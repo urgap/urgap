@@ -15,6 +15,7 @@ import os
 """
 
 
+def test_uio_calculate_md5_standard():
 
     os.remove(output.name)
     assert output_md5 == "8d6c9484a6b6f329a9ae57a1f8837e7e"
