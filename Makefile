@@ -34,7 +34,9 @@ new-unode:
 	@echo "+------------------ ---- --    -"
 	@echo ""
 
+tests:
 	@echo "Running Unittests using pytest"
+	pytest tests
 
 zip-exes:
 	@echo "Creating new zip files and calculating md5s for new exes"
