@@ -41,3 +41,5 @@ tests:
 zip-exes:
 	@echo "Creating new zip files and calculating md5s for new exes"
 	@echo "----[to be implemented ]----"
+
+black:
