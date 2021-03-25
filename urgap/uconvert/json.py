@@ -6,6 +6,7 @@ class JSONEncoder(json.JSONEncoder):
 
         if isinstance(obj, datetime.datetime):
 
+
 class JSONDecoder(json.JSONDecoder):
             *args,
             object_hook=self.object_hook,
