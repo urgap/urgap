@@ -3,6 +3,7 @@ import shutil
 
 
 
+            self.delete_tmp_files()
                 / "resources"
                 / "platform_independent"
                 / "arc_independent"
