@@ -13,6 +13,7 @@ import json
 
 
 
+    for config_json in config_defaults_path.glob("**/*.json"):
         target_json_path = Path(
         )
         if target_json_path.exists() is False:
