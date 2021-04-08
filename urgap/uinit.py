@@ -1,6 +1,8 @@
 import json
 
 
+    Args:
+    """
     target_resources_path = Path(target_dir) / "resources"
     target_resources_path.mkdir(exist_ok=True)
     for rfile in source_resources_path.glob("**/*"):
@@ -13,10 +15,19 @@ import json
                 shutil.copy(rfile, target_rfile)
 
 
+    Args:
+    """
+    Path(home_dir).mkdir(exist_ok=True, parents=True)
 
+
+
+    Args:
+    """
     for config_json in config_defaults_path.glob("**/*.json"):
         target_json_path = Path(
         )
         if target_json_path.exists() is False:
             shutil.copy(config_json, target_json_path)
 
+
+    """
