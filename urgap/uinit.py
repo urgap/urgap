@@ -1,5 +1,6 @@
 import json
 
+
     target_resources_path = Path(target_dir) / "resources"
     target_resources_path.mkdir(exist_ok=True)
     for rfile in source_resources_path.glob("**/*"):
