@@ -2,3 +2,4 @@ __pycache__/
 *.py[cod]
 .DS_Store
 example_scripts/*.ujson
+example_scripts/*.txt
