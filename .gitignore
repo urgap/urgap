@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 example_scripts/*.ujson
 example_scripts/*.txt
+docs/build/
+.idea
+.coverage
