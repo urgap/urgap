@@ -6,3 +6,4 @@ example_scripts/*.txt
 docs/build/
 .idea
 .coverage
+.tox
