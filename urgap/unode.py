@@ -24,3 +24,4 @@ import shutil
                 else:
                     path.unlink()
         self.tmp_files = []
+
