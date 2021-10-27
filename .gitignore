@@ -8,3 +8,4 @@ docs/build/
 .coverage
 .tox
 tests/integrationtests/test_t1.txt
+.vscode/
