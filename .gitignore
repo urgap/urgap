@@ -9,3 +9,4 @@ docs/build/
 .tox
 tests/integrationtests/test_t1.txt
 .vscode/
+_playground/
