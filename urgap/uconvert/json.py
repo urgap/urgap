@@ -5,6 +5,9 @@ import datetime
 class JSONEncoder(json.JSONEncoder):
 
         if isinstance(obj, datetime.datetime):
+            return {
+                "_type": "UFile",
+            }
 
 
 class JSONDecoder(json.JSONDecoder):
