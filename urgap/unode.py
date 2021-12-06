@@ -6,6 +6,11 @@ import shutil
 
         if len(reasons) > 0:
             self.delete_tmp_files()
+        if self.has_all_required_installations() is False:
+                f"Cannot execute {self.META_INFO['name']}, "
+                "which not available on this system ..."
+            )
+
                 / "resources"
                 / "platform_independent"
                 / "arc_independent"
