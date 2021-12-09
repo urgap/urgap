@@ -9,5 +9,16 @@ docs/build/
 .tox
 tests/integrationtests/test_t1.txt
 tests/integrationtests/test.txt.ujson
+BSA1.canno
+BSA1.cnlcp
+BSA1.csarr
+BSA1.cseq
+BSA1.fasta.1.pepindex
+BSA1.fasta.2.pepindex
+BSA1.fasta.phr
+BSA1.fasta.pin
+BSA1.fasta.psq
+BSA1.mzML.ujson
 .vscode/
 _playground/
+_notebooks_/
