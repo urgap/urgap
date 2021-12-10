@@ -11,6 +11,7 @@ import shutil
                 "which not available on this system ..."
             )
 
+        self.tmp_files = []
                 / "resources"
                 / "platform_independent"
                 / "arc_independent"
