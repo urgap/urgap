@@ -1,1 +1,15 @@
 {
+    "umeta": {
+    },
+    "logging_level": {
+        "value": "DEBUG",
+    },
+    "update_resources": {
+    },
+    "update_uparma": {
+        "value": false,
+    },
+    "hash_algorithm": {
+        "value": "md5",
+    },
+    "umeta-mongodb-url": {
