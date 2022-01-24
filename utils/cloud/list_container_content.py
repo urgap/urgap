@@ -7,6 +7,8 @@ import sys
     Args:
     """
     driver = ufile.io.driver
+    if "/" in container_name:
+        container_name = container_name.split("/")[-1]
     available_containers = [x.name for x in driver.list_containers()]
     if container_name in available_containers:
         container = driver.get_container(container_name=container_name)
