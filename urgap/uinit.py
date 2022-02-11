@@ -1,4 +1,6 @@
 import json
+import tempfile
+
 
 
     Args:
@@ -33,3 +35,6 @@ import json
     """
     return {k: v["value"] for k, v in config.items() if isinstance(v, dict)}
 
+
+    if path is None:
+    return path

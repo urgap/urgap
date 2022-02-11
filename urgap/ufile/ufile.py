@@ -8,6 +8,11 @@ class UFile:
         self._local_copy = None
         self._io = None
 
+    @property
+
+
+
+
 
 
 

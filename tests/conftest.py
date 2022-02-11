@@ -12,3 +12,9 @@ def provide_clean_node_dirs(request):
 
 
 def tmp_dir():
+
+
+
+
+def tmp_scratch_disk(tmp_dir):
+    yield tmp_dir
