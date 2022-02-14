@@ -9,6 +9,7 @@ class UFile:
         self._io = None
 
     @property
+        return self.io.scratch_path
 
 
 
@@ -38,6 +39,7 @@ class UFile:
         Returns:
 
         """
+
 
         )
         self._io = None
