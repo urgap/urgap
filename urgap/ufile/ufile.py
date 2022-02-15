@@ -46,6 +46,7 @@ class UFile:
         )
         self._io = None
 
+        self.io.create_container()
 
 
 
