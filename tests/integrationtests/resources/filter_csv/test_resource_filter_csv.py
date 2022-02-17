@@ -9,6 +9,7 @@ print(sys.path)
 def test_filter_int():
 
     main(
+        output=output_file,
     )
     df = pd.read_csv(output_file)
     assert df.shape[0] == 4
