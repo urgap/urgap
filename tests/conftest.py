@@ -13,8 +13,12 @@ def provide_clean_node_dirs(request):
 
 
 def tmp_dir():
+    with tempfile.TemporaryDirectory() as tmp_dir:
 
 
+def tmp_file():
+    with tempfile.NamedTemporaryFile() as tmp_file:
+        yield Path(tmp_file.name)
 
 
 def tmp_scratch_disk(tmp_dir):
