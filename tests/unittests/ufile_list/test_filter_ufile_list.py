@@ -3,11 +3,16 @@ from pathlib import Path
 
 
     )
+
+    )
     assert filtered_list == [uf]
 
 
 
+    )
+    )
 
+        },
     )
     assert filtered_list == [uf_1]
 
@@ -15,6 +20,8 @@ from pathlib import Path
 def test_filtering_on_two_files_one_excluding_based_on_additional_filters(
 ):
 
+    )
+    )
 
         additional_filters={
         },
@@ -24,13 +31,17 @@ def test_filtering_on_two_files_one_excluding_based_on_additional_filters(
 
 
 
+        },
     )
     assert filtered_list == []
 
 
 
-
     )
+
+        },
+    )
+    assert filtered_list == [uf_1]
 
 
     ufiles = [
