@@ -3,6 +3,7 @@ import json
 
     """
 
+            "parameters": {},
         }
 
     @property
