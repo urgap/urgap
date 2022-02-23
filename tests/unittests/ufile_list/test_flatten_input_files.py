@@ -12,6 +12,8 @@ def test_list_of_nested_Ufiles_is_returned(tmp_file):
     expected = [
     ]
     input_files = [
+        [
+        ],
     ]
     assert flat_input_files == expected
 
