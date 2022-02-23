@@ -5,6 +5,7 @@ import shutil
 
         self.tmp_files = []
 
+        )
         if len(reasons) > 0:
             self.delete_tmp_files()
         if self.has_all_required_installations() is False:
