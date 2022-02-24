@@ -1,7 +1,9 @@
 import types
 
+# Proteomics====================================================================
 proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
+
 proteomics.dbsearch = types.SimpleNamespace()
 proteomics.dbsearch.ANY = "proteomics.dbsearch.ANY"
 proteomics.dbsearch.COMET_MZID = ".comet.mzid"
@@ -26,8 +28,14 @@ proteomics.validator.PEPTIDEFOREST_CSV = ".peptideforest.csv"
 proteomics.quantification = types.SimpleNamespace()
 proteomics.quantification.ANY = "proteomics.quantification.ANY"
 
+# Statistics====================================================================
 stats = types.SimpleNamespace()
 
+# Plotter=======================================================================
 plotter = types.SimpleNamespace()
 plotter.ANY = "plotter.ANY"
 plotter.VOLCANO_PDF = ".volcano.pdf"
+# Metabolomics==================================================================
+# Imaging=======================================================================
+
+# Mass Spec=====================================================================
