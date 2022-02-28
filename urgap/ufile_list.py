@@ -36,6 +36,7 @@ class UFileList(UserList):
 
         Raises:
         """
+        already_seen_objects = set()
             else:
                 flat_list.append(entry)
 
@@ -46,6 +47,7 @@ class UFileList(UserList):
             for k, v_dict in additional_filters.items():
 
         ufile_classes = ddict(list)
+        for ufile in self.create_flat_and_non_redundant_list():
 
 
         for file_data_type, ufile_sublist in ufile_classes.items():
@@ -56,3 +58,21 @@ class UFileList(UserList):
             else:
                 )
         return filtered_ufile_list
+
+
+        Args:
+
+        Returns:
+        """
+
+
+        Args:
+
+        Returns:
+        """
+        indices = []
+        return indices
+
+
+        Returns:
+        """
