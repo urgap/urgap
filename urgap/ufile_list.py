@@ -48,6 +48,7 @@ class UFileList(UserList):
 
         ufile_classes = ddict(list)
         for ufile in self.create_flat_and_non_redundant_list():
+            )
 
 
         for file_data_type, ufile_sublist in ufile_classes.items():
