@@ -32,3 +32,4 @@ import json
 
 
         else:
+        return new_fragment

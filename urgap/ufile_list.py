@@ -8,6 +8,9 @@ class UFileList(UserList):
         super().__init__(initlist=initlist)
         for item in self.data:
             self._eval_if_item_is_of_correct_type(item)
+        self._output_definitions = None
+
+    @property
 
         self._eval_if_item_is_of_correct_type(item)
         super().__setitem__(i, item)
@@ -77,3 +80,20 @@ class UFileList(UserList):
 
         Returns:
         """
+
+
+        Args:
+
+        Returns:
+        """
+        safe_to_create_new_file = False
+                safe_to_create_new_file = True
+        else:
+            safe_to_create_new_file = True
+
+        if safe_to_create_new_file is True:
+            self.append(
+            )
+        return len(self) - 1
+
+        return [x.as_storage_base_uri() for x in self]
