@@ -5,6 +5,7 @@ unknown.UNKNOWN = ".unknown"
 # Proteomics====================================================================
 proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
+proteomics.THERMO_RAW = ".thermo.raw"
 
 proteomics.dbsearch = types.SimpleNamespace()
 proteomics.dbsearch.ANY = "proteomics.dbsearch.ANY"
@@ -33,6 +34,7 @@ proteomics.quantification.ANY = "proteomics.quantification.ANY"
 
 # Statistics====================================================================
 stats = types.SimpleNamespace()
+stats.ANY = "stats.ANY"
 
 # Plotter=======================================================================
 plotter = types.SimpleNamespace()
