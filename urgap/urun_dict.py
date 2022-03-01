@@ -29,6 +29,9 @@ import json
         if skip_data_versioning is False:
         return container_folder_name
 
+        if ufiles is None:
+            ufiles = self.input_files
+
         )
 
 
