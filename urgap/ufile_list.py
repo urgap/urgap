@@ -96,4 +96,5 @@ class UFileList(UserList):
             )
         return len(self) - 1
 
+
         return [x.as_storage_base_uri() for x in self]

@@ -1,5 +1,7 @@
 import types
 
+unknown = types.SimpleNamespace()
+unknown.UNKNOWN = ".unknown"
 # Proteomics====================================================================
 proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
