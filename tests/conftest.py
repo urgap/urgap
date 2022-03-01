@@ -4,6 +4,8 @@ import pytest
 
         ufile_path_list = [ufile_path_list]
 
+        )
+
 @pytest.fixture
 def provide_clean_node_dirs(request):
         ufile_path_list=request.param[0],

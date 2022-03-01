@@ -4,6 +4,7 @@ import json
     """
 
             "parameters": {},
+            "output_files": None,
         }
 
     @property
