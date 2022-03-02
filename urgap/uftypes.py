@@ -6,6 +6,7 @@ unknown.UNKNOWN = ".unknown"
 proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
 proteomics.THERMO_RAW = ".thermo.raw"
+proteomics.FASTA = ".protein.faa"
 
 proteomics.dbsearch = types.SimpleNamespace()
 proteomics.dbsearch.ANY = "proteomics.dbsearch.ANY"
