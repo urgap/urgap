@@ -43,3 +43,4 @@ plotter.VOLCANO_PDF = ".volcano.pdf"
 
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
+ms.SPECTRA_META_CSV = ".spectra_meta.csv"
