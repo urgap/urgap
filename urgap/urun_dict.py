@@ -1,11 +1,14 @@
 import json
+from collections import UserDict
 
 
     """
 
+        super().__init__(*args, **kwargs)
             "parameters": {},
             "output_files": None,
         }
+            if k not in self.keys():
 
     @property
 
