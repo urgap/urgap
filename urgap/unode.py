@@ -29,6 +29,7 @@ import shutil
 
 
         for path in self.tmp_files:
+                continue
             if path.exists():
                 if path.is_dir():
                     if path.is_symlink():
