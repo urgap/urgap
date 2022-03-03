@@ -17,6 +17,7 @@ import shutil
             )
 
         self.tmp_files = []
+
                 / "resources"
                 / "platform_independent"
                 / "arc_independent"
