@@ -11,6 +11,8 @@ def test_create_home_folder(tmp_dir):
 
 
 
+    assert file.exists() is True
+    with open(file, "w") as f:
         f.write("New Content")
 
     assert md5 != md5_new_content
