@@ -28,3 +28,6 @@ def tmp_file():
 def tmp_scratch_disk(tmp_dir):
     yield tmp_dir
 
+
+def change_hash_algorithm():
+    yield None
