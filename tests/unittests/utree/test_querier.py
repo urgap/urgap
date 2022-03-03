@@ -12,6 +12,7 @@ def test_graph_is_built_on_init():
         "test.ANY",
         "ANY",
     ]
+        "test.TEST_FILE1",
         "test.ANY",
         "ANY",
     ]
