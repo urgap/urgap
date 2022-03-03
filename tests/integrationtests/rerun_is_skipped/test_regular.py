@@ -16,6 +16,7 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
     print("Output node1:")
     pprint.pprint(return_file)
     print("Input:")
+    pprint.pprint(ufiles)
 
     print("Output:")
     pprint.pprint(second_run_return_file)
