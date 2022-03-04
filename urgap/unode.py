@@ -29,6 +29,7 @@ import shutil
 
 
         for path in self.tmp_files:
+            if str(path) in [".", "/", "./", "../"]:
                 continue
             if path.exists():
                 if path.is_dir():
