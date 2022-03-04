@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 
@@ -50,6 +51,7 @@ class UFile:
 
         )
         self._io = None
+        try:
 
         self.io.create_container()
 

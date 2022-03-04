@@ -15,6 +15,9 @@ import sys
     fragment = "/".join(input_file.as_posix().split("/")[-2:])
 
     rest = "/".join(input_file.as_posix().split("/")[:-2])
+    ufile.rebase(f"{scheme}://{container_name}")
+    ufile.upload()
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
