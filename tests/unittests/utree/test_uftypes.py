@@ -1,6 +1,7 @@
 import regex as re
 
 
+
 def test_node_names_are_unique():
     assert len(nodes) == len(set(nodes))
 

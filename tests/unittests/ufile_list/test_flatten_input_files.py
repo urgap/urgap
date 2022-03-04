@@ -1,6 +1,8 @@
 import random
 import string
 
+import pytest
+
 
 
 def _random_string(lenght=7):
