@@ -32,6 +32,10 @@ proteomics.validator.PEPTIDEFOREST_CSV = ".peptideforest.csv"
 # Quantification
 proteomics.quantification = types.SimpleNamespace()
 proteomics.quantification.ANY = "proteomics.quantification.ANY"
+proteomics.quantification.FLASHLFQ_PSM_TSV = ".flashlfq_psms.tsv"
+proteomics.quantification.FLASHLFQ_PEPTIDE_TSV = ".flashlfq_peptides.tsv"
+proteomics.quantification.FLASHLFQ_PROTEIN_TSV = ".flashlfq_proteins.tsv"
+proteomics.quantification.FLASHLFQ_BAYESFC_TSV = ".flashlfq_bayesFC.tsv"
 
 # Statistics====================================================================
 stats = types.SimpleNamespace()
