@@ -87,6 +87,13 @@ class UFileList(UserList):
 
         Returns:
         """
+        return [self[i].path for i in idxs]
+
+
+        Args:
+
+        Returns:
+        """
         safe_to_create_new_file = False
                 safe_to_create_new_file = True
         else:
