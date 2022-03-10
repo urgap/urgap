@@ -10,11 +10,17 @@ class UFile:
         self._local_copy = None
         self._io = None
 
+        self._io = None
+
+    @property
+
     @property
         return self.io.scratch_path
 
 
 
+
+    @property
 
     @property
 
@@ -55,5 +61,9 @@ class UFile:
 
         self.io.create_container()
 
+        self.io.remove_remote_object()
 
+        self.purge_local_file()
+        self.purge_local_tags()
 
+            self.io.scratch_path.unlink()

@@ -6,6 +6,7 @@ import pytest
 
         ufile_path_list = [ufile_path_list]
 
+    for u in ufiles:
         )
 
 @pytest.fixture
@@ -33,3 +34,11 @@ def tmp_scratch_disk(tmp_dir):
 
 def change_hash_algorithm():
     yield None
+
+
+@pytest.fixture
+def provide_clean_scratch_and_remote(request):
+    ufile = request.param
+    ufile.purge_local()
+    yield ufile
+    ufile.purge_local()
