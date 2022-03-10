@@ -4,6 +4,17 @@ import pytest
 
 
 
+def ping(host):
+    Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
+
+    https://stackoverflow.com/questions/2953462/pinging-servers-in-python
+    """
+    param = "-n" if platform.system().lower() == "windows" else "-c"
+
+
+    return subprocess.call(command) == 0
+
+
         ufile_path_list = [ufile_path_list]
 
     for u in ufiles:
