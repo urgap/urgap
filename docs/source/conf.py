@@ -15,6 +15,9 @@ import os
 
 
 # The full version, including alpha/beta/rc tags stored in version.txt
+# version_path = os.path.join(
+# )
+# with open(version_path, "r") as version_file:
 
 # The full version, including alpha/beta/rc tags.
 
