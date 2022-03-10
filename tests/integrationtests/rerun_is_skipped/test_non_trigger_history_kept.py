@@ -6,6 +6,9 @@ import pytest
 @pytest.mark.parametrize(
     "provide_clean_test_node_dirs",
     [
+        (
+            ),
+        ),
     ],
     indirect=["provide_clean_test_node_dirs"],
 )
