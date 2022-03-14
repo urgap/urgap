@@ -9,3 +9,4 @@ import pytest
     ],
     indirect=["provide_clean_node_dirs"],
 )
+    assert filtered_csv[0].path.exists()
