@@ -21,3 +21,4 @@ class JSONDecoder(json.JSONDecoder):
         )
 
                 return datetime.datetime.fromisoformat(obj["value"])
+                return set(obj["value"])

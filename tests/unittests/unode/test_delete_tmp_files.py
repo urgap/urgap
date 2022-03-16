@@ -33,6 +33,7 @@ def test_unode_delete_tmp_dir():
     indirect=["provide_clean_test_node_dirs"],
 )
 def test_unode_delete_tmp_file_pior_run(provide_clean_test_node_dirs):
+    test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
 
         fin.write("This is gonna be deleted")
     assert tmp_file.exists() is True

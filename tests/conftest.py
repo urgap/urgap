@@ -11,10 +11,12 @@ def ping(host):
     """
     param = "-n" if platform.system().lower() == "windows" else "-c"
 
+    command = ["ping", param, "1", host]
 
     return subprocess.call(command) == 0
 
 
+def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
         ufile_path_list = [ufile_path_list]
 
     for u in ufiles:
@@ -22,10 +24,15 @@ def ping(host):
 
 @pytest.fixture
 def provide_clean_node_dirs(request):
+    unodes, ufiles, urun_dict = init_nodes(
         ufile_path_list=request.param[0],
+        urun_dict=request.param[1],
         unodes=request.param[2],
     )
+    yield unodes, ufiles, urun_dict
+    unodes, ufiles, urun_dict = init_nodes(
         ufile_path_list=request.param[0],
+        urun_dict=request.param[1],
         unodes=request.param[2],
     )
 
