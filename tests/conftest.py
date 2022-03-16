@@ -60,3 +60,4 @@ def provide_clean_scratch_and_remote(request):
     ufile.purge_local()
     yield ufile
     ufile.purge_local()
+
