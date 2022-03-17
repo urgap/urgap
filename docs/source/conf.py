@@ -10,6 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
+import sys
 
 # -- Project information -----------------------------------------------------
 
@@ -20,6 +21,7 @@ import os
 # with open(version_path, "r") as version_file:
 
 # The full version, including alpha/beta/rc tags.
+version = ".".join(release.split(".")[:2])
 
 # -- General configuration ---------------------------------------------------
 
