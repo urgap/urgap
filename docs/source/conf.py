@@ -21,6 +21,7 @@ import sys
 # with open(version_path, "r") as version_file:
 
 # The full version, including alpha/beta/rc tags.
+# # for example take major/minor
 version = ".".join(release.split(".")[:2])
 
 # -- General configuration ---------------------------------------------------
