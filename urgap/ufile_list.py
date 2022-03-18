@@ -10,6 +10,7 @@ class UFileList(UserList):
         for item in self.data:
             self._eval_if_item_is_of_correct_type(item)
         self._output_definitions = None
+        self.wid = None
 
     @property
 

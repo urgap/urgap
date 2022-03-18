@@ -26,3 +26,5 @@ from pathlib import Path
 
 
 
+
+        if wid_folder.exists():
