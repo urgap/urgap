@@ -7,6 +7,7 @@ proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
 proteomics.THERMO_RAW = ".thermo.raw"
 proteomics.FASTA = ".protein.faa"
+proteomics.MODS_XML = ".mods.xml"
 
 proteomics.dbsearch = types.SimpleNamespace()
 proteomics.dbsearch.ANY = "proteomics.dbsearch.ANY"
