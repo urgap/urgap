@@ -61,3 +61,22 @@ def provide_clean_scratch_and_remote(request):
     yield ufile
     ufile.purge_local()
 
+
+@pytest.fixture
+    if str(request.param[0]) == "mongodb":
+        host, port = parsed_url.netloc.split(":")
+        try:
+            urllib3.util.connection.create_connection((host, port))
+        except ConnectionRefusedError:
+            pytest.skip(f"MongoDB at {host}:{port} not reachable ...")
+
+    ufile_path_list = [
+    ]
+        "parameters": {
+            "triggers_nuttin": 100,
+            "triggers_rerun": 100,
+            "triggers_rerun_-3": 100,
+        },
+        "unode_parameters": {
+            "record_skipped_runs": True,
+        },
