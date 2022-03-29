@@ -39,3 +39,12 @@ import tempfile
 
     if path is None:
     return path
+
+
+    banners = [
+    ]
+    constellations = [
+        [
+        ],
+    ]
+    return f"""{banner}
