@@ -20,7 +20,9 @@ def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
         ufile_path_list = [ufile_path_list]
 
     for u in ufiles:
+        check_ufile_can_be_tested(u)
         )
+
 
 @pytest.fixture
 def provide_clean_node_dirs(request):
@@ -57,6 +59,7 @@ def change_hash_algorithm():
 @pytest.fixture
 def provide_clean_scratch_and_remote(request):
     ufile = request.param
+    check_ufile_can_be_tested(ufile)
     ufile.purge_local()
     yield ufile
     ufile.purge_local()
