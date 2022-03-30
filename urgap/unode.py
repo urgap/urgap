@@ -9,6 +9,7 @@ from pathlib import Path
 
         self.tmp_files = []
 
+            urun_dict.unode_parameters.update(kwargs)
         )
         if len(reasons) > 0:
         else:
