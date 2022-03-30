@@ -59,6 +59,9 @@ class URunDict(UserDict):
 
     def _generate_container_folder_name(
         if run_folder_name is None:
+                self.unode_rinfo["meta_info"]["name"],
+                self.unode_rinfo["meta_info"]["wrapper_version"]["major"],
+            )
         else:
             container_folder_name = run_folder_name
 
