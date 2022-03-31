@@ -9,6 +9,7 @@ proteomics.THERMO_RAW = ".thermo.raw"
 proteomics.FASTA = ".protein.faa"
 proteomics.MODS_XML = ".mods.xml"
 
+# Database Search Engines
 proteomics.dbsearch = types.SimpleNamespace()
 proteomics.dbsearch.ANY = "proteomics.dbsearch.ANY"
 proteomics.dbsearch.COMET_MZID = ".comet.mzid"
