@@ -19,6 +19,11 @@ proteomics.dbsearch.MSGFPLUS_MZID = ".msgfplus.mzid"
 proteomics.dbsearch.OMSSA_CSV = ".omssa.csv"
 proteomics.dbsearch.XTANDEM_XML = ".xtandem.xml"
 
+# De Novo Search Engines
+proteomics.denovosearch = types.SimpleNamespace()
+proteomics.denovosearch.NOVOR_CSV = ".novor.csv"
+
+
 # Data Conversion
 proteomics.converter = types.SimpleNamespace()
 proteomics.converter.ANY = "proteomics.converter.ANY"
