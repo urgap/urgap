@@ -47,6 +47,7 @@ proteomics.quantification.FLASHLFQ_BAYESFC_TSV = ".flashlfq_bayesFC.tsv"
 # Statistics====================================================================
 stats = types.SimpleNamespace()
 stats.ANY = "stats.ANY"
+stats.UMAP_CSV = ".umap.csv"
 
 # Plotter=======================================================================
 plotter = types.SimpleNamespace()
@@ -54,6 +55,7 @@ plotter.ANY = "plotter.ANY"
 plotter.VOLCANO_PDF = ".volcano.pdf"
 plotter.UMAP_PDF = ".umap.pdf"
 plotter.VENN_RESULTS_CSV = ".venn_results.csv"
+plotter.UMAP_PDF = ".umap.pdf"
 # Filetype =======================================================================
 
 # Metabolomics==================================================================
