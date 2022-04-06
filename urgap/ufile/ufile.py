@@ -23,6 +23,9 @@ class UFile:
     @property
 
     @property
+        object_name = self.object_name
+
+    @property
 
 
     @property
