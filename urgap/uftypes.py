@@ -53,6 +53,7 @@ plotter = types.SimpleNamespace()
 plotter.ANY = "plotter.ANY"
 plotter.VOLCANO_PDF = ".volcano.pdf"
 plotter.UMAP_PDF = ".umap.pdf"
+plotter.VENN_RESULTS_CSV = ".venn_results.csv"
 # Filetype =======================================================================
 
 # Metabolomics==================================================================
