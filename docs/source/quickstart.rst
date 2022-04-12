@@ -7,6 +7,7 @@ Running pytest
 --------------
 
 
+.. code-block:: bash
 
 
 
@@ -30,7 +31,12 @@ Using UFiles, the data abstraction layer
     ufile.upload()
     # uploads scratch file to new rebased destination 
 
+.. note::
 
+    Please refer to :ref:`ufile` for more details on, e.g.
+    
+    #. Why is there a # in uri?
+    #. How are tags handled 
 
 
 

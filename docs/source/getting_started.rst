@@ -3,13 +3,16 @@ Getting started
 
 
 Installation (stable version)
+-----------------------------
 
 Installation from pypi
+^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
 
 
 Installation from github
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 TODO
     #. Clone github 
@@ -20,8 +23,10 @@ TODO
 
 
 Installation (development environment)
+--------------------------------------
 
 Installation from source
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 * GitHub version: Starting from your command line, the easiest way is to clone the GitHub repo.

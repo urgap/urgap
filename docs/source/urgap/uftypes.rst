@@ -1,4 +1,6 @@
 .. _uftypes:
 
+UFtypes
+#######
 
    :members:
