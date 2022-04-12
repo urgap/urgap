@@ -2,6 +2,7 @@ import types
 
 unknown = types.SimpleNamespace()
 unknown.UNKNOWN = ".unknown"
+
 # Proteomics====================================================================
 proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
@@ -59,8 +60,18 @@ plotter.VENN_RESULTS_SVG = ".venn_results.svg"
 plotter.UMAP_PDF = ".umap.pdf"
 # Filetype =======================================================================
 any = types.SimpleNamespace()
+any.ANY = "any.ANY"
 any.CSV = ".any.csv"
+any.DAT = ".any.dat"
+any.FAA = ".any.faa"
+any.MGF = ".any.mgf"
+any.MZID = ".any.mzid"
+any.MZML = ".any.mzml"
+any.PDF = ".any.pdf"
+any.RAW = ".any.raw"
 any.SVG = ".any.svg"
+any.TSV = ".any.tsv"
+any.XML = ".any.xml"
 
 # Metabolomics==================================================================
 # Imaging=======================================================================
