@@ -93,6 +93,7 @@ Adding test user to the server and assigning the right policy
 Adding login and password to your shell login 
 
 .. code-block:: bash
+
     export uuser_minio=minio_anyone
     export upassword_minio=minio_anyone
 
