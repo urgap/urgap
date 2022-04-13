@@ -13,6 +13,7 @@ def test_filter_int():
 
     main(
         output=output_file,
+        query_string="`spectrum_id` > 3000",
     )
     df = pd.read_csv(output_file)
     assert df.shape[0] == 4
@@ -24,6 +25,7 @@ def test_filter_int_input_twice():
     main(
         csvs=[input_file, input_file],
         output=output_file,
+        query_string="`spectrum_id` > 3000",
     )
     df = pd.read_csv(output_file)
     assert df.shape[0] == 8
