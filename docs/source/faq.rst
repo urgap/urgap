@@ -31,3 +31,10 @@ Therefor, we decided to explicitly define the object name as a fragment in the u
 
     gcs://<container_name>#<object_name>
     minio://k8s-server/<namespace>/<container>#<object_name>
+
+
+
+
+*Why do I get a workflow ID (WID) for each executed node?*
+
+WIDs are created during init of a URunDict, so the problem could be that you initalize a new URunDict for each unode.run()?. 
