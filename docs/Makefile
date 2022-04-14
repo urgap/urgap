@@ -1,3 +1,4 @@
+# You can set these variables from the command line.
 # from the environment for the first two.
 SPHINXOPTS    ?=
 SOURCEDIR     = source

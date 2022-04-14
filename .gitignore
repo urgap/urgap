@@ -4,6 +4,8 @@ __pycache__/
 example_scripts/*.ujson
 example_scripts/*.txt
 docs/build/
+docs/source/code_inc
+docs/source/example_scripts.rst
 .idea
 .coverage
 .tox
