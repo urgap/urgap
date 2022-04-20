@@ -15,6 +15,7 @@ Documentation
    getting_started
    quickstart
    faq
+   third_party
 
 .. toctree::
    :glob:

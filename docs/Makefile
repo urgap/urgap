@@ -1,6 +1,7 @@
 # You can set these variables from the command line.
 # from the environment for the first two.
 SPHINXOPTS    ?=
+SPHINXBUILD   ?= $(AUTO_GEN1);$(AUTO_GEN2);sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
 
