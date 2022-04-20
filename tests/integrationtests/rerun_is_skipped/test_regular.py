@@ -9,6 +9,11 @@ import pytest
     [
         (
             ),
+                {
+                    "parameters": {
+                    },
+                    },
+            ),
         ),
     ],
     indirect=["provide_clean_test_node_dirs"],

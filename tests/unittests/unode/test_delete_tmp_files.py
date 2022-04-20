@@ -29,6 +29,16 @@ def test_unode_delete_tmp_dir():
     [
         (
             ),
+                {
+                    "parameters": {
+                        "triggers_nuttin": 100,
+                        "triggers_rerun": 100,
+                        "triggers_rerun_-3": 100,
+                    },
+                    "unode_parameters": {
+                        "remove_temporary_files": False,
+                    },
+            ),
     ],
     indirect=["provide_clean_test_node_dirs"],
 )

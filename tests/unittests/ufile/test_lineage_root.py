@@ -6,6 +6,13 @@ import pytest
     [
         (
             ),
+                {
+                    "parameters": {
+                    },
+                    "unode_parameters": {
+                        "force": True,
+                    },
+            ),
     ],
     indirect=["provide_clean_node_dirs"],
 )
