@@ -7,9 +7,17 @@ for cat in UNodeBase.__subclasses__():
 
 
 with open("source/third_party.rst", "w") as f:
+    f.write(
+        """.. _third party tools:
 
 Third party tools
 
 
+"""
+    )
     for name, citation in sorted(info_collection):
+        f.write(
+            f"""{name}
  * {citation}
+"""
+        )
