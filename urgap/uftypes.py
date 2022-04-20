@@ -48,6 +48,7 @@ proteomics.quantification.FLASHLFQ_BAYESFC_TSV = ".flashlfq_bayesFC.tsv"
 # Statistics====================================================================
 stats = types.SimpleNamespace()
 stats.ANY = "stats.ANY"
+stats.PWSTATS_CSV = ".pwstats.csv"
 stats.UMAP_CSV = ".umap.csv"
 
 # Plotter=======================================================================
