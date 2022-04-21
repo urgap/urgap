@@ -1,0 +1,1 @@
+from .uwid import UWIDGenerator
