@@ -52,3 +52,10 @@ from pathlib import Path
 
     @property
         return self.META_INFO.get("requires", None)
+
+    @classmethod
+
+        Args:
+
+        Returns:
+        """

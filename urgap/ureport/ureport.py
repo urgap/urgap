@@ -16,3 +16,5 @@ UReport id {id(self)}
 
     @property
 
+
+        node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]

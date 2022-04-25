@@ -9,6 +9,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet" type="text/css">
 
 </head>
+<script src="{{ url_for('static', filename='js/plotly-2.11.1.min.js') }}"></script>
 <script> var network_ids = [];</script>
 
 <body>
@@ -71,6 +72,15 @@
 							</table>
 
 						</div>
+						{%endfor%}
+					</span>
+					{%endif%}
+					{% if section["figures"]|length != 0 %}
+					<span>
+						{%for e in section["figures"]%}
+						{%set id = "table_" ~ section_loop.index ~ "_" ~ loop.index %}
+						<h3>{{e["title"]}}</h3>
+						{{ e['data'] | safe }}
 						{%endfor%}
 					</span>
 					{%endif%}
