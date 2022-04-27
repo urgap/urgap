@@ -80,3 +80,4 @@ any.XML = ".any.xml"
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
 ms.SPECTRA_META_CSV = ".spectra_meta.csv"
+ms.SCANS_CSV = ".scans.csv"
