@@ -60,6 +60,8 @@ Merge/pull requests
 *******************
 
 Please use the pull request to push your code to the master repository. It will
+be automatically tested github actions using tox if the module is still working in
+unix environments. Pull requests will be discussed by the main dev
 
 
 Issues
