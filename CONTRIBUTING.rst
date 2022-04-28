@@ -29,6 +29,7 @@ Code standards and conventions
 Since this a collaborative project, you will encounter different coding styles.
 Despite the fact that we know that diversity is beautiful, we need to keep some
 common line on how to code (This list may be further extended). We generally use
+black style (https://github.com/psf/black)
 Additionally this list will give you some things to think about:
 
   | Re-think naming of variables at least twice
