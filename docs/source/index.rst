@@ -23,6 +23,7 @@ Documentation
    :caption: Developer:
 
    api_docs
+   contributing
    appendix
 
 The latest Documentation was generated on: |today|
