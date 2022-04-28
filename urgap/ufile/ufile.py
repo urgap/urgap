@@ -1,3 +1,4 @@
+import gzip
 import shutil
 import zipfile
 from pathlib import Path
@@ -74,7 +75,13 @@ class UFile:
             with ZipFile(new_path, "w", zipfile.ZIP_DEFLATED) as file:
                 file.write(self.path, arcname=self.path.name)
 
+            suffix = ".gz"
             new_path = self.path.with_suffix(self.path.suffix + suffix)
+                out_file.writelines(file)
+
+            suffix = ".tar"
+            new_path = self.path.with_suffix(self.path.suffix + suffix)
+            with tarfile.open(new_path, mode="w:") as file:
                 file.add(self.path, arcname=self.path.name)
 
         else:
