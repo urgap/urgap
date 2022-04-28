@@ -42,6 +42,109 @@ class URunDict(UserDict):
 
         for k, v in self._default_setup_that_cannot_be_set_by_user.items():
 
+        default_storage_parameters = copy.deepcopy(
+        )
+        default_storage_parameters.update(user_dict)
+        return default_storage_parameters
+
+    @property
+
+        Returns:
+        """
+        return self["wid"]
+
+    @wid.setter
+        """
+        self["wid"] = wid
+
+    @property
+
+        Returns:
+        """
+        return self.get("parameters", {})
+
+    @parameters.setter
+        self["parameters"] = parameters
+
+    @property
+        return self["unode_parameters"]
+
+    @unode_parameters.setter
+
+        Args:
+        """
+        if isinstance(unode_parameters, dict) is False:
+
+        self["unode_parameters"] = self._update_default_storage(
+        )
+
+    @property
+
+        Returns:
+        """
+        return self["unode_rinfo"]
+
+    @unode_rinfo.setter
+
+        Args:
+        """
+        if isinstance(unode_rinfo, dict) is False:
+        self["unode_rinfo"] = self._update_default_storage("unode_rinfo", unode_rinfo)
+
+    @property
+
+        Returns:
+        """
+        return self.unode_rinfo["meta_info"]
+
+    @meta_info.setter
+
+        Args:
+        """
+        self.unode_rinfo["meta_info"] = meta_info
+
+    @property
+
+        Returns:
+        """
+        return self.data["input_files"]
+
+    @input_files.setter
+
+        Args:
+
+        Raises:
+        """
+        self.data["input_files"] = input_files
+
+    @property
+
+        Returns:
+        """
+        return self.data["output_files"]
+
+    @output_files.setter
+
+        Args:
+
+        Raises:
+        """
+        self.data["output_files"] = output_files
+
+    @property
+
+        Returns:
+        """
+        return self.unode_rinfo["command_list"]
+
+    @command_list.setter
+
+        Args:
+
+        Raises:
+        """
+        if isinstance(command_list, list) is False:
+        self.unode_rinfo["command_list"] = command_list
 
     @property
 
