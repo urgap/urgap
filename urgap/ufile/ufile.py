@@ -60,6 +60,8 @@ class UFile:
 
         """
 
+        return self.io.remote_object_exists()
+
 
         )
         self._io = None
