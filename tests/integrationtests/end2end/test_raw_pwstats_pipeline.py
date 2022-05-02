@@ -50,6 +50,7 @@ def test_raw_to_pwstats_pipeline():
     )
     )
     fasta = fasta.uncompress()
+    fasta.upload()
     td_fasta = target_decoy.run([fasta], urun_dict)
     mgf = mzml_to_mgf.run([mzml], urun_dict)
     ident_msfragger = msfragger.run([mgf, td_fasta], urun_dict)
