@@ -7,6 +7,7 @@ def test_raw_to_pwstats_pipeline():
 
         {
             "parameters": {
+                "pandas_query_string": "`q-value_peptide_forest` < 0.01 and `is_decoy` == False",
                 "q_cut": 0.01,
                 "q_cut_train": 0.1,
                 "sensitivity": 0.9,
@@ -44,6 +45,9 @@ def test_raw_to_pwstats_pipeline():
                         "name": "TMT6plex",
                     },
                 ],
+            },
+            "unode_parameters": {
+            },
     )
 
 
@@ -53,6 +57,7 @@ def test_raw_to_pwstats_pipeline():
     fasta.upload()
     td_fasta = target_decoy.run([fasta], urun_dict)
     mgf = mzml_to_mgf.run([mzml], urun_dict)
+    meta = spectrum_meta_data.run([mzml], urun_dict)
     ident_msfragger = msfragger.run([mgf, td_fasta], urun_dict)
     ident_msgfplus = msgfplus.run([mgf, td_fasta], urun_dict)
 
