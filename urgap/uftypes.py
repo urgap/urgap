@@ -59,6 +59,7 @@ plotter.UMAP_PDF = ".umap.pdf"
 plotter.VENN_RESULTS_CSV = ".venn_results.csv"
 plotter.VENN_RESULTS_SVG = ".venn_results.svg"
 plotter.UMAP_PDF = ".umap.pdf"
+
 # Filetype =======================================================================
 any = types.SimpleNamespace()
 any.ANY = "any.ANY"
@@ -81,3 +82,6 @@ any.XML = ".any.xml"
 ms = types.SimpleNamespace()
 ms.SPECTRA_META_CSV = ".spectra_meta.csv"
 ms.SCANS_CSV = ".scans.csv"
+
+ms.converter = types.SimpleNamespace()
+ms.converter.ANY = "ms.converter.ANY"
