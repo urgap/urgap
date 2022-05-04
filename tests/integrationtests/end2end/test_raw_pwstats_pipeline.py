@@ -52,9 +52,11 @@ def test_raw_to_pwstats_pipeline():
 
 
     )
+    assert raw.path.exists()
     )
     fasta = fasta.uncompress()
     fasta.upload()
+    assert fasta.path.exists()
     td_fasta = target_decoy.run([fasta], urun_dict)
     mgf = mzml_to_mgf.run([mzml], urun_dict)
     meta = spectrum_meta_data.run([mzml], urun_dict)
