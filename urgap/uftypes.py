@@ -82,6 +82,7 @@ any.XML = ".any.xml"
 ms = types.SimpleNamespace()
 ms.SPECTRA_META_CSV = ".spectra_meta.csv"
 ms.SCANS_CSV = ".scans.csv"
+ms.NORM_IT_CSV = ".norm_it.csv"
 
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
