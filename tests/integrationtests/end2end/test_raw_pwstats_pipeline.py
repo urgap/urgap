@@ -51,6 +51,7 @@ def test_raw_to_pwstats_pipeline():
     )
 
 
+    # curdir = Path(__file__).resolve()
     )
     assert raw.path.exists()
     )
@@ -58,12 +59,30 @@ def test_raw_to_pwstats_pipeline():
     fasta.upload()
     assert fasta.path.exists()
     td_fasta = target_decoy.run([fasta], urun_dict)
+    assert td_fasta[0].path.exists()
+    #     f"https://ftp.ebi.ac.uk/pride-archive/2017/04#PXD005590/B02_08_161103_B2_HCD_OT_4ul.raw",
+    # )
+    # assert mzml.path.exists()
+    mzml = raw_to_mzml.run([raw], urun_dict)
+    assert mzml[0].path.exists()
     mgf = mzml_to_mgf.run([mzml], urun_dict)
+    assert mgf[0].path.exists()
     meta = spectrum_meta_data.run([mzml], urun_dict)
+    assert meta[0].path.exists()
     ident_msfragger = msfragger.run([mgf, td_fasta], urun_dict)
+    assert ident_msfragger[0].path.exists()
     ident_msgfplus = msgfplus.run([mgf, td_fasta], urun_dict)
+    assert ident_msgfplus[0].path.exists()
 
+    assert unified_msfragger[0].path.exists()
+    assert unified_msgfplus[0].path.exists()
     validated = peptide_forest.run([unified_msfragger, unified_msgfplus], urun_dict)
+    assert validated[0].path.exists()
     filtered = filter_node.run([validated], urun_dict)
+    assert filtered[0].path.exists()
+    # quant = flash_lfq.run(filtered, urun_dict)
+    # assert quant.path.exists()
+    # contrasts = pw_stats.run(quants, urun_dict)
+    # assert contrasts.path.exists()
 
     # do we need a bigger raw file
