@@ -76,6 +76,8 @@ any.TSV = ".any.tsv"
 any.XML = ".any.xml"
 
 # Metabolomics==================================================================
+mx = types.SimpleNamespace()
+mx.REF_MASS_CSV = ".ref_mass.csv"
 # Imaging=======================================================================
 
 # Mass Spec=====================================================================
@@ -85,6 +87,7 @@ ms.SCANS_CSV = ".scans.csv"
 ms.NORM_IT_CSV = ".norm_it.csv"
 ms.ALIGN_SCANS_CSV = ".align_scans.csv"
 ms.AVG_SCANS_CSV = ".avg_scans.csv"
+ms.RECAL_MZ_CSV = ".recal_mz.csv"
 
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
