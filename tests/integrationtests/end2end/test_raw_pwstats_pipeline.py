@@ -3,6 +3,7 @@ import pytest
 
 
 @pytest.mark.slow
+@pytest.mark.skip(reason="Takes too long!")
 @pytest.mark.xfail(strict=False)
 def test_raw_to_pwstats_pipeline():
 
