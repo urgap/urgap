@@ -18,6 +18,7 @@ new-unode:
 	@echo "|   Defining the wrapper name ${RED}without${OFF} version, which will be used"
 	@echo "|   as a top level folder to group different versions of the same tool"
 	@echo "|   This can also be used to group a type of wrapper into a folder for convenience,"	
+	@echo "|   e.g. io for filter_csv or echo_to_file etc"	
 	@echo "|"
 	@echo "| version:"
 	@echo "|   Any string"
