@@ -89,6 +89,7 @@ ms.NORM_IT_CSV = ".norm_it.csv"
 ms.ALIGN_SCANS_CSV = ".align_scans.csv"
 ms.AVG_SCANS_CSV = ".avg_scans.csv"
 ms.RECAL_MZ_CSV = ".recal_mz.csv"
+ms.MULTI_ALIGN_SCANS_CSV = ".multialign_scans.csv"
 
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
