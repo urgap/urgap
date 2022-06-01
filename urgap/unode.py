@@ -59,3 +59,36 @@ from pathlib import Path
 
         Returns:
         """
+        data = [
+            {
+                "section_title": "General Node Info",
+                "tables": [
+                    {
+                        "title": "Run information",
+                        "headers": ["key", "value"],
+                        "rows": [
+                            {
+                                "value": f"{um.urun_dict['version']}",
+                            },
+                        ],
+                        "caption": "URun Dict information associated with the file",
+                ],
+        ]
+        for k in ["input_files", "output_files"]:
+            for entry in um.urun_dict.get(k, []):
+                data[0]["tables"][0]["rows"].append(
+                )
+
+            data[0]["tables"][0]["rows"].append({"key": "@wid", "value": wid})
+
+        data[0]["tables"].append(
+            {
+                "title": "Parameters",
+                "headers": ["key", "value"],
+                "rows": [
+                    {"key": k, "value": v}
+                    for k, v in um.urun_dict["parameters"].items()
+                ],
+        )
+            data += cls.generate_wrapper_vis(ufile)
+        return data
