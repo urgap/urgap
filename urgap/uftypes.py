@@ -74,6 +74,7 @@ any.RAW = ".any.raw"
 any.SVG = ".any.svg"
 any.TSV = ".any.tsv"
 any.XML = ".any.xml"
+any.TXT = ".any.txt"
 
 # Metabolomics==================================================================
 mx = types.SimpleNamespace()
