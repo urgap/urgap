@@ -79,7 +79,11 @@ any.TXT = ".any.txt"
 # Metabolomics==================================================================
 mx = types.SimpleNamespace()
 mx.REF_MASS_CSV = ".ref_mass.csv"
+mx.ADDUCTS_CSV = ".adducts.csv"
+mx.MASS_SHIFT_CSV = ".mass_shift.csv"
+mx.CAL_MASS_CSV = ".cal_mass.csv"
 mx.QC_HTML = ".qc.html"
+
 # Imaging=======================================================================
 
 # Mass Spec=====================================================================
@@ -93,6 +97,7 @@ ms.RECAL_MZ_CSV = ".recal_mz.csv"
 ms.MULTI_ALIGN_SCANS_CSV = ".multialign_scans.csv"
 ms.MULTI_AVG_SCANS_CSV = ".multiavg_scans.csv"
 ms.MERGED_IONS_CSV = ".merged_ions.csv"
+ms.GLOBAL_RECAL_MZ_CSV = ".global_recal_mz.csv"
 
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
