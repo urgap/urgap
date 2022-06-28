@@ -6,9 +6,11 @@ Quickstart
 Running pytest
 --------------
 
+If you have installed from source / github, then you can test your installation by invoking tox, e.g.
 
 .. code-block:: bash
 
+    tox -e py39
 
 If you need a fresh installation of all requirements, run
 
@@ -48,3 +50,6 @@ Using UFiles, the data abstraction layer
 
 Executing example scripts
 -------------------------
+
+Have a look in the example_scripts folder to get started with more advanced workflows.
+Most example scripts come with a click interface, for help simply run python scriptXXX.py --help
