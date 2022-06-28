@@ -100,3 +100,33 @@ Adding login and password to your shell login
 Note: After setting up the server, policies and user credentials are stored inside minio, 
 so restart does not require the above to be done.
 
+
+Using Docker
+^^^^^^^^^^^^
+
+mongoDB
+""""""""
+
+.. code-block:: bash
+
+        -p 27017:27017 \
+        -v ~/mongo/data:/data/db \
+        mongo:latest
+
+
+MinIO
+"""""
+
+.. code-block:: bash
+
+    export uuser_minio="admin1"
+    export upassword_minio="$uper$3cureP4ssw0rd"
+
+    docker run \
+        -p 9000:9000 \
+        -p 9001:9001 \
+        -e "MINIO_ROOT_USER=$uuser_minio" \
+        -e "MINIO_ROOT_PASSWORD=$upassword_minio" \
+        -v ~/minio/data:/data \
+        quay.io/minio/minio server /data \
+        --console-address ":9001"

@@ -10,6 +10,12 @@ Running pytest
 .. code-block:: bash
 
 
+If you need a fresh installation of all requirements, run
+
+.. code-block:: bash
+
+    tox -r -e py39
+
 
 Using UFiles, the data abstraction layer
 ----------------------------------------
