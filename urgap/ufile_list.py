@@ -14,6 +14,9 @@ class UFileList(UserList):
 
     @property
 
+        Returns:
+        """
+
         self._eval_if_item_is_of_correct_type(item)
         super().__setitem__(i, item)
 
@@ -26,12 +29,21 @@ class UFileList(UserList):
         self._eval_if_item_is_of_correct_type(other)
         return super().__iadd__(other)
 
+
+        Args:
+        """
         self._eval_if_item_is_of_correct_type(item)
         super().append(item)
 
+
+        Args:
+        """
         self._eval_if_item_is_of_correct_type(item)
         super().insert(i, item)
 
+
+        Returns:
+        """
 
         kosha = False
             kosha = True
@@ -112,4 +124,7 @@ class UFileList(UserList):
         return len(self) - 1
 
 
+
+        Returns:
+        """
         return [x.as_storage_base_uri() for x in self]
