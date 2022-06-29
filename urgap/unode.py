@@ -1,3 +1,6 @@
+"""Unode class.
+
+"""
 import copy
 import os
 import platform
@@ -49,8 +52,18 @@ from pathlib import Path
 
 
 
+        Args:
+        """
+
+        """Remove umeta data for a given output_file.
+
+        Args:
+        """
 
     @property
+
+        Returns:
+        """
         return self.META_INFO.get("requires", None)
 
     @classmethod
