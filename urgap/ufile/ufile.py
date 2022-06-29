@@ -25,16 +25,31 @@ class UFile:
 
     @property
 
+        Returns:
+        """
+
     @property
+
+        Returns:
+        """
         object_name = self.object_name
 
     @property
 
+        Returns:
+        """
+
 
     @property
+
+        Returns:
+        """
             )
 
     @property
+
+        Returns:
+        """
 
 
     @property
@@ -51,6 +66,11 @@ class UFile:
         Returns:
         """
 
+        Args:
+
+        Returns:
+        """
+
 
         Returns:
         """
@@ -60,9 +80,15 @@ class UFile:
 
         """
 
+
+        Returns:
+        """
         return self.io.remote_object_exists()
 
 
+
+        Args:
+        """
         )
         self._io = None
         try:
