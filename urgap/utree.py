@@ -5,6 +5,7 @@ import networkx as nx
 
 class UTreeQuerier:
 
+        """Build a directed graph from a file providing namespacing.
 
         Args:
 
@@ -27,8 +28,18 @@ class UTreeQuerier:
         for leaf, ext in general_types:
             for node in leafs_with_ext:
 
+
+        Args:
+
+        Returns:
+        """
         return [x for x, y in self.G.nodes(data=True) if y.get("ext", "").endswith(ext)]
 
+
+        Args:
+
+        Returns:
+        """
         return nx.ego_graph(self.G, node, radius=100)
 
 
