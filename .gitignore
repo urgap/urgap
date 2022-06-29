@@ -11,6 +11,7 @@ docs/source/example_scripts.rst
 .tox
 tests/integrationtests/test_t1.txt
 tests/integrationtests/test.txt.ujson
+tests/data/test_node_data/test.txt.ujson
 # tests/data/test_node_v*
 BSA1.canno
 BSA1.cnlcp
