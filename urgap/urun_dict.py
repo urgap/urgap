@@ -12,6 +12,9 @@ class URunDict(UserDict):
 
     """
 
+
+
+        """
         super().__init__(*args, **kwargs)
         self._storage_requirements = {
             "parameters": {},
@@ -58,6 +61,7 @@ class URunDict(UserDict):
         self["wid"] = wid
 
     @property
+        """Get wrapper parameters.
 
         Returns:
         """
@@ -171,6 +175,12 @@ class URunDict(UserDict):
         if skip_data_versioning is False:
         return container_folder_name
 
+        """Determine the root folder for output files.
+
+        Args:
+
+        Returns:
+        """
         if ufiles is None:
             ufiles = self.input_files
 
