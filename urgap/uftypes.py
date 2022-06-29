@@ -100,5 +100,12 @@ ms.MULTI_AVG_SCANS_CSV = ".multiavg_scans.csv"
 ms.MERGED_IONS_CSV = ".merged_ions.csv"
 ms.GLOBAL_RECAL_MZ_CSV = ".global_recal_mz.csv"
 
+# Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
+
+# Compression formats===========================================================
+compression = types.SimpleNamespace()
+compression.TAR = ".compression.tar"
+compression.GZ = ".compression.gz"
+compression.ZIP = ".compression.zip"
