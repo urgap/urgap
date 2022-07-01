@@ -83,6 +83,8 @@ mx.ADDUCTS_CSV = ".adducts.csv"
 mx.MASS_SHIFT_CSV = ".mass_shift.csv"
 mx.CAL_MASS_CSV = ".cal_mass.csv"
 mx.QC_HTML = ".qc.html"
+mx.ANNOTATION_MET_HDF5 = ".annotation_met.hdf5"
+mx.ANNOTATION_MET_EXCLUSION_CSV = ".annotation_met_exc.csv"
 
 # Imaging=======================================================================
 
@@ -99,6 +101,8 @@ ms.MULTI_ALIGN_SCANS_CSV = ".multialign_scans.csv"
 ms.MULTI_AVG_SCANS_CSV = ".multiavg_scans.csv"
 ms.MERGED_IONS_CSV = ".merged_ions.csv"
 ms.GLOBAL_RECAL_MZ_CSV = ".global_recal_mz.csv"
+ms.ION_CHARGE_STATE_CSV = ".calculated_charge_state.csv"
+ms.ANNOTATED_MET_CSV = ".annotated_metabolites.csv"
 
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
