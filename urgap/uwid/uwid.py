@@ -10,6 +10,8 @@ class UWIDGenerator:
     All issued WIDs are captured in self.issued_wids and those
     """
 
+
+        """
         self.nouns = self._read_word_file("nouns.txt")
         self.verbs = self._read_word_file("verbs_3rd_form.txt")
         self.adjectives = self._read_word_file("adjectives.txt")
@@ -22,9 +24,21 @@ class UWIDGenerator:
 
     @property
 
+        Returns:
+        """
+
+
+        Returns:
+        """
         return self
 
+
+        Returns:
+        """
         return self.generate_wid()
 
+
+        Returns:
+        """
         self.issued_wids.append(new_wid)
         return new_wid

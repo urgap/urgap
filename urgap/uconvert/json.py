@@ -6,6 +6,11 @@ import json
 
 class JSONEncoder(json.JSONEncoder):
 
+
+        Args:
+
+        Returns:
+        """
         if isinstance(obj, datetime.datetime):
             return {
                 "_type": "UFile",
@@ -15,10 +20,16 @@ class JSONEncoder(json.JSONEncoder):
 
 
 class JSONDecoder(json.JSONDecoder):
+
             *args,
             object_hook=self.object_hook,
             **kwargs,
         )
 
+
+        Args:
+
+        Returns:
+        """
                 return datetime.datetime.fromisoformat(obj["value"])
                 return set(obj["value"])

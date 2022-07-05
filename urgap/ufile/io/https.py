@@ -4,9 +4,23 @@ import urllib
 
 class IOHTTPS(UIOBase):
 
+        """Create new UIO class for processing https scheme.
+
+        Args:
+        """
 
 
+        Returns:
+        """
 
+        """Get referenced URL.
+
+        Returns:
+        """
+
+        """Download referenced remote object.
+
+        """
         try:
 
         except urllib.error.URLError:
@@ -14,6 +28,10 @@ class IOHTTPS(UIOBase):
             )
 
 
+        """Verify referenced remote object exists.
+
+        Returns:
+        """
         try:
             exists = True
         except urllib.error.HTTPError:
