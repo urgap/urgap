@@ -6,6 +6,9 @@ class UFileList(UserList):
 
     """
 
+
+        Args:
+        """
         super().__init__(initlist=initlist)
         for item in self.data:
             self._eval_if_item_is_of_correct_type(item)
@@ -17,15 +20,27 @@ class UFileList(UserList):
         Returns:
         """
 
+
+        Args:
+        """
         self._eval_if_item_is_of_correct_type(item)
         super().__setitem__(i, item)
 
+
+        Args:
+        """
         self._eval_if_item_is_of_correct_type(other)
         return super().__add__(other)
 
+
+        Args:
+        """
         self._eval_if_item_is_of_correct_type(other)
         return super().__radd__(other)
 
+
+        Args:
+        """
         self._eval_if_item_is_of_correct_type(other)
         return super().__iadd__(other)
 

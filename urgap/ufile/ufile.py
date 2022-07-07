@@ -10,6 +10,9 @@ class UFile:
 
     def __init__(
         self,
+
+        Args:
+        """
         self._local_copy = None
         self._io = None
 
@@ -17,11 +20,31 @@ class UFile:
 
     @property
 
+        Returns:
+        """
+
     @property
+
+
+        Returns:
+        """
         return self.io.scratch_path
 
 
+        Returns:
+        """
 
+
+        Args:
+
+        Returns:
+        """
+
+
+        Args:
+
+        Returns:
+        """
 
     @property
 
