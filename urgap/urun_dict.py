@@ -27,6 +27,7 @@ class URunDict(UserDict):
                 "prefix": None,
                 "record_skipped_runs": False,
                 "remove_temporary_files": False,
+                "retain_uftype": False,
             },
         }
         self._default_setup_that_cannot_be_set_by_user = {
