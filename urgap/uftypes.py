@@ -102,6 +102,7 @@ ms.MULTI_ALIGN_SCANS_CSV = ".multialign_scans.csv"
 ms.MULTI_AVG_SCANS_CSV = ".multiavg_scans.csv"
 ms.MERGED_IONS_CSV = ".merged_ions.csv"
 ms.GLOBAL_RECAL_MZ_CSV = ".global_recal_mz.csv"
+ms.IMMUTABLE_PEPTIDES = ".immutable_peptides.txt"
 ms.ION_CHARGE_STATE_CSV = ".calculated_charge_state.csv"
 ms.ANNOTATED_MET_CSV = ".annotated_metabolites.csv"
 
