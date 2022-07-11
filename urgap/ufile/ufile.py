@@ -1,5 +1,6 @@
 import gzip
 import shutil
+import tarfile
 import zipfile
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
