@@ -52,6 +52,7 @@ import tempfile
     Returns:
     """
     banners = [
+        r"""
     ]
     constellations = [
         [
