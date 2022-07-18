@@ -8,6 +8,7 @@
         self.ready = False
         self.window = beam.transforms.window.GlobalWindow()
         self.unode = None
+
         if self._check_input(unode=unode, urd=urd):
             self.ready = True
 
@@ -23,6 +24,7 @@
         return input_is_ok
 
 
+        """Execute before a bundle starts."""
 
 
         Args:
