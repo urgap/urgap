@@ -6,6 +6,8 @@
 
 
 
+        .attr("class", "svg-content")
+        .attr("width", "100%")
 
 
 
