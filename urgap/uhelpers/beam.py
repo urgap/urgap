@@ -1,3 +1,6 @@
+import copy
+
+import apache_beam as beam
 
 
 
@@ -8,6 +11,7 @@
         self.ready = False
         self.window = beam.transforms.window.GlobalWindow()
         self.unode = None
+        self.urd = copy.deepcopy(urd)
 
         if self._check_input(unode=unode, urd=urd):
             self.ready = True
@@ -31,8 +35,17 @@
 
         Yields:
         """
+        if len(utuple) != 2:
+            )
+        input_group_key, elements = utuple
+
+            for x in nested_list:
+                else:
+                    yield x
+
         if self.ready is True:
 
+            yield input_group_key, [u.as_uri() for u in output_ufiles]
 
 
 
