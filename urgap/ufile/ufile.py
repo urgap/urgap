@@ -154,3 +154,6 @@ class UFile:
         self.purge_local_tags()
 
             self.io.scratch_path.unlink()
+
+
+            ]
