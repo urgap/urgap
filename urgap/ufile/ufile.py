@@ -16,6 +16,7 @@ class UFile:
         """
         self._local_copy = None
         self._io = None
+        self._lineage_root_files = None
 
         self._io = None
 
@@ -156,4 +157,7 @@ class UFile:
             self.io.scratch_path.unlink()
 
 
+        if self._lineage_root_files is None:
+            self._lineage_root_files = [
             ]
+        return self._lineage_root_files
