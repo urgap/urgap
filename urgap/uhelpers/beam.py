@@ -69,3 +69,19 @@ import apache_beam as beam
     net.dot_lang = net.dot_lang.replace('"', '\\"')
     net.dot_lang = net.dot_lang.replace("fontcolor=blue", "fontcolor=white")
     return net
+
+
+class Concat(beam.DoFn):
+
+
+        Args:
+
+        Yields:
+        """
+        element_key, element_list = element
+        copy_of_element_list = element_list[:]
+        for side_key, side_list in side:
+            if key_aware is True and side_key != element_key:
+                continue
+            copy_of_element_list += side_list
+        yield (element_key, copy_of_element_list)
