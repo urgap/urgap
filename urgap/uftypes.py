@@ -91,6 +91,7 @@ mx.INSTRUMENT_RESOLUTION_CSV = ".instr_res.csv"
 
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
+ms.RUN_META_CSV = ".run_meta.csv"
 ms.SPECTRA_META_CSV = ".spectra_meta.csv"
 ms.SCANS_CSV = ".scans.csv"
 ms.NORM_IT_CSV = ".norm_it.csv"
