@@ -82,6 +82,7 @@ class UFile:
         Returns:
         """
         if self._io is None:
+            self._io = self.init_io_class()
         return self._io
 
     @classmethod
