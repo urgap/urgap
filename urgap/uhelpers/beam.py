@@ -45,6 +45,10 @@ import apache_beam as beam
 
         if self.ready is True:
 
+            output_ufiles = self.unode.run(
+                ufiles=ufile_list,
+                urun_dict=self.urd,
+            )
             yield input_group_key, [u.as_uri() for u in output_ufiles]
 
 
@@ -60,6 +64,7 @@ import apache_beam as beam
 
     s = pipeline_graph.PipelineGraph(pipeline).get_dot()
     net = Network(
+        height="1500px",
         width="100%",
         directed=True,
         font_color="white",
