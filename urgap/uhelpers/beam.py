@@ -8,6 +8,7 @@ import apache_beam as beam
 
         Args:
         """
+        self.kwargs = kwargs
         self.ready = False
         self.window = beam.transforms.window.GlobalWindow()
         self.unode = None
@@ -48,6 +49,7 @@ import apache_beam as beam
             output_ufiles = self.unode.run(
                 ufiles=ufile_list,
                 urun_dict=self.urd,
+                **self.kwargs,
             )
             yield input_group_key, [u.as_uri() for u in output_ufiles]
 
