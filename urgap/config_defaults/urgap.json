@@ -17,3 +17,4 @@
         "value": "mongodb://localhost:27017",
     },
     "scratch_disk": {
+    },
