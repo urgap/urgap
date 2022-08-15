@@ -9,6 +9,7 @@
     },
     "update_uparma": {
         "value": false,
+        "description": "Define whether uparma json download should be forced (part of u2 dev work). Not required for release"
     },
     "hash_algorithm": {
         "value": "md5",
@@ -18,3 +19,4 @@
     },
     "scratch_disk": {
     },
+    }
