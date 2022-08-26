@@ -116,6 +116,11 @@ class UFile:
 
         Args:
         """
+
+            scheme=None if parsed_uri.scheme == "" else parsed_uri.scheme,
+            netloc=None if parsed_uri.netloc == "" else parsed_uri.netloc,
+            path=None if parsed_uri.path == "" else parsed_uri.path,
+            fragment=None if parsed_uri.fragment == "" else parsed_uri.fragment,
         )
         self._io = None
         try:
