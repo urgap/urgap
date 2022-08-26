@@ -2,6 +2,8 @@
 
 class UReport:
 
+    def __init__(
+        self,
 
         Args:
         """
