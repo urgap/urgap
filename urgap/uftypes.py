@@ -98,6 +98,7 @@ mx.METADATA_MAP_JSON = ".metadata_map.json"
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
 ms.RUN_META_CSV = ".run_meta.csv"
+ms.RUN_BATCH_META_CSV = ".run_batch_meta.csv"
 ms.SPECTRA_META_CSV = ".spectra_meta.csv"
 ms.SCANS_CSV = ".scans.csv"
 ms.NORM_IT_CSV = ".norm_it.csv"
