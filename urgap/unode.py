@@ -35,6 +35,18 @@ from pathlib import Path
 
         """
 
+    @property
+
+        Returns:
+        """
+        if self.META_INFO.get("platform_independent", True) is True:
+            subfolder = "platform_independent/arc_independent"
+        else:
+        return subfolder
+
+
+        Args:
+        """
         for uf in new_ufiles:
 
 
