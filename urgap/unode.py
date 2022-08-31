@@ -47,7 +47,9 @@ from pathlib import Path
 
         Args:
         """
+        pure_engine_exe_list = [Path(x).name for x in engine_exe_list]
         for uf in new_ufiles:
+            if uf.path.name in pure_engine_exe_list:
 
 
         Args:
