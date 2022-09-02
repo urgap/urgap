@@ -45,6 +45,11 @@ proteomics.quantification.FLASHLFQ_PEPTIDE_TSV = ".flashlfq_peptides.tsv"
 proteomics.quantification.FLASHLFQ_PROTEIN_TSV = ".flashlfq_proteins.tsv"
 proteomics.quantification.FLASHLFQ_BAYESFC_TSV = ".flashlfq_bayesFC.tsv"
 
+# Quality Control
+proteomics.qc = types.SimpleNamespace()
+proteomics.qc.ANY = "proteomics.qc.ANY"
+proteomics.qc.OFFSET_CSV = ".offset.csv"
+
 # Statistics====================================================================
 stats = types.SimpleNamespace()
 stats.ANY = "stats.ANY"
