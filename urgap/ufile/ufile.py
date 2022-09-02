@@ -30,6 +30,7 @@ class UFile:
 
         Returns:
         """
+                    )
         return self.io.scratch_path
 
 
