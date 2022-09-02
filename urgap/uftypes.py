@@ -115,6 +115,7 @@ ms.ION_CHARGE_STATE_CSV = ".calculated_charge_state.csv"
 ms.ANNOTATED_MET_CSV = ".annotated_metabolites.csv"
 ms.ANNOTATED_MET_IEM_CSV = ".annotated_metabolites_iem.csv"
 ms.IONS_CSV = ".ions.csv"
+ms.IONS_DRIFT_CORRECTED_CSV = ".ions_drift_corrected.csv"
 
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
