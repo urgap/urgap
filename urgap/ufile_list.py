@@ -143,3 +143,20 @@ class UFileList(UserList):
         Returns:
         """
         return [x.as_storage_base_uri() for x in self]
+
+
+        Args:
+
+        Returns:
+        """
+
+                indices.extend(value)
+
+
+
+        Args:
+
+        Returns:
+        """
+
+                indices.extend(value)
