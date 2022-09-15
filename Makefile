@@ -1,7 +1,15 @@
 endif
 
 RED=\033[0;31m
+GREEN=\033[0;32m
+YELLOW=\033[0;33m
 OFF=\033[0m
+
+help:
+	@echo " - ${GREEN}new-unode${OFF}:   create a new unode"
+	@echo " - ${GREEN}tests${OFF}:       run full testsuit"
+	@echo " - ${GREEN}black${OFF}:       run black on src code with the right parameters and exclude certain files"
+	@echo " - ${GREEN}sphinx-html${OFF}: create docu in docs folder. Requires pip install -e ./[docs]"
 
 new-unode:
 	@echo ""
@@ -56,3 +64,15 @@ zip-exes:
 	@echo "----[to be implemented ]----"
 
 black:
+
+
+AUTO_GEN1 = /usr/bin/env python3 parse_example_scripts.py
+AUTO_GEN2 = /usr/bin/env python3 parse_third_party.py
+# You can set these variables from the command line.
+# from the environment for the first two.
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= cd docs;$(AUTO_GEN1);$(AUTO_GEN2);sphinx-build
+SOURCEDIR     = source
+BUILDDIR      = build
+
+sphinx-html:
