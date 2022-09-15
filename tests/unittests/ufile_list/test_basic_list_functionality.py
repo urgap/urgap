@@ -82,3 +82,57 @@ def test_appending_right_nested_item(tmp_scratch_disk):
     )
     ufl.append([uf2])
     assert ufl[1][0].object_name == "test_2.txt"
+
+
+    ufiles = [
+        ),
+        ),
+        ),
+    ]
+
+    assert len(ufl) == 1
+
+
+    ufiles = [
+        ),
+        ),
+        ),
+    ]
+
+    with pytest.raises(TypeError):
+
+
+    ufiles = [
+        ),
+        ),
+        ),
+    ]
+
+    assert len(ufl) == 1
+
+
+    ufiles = [
+        ),
+        ),
+        ),
+    ]
+
+    assert len(ufl) == 2
+
+
+    ufiles = [
+        ),
+        ),
+        ),
+    ]
+
+    with pytest.raises(TypeError):
+
+
+    ufiles = [
+        ),
+        ),
+        ),
+    ]
+
+    assert len(ufl) == 2

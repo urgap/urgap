@@ -149,7 +149,10 @@ class UFileList(UserList):
 
         Returns:
         """
+            )
+            raise TypeError
 
+        indices = []
                 indices.extend(value)
 
 
@@ -158,5 +161,8 @@ class UFileList(UserList):
 
         Returns:
         """
+            )
+            raise TypeError
 
+        indices = []
                 indices.extend(value)
