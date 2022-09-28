@@ -2,6 +2,7 @@
 import binascii
 
 
+
     Args:
 
     Returns:
@@ -11,3 +12,4 @@ import binascii
     elif signature.startswith("504b0304"):
     elif signature.startswith("425a68"):
     else:
+
