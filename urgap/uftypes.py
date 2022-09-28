@@ -88,6 +88,7 @@ mx.ADDUCTS_CSV = ".adducts.csv"
 mx.MASS_SHIFT_CSV = ".mass_shift.csv"
 mx.CAL_MASS_CSV = ".cal_mass.csv"
 mx.QC_HTML = ".qc.html"
+mx.QC_SVG = ".qc.svg"
 mx.QC_PDF = ".qc.pdf"
 mx.BEST_ION_MET_CSV = ".best_ion_met.csv"
 mx.ANNOTATION_MET_HDF5 = ".annotation_met.hdf5"
@@ -120,6 +121,7 @@ ms.ANNOTATED_MET_CSV = ".annotated_metabolites.csv"
 ms.ANNOTATED_MET_IEM_CSV = ".annotated_metabolites_iem.csv"
 ms.IONS_CSV = ".ions.csv"
 ms.IONS_DRIFT_CORRECTED_CSV = ".ions_drift_corrected.csv"
+ms.KEGG_MAP_HTML = ".kegg_map.html"
 
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
