@@ -1,0 +1,13 @@
+trigger:
+  branches:
+    include:
+pr:
+  branches:
+    include:
+resources:
+  repositories:
+    - repository: templates
+      name: gsk-tech/dso_azure_pipeline_templates
+pool:
+  vmImage: ubuntu-latest
+stages:
