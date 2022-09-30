@@ -132,3 +132,18 @@ from pathlib import Path
         )
             data += cls.generate_wrapper_vis(ufile)
         return data
+
+
+        Args:
+
+        Returns:
+
+        """
+            )
+
+        execute_answer = []
+        proc = None
+                stdout=subprocess.PIPE,
+            )
+        else:
+            execute_answer.append("Command list is empty")
