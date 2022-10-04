@@ -146,6 +146,7 @@ from pathlib import Path
         proc = None
             proc = subprocess.run(
                 stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
             )
         else:
             execute_answer.append("Command list is empty")
