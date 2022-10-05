@@ -9,6 +9,7 @@ proteomics.ANY = "proteomics.ANY"
 proteomics.THERMO_RAW = ".thermo.raw"
 proteomics.FASTA = ".protein.faa"
 proteomics.MODS_XML = ".mods.xml"
+proteomics.TMT_CORRECTION_FACTORS = ".tmt_correction_factors.json"
 
 # Database Search Engines
 proteomics.dbsearch = types.SimpleNamespace()
@@ -44,6 +45,15 @@ proteomics.quantification.FLASHLFQ_PSM_TSV = ".flashlfq_psms.tsv"
 proteomics.quantification.FLASHLFQ_PEPTIDE_TSV = ".flashlfq_peptides.tsv"
 proteomics.quantification.FLASHLFQ_PROTEIN_TSV = ".flashlfq_proteins.tsv"
 proteomics.quantification.FLASHLFQ_BAYESFC_TSV = ".flashlfq_bayesFC.tsv"
+
+# Reporter ion-based quantification
+proteomics.quantification.reporter_ions = types.SimpleNamespace()
+proteomics.quantification.reporter_ions.ANY = ".reporter_ions.ANY"
+proteomics.quantification.reporter_ions.REPORTER_IONS = ".reporter_ions.csv"
+proteomics.quantification.reporter_ions.ISO_CORRECTED_REPORTER_IONS = (
+)
+proteomics.quantification.reporter_ions.S2I_CORRECTED_REPORTER_IONS = (
+)
 
 # Quality Control
 proteomics.qc = types.SimpleNamespace()
@@ -106,6 +116,7 @@ ms.SPECTRA_META_CSV = ".spectra_meta.csv"
 ms.SPECTRA_NOISE_CSV = ".spectra_noise.csv"
 ms.INSTRUMENT_UNIT_CSV = ".instrument_unit.csv"
 ms.SCANS_CSV = ".scans.csv"
+ms.PRECURSOR_WINDOW_CSV = ".precursor_window.csv"
 ms.NORM_IT_CSV = ".norm_it.csv"
 ms.ALIGN_SCANS_CSV = ".align_scans.csv"
 ms.ION_TIC_CORR_CSV = ".ion_tic_corr.csv"
