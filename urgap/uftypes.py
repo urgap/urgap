@@ -51,8 +51,10 @@ proteomics.quantification.reporter_ions = types.SimpleNamespace()
 proteomics.quantification.reporter_ions.ANY = ".reporter_ions.ANY"
 proteomics.quantification.reporter_ions.REPORTER_IONS = ".reporter_ions.csv"
 proteomics.quantification.reporter_ions.ISO_CORRECTED_REPORTER_IONS = (
+    ".iso_corrected_reporter_ions.csv"
 )
 proteomics.quantification.reporter_ions.S2I_CORRECTED_REPORTER_IONS = (
+    ".s2i_corrected_reporter_ions.csv"
 )
 
 # Quality Control
