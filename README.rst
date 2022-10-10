@@ -3,7 +3,9 @@
 tool making pipeline development independent from business logic and data storage, while offering 
 standardized logging and execution, which makes monitoring and debugging easy.
 
+|build-status-azure|
 
+   :alt: ADO CI status
 
 
 Documentation
