@@ -152,6 +152,7 @@ class UFile:
         return compressed_ufile
 
 
+
         Returns:
         """
 
