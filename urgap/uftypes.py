@@ -112,6 +112,8 @@ mx.METADATA_MAP_JSON = ".metadata_map.json"
 transcriptomics = types.SimpleNamespace()
 transcriptomics.FASTA = ".transcriptomics.fa"
 transcriptomics.READS = ".transcriptomics.reads"
+transcriptomics.BOWTIE_1_INDEX = ".bowtie1.idx"
+transcriptomics.BOWTIE_1_INDEX_MAPPING = ".bowtie_1_index_mapping.json"
 transcriptomics.KALLISTO_INDEX = ".kallisto.idx"
 transcriptomics.KALLISTO_QUANT_TSV = ".kallisto_quant.tsv"
 
