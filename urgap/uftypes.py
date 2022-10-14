@@ -113,6 +113,7 @@ transcriptomics = types.SimpleNamespace()
 transcriptomics.FASTA = ".transcriptomics.fa"
 transcriptomics.READS = ".transcriptomics.reads"
 transcriptomics.KALLISTO_INDEX = ".kallisto.idx"
+transcriptomics.KALLISTO_QUANT_TSV = ".kallisto_quant.tsv"
 
 # Imaging=======================================================================
 
