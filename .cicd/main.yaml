@@ -4,6 +4,8 @@ trigger:
 pr:
   branches:
     include:
+      - feature/*
+      - fix/*
 resources:
   repositories:
     - repository: templates
