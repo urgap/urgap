@@ -1,2 +1,21 @@
 
 import json
+
+
+
+def _check_if_config_key_value_is_valid(
+    is_valid = True
+        is_valid = False
+    else:
+        options = config[config_key].get("options", None)
+    return is_valid
+
+
+        config = json.load(config_json)
+    kv_is_valid = _check_if_config_key_value_is_valid(
+        config,
+        config_key,
+        config_value,
+        verbose=verbose,
+    )
+        config[config_key]["value"] = config_value
