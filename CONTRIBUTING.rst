@@ -20,6 +20,8 @@ Commit messages
 
 First of all, please be concise and as descriptive (explicit is better than
 implicit :) ) as possible. It is always
+documentation or example scripts etc. ). At the same time, please avoid
+unnecessarily long messages.
 If possible, always use a headline in your commit message and list all changes as bullet points.
 
 
@@ -53,6 +55,7 @@ We use Sphinx to automatically build and format the documentation. Please keep
 this style in your docstrings
 
 
+Other rules and considerations
 
 Please focus on contributing mainly source code and refrain from adding large files (e.g. mzML files).
 to keep the overview of code contributions neat and clean.
@@ -70,6 +73,7 @@ Issues
 
 If you have an issue or problem, please first search all open issues and pull
 request to avoid duplication of efforts. If you have a fix for the problem you
+may directly open a pull request. On the other hand, if you plan to or
 are already working on implementing new stuff, you may also open an issue and
 (pre-) announce your contribution. Please tag then the issue with
 and assure its compatibility and functionality (please be reminded here to test
@@ -79,5 +83,6 @@ your code, seriously, test your code)
 Citation
 ********
 
+Be reminded that in an academic world citations are the only credit that one can hope for ;)
 
 tba
