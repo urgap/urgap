@@ -17,6 +17,8 @@
     "umeta-mongodb-url": {
         "value": "mongodb://localhost:27017",
     },
+    "umeta-postgresql-url": {
+        "value": "postgresql://localhost:5432",
     "scratch_disk": {
     },
     "resource_urls": {
