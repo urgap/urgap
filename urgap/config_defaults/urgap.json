@@ -19,6 +19,10 @@
     },
     "umeta-postgresql-url": {
         "value": "postgresql://localhost:5432",
+    },
+    "umeta-sqlite3-url": {
+        "value": null,
+    },
     "scratch_disk": {
     },
     "resource_urls": {

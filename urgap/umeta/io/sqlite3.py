@@ -9,3 +9,6 @@
 
         self._db = None
         self._session = None
+
+        if sqlite3_url is None:
+        return sqlite3_url
