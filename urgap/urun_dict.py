@@ -28,6 +28,7 @@ class URunDict(UserDict):
                 "record_skipped_runs": False,
                 "remove_temporary_files": False,
                 "retain_uftype": False,
+                "run_resource_as": "subprocess_run",
             },
         }
         self._default_setup_that_cannot_be_set_by_user = {
