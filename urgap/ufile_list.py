@@ -124,16 +124,24 @@ class UFileList(UserList):
         return [self[i].path for i in idxs]
 
 
+
         Args:
 
         Returns:
         """
+        needs_quantifier = False
         safe_to_create_new_file = False
+                needs_quantifier = True
                 safe_to_create_new_file = True
         else:
+            current_count = 1
             safe_to_create_new_file = True
 
         if safe_to_create_new_file is True:
+            if needs_quantifier is True:
+                counter = str(current_count + 1) + "_of_N"
+            else:
+                counter = current_count
             self.append(
             )
         return len(self) - 1

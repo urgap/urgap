@@ -1,4 +1,5 @@
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -39,3 +40,15 @@ class IOPython(UIOBase):
         Args:
         """
         container_folder.mkdir(exist_ok=exist_ok, parents=True)
+
+
+        Args:
+
+        Returns:
+        """
+        if container_name is None:
+
+        Args:
+
+        Returns:
+        """
