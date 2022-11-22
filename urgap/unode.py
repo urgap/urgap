@@ -10,7 +10,16 @@ from pathlib import Path
 
 
 
+        self._exe_path = None
         self.tmp_files = []
+
+    @property
+
+        Returns:
+        """
+        if self._exe_path is None:
+        return self._exe_path
+
 
             urun_dict.unode_parameters.update(kwargs)
         )
