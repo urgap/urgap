@@ -10,3 +10,4 @@
         )
         connection_string = postgresql_uri.replace(
         )
+        return connection_string.format(**credentials)
