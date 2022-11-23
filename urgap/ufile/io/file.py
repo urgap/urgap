@@ -52,3 +52,4 @@ class IOPython(UIOBase):
 
         Returns:
         """
+        container = self.get_container(container_name=container_name)

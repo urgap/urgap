@@ -123,6 +123,7 @@ class UFileList(UserList):
         """
         return [self[i].path for i in idxs]
 
+        return dynamic_index_groups
 
 
         Args:
