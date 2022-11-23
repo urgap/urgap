@@ -127,6 +127,7 @@ class UFile:
         )
         self._io = None
         try:
+        except (shutil.SameFileError, FileNotFoundError):
 
 
 
