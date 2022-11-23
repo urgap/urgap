@@ -1,5 +1,6 @@
 """Unode class.
 
+This module defines the UnodeBase class, which is inherited by wrappers.
 """
 import copy
 import os
@@ -27,6 +28,8 @@ from pathlib import Path
         else:
             self.delete_tmp_files()
 
+
+        """
         if self.has_all_required_installations() is False:
                 f"Cannot execute {self.META_INFO['name']}, "
                 f"it requires {self.required_3rd_party_installation} "
@@ -76,6 +79,8 @@ from pathlib import Path
         if len(missing_exe) != 0:
             return False
 
+
+        """
         for path in self.tmp_files:
             if str(path) in [".", "/", "./", "../"]:
                 continue
@@ -152,6 +157,8 @@ from pathlib import Path
 
         """
                 "No command_list was found in urun_dict."
+                "Convention is to define the command list during "
+                "preflight in the UNode engine class."
             )
 
         execute_answer = []
