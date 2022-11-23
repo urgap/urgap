@@ -24,9 +24,13 @@ def test_only_correct_are_set():
         )
     ufl.append(
     )
+    ufl.append(
+    )
     ufl.complete_file_counts()
     assert set(uf.simple_name for uf in ufl) == {
         "test_1_of_3",
         "test_2_of_3",
         "test_3_of_3",
+        "different_1_of_1",
+        "bait_1",
     }
