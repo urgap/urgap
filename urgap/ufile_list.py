@@ -123,6 +123,9 @@ class UFileList(UserList):
         """
         return [self[i].path for i in idxs]
 
+        dynamic_index_groups = {}
+            if self[idx_list[0]].is_borg:
+                for i in idx_list:
         return dynamic_index_groups
 
 
