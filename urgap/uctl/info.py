@@ -25,6 +25,8 @@
         w = v.META_INFO.get(
         )
         wrapper_version = "{major}.{minor}.{patch}".format(**w)
+        click.echo(
+        )
 
 
 @click.command()
