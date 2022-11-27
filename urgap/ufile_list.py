@@ -178,3 +178,9 @@ class UFileList(UserList):
 
         indices = []
                 indices.extend(value)
+
+
+    @classmethod
+
+
+        """
