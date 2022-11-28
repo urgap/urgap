@@ -96,3 +96,12 @@ class Concat(beam.DoFn):
                 continue
             copy_of_element_list += side_list
         yield (element_key, copy_of_element_list)
+
+
+
+
+        Args:
+
+        Yields:
+        """
+        element_key, element_list = element
