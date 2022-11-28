@@ -13,6 +13,10 @@ import apache_beam as beam
         self.window = beam.transforms.window.GlobalWindow()
         self.unode = None
         self.urd = copy.deepcopy(urd)
+        if ucredentials is not None:
+            self.ucredentials = copy.deepcopy(ucredentials)
+        else:
+            self.ucredentials = []
 
         if self._check_input(unode=unode, urd=urd):
             self.ready = True
