@@ -107,6 +107,7 @@ mx.ANNOTATION_MET_HDF5 = ".annotation_met.hdf5"
 mx.ANNOTATION_MET_EXCLUSION_CSV = ".annotation_met_exc.csv"
 mx.INSTRUMENT_RESOLUTION_CSV = ".instr_res.csv"
 mx.METADATA_MAP_JSON = ".metadata_map.json"
+mx.METADATA_XLSX = ".metadata.xlsx"
 
 # Transcriptomics===============================================================
 transcriptomics = types.SimpleNamespace()
