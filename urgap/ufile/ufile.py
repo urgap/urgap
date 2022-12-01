@@ -1,3 +1,4 @@
+import copy
 import gzip
 import shutil
 import tarfile
@@ -17,6 +18,7 @@ class UFile:
         self._local_copy = None
         self._io = None
         self._lineage_root_files = None
+        self.was_downloaded_to_scratch = False
 
         self._io = None
 
@@ -69,6 +71,14 @@ class UFile:
         Returns:
         """
 
+        cls = self.__class__
+        result = cls.__new__(cls)
+        memo[id(self)] = result
+        for k, v in self.__dict__.items():
+                setattr(result, k, None)
+            else:
+                setattr(result, k, copy.deepcopy(v, memo))
+        return result
 
     @property
 
