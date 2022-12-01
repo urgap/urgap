@@ -72,6 +72,10 @@ class UFile:
         Returns:
         """
 
+        Args:
+
+        Returns:
+        """
         cls = self.__class__
         result = cls.__new__(cls)
         memo[id(self)] = result

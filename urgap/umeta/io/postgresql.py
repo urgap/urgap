@@ -7,6 +7,10 @@
         self._db = None
         self._session = None
 
+        """Generate SQLAlchemy compatible connection string.
+
+        Returns:
+        """
         )
         connection_string = postgresql_uri.replace(
         )
