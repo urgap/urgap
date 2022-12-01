@@ -79,6 +79,11 @@ def provide_clean_scratch_and_remote(request):
         except ConnectionRefusedError:
             pytest.skip(f"MongoDB at {host}:{port} not reachable ...")
 
+    if str(request.param[0]) == "json":
+        um.ufile.io.remote_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(um.ufile.io.remote_path, "w") as oo:
+            print("test", file=oo)
+
     ufile_path_list = [
     ]
         "parameters": {
@@ -89,3 +94,6 @@ def provide_clean_scratch_and_remote(request):
         "unode_parameters": {
             "record_skipped_runs": True,
         },
+
+    if str(request.param[0]) == "json":
+        um.ufile.io.remote_path.unlink()

@@ -1,5 +1,6 @@
 """UMeta subclass for using the sqlite interface."""
 import sqlalchemy
+from ._base import UMetaIOBase
 
 
     )
