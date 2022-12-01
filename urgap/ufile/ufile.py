@@ -1,5 +1,6 @@
 import copy
 import gzip
+import re
 import shutil
 import tarfile
 import zipfile
@@ -75,6 +76,7 @@ class UFile:
         result = cls.__new__(cls)
         memo[id(self)] = result
         for k, v in self.__dict__.items():
+            if re.match(r"^_(?!_)", k):
                 setattr(result, k, None)
             else:
                 setattr(result, k, copy.deepcopy(v, memo))
