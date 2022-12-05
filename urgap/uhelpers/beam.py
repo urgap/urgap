@@ -98,6 +98,7 @@ class Concat(beam.DoFn):
         yield (element_key, copy_of_element_list)
 
 
+class FilterByUftype(beam.DoFn):
 
 
         Args:
@@ -105,3 +106,8 @@ class Concat(beam.DoFn):
         Yields:
         """
         element_key, element_list = element
+        if uftypes is not None:
+            if mode == "remove":
+            if mode == "keep":
+        yield (element_key, [uf.as_uri() for uf in uflist])
+
