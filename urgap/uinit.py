@@ -8,6 +8,7 @@ import traceback
 
 
 
+
     Args:
     """
     target_resources_path = Path(target_dir) / "resources"
@@ -24,6 +25,9 @@ import traceback
 
 
     """
+    execution_traceback = [line.strip() for line in traceback.format_stack()]
+    if "/bin/uctl" in execution_traceback[0]:
+    else:
 
 
 
