@@ -16,12 +16,15 @@
     },
     "umeta-mongodb-url": {
         "value": "mongodb://localhost:27017",
+        "description": "url for mongo instance, used if umeta is set to mongopdb. Login and password are extracted via ENV or alternative secret store defined in credentials_lookup.json"
     },
     "umeta-postgresql-url": {
         "value": "postgresql://localhost:5432",
+        "description": "url for postgresql instance, used if umeta is set to postgresql. Login and password are extracted via ENV or alternative secret store defined in credentials_lookup.json"
     },
     "umeta-sqlite3-url": {
         "value": null,
+        "description": "url for sqlite3 db file, used if umeta is set to sqlite. Should start with file:///"
     },
     "scratch_disk": {
     },
