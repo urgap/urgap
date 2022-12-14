@@ -27,6 +27,7 @@
         "description": "url for sqlite3 db file, used if umeta is set to sqlite. Should start with file:///"
     },
     "umeta-gcpsql-url": {
+    },
     "scratch_disk": {
     },
     "resource_urls": {
