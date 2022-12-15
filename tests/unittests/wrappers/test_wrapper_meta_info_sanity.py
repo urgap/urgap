@@ -6,6 +6,19 @@ def is_tuple(checker, instance):
     return isinstance(instance, tuple)
 
 
+def is_uftype_specification(checker, instance):
+    if isinstance(instance, dict) is False:
+        return False
+    for uftype, spec in instance.items():
+        if isinstance(uftype, str) is False:
+            return False
+        if {"min", "max"} != spec.keys():
+            return False
+    return True
+
+
+type_checker = validators.Draft7Validator.TYPE_CHECKER.redefine_many(
+)
 TupleValidator = validators.extend(
 )
 reference_schema = {
@@ -28,6 +41,8 @@ reference_schema = {
         "release_date": {"type": "string"},
         "engine_type": {"type": "tuple"},
         "wrapper_version": {"type": "object"},
+        "input_uftypes": {"type": "uftype_spec"},
+        "output_uftypes": {"type": "uftype_spec"},
         "citation": {"type": "string"},
         "engine": {"type": "object"},
     },
