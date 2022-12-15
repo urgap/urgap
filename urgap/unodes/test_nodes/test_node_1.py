@@ -2,7 +2,9 @@
 
 
     META_INFO = {
+        "input_uftypes": {
         },
+        "output_uftypes": {
         },
     }
 

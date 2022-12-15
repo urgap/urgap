@@ -84,6 +84,7 @@ def test_appending_right_nested_item(tmp_scratch_disk):
     assert ufl[1][0].object_name == "test_2.txt"
 
 
+def test_removing_single_uftypes():
     ufiles = [
         ),
         ),
@@ -93,6 +94,7 @@ def test_appending_right_nested_item(tmp_scratch_disk):
     assert len(ufl) == 1
 
 
+def test_remove_single_uftypes_typeerror():
     ufiles = [
         ),
         ),
@@ -102,15 +104,20 @@ def test_appending_right_nested_item(tmp_scratch_disk):
     with pytest.raises(TypeError):
 
 
+def test_remove_multiple_uftypes():
     ufiles = [
         ),
         ),
         ),
     ]
 
+    ufl = ufl.remove_uftypes(uftype_list)
     assert len(ufl) == 1
+    for uftype in uftype_list:
+        assert uftype not in ufl.get_index_groups_by_uftypes().keys()
 
 
+def test_keep_single_uftypes():
     ufiles = [
         ),
         ),
@@ -120,6 +127,7 @@ def test_appending_right_nested_item(tmp_scratch_disk):
     assert len(ufl) == 2
 
 
+def test_keep_single_uftypes_typeerror():
     ufiles = [
         ),
         ),
@@ -129,10 +137,14 @@ def test_appending_right_nested_item(tmp_scratch_disk):
     with pytest.raises(TypeError):
 
 
+def test_keep_multiple_uftypes():
     ufiles = [
         ),
         ),
         ),
     ]
 
+    ufl = ufl.keep_uftypes(uftype_list)
     assert len(ufl) == 2
+    for uftype in uftype_list:
+        assert uftype in ufl.get_index_groups_by_uftypes().keys()

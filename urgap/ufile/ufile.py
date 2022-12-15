@@ -96,6 +96,8 @@ class UFile:
 
         Returns:
         """
+        if uftype is None:
+        return uftype
 
 
     @property

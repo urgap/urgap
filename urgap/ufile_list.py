@@ -75,8 +75,12 @@ class UFileList(UserList):
 
         Returns:
         """
+        if input_uftypes is None:
+            input_uftypes = {}
         if additional_filters is not None:
             for k, v_dict in additional_filters.items():
+                    input_uftypes[k] = {}
+                input_uftypes[k].update(v_dict)
 
         ufile_classes = ddict(list)
         for ufile in self.create_flat_and_non_redundant_list():
@@ -85,6 +89,8 @@ class UFileList(UserList):
 
 
         for file_data_type, ufile_sublist in ufile_classes.items():
+            min_number_required = input_uftypes[file_data_type].get("min", 1)
+            max_number_allowed = input_uftypes[file_data_type].get("max", -1)
             if len(ufile_sublist) >= min_number_required:
                 if max_number_allowed == -1 or len(ufile_sublist) <= max_number_allowed:
                     filtered_ufile_list += ufile_sublist
@@ -99,6 +105,7 @@ class UFileList(UserList):
 
         Returns:
         """
+        return self.get_indices_matching_tag(tag="uftype", search_value=uftype)
 
 
         Args:
@@ -111,20 +118,27 @@ class UFileList(UserList):
 
         Returns:
         """
+        return {uftype: self.get_indices_by_uftype(uftype) for uftype in all_uftypes}
 
 
         Returns:
         """
+        return {
+            uftype: self.get_path_objects_by_uftype(uftype) for uftype in all_uftypes
+        }
 
 
         Args:
 
         Returns:
         """
+        idxs = self.get_indices_by_uftype(uftype)
         return [self[i].path for i in idxs]
 
         dynamic_index_groups = {}
+        for uftype, idx_list in self.get_index_groups_by_uftypes().items():
             if self[idx_list[0]].is_borg:
+                dynamic_index_groups[uftype] = idx_list
                 for i in idx_list:
         return dynamic_index_groups
 
@@ -135,6 +149,8 @@ class UFileList(UserList):
         """
         needs_quantifier = False
         safe_to_create_new_file = False
+            if self.output_definitions["uftypes"][uftype].get(
+            ) != self.output_definitions["uftypes"][uftype].get("max", -1):
                 needs_quantifier = True
                 safe_to_create_new_file = True
         else:
@@ -161,10 +177,13 @@ class UFileList(UserList):
 
         Returns:
         """
+        if isinstance(uftype_list, list) is False:
             )
             raise TypeError
 
         indices = []
+        for key, value in self.get_index_groups_by_uftypes().items():
+            if key not in uftype_list:
                 indices.extend(value)
 
 
@@ -173,10 +192,13 @@ class UFileList(UserList):
 
         Returns:
         """
+        if isinstance(uftype_list, list) is False:
             )
             raise TypeError
 
         indices = []
+        for key, value in self.get_index_groups_by_uftypes().items():
+            if key in uftype_list:
                 indices.extend(value)
 
 

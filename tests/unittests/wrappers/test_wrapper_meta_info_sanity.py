@@ -17,6 +17,8 @@ reference_schema = {
         "release_date",
         "engine_type",
         "wrapper_version",
+        "input_uftypes",
+        "output_uftypes",
         "citation",
         "engine",
     ],

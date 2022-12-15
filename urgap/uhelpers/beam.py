@@ -108,6 +108,8 @@ class FilterByUftype(beam.DoFn):
         element_key, element_list = element
         if uftypes is not None:
             if mode == "remove":
+                uflist = uflist.remove_uftypes(uftypes)
             if mode == "keep":
+                uflist = uflist.keep_uftypes(uftypes)
         yield (element_key, [uf.as_uri() for uf in uflist])
 

@@ -34,5 +34,6 @@ def test_get_index_groups():
         ),
     ]
 
+    idx_dict = ufl.get_index_groups_by_uftypes()
     assert idx_dict == {
     }
