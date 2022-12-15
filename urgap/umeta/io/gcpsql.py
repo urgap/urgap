@@ -11,5 +11,8 @@
         """
         )
         )
+        connection_string = (
+            gcpsql_connection_string.replace(
+            )
         )
         return connection_string.format(**credentials)
