@@ -26,6 +26,7 @@ import click
         w = v.META_INFO.get(
         )
         wrapper_version = "{major}.{minor}.{patch}".format(**w)
+        is_of_engine_type = ", ".join(v.META_INFO["engine_type"])
         click.echo(
         )
 
