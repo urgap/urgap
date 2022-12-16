@@ -6,6 +6,7 @@
 
 """
 
+import logging
 
 
 def source_sphinx(inc, path_to_inc):
@@ -17,6 +18,7 @@ def source_sphinx(inc, path_to_inc):
 
 
 def main():
+    # logging.info(
     #     f"Formatting example scripts from {example_script_path} into rst files for docs"
     # )
     example_path = (

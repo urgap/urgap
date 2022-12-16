@@ -3,9 +3,11 @@
 This module defines the UnodeBase class, which is inherited by wrappers.
 """
 import copy
+import logging
 import os
 import platform
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 

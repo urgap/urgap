@@ -1,5 +1,6 @@
 import copy
 import gzip
+import logging
 import re
 import shutil
 import tarfile

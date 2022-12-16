@@ -1,9 +1,11 @@
 
 import json
+import logging
 import shutil
 import sys
 import tempfile
 import traceback
+from pathlib import Path
 
 
 
@@ -26,8 +28,15 @@ import traceback
 
     """
     execution_traceback = [line.strip() for line in traceback.format_stack()]
+    sh = logging.StreamHandler(sys.stderr)
+    formatter = logging.Formatter(
+    )
+    sh.setFormatter(formatter)
+    logging.getLogger().addHandler(sh)
     if "/bin/uctl" in execution_traceback[0]:
+        logging.getLogger().setLevel(level="INFO")
     else:
+        logging.getLogger().setLevel(level="DEBUG")
 
 
 
