@@ -3,6 +3,7 @@
 
 
     META_INFO = {
+        "input_uftypes": {
                 "min": 0,
                 "max": -1,
             },
@@ -10,6 +11,7 @@
                 "max": 1,
             },
         },
+        "output_uftypes": {
                 "min": 0,
                 "max": 1,
             },
