@@ -8,12 +8,3 @@ import argparse
         "--params",
         dest="params",
     )
-    known_args = parser.parse_args(argv)
-
-    for file in known_args.output_files:
-            print(known_args.params, file=oo)
-    return "Mischief Managed."
-
-
-if __name__ == "__main__":
-    main()

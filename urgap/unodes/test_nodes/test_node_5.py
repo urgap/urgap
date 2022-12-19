@@ -36,3 +36,8 @@
 
         Returns:
         """
+            "python",
+            str(self.exe_path),
+            "--params",
+            "--input",
+        ]
