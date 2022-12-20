@@ -16,5 +16,9 @@ if __name__ == "__main__":
         "--params",
         dest="params",
     )
+    args = parser.parse_args()
     main(
+        input_files=args.input_files,
+        output_files=args.output_files,
+        params=args.params,
     )
