@@ -6,6 +6,7 @@ import apache_beam as beam
 
 
 
+    def __init__(
 
         Args:
         """
@@ -18,6 +19,10 @@ import apache_beam as beam
             self.ucredentials = copy.deepcopy(ucredentials)
         else:
             self.ucredentials = []
+        if config is not None:
+            self.config = config
+        else:
+            self.config = {}
 
         if self._check_input(unode=unode, urd=urd):
             self.ready = True
