@@ -13,6 +13,7 @@ class UCredentialManager:
 
     def __init__(
         self,
+        """Initialize UCredentials.
 
         Args:
         """
@@ -49,6 +50,11 @@ class UCredentialManager:
             password = None
         return password
 
+
+        Args:
+
+        Returns:
+        """
         return self._extracted_secrets[cred_key]
 
 
