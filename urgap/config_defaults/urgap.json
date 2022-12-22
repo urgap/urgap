@@ -27,6 +27,7 @@
         "description": "url for sqlite3 db file, used if umeta is set to sqlite. Should start with file:///"
     },
     "umeta-gcpsql-url": {
+        "value": "postgresql+pg8000://10.138.0.5:5432"
     },
     "scratch_disk": {
     },
