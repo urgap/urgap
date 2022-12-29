@@ -25,10 +25,15 @@ from pathlib import Path
 
 
             urun_dict.unode_parameters.update(kwargs)
+            urun_dict=urun_dict,
+            unode_meta=self.META_INFO,
         )
+        reasons = ut.evaluate_if_rerun_is_required()
         if len(reasons) > 0:
         else:
             self.delete_tmp_files()
+
+        return ut.output_files
 
 
         """
@@ -38,6 +43,10 @@ from pathlib import Path
                 "which not available on this system ..."
             )
 
+        for uftype_spec in itertools.chain(
+            self.META_INFO.get("input_uftypes").values(),
+            self.META_INFO.get("output_uftypes").values(),
+        ):
                 )
         self.tmp_files = []
 
