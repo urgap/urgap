@@ -158,6 +158,8 @@ class UFileList(UserList):
         """
         needs_quantifier = False
         safe_to_create_new_file = False
+        current_counts = self.number_of_uftypes()
+            current_count = current_counts[uftype]
             if self.output_definitions["uftypes"][uftype].get(
             ) != self.output_definitions["uftypes"][uftype].get("max", -1):
                 needs_quantifier = True

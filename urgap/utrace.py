@@ -109,10 +109,26 @@ class UTrace:
         if self.urun_dict.unode_parameters["force"] is True:
             reasons.append("You used (the) Force!")
         else:
+            for (
+                uftype,
+                idx_list,
+            ) in self.output_files.get_index_groups_by_uftypes().items():
+                first_idx = idx_list[0]
+                if "1_of_N" in self.output_files[first_idx].object_name:
+                    number_of_remote_objects = len(self.remote_output_files[uftype])
+                    min_n = self.unode_meta["output_uftypes"][uftype]["min"]
+                    if min_n > number_of_remote_objects:
+                        reasons.append(
+                            f"Not all dynamic files were written. Minimum {min_n}"
                         )
+                else:
+                    for idx in idx_list:
+                        if self.output_files[idx].io.remote_object_exists() is False:
                             reasons.append(
                             )
                             break
+                if len(reasons) > 0:
+                    break
         return reasons
 
 
@@ -134,4 +150,5 @@ class UTrace:
             ilist = []
 
         else:
+
 

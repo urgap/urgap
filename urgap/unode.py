@@ -116,6 +116,7 @@ from pathlib import Path
         Args:
         """
 
+        umeta.delete(output_file)
 
     @property
 
