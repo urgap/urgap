@@ -27,5 +27,6 @@ UReport id {id(self)}
         Returns:
         """
 
+        return self.umeta.umeta_exists(reference_ufile)
 
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
