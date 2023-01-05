@@ -12,6 +12,7 @@ class UTrace:
         self._output_files_stem = None
         self.unode_meta = self._init_unode_meta(unode_meta)
         self.urun_dict = self._init_urun_dict(urun_dict)
+
         else:
         return urun_dict
 
@@ -70,21 +71,37 @@ class UTrace:
         if self.urun_dict.unode_parameters["retain_uftype"] is True:
             if (
                 len(output_files_uftype_counts.keys()) != 1
+                or len(input_files_uftype_counts.keys()) != 1
             ):
                 )
             else:
+                for ofile in self.output_files:
 
         for ouftype, mdict in self.unode_meta["output_uftypes"].items():
             if mdict["min"] == 0:
+                continue
+            if mdict["min"] == mdict["max"]:
+                for n in range(1, mdict["max"] + 1):
                         uftype=ouftype,
                         n=n,
                         max_n=mdict["max"],
                     )
+            elif mdict["max"] == -1:
+                    uftype=ouftype,
+                    max_n="N",
+                )
+            elif mdict["min"] < mdict["max"]:
+                    uftype=ouftype,
+                    max_n="N",
+                )
             else:
 
         safe_to_create = True
+        if n is None:
+            current_n = self.output_files.number_of_uftypes().get(uftype, 0)
             n = current_n + 1
                 safe_to_create = False
+            if n == self.unode_meta["output_uftypes"][uftype]["max"]:
         if safe_to_create:
 
 
