@@ -14,6 +14,8 @@ class UTrace:
         self._output_files_stem = None
         self.unode_meta = self._init_unode_meta(unode_meta)
         self.urun_dict = self._init_urun_dict(urun_dict)
+        if input_files is None:
+
         if output_files is None:
             self.evaluate_retain_uftype()
 
@@ -45,6 +47,11 @@ class UTrace:
         if self._output_files_stem is None:
             self._output_files_stem = self.determine_output_files_stem()
         return self._output_files_stem
+
+    @property
+
+    @property
+        return self.urun_dict.wid
 
         input_storage_base_uris = set(self.input_files.get_storage_base_uris())
         params_storage_base_uri = self.urun_dict.unode_parameters["storage_base_uri"]
@@ -162,3 +169,5 @@ class UTrace:
         else:
 
 
+
+    @classmethod
