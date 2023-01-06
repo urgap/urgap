@@ -10,6 +10,7 @@ class UTreeQuerier:
         Args:
 
         """
+        if namespace is None:
             namespace = namespace.__dict__
             parent_node = "ANY"
 

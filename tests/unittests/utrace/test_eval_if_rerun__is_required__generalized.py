@@ -9,6 +9,7 @@ def test_rerun_reason_by_force():
             ),
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     assert len(ut.evaluate_if_rerun_is_required()) == 1
     assert "Force" in ut.rerun_reasons[0]
@@ -21,6 +22,7 @@ def test_rerun_reason_output_files_are_missing():
             ),
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     assert len(ut.evaluate_if_rerun_is_required()) == 1
 
@@ -35,6 +37,7 @@ def test_rerun_reason_dynamic_output_files_are_less_than_min():
         print("created temporary directory", tmpdirname)
 
             urun_dict=urd,
+            input_files=input_files,
         )
         dynout_ufile = ut.output_files[0]
         base, extension = dynout_ufile.object_name.split("_1_of_N")

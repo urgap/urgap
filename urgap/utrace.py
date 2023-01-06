@@ -8,24 +8,33 @@ class UTrace:
 
     """
 
+    def __init__(
+        self,
         self._output_base_storage_uri = None
         self._output_files_stem = None
         self.unode_meta = self._init_unode_meta(unode_meta)
         self.urun_dict = self._init_urun_dict(urun_dict)
+        if output_files is None:
+            self.evaluate_retain_uftype()
 
         else:
         return urun_dict
 
+        input_files = input_files.filter(
             input_uftypes=self.unode_meta["input_uftypes"],
             additional_filters=self.urun_dict.unode_parameters["additional_filters"],
         )
+        if input_files is None:
 
+        if len(input_files) == 0:
+        return input_files
 
         if unode_meta is None:
         return copy.deepcopy(unode_meta)
 
         return
 
+    @classmethod
 
     @property
         if self._output_base_storage_uri is None:
@@ -37,6 +46,7 @@ class UTrace:
             self._output_files_stem = self.determine_output_files_stem()
         return self._output_files_stem
 
+        input_storage_base_uris = set(self.input_files.get_storage_base_uris())
         params_storage_base_uri = self.urun_dict.unode_parameters["storage_base_uri"]
         if params_storage_base_uri is not None:
             output_storage_uri = params_storage_base_uri

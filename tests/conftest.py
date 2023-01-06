@@ -28,6 +28,7 @@ def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
     for u in ufiles:
         check_ufile_can_be_tested(u)
             urun_dict=urun_dict,
+            input_files=ufiles,
             unode_meta=node_obj.META_INFO,
         )
         for output_file in ut.output_files:

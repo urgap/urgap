@@ -16,6 +16,7 @@ def test_retain_uftype_all_same_not_set():
             },
     )
         urun_dict=urd,
+        input_files=input_files,
     )
 
 
@@ -31,6 +32,7 @@ def test_retain_uftype_all_same():
             "unode_parameters": {"retain_uftype": True},
     )
         urun_dict=urd,
+        input_files=input_files,
     )
 
     # First check the scans_file
@@ -50,4 +52,5 @@ def test_retain_uftype_different():
             "unode_parameters": {"retain_uftype": True},
     )
         urun_dict=urd,
+        input_files=input_files,
     )

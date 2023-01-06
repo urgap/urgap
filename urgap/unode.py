@@ -27,6 +27,7 @@ from pathlib import Path
             urun_dict.unode_parameters.update(kwargs)
 
             urun_dict=urun_dict,
+            input_files=ufiles,
             unode_meta=self.META_INFO,
         )
         reasons = ut.evaluate_if_rerun_is_required()

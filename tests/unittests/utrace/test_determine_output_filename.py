@@ -5,6 +5,7 @@ def test_single_input():
         [
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -26,6 +27,7 @@ def test_single_input_no_data_versioning():
             },
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
 
@@ -43,6 +45,7 @@ def test_single_input_with_run_folder_name():
             },
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
 
@@ -59,6 +62,7 @@ def test_single_input_with_prefix_and_nested_dir():
         [
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -74,6 +78,7 @@ def test_single_input_with_data_versioning():
         [
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -92,6 +97,7 @@ def test_multi_input():
             ),
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -111,6 +117,7 @@ def test_multi_input_shuffled_input():
     ]
     random.shuffle(pre_list)
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -129,6 +136,7 @@ def test_multi_input_with_data_versioning():
             ),
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -154,5 +162,6 @@ def test_override_folder_creation_with_md5():
             ),
     )
         urun_dict=urd,
+        input_files=input_files,
     )
     _output = ut.determine_output_files_stem()
