@@ -26,3 +26,5 @@ from ._base import UMetaIOBase
 
         with Session(self.db) as session:
             session.commit()
+
+        with Session(self.db) as session:

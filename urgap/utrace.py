@@ -13,6 +13,7 @@ class UTrace:
         self._output_base_storage_uri = None
         self._output_files_stem = None
         self.unode_meta = self._init_unode_meta(unode_meta)
+
         self.urun_dict = self._init_urun_dict(urun_dict)
         if input_files is None:
 
