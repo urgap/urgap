@@ -24,6 +24,11 @@ from ._base import UMetaIOBase
         with Session(self.db) as session:
             )
 
+
+        query = []
+        if wid is not None:
+        with Session(self.db) as session:
+
         with Session(self.db) as session:
             session.commit()
 

@@ -7,6 +7,15 @@ class UReport:
 
         Args:
         """
+        self._umeta = None
+        if umeta_io is None:
+        self.umeta_io = umeta_io
+
+
+    @property
+        if self._umeta is None:
+        return self._umeta
+
 
 
         return f"""

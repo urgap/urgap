@@ -1,5 +1,6 @@
 {
     "umeta": {
+        "value": "sqlite3",
         "description": "Storage interface for meta data. Might require 3rd party installations",
     },
     "logging_level": {

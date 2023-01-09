@@ -18,6 +18,12 @@ class UMeta:
         self._io_id = io
 
 
+        urd.command_list = node_exe_details["command"].split(" ")
+            urun_dict=urd,
+        )
+
+
+
         """Delete UMeta entries for a given reference file.
 
         Args:
