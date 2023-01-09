@@ -8,6 +8,10 @@ from ._base import UMetaIOBase
 
 
 
+
+
+
+
     """UMeta SQLAlchemy Base class."""
 
         self._db = None
@@ -18,3 +22,7 @@ from ._base import UMetaIOBase
         return self._db
 
         with Session(self.db) as session:
+            )
+
+        with Session(self.db) as session:
+            session.commit()

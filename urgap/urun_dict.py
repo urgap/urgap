@@ -74,6 +74,15 @@ class URunDict(UserDict):
         self["parameters"] = parameters
 
     @property
+
+        Returns:
+        """
+        return self.get("user_dict", {})
+
+    @user_dict.setter
+        self["user_dict"] = user_dict
+
+    @property
         return self["unode_parameters"]
 
     @unode_parameters.setter
