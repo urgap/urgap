@@ -10,6 +10,10 @@ class UTrace:
 
     def __init__(
         self,
+        """Construct a new UTrace instance.
+
+        Args:
+        """
         self._output_base_storage_uri = None
         self._output_files_stem = None
         self.unode_meta = self._init_unode_meta(unode_meta)
@@ -51,6 +55,9 @@ class UTrace:
 
     @property
 
+        Returns:
+        """
+
     @property
         return self.urun_dict.wid
 
@@ -84,6 +91,11 @@ class UTrace:
         if skip_data_versioning is False:
         return top_level_folder
 
+        """Check if it is possible to retain uftypes of input UFiles.
+
+        If uftypes are unique across the inputs, output UFiles are assigned the same uftype
+        if specified by UNode parameter.
+        """
         output_files_uftype_counts = self.output_files.number_of_uftypes()
         input_files_uftype_counts = self.input_files.number_of_uftypes()
         if self.urun_dict.unode_parameters["retain_uftype"] is True:
@@ -106,14 +118,19 @@ class UTrace:
                     )
             elif mdict["max"] == -1:
                     uftype=ouftype,
+                    n=1,
                     max_n="N",
                 )
             elif mdict["min"] < mdict["max"]:
                     uftype=ouftype,
+                    n=1,
                     max_n="N",
                 )
             else:
 
+
+        Args:
+        """
         safe_to_create = True
         if n is None:
             current_n = self.output_files.number_of_uftypes().get(uftype, 0)
@@ -123,6 +140,9 @@ class UTrace:
         if safe_to_create:
 
 
+
+        Returns:
+        """
         reasons = []
         if self.urun_dict.unode_parameters["force"] is True:
             reasons.append("You used (the) Force!")
@@ -151,6 +171,9 @@ class UTrace:
 
 
 
+        Args:
+        """
+
         """Get list of input files in URunDict.
 
         Returns:
@@ -167,8 +190,17 @@ class UTrace:
         if ilist is None:
             ilist = []
 
+        """Fill in completed integer counts for all output UFiles.
+
+        Operation is performed inplace.
+        """
         else:
 
 
 
     @classmethod
+
+        Args:
+
+        Returns:
+        """
