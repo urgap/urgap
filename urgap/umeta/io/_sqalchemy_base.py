@@ -21,14 +21,26 @@ from ._base import UMetaIOBase
             self._db = sqlalchemy.create_engine(self.generate_connection_string())
         return self._db
 
+
+        Args:
+        """
         with Session(self.db) as session:
             )
 
 
+        Args:
+        """
+
+
+        Args:
+        """
         query = []
         if wid is not None:
         with Session(self.db) as session:
 
+
+        Args:
+        """
         with Session(self.db) as session:
             session.commit()
 
