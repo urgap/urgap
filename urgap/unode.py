@@ -33,6 +33,8 @@ from pathlib import Path
         reasons = ut.evaluate_if_rerun_is_required()
         if len(reasons) > 0:
         else:
+            ut.fix_dynamic_output_file_names()
+        ut.save_umeta_information()
             self.delete_tmp_files()
 
         return ut.output_files
