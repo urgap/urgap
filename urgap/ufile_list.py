@@ -64,6 +64,9 @@ class UFileList(UserList):
 
     @property
 
+        Returns:
+        """
+
         kosha = False
             kosha = True
         if kosha is False:
@@ -146,6 +149,9 @@ class UFileList(UserList):
                 for i in idx_list:
         return dynamic_index_groups
 
+
+        Returns:
+        """
         numbers_by_uftype = self.get_index_groups_by_uftypes()
         for k, v in numbers_by_uftype.items():
             numbers_by_uftype[k] = len(v)
