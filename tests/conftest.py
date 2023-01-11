@@ -28,6 +28,18 @@ def ping(host):
     return request.param
 
 
+@pytest.fixture
+def check_if_meta_interface_backend_is_available(request):
+    umeta_interface, netloc = request.param
+    if netloc is not None:
+        parsed_url = urlparse(netloc)
+        host, port = parsed_url.netloc.split(":")
+        try:
+            urllib3.util.connection.create_connection((host, port), timeout=1)
+            pytest.skip(f"{umeta_interface} at {host}:{port} not reachable ...")
+    return request.param
+
+
 def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
         ufile_path_list = [ufile_path_list]
 
