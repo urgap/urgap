@@ -16,6 +16,7 @@ class UTrace:
         """
         self._output_base_storage_uri = None
         self._output_files_stem = None
+        self.rerun_reasons = None
         self.unode_meta = self._init_unode_meta(unode_meta)
 
         self.urun_dict = self._init_urun_dict(urun_dict)
@@ -172,6 +173,7 @@ class UTrace:
                 if len(reasons) > 0:
                     break
 
+        self.rerun_reasons = reasons
         return reasons
 
 
