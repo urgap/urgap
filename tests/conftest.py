@@ -22,6 +22,12 @@ def ping(host):
     return subprocess.call(command) == 0
 
 
+@pytest.fixture
+    for u in request.param:
+        check_ufile_can_be_tested(u)
+    return request.param
+
+
 def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
         ufile_path_list = [ufile_path_list]
 

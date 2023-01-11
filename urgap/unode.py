@@ -15,6 +15,7 @@ from pathlib import Path
 
         self._exe_path = None
         self.tmp_files = []
+        self.utrace_history = []
 
     @property
 
@@ -24,13 +25,16 @@ from pathlib import Path
         return self._exe_path
 
 
+        self.tmp_files = []
             urun_dict.unode_parameters.update(kwargs)
 
             urun_dict=urun_dict,
             input_files=ufiles,
             unode_meta=self.META_INFO,
         )
+        self.utrace_history.append(ut.id)
         reasons = ut.evaluate_if_rerun_is_required()
+        ut.info()
         if len(reasons) > 0:
         else:
             ut.fix_dynamic_output_file_names()

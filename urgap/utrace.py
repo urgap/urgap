@@ -135,6 +135,10 @@ class UTrace:
         if n is None:
             current_n = self.output_files.number_of_uftypes().get(uftype, 0)
             n = current_n + 1
+            if (
+                n > self.unode_meta["output_uftypes"][uftype]["max"]
+                and self.unode_meta["output_uftypes"][uftype]["max"] != -1
+            ):
                 safe_to_create = False
             if n == self.unode_meta["output_uftypes"][uftype]["max"]:
         if safe_to_create:
@@ -167,6 +171,7 @@ class UTrace:
                             break
                 if len(reasons) > 0:
                     break
+
         return reasons
 
 

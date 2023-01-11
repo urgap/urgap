@@ -21,6 +21,7 @@ class UMeta:
         Args:
         """
         urd.command_list = node_exe_details["command"].split(" ")
+        urd["wid"] = wid  # not using urd.wid to avoid the warning :)
             urun_dict=urd,
         )
 
