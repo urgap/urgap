@@ -24,6 +24,8 @@ class UTrace:
 
         if output_files is None:
             self.evaluate_retain_uftype()
+        else:
+            self.output_files = output_files
 
         else:
         return urun_dict
@@ -153,6 +155,13 @@ class UTrace:
             if n == self.unode_meta["output_uftypes"][uftype]["max"]:
         if safe_to_create:
 
+        if len(self.output_files) != 0:
+            _ufile = self.output_files[0]
+                for remote_file in _ufile.io.list_container_items(
+                ):
+                    if remote_file.endswith(".tag"):
+                        continue
+                    )
 
 
         Returns:
