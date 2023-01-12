@@ -9,11 +9,14 @@ class UReport:
         Args:
         """
         self._umeta = None
+        self._os = []
         if umeta_io is None:
         self.umeta_io = umeta_io
 
         if ufile is not None:
                 raise KeyError(msg)
+                # is first file
+
         else:
 
     @property
@@ -45,6 +48,8 @@ UReport id {id(self)}
         Returns:
         """
         graph = nx.DiGraph()
+        for missing_node in self._os:
+            graph.add_node(missing_node)
                 continue
             graph = self.walk(
             )

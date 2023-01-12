@@ -16,6 +16,7 @@ class UTrace:
         """
         self._output_base_storage_uri = None
         self._output_files_stem = None
+        self._remote_output_files = None
         self.rerun_reasons = None
         self.unode_meta = self._init_unode_meta(unode_meta)
 
@@ -155,6 +156,7 @@ class UTrace:
             if n == self.unode_meta["output_uftypes"][uftype]["max"]:
         if safe_to_create:
 
+        remote_ofiles = ddict(list)
         if len(self.output_files) != 0:
             _ufile = self.output_files[0]
                 for remote_file in _ufile.io.list_container_items(
@@ -162,6 +164,8 @@ class UTrace:
                     if remote_file.endswith(".tag"):
                         continue
                     )
+                    remote_ofiles[uftype].append(ufile)
+        return remote_ofiles
 
 
         Returns:

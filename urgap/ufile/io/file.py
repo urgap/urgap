@@ -31,6 +31,7 @@ class IOPython(UIOBase):
 
         """
 
+        try:
 
         """Verify referenced remote object exists.
 
