@@ -49,6 +49,7 @@ def test_rerun_reason_dynamic_output_files_are_less_than_min():
         dynout_filename.touch()
         wrong_dynout_filename.touch()
 
+        ut._remote_output_files = None
         assert len(ut.remote_output_files) == 1
         rerun_reasons = ut.evaluate_if_rerun_is_required()
         assert "Not all dynamic files were written" in rerun_reasons[0]
