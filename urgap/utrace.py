@@ -62,6 +62,8 @@ class UTrace:
     @property
         return self.urun_dict.wid
 
+
+
         input_storage_base_uris = set(self.input_files.get_storage_base_uris())
         params_storage_base_uri = self.urun_dict.unode_parameters["storage_base_uri"]
         if params_storage_base_uri is not None:

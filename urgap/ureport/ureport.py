@@ -12,12 +12,16 @@ class UReport:
         if umeta_io is None:
         self.umeta_io = umeta_io
 
+        if ufile is not None:
+                raise KeyError(msg)
+        else:
 
     @property
         if self._umeta is None:
         return self._umeta
 
 
+        """
 
         return f"""
 UReport id {id(self)}
@@ -31,11 +35,36 @@ UReport id {id(self)}
         Returns:
         """
 
+    @property
+
+        Returns:
+        """
+
+    @property
+
+        Returns:
+        """
+        graph = nx.DiGraph()
+                continue
+            graph = self.walk(
+            )
+        return graph
+
 
         Args:
 
         Returns:
         """
+                graph.add_edge(
+                    weight=4.7,
+                    arrow=True,
+                )
+                    graph = self.walk(
+                        wid=wid,
+                        graph=graph,
+                    )
+        return graph
+
 
         return self.umeta.umeta_exists(reference_ufile)
 
