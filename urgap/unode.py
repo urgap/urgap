@@ -25,6 +25,9 @@ from pathlib import Path
         return self._exe_path
 
 
+        if urun_dict.unode_parameters["skip_pre_checks"] is False:
+            self._pre_checks()
+
         self.tmp_files = []
             urun_dict.unode_parameters.update(kwargs)
 
