@@ -20,11 +20,14 @@
             "--params",
             "--input",
         ]
+        for ufile in utrace.input_files:
+        for ufile in utrace.output_files:
 
 
         Args:
         Returns:
         """
+        super().execute(utrace)
 
 
 
@@ -32,3 +35,4 @@
 
         Returns:
         """
+        utrace.output_files[-1].path.write_text("Writing into 3_of_N")
