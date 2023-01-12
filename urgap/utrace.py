@@ -62,6 +62,10 @@ class UTrace:
     @property
         return self.urun_dict.wid
 
+    @property
+        return self.output_files_stem
+
+    @property
 
 
         input_storage_base_uris = set(self.input_files.get_storage_base_uris())

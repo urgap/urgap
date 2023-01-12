@@ -36,6 +36,8 @@
 
         Returns:
         """
+            difference = n - minimal_dataset.get(filetype, 0)
+
             "python",
             str(self.exe_path),
             "--params",
