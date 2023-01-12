@@ -20,6 +20,12 @@ class UFileList(UserList):
 
         Returns:
         """
+        r_value = True
+        for uf in self:
+            if uf.io.remote_object_exists() is False:
+                r_value = False
+                break
+        return r_value
 
 
         Args:

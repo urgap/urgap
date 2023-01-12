@@ -59,6 +59,7 @@ UReport id {id(self)}
                     weight=4.7,
                     arrow=True,
                 )
+
                     graph = self.walk(
                         wid=wid,
                         graph=graph,
