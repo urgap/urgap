@@ -108,6 +108,7 @@ def provide_clean_scratch_and_remote(request):
 
     ufile_path_list = [
     ]
+    run_dict = {
         "parameters": {
             "triggers_nuttin": 100,
             "triggers_rerun": 100,
@@ -116,6 +117,8 @@ def provide_clean_scratch_and_remote(request):
         "unode_parameters": {
             "record_skipped_runs": True,
         },
+    }
+    yield ufile_path_list, run_dict
 
     if str(request.param[0]) == "json":
         um.ufile.io.remote_path.unlink()
