@@ -23,6 +23,8 @@ from pathlib import Path
             )
                 target_rfile.parent.mkdir(exist_ok=True, parents=True)
                 shutil.copy(rfile, target_rfile)
+                if force is False:
+                else:
 
 
 
