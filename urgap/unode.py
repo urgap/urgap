@@ -42,6 +42,7 @@ from pathlib import Path
         else:
             ut.fix_dynamic_output_file_names()
         ut.save_umeta_information()
+        if ut.urun_dict.unode_parameters["remove_temporary_files"] is True:
             self.delete_tmp_files()
 
         return ut.output_files
@@ -188,9 +189,12 @@ from pathlib import Path
                 "preflight in the UNode engine class."
             )
 
+        utrace.urun_dict.command_list = [str(x) for x in utrace.urun_dict.command_list]
         execute_answer = []
         proc = None
+        if len(utrace.urun_dict.command_list) != 0:
             proc = subprocess.run(
+                utrace.urun_dict.command_list,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
             )
