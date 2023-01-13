@@ -6,6 +6,7 @@ from pathlib import Path
 def test_create_home_folder(tmp_dir):
 
 
+def test_copy_resources_if_needed(tmp_dir):
     assert (
         Path(
         ).exists()
@@ -13,6 +14,7 @@ def test_create_home_folder(tmp_dir):
     )
 
 
+def test_copy_resources_if_needed_fails_due_to_md5_mismatch(tmp_dir):
 
     assert file.exists() is True
     with open(file, "w") as f:
