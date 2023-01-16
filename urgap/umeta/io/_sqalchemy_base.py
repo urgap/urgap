@@ -12,8 +12,10 @@ from ._base import UMetaIOBase
 
 
 
+class SQLAlchemyBaseUMeta(UMetaIOBase):
     """UMeta SQLAlchemy Base class."""
 
+        self.name = "SQLAlchemyBaseUMeta"
         self._db = None
 
     @property

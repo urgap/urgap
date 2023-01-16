@@ -6,6 +6,7 @@ class UMetaIOBase:
 
     """
 
+        self.name = "UMetaBase"
 
 
         Args:

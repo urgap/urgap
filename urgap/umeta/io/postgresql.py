@@ -2,10 +2,12 @@
 
 
 
+class UMeta(SQLAlchemyBaseUMeta):
     """UMeta postgresql class."""
 
         self._db = None
         self._session = None
+        self.name = "UMeta postgresql"
 
         """Generate SQLAlchemy compatible connection string.
 

@@ -56,3 +56,5 @@ class UMeta:
 
         Returns:
         """
+
+        return self.io.retrieve_interface_statistics()

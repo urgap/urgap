@@ -33,3 +33,4 @@ import click
 
 @click.command()
     for k, v in interface_stats.items():
+        click.echo(f"{k: >50}:{v: >12}")

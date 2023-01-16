@@ -2,6 +2,7 @@
 
 
 
+class UMeta(SQLAlchemyBaseUMeta):
     """UMeta sqlite class.
 
     SQlite is not intended for production use!
@@ -9,6 +10,7 @@
 
         self._db = None
         self._session = None
+        self.name = "UMeta sqlite3"
 
         """Generate SQLAlchemy compatible connection string.
 

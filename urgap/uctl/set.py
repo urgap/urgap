@@ -19,3 +19,5 @@ def _check_if_config_key_value_is_valid(
         verbose=verbose,
     )
         config[config_key]["value"] = config_value
+
+                json.dump(config, config_json, indent=4, sort_keys=True)
