@@ -16,10 +16,17 @@ import click
 @click.argument("object_name")
 
 
+    return {
+    }
+
+
+@click.command()
+
 
 
 
 @click.command()
+@click.argument("unode")
 @click.option(
     "--last",
     "-l",
@@ -27,4 +34,7 @@ import click
     help="Show the last n ufiles created by the node",
     default=10,
 )
+    """Retrieve last n processed files for a given unode (click wrapper)."""
 
+
+    return um.find_last_processed_files(unode, last=last)
