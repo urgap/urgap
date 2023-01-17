@@ -33,3 +33,4 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
             test_node1.remove_output_folder(output_file)
             assert output_file.remote_object_exists() is False
 
+        urun_dict.assign_wid()

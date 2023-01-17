@@ -27,6 +27,8 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
     return_file = test_node1.run(ufiles=ufiles, urun_dict=urun_dict)
     print("Output node1:")
     pprint.pprint(return_file)
+
+    urun_dict.assign_wid()
     print("Input:")
     pprint.pprint(urun_dict)
     pprint.pprint(ufiles)

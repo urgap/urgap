@@ -60,6 +60,7 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
 
             assert n == return_file.number_of_uftypes().get(uftype, 0)
 
+
         second_run_return_file = test_node9.run(
             ufiles=ufiles,
             urun_dict=urun_dict,

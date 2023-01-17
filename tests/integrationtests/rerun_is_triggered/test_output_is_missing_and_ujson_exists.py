@@ -46,6 +46,8 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
             """
         ------- Second run -------
         )
+        urun_dict.assign_wid()
+
             ufiles=ufiles,
             urun_dict=urun_dict,
         )

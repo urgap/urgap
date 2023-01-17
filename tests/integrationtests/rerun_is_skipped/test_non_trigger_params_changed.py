@@ -28,6 +28,8 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
     print("Output node1:")
     pprint.pprint(return_file)
 
+
+    urun_dict.assign_wid()
     print("Input:")
     pprint.pprint(urun_dict)
     print("Output:")

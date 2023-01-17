@@ -29,3 +29,6 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
     return_file = test_node1.run(ufiles=ufiles, urun_dict=urun_dict)
     print("Output node:")
     pprint.pprint(return_file)
+
+
+    urun_dict.assign_wid()

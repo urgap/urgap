@@ -44,6 +44,8 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
             """
         ------- Second run -------
         )
+        urun_dict.assign_wid()
+
         print("Input:", urun_dict)
             ufiles=ufiles,
             urun_dict=urun_dict,
