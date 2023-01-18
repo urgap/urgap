@@ -6,6 +6,7 @@ class UMeta(SQLAlchemyBaseUMeta):
 
         self._db = None
         self._session = None
+        self.name = "UMeta GCP SQL"
 
 
         Returns:

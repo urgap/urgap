@@ -6,6 +6,7 @@ class UMeta(UMetaIOBase):
     """UMeta dummy class - always returning True and not storing any run time info! - ya welcome."""
 
         """Needs to be implemented."""
+        self.name = "UMeta for test purposes"
 
         """Needs to be implemented."""
         return {"history": [], "urun_dict": {}}
