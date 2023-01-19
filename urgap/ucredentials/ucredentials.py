@@ -62,6 +62,10 @@ class UCredentialManager:
         """
         cred_key = self.format_cred_key(cred_entry)
         cred_entry = self.validate_credential_entry(cred_entry)
+        else:
+                f"The credentials for {cred_key} were not valid. Hence, "
+                f"{cred_key} will not be ingested."
+            )
             del self._extracted_secrets[cred_key]
 
 
