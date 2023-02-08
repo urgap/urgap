@@ -19,3 +19,4 @@ import pytest
     indirect=["provide_clean_test_node_dirs"],
 )
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
+    retain_uftype = True

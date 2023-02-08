@@ -124,7 +124,14 @@ class UTrace:
             ):
                 )
             else:
+                self.unode_meta["output_uftypes"][i_uftype] = self.unode_meta[
+                    "output_uftypes"
+                ].pop(o_uftype)
+                new_output_file_list = []
                 for ofile in self.output_files:
+                        uri=ofile.as_uri(
+                    )
+                    new_output_file_list.append(uf)
 
         for ouftype, mdict in self.unode_meta["output_uftypes"].items():
             if mdict["min"] == 0:

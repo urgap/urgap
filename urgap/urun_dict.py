@@ -64,6 +64,8 @@ class URunDict(UserDict):
         self["wid"] = wid
 
 
+        self.assign_wid()
+
     @property
         """Get wrapper parameters.
 
