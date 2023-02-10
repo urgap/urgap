@@ -38,7 +38,22 @@ class UFile:
 
         Returns:
         """
+        if self.io.local_object_exists() is True:
+            remote_tags = self.io.get_remote_tags()
+            if remote_tags is None:
+                download_file = False
+                    " Will not download file anymore."
+                )
+                download_file = False
+            else:
+                        {
                     )
+                    )
+                    download_file = True
+
+        if download_file is True:
+            self.purge_local_file()
+            self.io.download()
         return self.io.scratch_path
 
 

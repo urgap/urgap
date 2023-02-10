@@ -12,6 +12,11 @@ class UIOBase:
         """
 
     @property
+        _scratch_path = (
+        ).resolve()
+        _scratch_path.parent.mkdir(exist_ok=True, parents=True)
+
+        return _scratch_path
 
 
 
