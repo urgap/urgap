@@ -21,6 +21,7 @@ proteomics.dbsearch.MSFRAGGER_TSV = ".msfragger.tsv"
 proteomics.dbsearch.MSGFPLUS_MZID = ".msgfplus.mzid"
 proteomics.dbsearch.OMSSA_CSV = ".omssa.csv"
 proteomics.dbsearch.XTANDEM_XML = ".xtandem.xml"
+proteomics.dbsearch.DIANN_QUANT = ".diann.quant"
 
 # De Novo Search Engines
 proteomics.denovosearch = types.SimpleNamespace()
