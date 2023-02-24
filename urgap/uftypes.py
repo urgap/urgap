@@ -7,6 +7,7 @@ unknown.UNKNOWN = ".unknown"
 proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
 proteomics.THERMO_RAW = ".thermo.raw"
+proteomics.BRUKER_D_TGZ = ".bruker_d.tgz"
 proteomics.FASTA = ".protein.faa"
 proteomics.MODS_XML = ".mods.xml"
 proteomics.TMT_CORRECTION_FACTORS = ".tmt_correction_factors.json"
@@ -22,6 +23,7 @@ proteomics.dbsearch.MSGFPLUS_MZID = ".msgfplus.mzid"
 proteomics.dbsearch.OMSSA_CSV = ".omssa.csv"
 proteomics.dbsearch.XTANDEM_XML = ".xtandem.xml"
 proteomics.dbsearch.DIANN_QUANT = ".diann.quant"
+proteomics.dbsearch.DIANN_REPORT = ".diann_report.tsv"
 
 # De Novo Search Engines
 proteomics.denovosearch = types.SimpleNamespace()
