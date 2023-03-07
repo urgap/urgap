@@ -31,6 +31,7 @@ proteomics.denovosearch.NOVOR_CSV = ".novor.csv"
 proteomics.converter = types.SimpleNamespace()
 proteomics.converter.ANY = "proteomics.converter.ANY"
 proteomics.converter.PYMZML_MGF = ".pymzml.mgf"
+proteomics.converter.PYIOHAT_CSV = ".pyiohat.csv"
 
 # Validator
 proteomics.validator = types.SimpleNamespace()

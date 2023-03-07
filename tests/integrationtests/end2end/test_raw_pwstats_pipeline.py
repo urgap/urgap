@@ -78,7 +78,9 @@ def test_raw_to_pwstats_pipeline():
     ident_msgfplus = msgfplus.run([mgf, td_fasta], urun_dict)
     assert ident_msgfplus[0].path.exists()
 
+    unified_msfragger = pyiohat_csv.run([ident_msfragger, td_fasta, meta], urun_dict)
     assert unified_msfragger[0].path.exists()
+    unified_msgfplus = pyiohat_csv.run([ident_msgfplus, td_fasta, meta], urun_dict)
     assert unified_msgfplus[0].path.exists()
     validated = peptide_forest.run([unified_msfragger, unified_msgfplus], urun_dict)
     assert validated[0].path.exists()
