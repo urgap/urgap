@@ -25,6 +25,7 @@ from pathlib import Path
         return self._exe_path
 
 
+        urun_dict = copy.deepcopy(urun_dict)
         if urun_dict.unode_parameters["skip_pre_checks"] is False:
             self._pre_checks()
 
