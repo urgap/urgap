@@ -123,6 +123,8 @@ transcriptomics.BOWTIE_1_INDEX = ".bowtie1.idx"
 transcriptomics.BOWTIE_1_INDEX_MAPPING = ".bowtie_1_index_mapping.json"
 transcriptomics.KALLISTO_INDEX = ".kallisto.idx"
 transcriptomics.KALLISTO_QUANT_TSV = ".kallisto_quant.tsv"
+transcriptomics.FASTQC_HTML = ".fastqc.html"
+transcriptomics.FASTQC_ZIP = ".fastqc.zip"
 
 # Imaging=======================================================================
 
