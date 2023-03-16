@@ -3,6 +3,7 @@
 This module defines the UnodeBase class, which is inherited by wrappers.
 """
 import copy
+import itertools
 import logging
 import os
 import platform

@@ -1,6 +1,8 @@
+import copy
 import datetime
 import logging
 from collections import defaultdict as ddict
+
 
 
 class UTrace:

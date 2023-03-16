@@ -3,6 +3,7 @@ import types
 import networkx as nx
 
 
+
 class UTreeQuerier:
 
         """Build a directed graph from a file providing namespacing.
