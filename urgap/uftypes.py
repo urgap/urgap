@@ -115,6 +115,7 @@ transcriptomics = types.SimpleNamespace()
 transcriptomics.FASTA = ".transcriptomics.fa"
 transcriptomics.GTF = ".transcriptomics.gtf"
 transcriptomics.READS = ".transcriptomics.reads"
+transcriptomics.CUTADAPT_STATS_JSON = ".cutadapt.json"
 transcriptomics.STAR_2_INDEX = ".star2.idx"
 transcriptomics.STAR_2_INDEX_META_ZIP = ".star2_idx_meta.zip"
 transcriptomics.STAR_2_QUANT_TSV = ".star2_quant.tsv"
