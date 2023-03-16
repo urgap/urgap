@@ -45,6 +45,7 @@ reference_schema = {
         "input_uftypes": {"type": "uftype_spec"},
         "output_uftypes": {"type": "uftype_spec"},
         "citation": {"type": "string"},
+        "requires": {"type": "object"},
         "engine": {"type": "object"},
     },
 }

@@ -23,6 +23,7 @@ import click
     click.secho(
     )
             continue
+        exe_available = get_status(v.is_available)
         w = v.META_INFO.get(
         )
         wrapper_version = "{major}.{minor}.{patch}".format(**w)
