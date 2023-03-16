@@ -2594,6 +2594,7 @@ zones
 graphs
 humps
 flashes
+counterattacks
 compensates
 tusks
 overbuilds
@@ -2958,6 +2959,7 @@ finishes
 unlaces
 foals
 foams
+crosschecks
 fruits
 puffs
 obverts
@@ -3363,6 +3365,7 @@ undersells
 circles
 waterproofs
 outlasts
+bellyaches
 struts
 bedews
 strums
@@ -3735,6 +3738,7 @@ prettifies
 overdresses
 encamps
 decorticates
+daydreams
 corrals
 scoops
 scoots
@@ -4247,6 +4251,7 @@ ribs
 stroys
 salivates
 sates
+egotrips
 answers
 bedights
 construes
@@ -4407,6 +4412,7 @@ exonerates
 blacklists
 mitigates
 euphemizes
+bypasses
 entrains
 alarms
 dogs
@@ -8014,6 +8020,7 @@ diminishes
 commences
 vilipends
 elopes
+kos
 featherstitches
 brazens
 elongates
