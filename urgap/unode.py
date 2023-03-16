@@ -26,6 +26,7 @@ from pathlib import Path
         return self._exe_path
 
 
+            msg = "UNode.run() function requires URunDict."
             raise TypeError(msg)
         urun_dict = copy.deepcopy(urun_dict)
         if urun_dict.unode_parameters["skip_pre_checks"] is False:
