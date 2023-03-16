@@ -52,6 +52,8 @@ UReport id {id(self)}
             graph.add_node(missing_node)
                 continue
             graph = self.walk(
+                wid=wid,
+                graph=graph,
             )
         return graph
 
@@ -60,6 +62,10 @@ UReport id {id(self)}
 
         Returns:
         """
+                graph.add_edge(
+                    weight=4.7,
+                    arrow=True,
+                )
                 graph.add_edge(
                     weight=4.7,
                     arrow=True,
