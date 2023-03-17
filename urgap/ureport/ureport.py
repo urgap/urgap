@@ -63,10 +63,12 @@ UReport id {id(self)}
 
         Returns:
         """
+
                 graph.add_edge(
                     weight=4.7,
                     arrow=True,
                 )
+
                 graph.add_edge(
                     weight=4.7,
                     arrow=True,
