@@ -42,14 +42,22 @@ def check_if_meta_interface_backend_is_available(request):
 
 def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
         ufile_path_list = [ufile_path_list]
+    unodes_dict = {}
+    for node in unodes:
+        if unodes_dict[node].resource_is_available is False:
+            pytest.skip(f"{node} is missing resources ...")
+        if unodes_dict[node].has_all_required_installations() is False:
+            pytest.skip(f"{node} is missing 3rd party installation ...")
 
     for u in ufiles:
         check_ufile_can_be_tested(u)
+    for node_name, node_obj in unodes_dict.items():
             urun_dict=urun_dict,
             input_files=ufiles,
             unode_meta=node_obj.META_INFO,
         )
         for output_file in ut.output_files:
+    return unodes_dict, ufiles, urun_dict
 
 
 @pytest.fixture
