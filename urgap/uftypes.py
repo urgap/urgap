@@ -175,9 +175,11 @@ exp_design.ANY = "exp_design.ANY"
 
 exp_design.input = types.SimpleNamespace()
 # assay type specific input formats
+exp_design.input.ANY = "exp_design.input.ANY"
 exp_design.input.UTMX_METADATA_XLSX = ".utmx_metadata.xlsx"
 
 exp_design.output = types.SimpleNamespace()
+exp_design.output.ANY = "exp_design.output.ANY"
 exp_design.output.UTMX_METADATA_CSV = ".utmx_metadata.csv"
 
 
