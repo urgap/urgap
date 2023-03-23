@@ -25,6 +25,18 @@ from pathlib import Path
         if self._exe_path is None:
         return self._exe_path
 
+    @property
+
+
+        Returns:
+        """
+        ]["resource_available"]
+
+    @property
+
+        Returns:
+        """
+        ]["has_3rd_party_requirements"]
 
             msg = "UNode.run() function requires URunDict."
             raise TypeError(msg)

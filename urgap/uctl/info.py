@@ -23,6 +23,10 @@ import click
     click.secho(
     )
             continue
+        if v.requires_3rd_party_installation is True:
+            status_3rd_party = get_status(v.has_all_required_installations())
+        else:
+            status_3rd_party = get_status(None)
         exe_available = get_status(v.is_available)
         w = v.META_INFO.get(
         )
