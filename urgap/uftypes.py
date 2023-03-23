@@ -169,6 +169,17 @@ compression.TAR = ".compression.tar"
 compression.GZ = ".compression.gz"
 compression.ZIP = ".compression.zip"
 
+# Experimental designs==========================================================
+exp_design = types.SimpleNamespace()
+exp_design.ANY = "exp_design.ANY"
+
+exp_design.input = types.SimpleNamespace()
+# assay type specific input formats
+exp_design.input.UTMX_METADATA_XLSX = ".utmx_metadata.xlsx"
+
+exp_design.output = types.SimpleNamespace()
+exp_design.output.UTMX_METADATA_CSV = ".utmx_metadata.csv"
+
 
 test = types.SimpleNamespace()
 test.ANY = "test.ANY"
