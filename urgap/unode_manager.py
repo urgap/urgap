@@ -31,6 +31,9 @@ class UNodeManager(UserDict):
             "command": ["mono", "--version"],
             "regex_pattern": r"compiler version 6\.[0-9]*\.[0-9]*",
         },
+        "R-4.x.x": {
+            "command": ["R", "--version"],
+            "regex_pattern": r"^R version 4\.[0-9]*\.[0-9]* ",
     }
 
 
