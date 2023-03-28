@@ -7,6 +7,12 @@ def test_node_names_are_unique():
 
 
 def test_leaf_suffix_nomenclature():
+    leafs = set(
+    )
+    test_leafs = set(
+        ext
+        )
+    )
     leafs = leafs.difference(test_leafs).difference({".unknown"})
 
     suffix_pattern = re.compile(r"^\.[\w]+\.[\w]+$")

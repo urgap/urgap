@@ -5,6 +5,9 @@ from pyvis.network import Network
 
     graph = nx.DiGraph()
 
+    for (
+        unode_name,
+        unode_class,
         graph.add_node(unode_name, color="red", size=7)
             graph.add_node(sft, color="blue", size=12)
             graph.add_edge(

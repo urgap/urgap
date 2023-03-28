@@ -52,4 +52,6 @@ reference_schema = {
 tuple_validator = TupleValidator(schema=reference_schema)
 
 
+@pytest.mark.parametrize(
+)
 def test_meta_info_is_sane(node_name):
