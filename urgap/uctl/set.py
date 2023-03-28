@@ -18,6 +18,8 @@ def _check_if_config_key_value_is_valid(
         config_value,
         verbose=verbose,
     )
+        if isinstance(config[config_key]["value"], list):
+            config_value = [x.strip() for x in config_value.split(",")]
         config[config_key]["value"] = config_value
 
                 json.dump(config, config_json, indent=4, sort_keys=True)
