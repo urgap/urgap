@@ -1,8 +1,59 @@
+import argparse
 import copy
+import json
 import logging
 
 import apache_beam as beam
 
+
+
+
+    Args:
+
+    Returns:
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input_json",
+        dest="input_json",
+        default="[{}]",
+        help="input JSON file with process info.",
+    )
+    known_args, pipeline_args = parser.parse_known_args(argv)
+
+        input_json = json.load(jf)
+
+    manual_pipeline_args = {}
+    for arg in pipeline_args:
+        key_value_pair = arg.split("=")
+        manual_pipeline_args[key_value_pair[0]] = None
+        if len(key_value_pair) > 1:
+            manual_pipeline_args[key_value_pair[0]] = key_value_pair[1]
+
+
+    # Extract pipeline configuration from default configuration
+    pipeline_config = default_pipeline_args.get("pipeline_configuration", {})
+    # Overwrite with explicit pipeline configuration
+    pipeline_config.update(input_json.get("pipeline_configuration", {}))
+    # Manual overrides
+    pipeline_config.update(manual_pipeline_args)
+
+    pipeline_args = []
+    for key, value in pipeline_config.items():
+        if value is None:
+            pipeline_args.append(key)
+        else:
+            pipeline_args.append(f"{key}={value}")
+
+    for pos, _ in enumerate(pipeline_args):
+        if "job_name" in _:
+
+    # We use the save_main_session option because one or more DoFn's in this
+    # workflow rely on global context (e.g., a module imported at module level).
+    pipeline_options = PipelineOptions(pipeline_args)
+    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
+
+    return pipeline_options, urd, input_json
 
 
 
