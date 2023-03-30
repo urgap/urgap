@@ -2,6 +2,7 @@ import argparse
 import copy
 import json
 import logging
+from pathlib import Path
 
 import apache_beam as beam
 
@@ -22,6 +23,15 @@ import apache_beam as beam
     known_args, pipeline_args = parser.parse_known_args(argv)
 
         input_json = json.load(jf)
+
+    default_config_json = input_json.get("default_pipeline_config_json", None)
+    if default_config_json is not None:
+        default_config_json = (
+            Path(known_args.input_json) / Path(default_config_json)
+        ).resolve()
+            default_pipeline_args = json.load(jf)
+    else:
+        default_pipeline_args = {}
 
     manual_pipeline_args = {}
     for arg in pipeline_args:
