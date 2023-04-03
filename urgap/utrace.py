@@ -30,6 +30,13 @@ class UTrace:
         else:
             self.output_files = output_files
 
+    @property
+
+        """
+        if self._remote_output_files is None:
+            self._remote_output_files = self._query_remote_by_uftype()
+        return self._remote_output_files
+
         else:
         return urun_dict
 
