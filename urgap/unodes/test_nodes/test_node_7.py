@@ -31,3 +31,6 @@
             "python",
             str(self.exe_path),
         ]
+        utrace.urun_dict.command_list.append("--output")
+        for ufile in utrace.output_files:
+            utrace.urun_dict.command_list.append(str(ufile.path))
