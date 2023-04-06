@@ -20,6 +20,7 @@ class UFile:
         self._local_copy = None
         self._io = None
         self._lineage_root_files = None
+        self._lineage_graph = None
         self.was_downloaded_to_scratch = False
 
         self._io = None
@@ -208,7 +209,47 @@ class UFile:
             self.io.scratch_path.unlink()
 
 
+        Returns:
+        """
         if self._lineage_root_files is None:
             self._lineage_root_files = [
+                node for node, in_degree in graph.in_degree() if in_degree == 0
             ]
         return self._lineage_root_files
+
+
+        Args:
+
+        Returns:
+        """
+        if self._lineage_graph is None:
+            if use_umeta is True:
+                graph = ur.graph
+            else:
+                graph = nx.DiGraph()
+                graph = self._walk_via_objects(
+                    graph=graph,
+                    ufile=self,
+                )
+            self._lineage_graph = graph
+        return self._lineage_graph
+
+        graph.add_node(ufile.object_name)
+        for parent in ufile.parents:
+            graph.add_edge(
+                parent,
+                ufile.object_name,
+                weight=4.7,
+                arrow=True,
+            )
+            parent_uri = ufile.as_uri(fragment=parent, query="")
+            graph = self._walk_via_objects(
+                graph=graph,
+                ufile=parent_ufile,
+            )
+        return graph
+
+    @property
+
+        Returns:
+        """
