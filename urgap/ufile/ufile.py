@@ -209,9 +209,12 @@ class UFile:
             self.io.scratch_path.unlink()
 
 
+        Args:
+
         Returns:
         """
         if self._lineage_root_files is None:
+            graph = self.create_lineage_graph(use_umeta=use_umeta)
             self._lineage_root_files = [
                 node for node, in_degree in graph.in_degree() if in_degree == 0
             ]
@@ -243,6 +246,7 @@ class UFile:
                 arrow=True,
             )
             parent_uri = ufile.as_uri(fragment=parent, query="")
+            parent_ufile.purge_local()
             graph = self._walk_via_objects(
                 graph=graph,
                 ufile=parent_ufile,
