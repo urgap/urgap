@@ -3,6 +3,8 @@
 tool making pipeline development independent from business logic and data storage, while offering 
 standardized logging and execution, which makes monitoring and debugging easy.
 
+an interface thus can be plugged into any existing processes and finally global data lineages. 
+
 |build-status-azure|
 
    :alt: ADO CI status
