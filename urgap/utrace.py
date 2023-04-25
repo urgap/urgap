@@ -26,6 +26,7 @@ class UTrace:
         if input_files is None:
 
         if output_files is None:
+            self.populate_minimal_output_file_list()
             self.evaluate_retain_uftype()
         else:
             self.output_files = output_files
