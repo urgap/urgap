@@ -117,6 +117,7 @@ mx.PIPELINE_EXP_DESIGN = ".pipeline_exp_design.csv"
 # Transcriptomics===============================================================
 transcriptomics = types.SimpleNamespace()
 transcriptomics.FASTA = ".transcriptomics.fa"
+transcriptomics.BAM_INDEX = ".transcriptomics.bai"
 transcriptomics.GTF = ".transcriptomics.gtf"
 transcriptomics.READS = ".transcriptomics.reads"
 transcriptomics.RIBOSOME_PROFILING_FEATHER = ".rp.feather"
