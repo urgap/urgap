@@ -1,3 +1,4 @@
+import bz2
 import copy
 import gzip
 import logging
