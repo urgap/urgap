@@ -25,6 +25,12 @@ proteomics.dbsearch.XTANDEM_XML = ".xtandem.xml"
 proteomics.dbsearch.DIANN_QUANT = ".diann.quant"
 proteomics.dbsearch.DIANN_REPORT = ".diann_report.tsv"
 
+# DIA-NN Libraries
+proteomics.diannlibrary = types.SimpleNamespace()
+proteomics.diannlibrary.ANY = "proteomics.diannlibrary.ANY"
+proteomics.diannlibrary.DIANN_PREDICTED_LIBRARY = ".diann_predicted.speclib"
+proteomics.diannlibrary.DIANN_EMPIRICIAL_LIBRARY = ".diann_emperical.speclib"
+
 # De Novo Search Engines
 proteomics.denovosearch = types.SimpleNamespace()
 proteomics.denovosearch.NOVOR_CSV = ".novor.csv"
