@@ -82,6 +82,7 @@ from pathlib import Path
                 / "platform_independent"
                 / "arc_independent"
             )
+                )
             sys_platform = sys.platform
             try:
             except KeyError:
