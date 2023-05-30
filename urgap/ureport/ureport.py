@@ -107,6 +107,11 @@ UReport id {id(self)}
         fig.update_layout(template="simple_white")
         iplot(fig)
 
+
+        Args:
+
+        Returns:
+        """
         translated_aliases = {
             self.node_aliases[alias]: value for alias, value in nodes.items()
         }
