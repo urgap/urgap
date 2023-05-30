@@ -1,5 +1,7 @@
 import logging
 from pprint import pformat
+from plotly.offline import init_notebook_mode, iplot
+
 
 
 class UReport:
@@ -11,6 +13,7 @@ class UReport:
         """
         self._umeta = None
         self._os = []
+        self.node_aliases = {}
         if umeta_io is None:
         self.umeta_io = umeta_io
 
@@ -90,3 +93,24 @@ UReport id {id(self)}
         return self.umeta.umeta_exists(reference_ufile)
 
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
+
+        init_notebook_mode(connected=True)
+            self.node_aliases[i] = node
+        fig = go.Figure(
+            layout=go.Layout(
+                title="Simplified DAG with aliases",
+                showlegend=False,
+                hovermode="closest",
+            ),
+        )
+
+        fig.update_layout(template="simple_white")
+        iplot(fig)
+
+        translated_aliases = {
+            self.node_aliases[alias]: value for alias, value in nodes.items()
+        }
+                if len(requested_uftypes) == 0:
+                    query_results += ut.output_files
+                else:
+        return query_results
