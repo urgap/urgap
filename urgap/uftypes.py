@@ -176,6 +176,9 @@ ms.KEGG_MAP_HTML = ".kegg_map.html"
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
+ms.converter.mzml = types.SimpleNamespace()
+ms.converter.mzml.ANY = "ms.converter.mzml.ANY"
+ms.converter.mzml.THERMORAWPARSER_MZML = ".thermorawparser.mzml"
 
 # Compression formats===========================================================
 compression = types.SimpleNamespace()
