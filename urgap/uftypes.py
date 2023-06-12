@@ -173,6 +173,9 @@ ms.IONS_CSV = ".ions.csv"
 ms.IONS_DRIFT_CORRECTED_CSV = ".ions_drift_corrected.csv"
 ms.KEGG_MAP_HTML = ".kegg_map.html"
 
+flow_cytometry = types.SimpleNamespace()
+
+
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
