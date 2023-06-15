@@ -175,6 +175,34 @@ ms.KEGG_MAP_HTML = ".kegg_map.html"
 
 flow_cytometry = types.SimpleNamespace()
 
+flow_cytometry.qc = types.SimpleNamespace()
+
+flow_cytometry.qc.reports = types.SimpleNamespace()
+flow_cytometry.qc.reports.ANY = "flow_cytometry.qc.reports.ANY"
+flow_cytometry.qc.reports.FLOWAI_QCMINI_TXT = ".flowai_qcmini.txt"
+flow_cytometry.qc.reports.FLOWAI_REPORT_HTML = ".flowai_report.html"
+flow_cytometry.qc.reports.PEACOQC_REPORT_TXT = ".peacoqc_report.txt"
+flow_cytometry.qc.reports.PEACOQC_REPORT_PNG = ".peacoqc_report.png"
+
+flow_cytometry.qc.summary = types.SimpleNamespace()
+flow_cytometry.qc.summary.ANY = "flow_cytometry.qc.summary.ANY"
+flow_cytometry.qc.summary.FLOWAI_QCSTATS_XLSX = ".flowai_qc_stats.xlsx"
+flow_cytometry.qc.summary.FLOWAI_QCSTATS_JPG = ".flowai_qc_stats.jpg"
+flow_cytometry.qc.summary.PEACOQC_REPORT_TXT = ".peacoqc_summary.txt"
+flow_cytometry.qc.summary.PEACOQC_REPORT_PNG = ".peacoqc_summary.png"
+flow_cytometry.qc.summary.ROUTINE_GATING_STATS_XLSX = ".routine_gating_summary.xlsx"
+flow_cytometry.qc.summary.ROUTINE_GATING_STATS_JPG = ".routine_gating_summary.jpg"
+
+flow_cytometry.qc.gating = types.SimpleNamespace()
+flow_cytometry.qc.gating.CYTOCLUSTER_STRAT_CSV = ".cytocluster_gating_strat.csv"
+flow_cytometry.qc.gating.CYTOCLUSTER_STATS_TSV = ".cytocluster_gating_stats.tsv"
+flow_cytometry.qc.gating.CYTOCLUSTER_JPG = ".cytocluster_gating.jpg"
+flow_cytometry.qc.gating.CYTOCLUSTER_MARKER_EXPRESSION_HTML = (
+    ".cytocluster_marker_expression.html"
+)
+flow_cytometry.qc.gating.CYTOCLUSTER_MARKER_EXPRESSION_TSV = (
+    ".cytocluster_marker_expression.tsv"
+)
 
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
