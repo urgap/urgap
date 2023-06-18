@@ -1,4 +1,5 @@
 import logging
+from collections import defaultdict
 from pprint import pformat
 from plotly.offline import init_notebook_mode, iplot
 
@@ -95,8 +96,28 @@ UReport id {id(self)}
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
 
         init_notebook_mode(connected=True)
+        custom_hover_data = []
+        for i, node in enumerate(nodes):
+            custom_hover_data.append(f"<b>UNodeExeID:</b> {node}<br><b>Alias:</b> {i}")
             self.node_aliases[i] = node
+        sources = []
+        targets = []
+        colors = []
+        shortened_nodes = []
+            sources.append(source)
+            targets.append(target)
+        for node in nodes:
+            if node.startswith("<"):
+                colors.append("orange")
+                shortened_nodes.append(node)
+            else:
+                colors.append("blue")
+                shortened_nodes.append(node.rsplit("_", 2)[0])
+
         fig = go.Figure(
+            data=[
+                go.Sankey(
+            ],
             layout=go.Layout(
                 title="Simplified DAG with aliases",
                 showlegend=False,
