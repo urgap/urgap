@@ -117,7 +117,14 @@ from pathlib import Path
         Returns:
         """
         missing_exe = []
+        if "exe_path" in self.META_INFO:
+            exe_exists = self.exe_path.exists() and self.exe_path.is_file()
+        else:
+            for exe in engine_exe_list:
+                path = self.exe_path.parent.joinpath(exe)
 
+                if (path.exists() and path.is_file()) is False:
+                    missing_exe.append(exe)
 
         if len(missing_exe) != 0:
             return False
