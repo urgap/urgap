@@ -36,6 +36,10 @@ class UNodeManager(UserDict):
         "R-4.x.x": {
             "command": ["R", "--version"],
             "regex_pattern": r"^R version 4\.[0-9]*\.[0-9]* ",
+        },
+        "R-3.x.x": {
+            "command": ["R", "--version"],
+            "regex_pattern": r"^R version 3\.[0-9]*\.[0-9]* ",
     }
 
 
