@@ -62,6 +62,13 @@ from pathlib import Path
 
 
 
+    """
+    cert_path.mkdir(exist_ok=True)
+    for certificate in cert_path.glob("*"):
+        cert_url = certificate.stem
+
+
+
     Args:
 
     Returns:
