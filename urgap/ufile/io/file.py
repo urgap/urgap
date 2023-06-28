@@ -20,6 +20,7 @@ class IOPython(UIOBase):
         """
         tags = None
         try:
+                tags = json.load(f)
         except FileNotFoundError:
             pass
         return tags
