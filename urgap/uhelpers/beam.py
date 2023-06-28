@@ -68,6 +68,17 @@ from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
 
 
 
+    Args:
+
+    Returns:
+    """
+    ufiles = []
+    for i in pcol_input:
+        ufiles += i[1]
+    return ["GroupKey", ufiles]
+
+
+
     def __init__(
 
         Args:
