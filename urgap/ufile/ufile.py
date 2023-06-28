@@ -43,6 +43,9 @@ class UFile:
         if self.io.local_object_exists() is True:
             remote_tags = self.io.get_remote_tags()
             if remote_tags is None:
+                if len(non_standard_tags) > 0:
+                        "Remote has no tags, thus the file is not downloaded again."
+                    )
                 download_file = False
                     " Will not download file anymore."
                 )
