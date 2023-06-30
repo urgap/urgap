@@ -66,6 +66,9 @@ from pathlib import Path
     cert_path.mkdir(exist_ok=True)
     for certificate in cert_path.glob("*"):
         cert_url = certificate.stem
+            f"Using custom SSL certificate for {cert_url}."
+            "Consider using a non-self-signed certificate."
+        )
 
 
 
