@@ -145,29 +145,38 @@ class UTrace:
                     )
                     new_output_file_list.append(uf)
 
+        uris = []
         for ouftype, mdict in self.unode_meta["output_uftypes"].items():
             if mdict["min"] == 0:
                 continue
             if mdict["min"] == mdict["max"]:
                 for n in range(1, mdict["max"] + 1):
+                    uri = self.get_output_file_uri(
                         uftype=ouftype,
                         n=n,
                         max_n=mdict["max"],
                     )
+                    uris.append(uri)
             elif mdict["max"] == -1:
+                uri = self.get_output_file_uri(
                     uftype=ouftype,
                     n=1,
                     max_n="N",
                 )
+                uris.append(uri)
             elif mdict["min"] < mdict["max"]:
+                uri = self.get_output_file_uri(
                     uftype=ouftype,
                     n=1,
                     max_n="N",
                 )
+                uris.append(uri)
             else:
+        uris = [uri for uri in uris if uri is not None]
 
 
         Args:
+        Returns:
         """
         safe_to_create = True
         if n is None:
@@ -180,6 +189,16 @@ class UTrace:
                 safe_to_create = False
             if n == self.unode_meta["output_uftypes"][uftype]["max"]:
         if safe_to_create:
+            uri = f"{self.output_base_storage_uri}?uftype={uftype}#{self.output_files_stem}_{n}_of_{max_n}{uftype}"
+        else:
+            uri = None
+        return uri
+
+    def extend_output_files_by_uftype(
+        self,
+
+        Args:
+        """
 
         remote_ofiles = ddict(list)
         if len(self.output_files) != 0:
