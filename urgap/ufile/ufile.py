@@ -6,6 +6,8 @@ import re
 import shutil
 import tarfile
 import zipfile
+import zlib
+from base64 import b64decode
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
 from zipfile import ZipFile
