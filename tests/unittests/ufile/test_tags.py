@@ -52,5 +52,7 @@ def test_setting_tags_merges_with_remote(tmp_scratch_disk):
     content = Path("test_node_data/test.txt")
     uf.rebase(f"file://{tmp_scratch_disk}")
     new_uri = uf.as_uri()
+    assert "md5" not in new_uri
+    assert "md5" in uf.as_uri()
     uf.upload()
     uf.purge_local()
