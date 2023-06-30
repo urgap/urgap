@@ -19,6 +19,7 @@ import click
     Args:
     """
     base_folder = Path(folder)
+    resulting_uris = []
     with tqdm(
         total=len(all_files),
         desc="Uploading",
