@@ -15,6 +15,9 @@ import click
     """
 
 
+
+    Args:
+    """
     base_folder = Path(folder)
     with tqdm(
         total=len(all_files),
