@@ -40,6 +40,7 @@ proteomics.denovosearch.NOVOR_CSV = ".novor.csv"
 proteomics.converter = types.SimpleNamespace()
 proteomics.converter.ANY = "proteomics.converter.ANY"
 proteomics.converter.PYMZML_MGF = ".pymzml.mgf"
+proteomics.converter.PYMZML_IDXGZ = ".pymzml_idx.gz"
 proteomics.converter.PYIOHAT_CSV = ".pyiohat.csv"
 
 # Validator
@@ -210,6 +211,7 @@ ms.converter.ANY = "ms.converter.ANY"
 ms.converter.mzml = types.SimpleNamespace()
 ms.converter.mzml.ANY = "ms.converter.mzml.ANY"
 ms.converter.mzml.THERMORAWPARSER_MZML = ".thermorawparser.mzml"
+ms.converter.mzml.PYMZML_IDXGZ = ".pymzml_idx.gz"
 
 # Compression formats===========================================================
 compression = types.SimpleNamespace()
