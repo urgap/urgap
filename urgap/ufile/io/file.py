@@ -31,6 +31,8 @@ class IOPython(UIOBase):
 
 
         """
+        try:
+        except FileNotFoundError:
 
         try:
 
