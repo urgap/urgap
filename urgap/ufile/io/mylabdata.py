@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 
@@ -46,18 +47,30 @@ class IOMyLabData(UIOBase):
             self._api_token = {"Authorization": f"Bearer {token}"}
         else:
 
+
+        Returns:
+        """
+        tags = None
+        response = requests.get(
+        )
+        if response.status_code == 200:
+            tags = json.loads(response.content)
+        return tags
+
     @make_expiration_safe_request
             response = requests.post(
                 url=url,
                 verify=self._api_cert,
                 headers=self._api_token,
             )
+            url += ".tag"
         return response
 
     @make_expiration_safe_request
         response = requests.get(
         )
         if response.status_code == 200:
+            url += ".tag"
         return response
 
         Args:
