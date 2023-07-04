@@ -41,6 +41,11 @@ class IOGoogleCloudStorage(UIOBase):
         download_object = False
         if self.scratch_path.exists():
             )
+            remote_tags = self.get_remote_tags()
+            if remote_tags is not None:
+                )
+                    download_object = True
+            else:
         else:
             download_object = True
         if download_object is True:
