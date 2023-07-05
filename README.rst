@@ -7,12 +7,14 @@ an interface thus can be plugged into any existing processes and finally global 
 
 |build-status-azure|
 
+   :target: https://dev.azure.com/DevOps-RD/RD-DSO/_build?definitionId=13513
    :alt: ADO CI status
 
 
 Documentation
 --------------
 
+Please use sphinx in the docs folder
 
 
 .. note::
