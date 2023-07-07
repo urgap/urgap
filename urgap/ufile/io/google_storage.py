@@ -29,6 +29,8 @@ class IOGoogleCloudStorage(UIOBase):
 
         Returns:
         """
+        if blob is None:
+            return None
         return blob.metadata
 
         """Upload scratch file to remote location with associated tags.
