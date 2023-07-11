@@ -41,6 +41,8 @@ from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
         if len(key_value_pair) > 1:
             manual_pipeline_args[key_value_pair[0]] = key_value_pair[1]
 
+    if "credentials_lookup" not in input_json:
+        input_json["credentials_lookup"] = None
 
     # Extract pipeline configuration from default configuration
     pipeline_config = default_pipeline_args.get("pipeline_configuration", {})
