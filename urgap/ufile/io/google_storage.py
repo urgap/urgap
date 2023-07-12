@@ -1,4 +1,5 @@
 import logging
+import re
 
 from google.cloud import storage
 
@@ -56,3 +57,4 @@ class IOGoogleCloudStorage(UIOBase):
 
         Returns:
         """
+        return container_objects
