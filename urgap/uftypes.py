@@ -184,6 +184,7 @@ flow_cytometry.qc.reports.FLOWAI_QCMINI_TXT = ".flowai_qcmini.txt"
 flow_cytometry.qc.reports.FLOWAI_REPORT_HTML = ".flowai_report.html"
 flow_cytometry.qc.reports.PEACOQC_REPORT_TXT = ".peacoqc_report.txt"
 flow_cytometry.qc.reports.PEACOQC_REPORT_PNG = ".peacoqc_report.png"
+flow_cytometry.qc.reports.FLOWCUT_REPORT_TXT = ".flowcut_report.txt"
 
 flow_cytometry.qc.summary = types.SimpleNamespace()
 flow_cytometry.qc.summary.ANY = "flow_cytometry.qc.summary.ANY"
