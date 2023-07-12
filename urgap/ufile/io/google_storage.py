@@ -58,3 +58,8 @@ class IOGoogleCloudStorage(UIOBase):
         Returns:
         """
         return container_objects
+
+
+        Returns:
+        """
+        return self.blob.exists()
