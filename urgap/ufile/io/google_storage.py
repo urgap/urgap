@@ -49,9 +49,13 @@ class IOGoogleCloudStorage(UIOBase):
                 )
                     download_object = True
             else:
+                download_object = False
         else:
             download_object = True
         if download_object is True:
+            if self.remote_object_exists():
+                self.blob.download_to_filename(filename=self.scratch_path)
+            else:
 
         Args:
 
