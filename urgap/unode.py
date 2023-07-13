@@ -105,6 +105,9 @@ from pathlib import Path
         Returns:
         """
         try:
+        except (FileNotFoundError, NotImplementedError) as e:
+            if isinstance(e, FileNotFoundError):
+            elif isinstance(e, NotImplementedError):
             return None
 
         pure_engine_exe_list = [Path(x).name for x in engine_exe_list]
