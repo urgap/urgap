@@ -105,6 +105,7 @@ from pathlib import Path
         Returns:
         """
         try:
+            new_ufiles = remote_ufile.uncompress()
         except (FileNotFoundError, NotImplementedError) as e:
             if isinstance(e, FileNotFoundError):
             elif isinstance(e, NotImplementedError):
