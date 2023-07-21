@@ -1,4 +1,5 @@
 
+import collections
 import click
 
 
@@ -22,7 +23,11 @@ import click
     )
     click.secho(
     )
+    counter = collections.defaultdict(int)
+    tags = set()
+            counter["test_nodes"] += 1
             continue
+        counter["unodes"] += 1
         if v.requires_3rd_party_installation is True:
             status_3rd_party = get_status(v.has_all_required_installations())
         else:
@@ -32,8 +37,14 @@ import click
         )
         wrapper_version = "{major}.{minor}.{patch}".format(**w)
         is_of_engine_type = ", ".join(v.META_INFO["engine_type"])
+        tags |= set(v.META_INFO["engine_type"])
         click.echo(
         )
+    click.echo(
+        "\nIn summary a total {unodes} wrappers are available. Not showing {test_nodes} test_nodes".format(
+    )
+    click.echo(f"Total number of tags {len(tags)}")
+    for _ in range(0, len(sorted_tags), 7):
 
 
 @click.command()
