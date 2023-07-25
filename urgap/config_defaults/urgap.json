@@ -35,4 +35,7 @@
     },
     "resource_urls": {
         "value": [
+    },
+    "mode": {
+        "value": "dev",
     }
