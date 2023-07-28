@@ -85,6 +85,8 @@ from pathlib import Path
     """
     banners = [
         r"""
+        r"""
+        """,
     ]
     constellations = [
         [
