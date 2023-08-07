@@ -206,6 +206,9 @@ flow_cytometry.qc.gating.CYTOCLUSTER_MARKER_EXPRESSION_TSV = (
     ".cytocluster_marker_expression.tsv"
 )
 
+flow_cytometry.stats = types.SimpleNamespace()
+
+
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
