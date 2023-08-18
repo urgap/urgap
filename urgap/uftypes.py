@@ -175,6 +175,8 @@ ms.IONS_DRIFT_CORRECTED_CSV = ".ions_drift_corrected.csv"
 ms.KEGG_MAP_HTML = ".kegg_map.html"
 
 flow_cytometry = types.SimpleNamespace()
+flow_cytometry.FCS = ".flow_cytometry.fcs"
+flow_cytometry.CALIBRATION_FCS = ".flow_cytometry.calibration_fcs"
 
 flow_cytometry.qc = types.SimpleNamespace()
 
