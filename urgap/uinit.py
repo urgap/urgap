@@ -61,6 +61,7 @@ from pathlib import Path
     try:
             config = json.load(uj)
     except FileNotFoundError:
+            config = json.load(uj)
     return {k: v["value"] for k, v in config.items() if isinstance(v, dict)}
 
 
