@@ -2,6 +2,50 @@
 
 [build-system]
 
+[project]
+readme = "README.rst"
+dynamic = ["version"]
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Environment :: Console',
+    'Intended Audience :: Developers',
+    'Intended Audience :: Education',
+    'Intended Audience :: Science/Research',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: MacOS :: MacOS X',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Operating System :: POSIX :: SunOS/Solaris',
+    'Operating System :: Unix',
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
+    'Topic :: Scientific/Engineering :: Chemistry',
+]
+dependencies = [
+    'nbformat>=4.2.0',
+    'openpyxl',
+    'plotly',
+]
+
+[project.optional-dependencies]
+cloud = [
+    'cloud-sql-python-connector~=1.0',
+    'pg8000~=1.29',
+]
+all = [
+    'cloud-sql-python-connector~=1.0',
+    'pg8000~=1.29',
+]
+
+[project.scripts]
+
+[tool.setuptools.packages.find]
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.package-data]
+"*" = ["*.txt"]
+
 
 line-length = 88
 ]
