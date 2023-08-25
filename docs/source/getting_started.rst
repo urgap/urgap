@@ -44,6 +44,8 @@ Installation from source
 
 
 You might need administrator privileges to write in the Python site-package folder.
+On Linux or OS X, use ``"sudo python3 -m pip install ."`` or write into a user folder
+by using this command ``"python3 -m pip install . --user"``. On Windows, you have to
 start the command line with administrator privileges.
 
 Setting up mongoDB and/or minio
