@@ -57,10 +57,13 @@ from pathlib import Path
             shutil.copy(config_json, target_json_path)
 
 
+
+    Args:
     """
     try:
             config = json.load(uj)
     except FileNotFoundError:
+        copy_config_if_needed(target_dir=config_root)
             config = json.load(uj)
     return {k: v["value"] for k, v in config.items() if isinstance(v, dict)}
 
