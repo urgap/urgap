@@ -4,6 +4,26 @@ from pathlib import Path
 
 
 
+DEFAULT_CREDENTIALS_SCHEME = {
+    "type": "object",
+    "maxItems": 8,
+    "required": [
+        "description",
+        "scheme",
+        "host",
+        "user",
+        "password",
+        "secure",
+        "secret_store",
+    ],
+    "properties": {
+        "description": {"type": "string"},
+        "scheme": {"type": "string"},
+        "host": {"type": "string"},
+        "secure": {"type": "boolean"},
+        "secret_store": {"type": "string"},
+    },
+}
 
 
 class UCredentialManager:
@@ -77,6 +97,8 @@ class UCredentialManager:
 
         Returns:
         """
+        validate(instance=cred_entry, schema=DEFAULT_CREDENTIALS_SCHEME)
+        return cred_entry
 
         """Add credentials to the manager.
 
