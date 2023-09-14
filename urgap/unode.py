@@ -15,6 +15,7 @@ from pathlib import Path
 
 
         self._exe_path = None
+        self.status = None
         self.tmp_files = []
         self.utrace_history = []
 
@@ -99,6 +100,9 @@ from pathlib import Path
         else:
         return subfolder
 
+
+        Returns:
+        """
 
         Args:
 
