@@ -194,3 +194,13 @@ class FilterByUftype(beam.DoFn):
                 uflist = uflist.keep_uftypes(uftypes)
         yield (element_key, [uf.as_uri() for uf in uflist])
 
+
+class OutputRenamer(beam.DoFn):
+    """Copy and rename output UFiles to user-friendly specifications."""
+
+        where source_file_stem is the file stem of the file in the source_pcol that is
+
+        Args:
+
+        """
+        element_key, element_list = element
