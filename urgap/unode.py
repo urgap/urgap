@@ -101,8 +101,10 @@ from pathlib import Path
         return subfolder
 
 
+
         Returns:
         """
+            return "x86_64"
 
         Args:
 
