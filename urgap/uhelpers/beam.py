@@ -198,10 +198,12 @@ class FilterByUftype(beam.DoFn):
 class OutputRenamer(beam.DoFn):
     """Copy and rename output UFiles to user-friendly specifications."""
 
+        """Copy and rename input UFiles.
 
         where source_file_stem is the file stem of the file in the source_pcol that is
 
         Args:
 
+        Yields:
         """
         element_key, element_list = element
