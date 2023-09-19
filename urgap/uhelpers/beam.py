@@ -200,6 +200,7 @@ class OutputRenamer(beam.DoFn):
 
         """Copy and rename input UFiles.
 
+        Files are renamed so that: <working_dir>/<prefix><source_file_stem><suffix>
         where source_file_stem is the file stem of the file in the source_pcol that is
 
         Args:
@@ -207,3 +208,7 @@ class OutputRenamer(beam.DoFn):
         Yields:
         """
         element_key, element_list = element
+        renamed_uf_list = uf_list.simplify_names(
+        )
+        for uf in renamed_uf_list:
+            yield (element_key, [uf.as_uri()])

@@ -229,3 +229,16 @@ class UFileList(UserList):
 
 
         """
+
+        Args:
+
+        Returns:
+        """
+        for ufile in self:
+            renamed_ufile_list.append(
+                ufile.simplify_name(
+                    source_object_names=source_object_names,
+                    prefix=prefix,
+                    suffix=suffix,
+            )
+        return renamed_ufile_list

@@ -264,3 +264,11 @@ class UFile:
 
         Returns:
         """
+
+
+        Args:
+
+        Returns:
+        """
+        if len(matching_source) != 1:
+            return None
