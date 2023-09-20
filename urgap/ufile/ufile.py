@@ -163,6 +163,7 @@ class UFile:
 
         Args:
         """
+        parsed_uri = urlparse(uri)
 
             scheme=None if parsed_uri.scheme == "" else parsed_uri.scheme,
             netloc=None if parsed_uri.netloc == "" else parsed_uri.netloc,
@@ -270,5 +271,12 @@ class UFile:
 
         Returns:
         """
+        matching_source = source_object_names.intersection(self.parents)
         if len(matching_source) != 1:
             return None
+        simple_name = ""
+        if prefix is not None:
+            simple_name += prefix
+        if suffix is not None:
+            simple_name += suffix
+        return self
