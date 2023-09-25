@@ -22,6 +22,7 @@ DEFAULT_CREDENTIALS_SCHEME = {
         "host": {"type": "string"},
         "secure": {"type": "boolean"},
         "secret_store": {"type": "string"},
+        "cloud_host_pid": {"type": "string"},
     },
 }
 
