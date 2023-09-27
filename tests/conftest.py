@@ -130,3 +130,17 @@ def provide_clean_scratch_and_remote(request):
 
     if str(request.param[0]) == "json":
         um.ufile.io.remote_path.unlink()
+
+
+def provide_changeable_config():
+    shutil.copy(default, backup)
+    yield None
+    shutil.copy(backup, default)
+    os.remove(backup)
+
+
+def provide_changeable_credentials():
+    shutil.copy(default, backup)
+    yield None
+    shutil.copy(backup, default)
+    os.remove(backup)
