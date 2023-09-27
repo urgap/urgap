@@ -29,4 +29,7 @@ from pathlib import Path
 
 
         if wid_folder.exists():
+            try:
+                subprocess.call(["chmod", "-R", "0777", wid_folder])
+                shutil.rmtree(wid_folder)
 
