@@ -30,3 +30,4 @@ BSA1.mzML.ujson
 _playground/
 _notebooks_/
 /**/tmp
+.env
