@@ -208,6 +208,10 @@ class OutputRenamer(beam.DoFn):
         Yields:
         """
         element_key, element_list = element
+        source_object_names = set()
+        for _, source_files in source_pcol:
+            for source_file in source_files:
+                source_object_names.add(source_file.split("#")[-1])
         renamed_uf_list = uf_list.simplify_names(
         )
         for uf in renamed_uf_list:
