@@ -98,13 +98,17 @@ from pathlib import Path
         if self.META_INFO.get("platform_independent", True) is True:
             subfolder = "platform_independent/arc_independent"
         else:
+            subfolder = f"{sys.platform}/{self.get_comp_arch()}"
         return subfolder
 
 
 
         Returns:
         """
+        comp_platform = sys.platform
+        comp_arch = platform.machine()
             return "x86_64"
+
 
         Args:
 
