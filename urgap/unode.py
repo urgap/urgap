@@ -85,6 +85,7 @@ from pathlib import Path
             )
                 )
             sys_platform = sys.platform
+            comp_arch = self.get_comp_arch()
             try:
             except KeyError:
         else:
