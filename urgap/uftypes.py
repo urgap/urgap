@@ -214,6 +214,9 @@ flow_cytometry.gating_strategy.FLOWJO_WSP = ".flowjo.wsp"
 flow_cytometry.gating_strategy.CYTOBANK_XML = ".cytobank.xml"
 
 flow_cytometry.stats = types.SimpleNamespace()
+flow_cytometry.stats.STATS_CSV = ".fc_stats.csv"
+flow_cytometry.stats.GATING_TREE = ".fc_gating_tree.txt"
+flow_cytometry.stats.FREQS_CSV = ".fc_freqs.csv"
 
 
 # Data Conversion===============================================================
