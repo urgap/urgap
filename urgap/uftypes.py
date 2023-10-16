@@ -208,6 +208,10 @@ flow_cytometry.qc.gating.CYTOCLUSTER_MARKER_EXPRESSION_HTML = (
 flow_cytometry.qc.gating.CYTOCLUSTER_MARKER_EXPRESSION_TSV = (
     ".cytocluster_marker_expression.tsv"
 )
+flow_cytometry.gating_strategy = types.SimpleNamespace()
+flow_cytometry.gating_strategy.ANY = "flow_cytometry.gating_strategy.ANY"
+flow_cytometry.gating_strategy.FLOWJO_WSP = ".flowjo.wsp"
+flow_cytometry.gating_strategy.CYTOBANK_XML = ".cytobank.xml"
 
 flow_cytometry.stats = types.SimpleNamespace()
 
