@@ -34,6 +34,7 @@ class UTrace:
             self.output_files = output_files
 
     @property
+    def remote_output_files(self) -> dict:
 
         """
         if self._remote_output_files is None:
@@ -60,32 +61,38 @@ class UTrace:
     @classmethod
 
     @property
+    def output_base_storage_uri(self) -> str:
         if self._output_base_storage_uri is None:
             self._output_base_storage_uri = self._set_output_storage_uri()
         return self._output_base_storage_uri
 
     @property
+    def output_files_stem(self) -> str:
         if self._output_files_stem is None:
             self._output_files_stem = self.determine_output_files_stem()
         return self._output_files_stem
 
     @property
+    def id(self) -> tuple:
 
         Returns:
         """
 
     @property
+    def wid(self) -> str:
         return self.urun_dict.wid
 
     @property
         return self.output_files_stem
 
     @property
+    def was_skipped(self) -> bool:
 
         Returns:
         """
 
     @property
+    def was_run(self) -> bool:
 
         Returns:
         """
@@ -196,6 +203,7 @@ class UTrace:
 
     def extend_output_files_by_uftype(
         self,
+        uftype: str,
 
         Args:
         """
@@ -211,6 +219,7 @@ class UTrace:
                     remote_ofiles[uftype].append(ufile)
         return remote_ofiles
 
+    def evaluate_if_rerun_is_required(self) -> list:
 
         Returns:
         """
@@ -247,6 +256,7 @@ class UTrace:
         Args:
         """
 
+    def get_parent_files(self) -> list:
         """Get list of input files in URunDict.
 
         Returns:
