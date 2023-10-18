@@ -1,11 +1,13 @@
 import types
 
 import networkx as nx
+import networkx.classes.digraph
 
 
 
 class UTreeQuerier:
 
+    """
         """Build a directed graph from a file providing namespacing.
 
         Args:
@@ -30,6 +32,7 @@ class UTreeQuerier:
         for leaf, ext in general_types:
             for node in leafs_with_ext:
 
+    def get_nodes_with_ext(self, ext: str) -> list:
 
         Args:
 
@@ -37,6 +40,7 @@ class UTreeQuerier:
         """
         return [x for x, y in self.G.nodes(data=True) if y.get("ext", "").endswith(ext)]
 
+    def get_subgraph(self, node: str) -> networkx.classes.digraph.DiGraph:
 
         Args:
 
@@ -44,6 +48,7 @@ class UTreeQuerier:
         """
         return nx.ego_graph(self.G, node, radius=100)
 
+    def get_leafs_from_node(self, node: str) -> list:
 
         Args:
 
@@ -56,6 +61,7 @@ class UTreeQuerier:
             ]
         except KeyError as e:
 
+    def to_root(self, node: str) -> list:
 
         Args:
 

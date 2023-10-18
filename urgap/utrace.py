@@ -181,6 +181,7 @@ class UTrace:
             else:
         uris = [uri for uri in uris if uri is not None]
 
+    def get_output_file_uri(
 
         Args:
         Returns:
