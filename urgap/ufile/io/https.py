@@ -13,6 +13,7 @@ class IOHTTPS(UIOBase):
 
         Returns:
         """
+        if response.status_code == 200:
         return tags
 
         """Get referenced URL.
