@@ -13,6 +13,7 @@ class IOHTTPS(UIOBase):
 
         Returns:
         """
+        return tags
 
         """Get referenced URL.
 
@@ -27,6 +28,7 @@ class IOHTTPS(UIOBase):
         except urllib.error.URLError:
                 "[ - HTTP - ] For OSX, make sure that certificates are installed (/Applications/Python 3.x/Install Certificates.command)",
             )
+            self.scratch_path.unlink()
 
 
         """Verify referenced remote object exists.
