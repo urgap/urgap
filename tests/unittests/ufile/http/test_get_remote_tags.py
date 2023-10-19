@@ -1,4 +1,8 @@
 
+remote_url = "https://raw.githubusercontent.com/computational-ms/demo_files/main/ursgal_resources"
+
+
+def test_get_remote_tags_omssa_2_1_9():
     node_urn = "darwin/arm64/omssa_2_1_9.zip"
     remote_tag = ufile.io.get_remote_tags()
     assert remote_tag["md5"] == "403e1f1245f8e4a73ffedcd33c5d2c51"
