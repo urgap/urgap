@@ -47,3 +47,8 @@ from pathlib import Path
 
     Returns:
     """
+
+
+@flow(name="Import Flow")
+    urd, input_json = parse_inputs(input_json=input_json)
+    pipeline(urd, input_json)
