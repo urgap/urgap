@@ -31,5 +31,19 @@ from pathlib import Path
     return urd, input_json
 
 
-        else:
 
+    Args:
+
+    Returns:
+    """
+    for e in iterable:
+        if hasattr(e, "__iter__") and not isinstance(e, str):
+        else:
+            yield e
+
+
+
+    Args:
+
+    Returns:
+    """
