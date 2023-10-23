@@ -50,5 +50,8 @@ from pathlib import Path
 
 
 @flow(name="Import Flow")
+
+    Args:
+    """
     urd, input_json = parse_inputs(input_json=input_json)
     pipeline(urd, input_json)
