@@ -54,12 +54,15 @@ class URunDict(UserDict):
         return default_storage_parameters
 
     @property
+    def wid(self) -> str:
 
         Returns:
         """
         return self["wid"]
 
     @wid.setter
+
+        Args:
         """
         self["wid"] = wid
 
@@ -67,6 +70,7 @@ class URunDict(UserDict):
         self.assign_wid()
 
     @property
+    def parameters(self) -> dict:
         """Get wrapper parameters.
 
         Returns:
@@ -74,18 +78,29 @@ class URunDict(UserDict):
         return self.get("parameters", {})
 
     @parameters.setter
+
+        Args:
+        """
         self["parameters"] = parameters
 
     @property
+    def user_dict(self) -> dict:
 
         Returns:
         """
         return self.get("user_dict", {})
 
     @user_dict.setter
+
+        Args:
+        """
         self["user_dict"] = user_dict
 
     @property
+    def unode_parameters(self) -> dict:
+
+        Returns:
+        """
         return self["unode_parameters"]
 
     @unode_parameters.setter
@@ -98,6 +113,7 @@ class URunDict(UserDict):
         )
 
     @property
+    def unode_rinfo(self) -> dict:
 
         Returns:
         """
@@ -111,6 +127,7 @@ class URunDict(UserDict):
         self["unode_rinfo"] = self._update_default_storage("unode_rinfo", unode_rinfo)
 
     @property
+    def meta_info(self) -> dict:
 
         Returns:
         """
