@@ -43,7 +43,15 @@ from pathlib import Path
 
 
 
+    Args:
+    """
 
+
+
+    Args:
+
+    Returns:
+    """
         uris = [uris]
     else:
         uris = list(flatten_no_strings(uris))
@@ -59,6 +67,9 @@ from pathlib import Path
 
 
 def simplify_output_names(
+
+    Args:
+    """
     uris = retrieve_processed_uris(uris=uris)
     source_uris = retrieve_processed_uris(uris=sources)
     source_object_names = set()
