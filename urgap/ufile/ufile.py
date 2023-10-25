@@ -280,4 +280,6 @@ class UFile:
             simple_name += prefix
         if suffix is not None:
             simple_name += suffix
+        if storage_base_uri is None:
+        else:
         return self
