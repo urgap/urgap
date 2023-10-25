@@ -43,10 +43,33 @@ from pathlib import Path
 
 
 
+
+        uris = [uris]
+    else:
+        uris = list(flatten_no_strings(uris))
+    return uris
+
+
+
     Args:
 
     Returns:
     """
+    uris = retrieve_processed_uris(uris=uris)
+
+
+def simplify_output_names(
+    uris = retrieve_processed_uris(uris=uris)
+    source_uris = retrieve_processed_uris(uris=sources)
+    source_object_names = set()
+    for uri in source_uris:
+        source_object_names.add(uri.split("#")[-1])
+    ufiles.simplify_names(
+        source_object_names=source_object_names,
+        prefix=prefix,
+        suffix=suffix,
+        storage_base_uri=storage_base_uri,
+    )
 
 
 @flow(name="Import Flow")
