@@ -20,6 +20,7 @@ from pathlib import Path
         self.utrace_history = []
 
     @property
+    def exe_path(self) -> os.PathLike:
 
         Returns:
         """
@@ -27,6 +28,7 @@ from pathlib import Path
         return self._exe_path
 
     @property
+    def resource_is_available(self) -> bool:
 
 
         Returns:
@@ -34,6 +36,7 @@ from pathlib import Path
         ]["resource_available"]
 
     @property
+    def requires_3rd_party_installation(self) -> bool:
 
         Returns:
         """
@@ -93,6 +96,7 @@ from pathlib import Path
         """
 
     @property
+    def resource_subfolder(self) -> str:
 
         Returns:
         """
@@ -102,6 +106,7 @@ from pathlib import Path
             subfolder = f"{sys.platform}/{self.get_comp_arch()}"
         return subfolder
 
+    def get_comp_arch(self) -> str:
 
 
         Returns:
@@ -128,6 +133,7 @@ from pathlib import Path
             uf.purge_local()
         return True
 
+    def check_if_all_exe_exist(self, engine_exe_list: list) -> bool:
 
         Args:
 

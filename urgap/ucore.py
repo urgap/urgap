@@ -28,6 +28,9 @@ from pathlib import Path
 
 
 
+
+    Raises:
+    """
         if wid_folder.exists():
             try:
                 subprocess.call(["chmod", "-R", "0777", wid_folder])

@@ -1,3 +1,4 @@
+import collections.abc
 import logging
 from collections.abc import Iterable
 
@@ -17,6 +18,7 @@ class UFileList(UserList):
         self.wid = None
 
     @property
+    def all_remote_files_exist(self) -> bool:
 
         Returns:
         """
@@ -69,6 +71,7 @@ class UFileList(UserList):
         """
 
     @property
+    def id(self) -> collections.abc.Hashable:
 
         Returns:
         """
@@ -113,6 +116,7 @@ class UFileList(UserList):
                 )
         return filtered_ufile_list
 
+    def get_indices_by_uftype(self, uftype: str) -> list[int]:
 
         Args:
 
@@ -128,11 +132,13 @@ class UFileList(UserList):
         indices = []
         return indices
 
+    def get_index_groups_by_uftypes(self) -> dict:
 
         Returns:
         """
         return {uftype: self.get_indices_by_uftype(uftype) for uftype in all_uftypes}
 
+    def get_path_object_groups_by_uftypes(self) -> dict:
 
         Returns:
         """
@@ -140,6 +146,7 @@ class UFileList(UserList):
             uftype: self.get_path_objects_by_uftype(uftype) for uftype in all_uftypes
         }
 
+    def get_path_objects_by_uftype(self, uftype: str) -> list:
 
         Args:
 
@@ -148,6 +155,10 @@ class UFileList(UserList):
         idxs = self.get_indices_by_uftype(uftype)
         return [self[i].path for i in idxs]
 
+    def complete_file_counts(self) -> dict:
+
+        Returns:
+        """
         dynamic_index_groups = {}
         for uftype, idx_list in self.get_index_groups_by_uftypes().items():
             if self[idx_list[0]].is_borg:
@@ -155,6 +166,7 @@ class UFileList(UserList):
                 for i in idx_list:
         return dynamic_index_groups
 
+    def number_of_uftypes(self) -> dict:
 
         Returns:
         """
@@ -163,6 +175,7 @@ class UFileList(UserList):
             numbers_by_uftype[k] = len(v)
         return numbers_by_uftype
 
+    def extend_by_uftype(self, uftype: str) -> int:
 
         Args:
 
@@ -190,6 +203,10 @@ class UFileList(UserList):
         return len(self) - 1
 
 
+        Args:
+        """
+
+    def get_storage_base_uris(self) -> list:
 
         Returns:
         """

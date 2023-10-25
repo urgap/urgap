@@ -168,6 +168,7 @@ class URunDict(UserDict):
         self.data["output_files"] = output_files
 
     @property
+    def command_list(self) -> list:
 
         Returns:
         """

@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from pathlib import Path
 
 
@@ -37,6 +38,7 @@ class UCredentialManager:
 
     def __init__(
         self,
+        credentials_id_key: str = "{scheme}://{host}",
         """Initialize UCredentials.
 
         Args:
@@ -93,6 +95,7 @@ class UCredentialManager:
             )
             del self._extracted_secrets[cred_key]
 
+    def validate_credential_entry(self, cred_entry: dict) -> dict:
 
         Args:
 
@@ -108,6 +111,7 @@ class UCredentialManager:
         for cred_entry in credential_list:
             self.ingest_cred_entry(cred_entry)
 
+    def format_cred_key(self, cred_entry: dict) -> str:
 
         Args:
 

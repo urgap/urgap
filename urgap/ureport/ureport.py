@@ -1,6 +1,7 @@
 import logging
 from collections import defaultdict
 from pprint import pformat
+import networkx as nx
 from plotly.offline import init_notebook_mode, iplot
 
 
@@ -39,6 +40,7 @@ UReport id {id(self)}
         """
 
     @property
+    def wids(self) -> set:
 
         Returns:
         """
@@ -49,6 +51,7 @@ UReport id {id(self)}
         """
 
     @property
+    def graph(self) -> nx.DiGraph:
 
         Returns:
         """
@@ -90,6 +93,7 @@ UReport id {id(self)}
         Returns:
         """
 
+    def data_exists(self) -> bool:
 
         return self.umeta.umeta_exists(reference_ufile)
 

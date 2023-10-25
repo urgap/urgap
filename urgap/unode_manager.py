@@ -1,5 +1,7 @@
 """Unode Manager class.
 
+This module defines the UNode Manager class which is used to initialize UNodes
+and check if their requirements are met, so they can actually be run.
 """
 import importlib
 import inspect
@@ -63,6 +65,7 @@ class UNodeManager(UserDict):
         }
         self.node_availability_lookup = {}
 
+    def generate_wrapper_lookup(self) -> dict:
 
 
         Returns:
