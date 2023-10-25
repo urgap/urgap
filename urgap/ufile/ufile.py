@@ -266,6 +266,7 @@ class UFile:
         Returns:
         """
 
+    def simplify_name(
 
         Args:
 

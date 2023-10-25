@@ -257,5 +257,6 @@ class UFileList(UserList):
                     source_object_names=source_object_names,
                     prefix=prefix,
                     suffix=suffix,
+                    storage_base_uri=storage_base_uri,
             )
         return renamed_ufile_list
