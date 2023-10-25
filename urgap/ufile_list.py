@@ -92,6 +92,8 @@ class UFileList(UserList):
 
     def filter(
 
+        Args:
+
         Returns:
         """
         if input_uftypes is None:
@@ -131,6 +133,7 @@ class UFileList(UserList):
     ) -> list[int]:
 
         Args:
+            search_value: Value to match.
 
         Returns:
         """
@@ -236,6 +239,9 @@ class UFileList(UserList):
         Args:
 
         Returns:
+
+        Raises:
+            TypeError: If uftype_list is not a list.
         """
         if isinstance(uftype_list, list) is False:
             )
@@ -254,8 +260,10 @@ class UFileList(UserList):
     def simplify_names(
 
         Args:
+            source_object_names: Set of intended object name stems.
 
         Returns:
+            UFileList with simplified names.
         """
         for ufile in self:
             renamed_ufile_list.append(

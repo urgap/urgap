@@ -26,6 +26,9 @@ class UReport:
         else:
 
     @property
+
+        Returns:
+        """
         if self._umeta is None:
         return self._umeta
 
@@ -95,6 +98,17 @@ UReport id {id(self)}
 
     def data_exists(self) -> bool:
 
+        Returns:
+            True if data exists, else False.
+        """
+
+        """Check if meta data file object exists.
+
+        Args:
+
+        Returns:
+            True if meta data exists, else False.
+        """
         return self.umeta.umeta_exists(reference_ufile)
 
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
@@ -134,6 +148,7 @@ UReport id {id(self)}
 
 
         Args:
+                Leave list empty to request all output uftypes.
 
         Returns:
         """

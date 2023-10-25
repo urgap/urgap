@@ -17,6 +17,8 @@ class UTrace:
         """Construct a new UTrace instance.
 
         Args:
+            unode_meta: UNode meta information dictionary.
+            umeta_io: UMeta interface to use.
         """
         self._output_base_storage_uri = None
         self._output_files_stem = None
@@ -59,6 +61,7 @@ class UTrace:
         return
 
     @classmethod
+            umeta_dict: Dict containing umeta information.
 
     @property
     def output_base_storage_uri(self) -> str:
@@ -184,6 +187,8 @@ class UTrace:
     def get_output_file_uri(
 
         Args:
+            n: Current number of files matching uftype.
+            max_n: Max number of files matching uftype or "N" for an unspecified number.
         Returns:
         """
         safe_to_create = True
@@ -207,6 +212,8 @@ class UTrace:
         uftype: str,
 
         Args:
+            n: Current number of files matching uftype.
+            max_n: Max number of files matching uftype or "N" for an unspecified number.
         """
 
         remote_ofiles = ddict(list)
@@ -223,6 +230,7 @@ class UTrace:
     def evaluate_if_rerun_is_required(self) -> list:
 
         Returns:
+            List of reasons for rerun. If empty, no rerun is triggered.
         """
         reasons = []
         if self.urun_dict.unode_parameters["force"] is True:
@@ -261,6 +269,7 @@ class UTrace:
         """Get list of input files in URunDict.
 
         Returns:
+            List of input files.
         """
         ilist = self.urun_dict.data.get("input_files", None)
         if ilist is None:
@@ -286,6 +295,7 @@ class UTrace:
     def load_from_umeta(
 
         Args:
+            umeta_io: UMeta interface to be used.
 
         Returns:
         """

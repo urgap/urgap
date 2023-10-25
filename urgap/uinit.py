@@ -90,6 +90,7 @@ from pathlib import Path
     return path
 
 
+def show_banner() -> str:
 
     Returns:
     """

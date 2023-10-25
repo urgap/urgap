@@ -7,6 +7,7 @@ import os
 
 def sense_compression_format(file: os.PathLike) -> str:
 
+
     Args:
 
     Returns:

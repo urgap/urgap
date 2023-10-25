@@ -11,7 +11,9 @@ class UTreeQuerier:
         """Build a directed graph from a file providing namespacing.
 
         Args:
+            namespace: Provides the namespace which is basis for the edges.
 
+        Note:
         """
         if namespace is None:
             namespace = namespace.__dict__
@@ -51,6 +53,7 @@ class UTreeQuerier:
     def get_leafs_from_node(self, node: str) -> list:
 
         Args:
+            node: Name of the query node.
 
         Returns:
         """
@@ -64,6 +67,7 @@ class UTreeQuerier:
     def to_root(self, node: str) -> list:
 
         Args:
+            node: Name of the query node.
 
         Returns:
         """

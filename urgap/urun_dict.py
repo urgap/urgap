@@ -210,9 +210,11 @@ class URunDict(UserDict):
 
         """Determine the root folder for output files.
 
+
         Args:
 
         Returns:
+            Path to output file stem.
         """
         if ufiles is None:
             ufiles = self.input_files
@@ -228,3 +230,7 @@ class URunDict(UserDict):
         if self.unode_parameters["override_folder_creation"] is True:
         else:
         return new_fragment
+
+
+        Args:
+        """
