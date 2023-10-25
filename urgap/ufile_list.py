@@ -88,6 +88,7 @@ class UFileList(UserList):
             else:
                 flat_list.append(entry)
 
+    def filter(
 
         Returns:
         """
@@ -124,6 +125,8 @@ class UFileList(UserList):
         """
         return self.get_indices_matching_tag(tag="uftype", search_value=uftype)
 
+    def get_indices_matching_tag(
+    ) -> list[int]:
 
         Args:
 
@@ -246,6 +249,7 @@ class UFileList(UserList):
 
 
         """
+    def simplify_names(
 
         Args:
 

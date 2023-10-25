@@ -50,6 +50,7 @@ class UCredentialManager:
         for cred_entry in self.read_credentials(json_path=json_path):
             self.ingest_cred_entry(cred_entry)
 
+    def get_user(
 
         Args:
 
@@ -63,6 +64,7 @@ class UCredentialManager:
             user = None
         return user
 
+    def get_password(
 
         Args:
 

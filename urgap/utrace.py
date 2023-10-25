@@ -283,6 +283,7 @@ class UTrace:
 
 
     @classmethod
+    def load_from_umeta(
 
         Args:
 

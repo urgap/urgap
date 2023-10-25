@@ -19,6 +19,8 @@ from pathlib import Path
     return signature is not None
 
 
+def calculate_file_hash(
+) -> str:
 
     Args:
 
