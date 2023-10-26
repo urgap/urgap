@@ -95,6 +95,7 @@ class UFile:
         Returns:
         """
 
+
         Args:
 
         Returns:
@@ -138,6 +139,7 @@ class UFile:
         Returns:
         """
 
+
         Args:
 
         Returns:
@@ -150,6 +152,7 @@ class UFile:
 
         Returns:
 
+        Raises:
         """
             )
 
@@ -215,6 +218,7 @@ class UFile:
         self.purge_local_tags()
 
             self.io.scratch_path.unlink()
+
 
 
         Args:
