@@ -2,3 +2,7 @@
 
 URunDict Class
 ##############
+
+   :members:
+
+   .. automethod:: __init__

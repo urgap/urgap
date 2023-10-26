@@ -56,6 +56,7 @@ this style in your docstrings
 
 
 Other rules and considerations
+******************************
 
 Please focus on contributing mainly source code and refrain from adding large files (e.g. mzML files).
 to keep the overview of code contributions neat and clean.
