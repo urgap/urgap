@@ -224,6 +224,9 @@ class UFileList(UserList):
         Args:
 
         Returns:
+
+        Raises:
+            TypeError: If uftype_list is not a list.
         """
         if isinstance(uftype_list, list) is False:
             )

@@ -30,6 +30,7 @@ from pathlib import Path
     @property
     def resource_is_available(self) -> bool:
 
+        Note:
 
         Returns:
         """
@@ -93,6 +94,7 @@ from pathlib import Path
             except KeyError:
         else:
 
+        Returns:
         """
 
     @property
@@ -108,6 +110,8 @@ from pathlib import Path
 
     def get_comp_arch(self) -> str:
 
+        Note:
+            platform.machine() outcomes on different platforms:
 
         Returns:
         """
@@ -155,6 +159,7 @@ from pathlib import Path
             return False
 
 
+        Note:
         """
         for path in self.tmp_files:
             if str(path) in [".", "/", "./", "../"]:
@@ -169,6 +174,8 @@ from pathlib import Path
                     path.unlink()
         self.tmp_files = []
 
+
+        """
 
 
         Args:

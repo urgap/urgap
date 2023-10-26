@@ -61,7 +61,10 @@ class UTrace:
         return
 
     @classmethod
+
+        Args:
             umeta_dict: Dict containing umeta information.
+        """
 
     @property
     def output_base_storage_uri(self) -> str:
@@ -189,6 +192,7 @@ class UTrace:
         Args:
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
+
         Returns:
         """
         safe_to_create = True
