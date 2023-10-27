@@ -57,6 +57,7 @@ class IOGoogleCloudStorage(UIOBase):
                 self.blob.download_to_filename(filename=self.scratch_path)
             else:
 
+
         Args:
 
         Returns:

@@ -23,6 +23,24 @@ UFile IO Classes
 
    :members:
 
-   :members:
+   .. automethod:: __init__
 
    :members:
+
+   .. automethod:: __init__
+
+   :members:
+
+   .. automethod:: __init__
+
+   :members:
+
+   .. automethod:: __init__
+
+   :members:
+
+   .. automethod:: __init__
+
+   :members:
+
+   .. automethod:: __init__
