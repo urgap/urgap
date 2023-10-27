@@ -63,6 +63,7 @@ from time import sleep
     return uris
 
 
+@task(retries=3, retry_delay_seconds=10)
 
     Args:
 
@@ -71,6 +72,7 @@ from time import sleep
     uris = retrieve_processed_uris(uris=uris)
 
 
+@task(retries=10, retry_delay_seconds=10)
 def simplify_output_names(
 
     Args:
