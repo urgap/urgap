@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from time import sleep
 
 
 
@@ -55,6 +56,10 @@ from pathlib import Path
         uris = [uris]
     else:
         uris = list(flatten_no_strings(uris))
+        while True:
+            uris = [uri.get_state() for uri in uris]
+            if (len(set(uris)) == 1) and ("plete" in uris[0].lower()):
+                break
     return uris
 
 
