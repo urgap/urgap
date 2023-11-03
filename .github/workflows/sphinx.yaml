@@ -7,5 +7,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         run: |
+          pip install --upgrade pip
         uses: JamesIves/github-pages-deploy-action@v4
         with:
