@@ -33,6 +33,8 @@ cloud = [
 ]
 ]
 docs = [
+    'sphinx',
+    'sphinx-rtd-theme',
 ]
 ]
 all = [
