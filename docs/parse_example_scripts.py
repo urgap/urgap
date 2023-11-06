@@ -43,6 +43,7 @@ def main():
             current_level = current_level[subfolder]
 
         current_level[basename] = doc_path / basename
+        with open(Path(__file__).resolve().parent / doc_path / basename, "w") as o:
             print(""".. code-block:: python\n""", file=o)
             with open(example_file) as infile:
                 for line in infile:
