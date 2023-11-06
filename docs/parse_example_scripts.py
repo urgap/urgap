@@ -26,6 +26,7 @@ def main():
     ).resolve()
     rst_data = {}
     for example_file in example_path.glob("**/*.py"):
+        doc_path = Path("source/code_inc")
         sub_folder_structure = example_file.parts[
             example_file.parts.index("example_scripts") + 1 : -1
         ]

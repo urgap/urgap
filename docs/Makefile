@@ -1,3 +1,5 @@
+AUTO_GEN1 = /usr/bin/env python3 parse_example_scripts.py
+AUTO_GEN2 = /usr/bin/env python3 parse_third_party.py
 # You can set these variables from the command line.
 # from the environment for the first two.
 SPHINXOPTS    ?=
