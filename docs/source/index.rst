@@ -16,6 +16,7 @@ Documentation
    quickstart
    faq
    third_party
+   example_scripts
 
 .. toctree::
    :glob:
