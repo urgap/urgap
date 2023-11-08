@@ -244,6 +244,7 @@ exp_design.input.UTMX_METADATA_XLSX = ".utmx_metadata.xlsx"
 exp_design.input.PX_METADATA_JSON = ".px_metadata.json"
 exp_design.input.NGS_METADATA_JSON = ".ngs_metadata.json"
 exp_design.input.TEST_METADATA_JSON = ".test_metadata.json"
+exp_design.input.FLOWCYTO_METADATA_XLSX = ".flowcyto_metadata.xlsx"
 
 exp_design.output = types.SimpleNamespace()
 exp_design.output.ANY = "exp_design.output.ANY"
