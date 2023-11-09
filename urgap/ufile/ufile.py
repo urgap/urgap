@@ -25,6 +25,7 @@ class UFile:
         self._lineage_root_files = None
         self._lineage_graph = None
         self.was_downloaded_to_scratch = False
+        self._tags = None
 
         self._io = None
 
@@ -32,6 +33,11 @@ class UFile:
 
         Returns:
         """
+        if self._tags is None:
+            self._tags = self.io.get_remote_tags()
+            if self._tags is None:
+                self._tags = {}
+        return self._tags
 
     @property
 
@@ -53,6 +59,7 @@ class UFile:
                 )
                 download_file = False
             else:
+                    self.tags.update(
                         {
                     )
                     )
@@ -114,12 +121,14 @@ class UFile:
 
         Returns:
         """
+            self.tags.update(
             )
 
     @property
 
         Returns:
         """
+        uftype = self.tags.get("uftype", None)
         if uftype is None:
         return uftype
 
@@ -219,6 +228,7 @@ class UFile:
 
             self.io.scratch_path.unlink()
 
+        self._tags = None
 
 
         Args:

@@ -64,6 +64,11 @@ class IOMyLabData(UIOBase):
                 headers=self._api_token,
             )
             url += ".tag"
+                url=url,
+                data=json.dumps(tags).encode("utf-8"),
+                verify=self._api_cert,
+                headers=self._api_token,
+            )
         return response
 
     @make_expiration_safe_request

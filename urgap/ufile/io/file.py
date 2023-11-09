@@ -35,6 +35,8 @@ class IOPython(UIOBase):
         except FileNotFoundError:
 
         try:
+            if tags is not None:
+                    json.dump(tags, remote_tag_file)
 
         """Verify referenced remote object exists.
 
