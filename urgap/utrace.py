@@ -156,6 +156,7 @@ class UTrace:
                 for ofile in self.output_files:
                         uri=ofile.as_uri(
                     )
+                    uf.tags.update({"uftype": i_uftype})
                     new_output_file_list.append(uf)
 
         uris = []

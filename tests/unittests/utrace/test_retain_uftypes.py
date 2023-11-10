@@ -18,6 +18,7 @@ def test_retain_uftype_all_same_not_set():
         urun_dict=urd,
         input_files=input_files,
     )
+    assert ut.output_files[0].tags.get("uftype", None) == ".any.csv"
 
 
 def test_retain_uftype_all_same():
@@ -37,6 +38,7 @@ def test_retain_uftype_all_same():
 
     # First check the scans_file
     assert (
+        ut.output_files[0].tags.get("uftype", None)
     )
 
 
@@ -54,3 +56,4 @@ def test_retain_uftype_different():
         urun_dict=urd,
         input_files=input_files,
     )
+    assert ut.output_files[0].tags.get("uftype", None) == ".any.csv"

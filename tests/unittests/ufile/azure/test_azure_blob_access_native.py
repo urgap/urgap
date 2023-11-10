@@ -8,3 +8,4 @@ def test_azure_native_io(tmp_file):
     uf.purge_local()
 
     assert "Earl Grey" in new_uf.path.read_text()
+    assert new_uf.tags.get("temp", None) == "hot"

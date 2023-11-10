@@ -29,6 +29,7 @@ Using UFiles, the data abstraction layer
     print(ufile.path)
     # Accessing the path attribute automatically downloads the file
     
+    ufile.tags.update({"source": "tagesschau.de"})
     # Update tags locally
 
     from pathlib import Path

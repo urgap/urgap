@@ -61,6 +61,7 @@ def test_raw_to_pwstats_pipeline():
     )
     fasta = fasta.uncompress()
     fasta.upload()
+    fasta.tags.update({"uftype": fasta_uftype})
     assert fasta.path.exists()
     td_fasta = target_decoy.run([fasta], urun_dict)
     assert td_fasta[0].path.exists()
