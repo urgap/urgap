@@ -83,6 +83,17 @@ class IOMyLabData(UIOBase):
 
         Returns:
         """
+        equip_task_id_fragment.append(limit)
+        query = urlencode(
+            dict(
+                zip(
+                    (
+                        "equipmentId",
+                        "taskId",
+                        "limit",
+                    ),
+                    equip_task_id_fragment,
+        )
         response = requests.get(
         )
         return container_objects
