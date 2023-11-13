@@ -1,3 +1,4 @@
+import json
 import logging
 import urllib
 
@@ -13,7 +14,11 @@ class IOHTTPS(UIOBase):
 
         Returns:
         """
+        tags = None
         if response.status_code == 200:
+            try:
+                tags = response.json()
+            except json.decoder.JSONDecodeError:
         return tags
 
         """Get referenced URL.

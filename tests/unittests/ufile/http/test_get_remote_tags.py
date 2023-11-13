@@ -19,3 +19,9 @@ def test_get_remote_tags_no_file():
     node_urn = "None"
     remote_tag = ufile.io.get_remote_tags()
     assert remote_tag is None
+
+
+def test_get_remote_tags_no_tags_but_response():
+    )
+    remote_tag = ufile.io.get_remote_tags()
+    assert remote_tag is None
