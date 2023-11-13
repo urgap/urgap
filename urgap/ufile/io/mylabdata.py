@@ -96,6 +96,11 @@ class IOMyLabData(UIOBase):
         )
         response = requests.get(
         )
+        while len(response.json()["data"].get("nextPage", "")) != 0:
+            response = requests.get(
+                verify=self._api_cert,
+                headers=self._api_token,
+            )
         return container_objects
 
 
