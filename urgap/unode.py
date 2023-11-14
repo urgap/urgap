@@ -10,6 +10,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 
@@ -56,6 +57,7 @@ from pathlib import Path
             input_files=ufiles,
             unode_meta=self.META_INFO,
         )
+        starting_time = time.time()
         self.utrace_history.append(ut.id)
         reasons = ut.evaluate_if_rerun_is_required()
         ut.info()

@@ -260,6 +260,8 @@ class UFileList(UserList):
 
 
         """
+        return [u.as_uri() for u in self]
+
     def simplify_names(
 
         Args:
