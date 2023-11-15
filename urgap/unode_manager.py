@@ -120,7 +120,11 @@ class UNodeManager(UserDict):
         """
         availabilities = []
         for pypackage in requirements.get("python_packages", []):
+            self.availability["python_packages"][pypackage] = False
                     )
+                package_version = self._check_for_module(pypackage)
+                if package_version is not None:
+                    self.availability["python_packages"][pypackage] = True
             availabilities.append(self.availability["python_packages"][pypackage])
         for resource in requirements.get("other_dependencies", []):
                     f"Wrapper {unode} contains requirements {resource} and we don't"

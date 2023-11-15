@@ -14,3 +14,11 @@ def test__test_command_not_available():
 def test_has_all_required_third_party_installs_without_init():
     assert test_node.has_all_required_installations() is True
     assert test_node.has_all_required_installations() is True
+
+
+def test__check_for_module():
+    no_version = um._check_for_module("definitely_no_module")
+    assert no_version is None
+    pandas_version = um._check_for_module("pandas")
+    assert pandas_version is not None
+
