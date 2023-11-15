@@ -119,7 +119,9 @@ class UNodeManager(UserDict):
         Returns:
         """
         availabilities = []
+        for pypackage in requirements.get("python_packages", []):
                     )
+            availabilities.append(self.availability["python_packages"][pypackage])
         for resource in requirements.get("other_dependencies", []):
                     f"Wrapper {unode} contains requirements {resource} and we don't"
                     " know how to validate this. Please reach out to the dev team "
