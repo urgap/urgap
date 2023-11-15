@@ -41,6 +41,7 @@ docs = [
 all = [
     'cloud-sql-python-connector~=1.0',
     'pg8000~=1.29',
+    'psycopg2-binary',
 ]
 
 [project.scripts]
