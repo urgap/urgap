@@ -123,6 +123,12 @@ class UNodeManager(UserDict):
             self.availability["python_packages"][pypackage] = False
             with_operator = False
             operators = {
+                "==": lambda version: version.__eq__,
+                ">=": lambda version: version.__ge__,
+                "<=": lambda version: version.__le__,
+                ">": lambda version: version.__gt__,
+                "<": lambda version: version.__lt__,
+                "!=": lambda version: version.__ne__,
             }
                 if operator in pypackage:
                     with_operator = True
