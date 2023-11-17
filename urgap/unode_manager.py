@@ -121,7 +121,16 @@ class UNodeManager(UserDict):
         availabilities = []
         for pypackage in requirements.get("python_packages", []):
             self.availability["python_packages"][pypackage] = False
+            with_operator = False
+            operators = {
+            }
+                if operator in pypackage:
+                    with_operator = True
+                    pypackage_clean, required_pypackage_version = pypackage.split(
                     )
+                    package_version = self._check_for_module(pypackage_clean)
+                    break
+            if with_operator is False:
                 package_version = self._check_for_module(pypackage)
                 if package_version is not None:
                     self.availability["python_packages"][pypackage] = True
