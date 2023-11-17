@@ -30,6 +30,10 @@ def test__check_for_module():
     [
         ({"python_packages": ["pandas"]}, True),
         ({"python_packages": ["no_package_for_sure"]}, False),
+        (
+            {"python_packages": ["pandas>=0.0.3", "plotly", "networkx", "click>=1.2"]},
+            True,
+        ),
     ],
 )
 def test_check_pypackage_requirements(requirements):
