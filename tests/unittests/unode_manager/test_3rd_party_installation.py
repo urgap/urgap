@@ -28,6 +28,11 @@ def test__check_for_module():
 @pytest.mark.parametrize(
     "requirements",
     [
+        ({"python_packages": ["pandas"]}, True),
+        ({"python_packages": ["no_package_for_sure"]}, False),
     ],
 )
 def test_check_pypackage_requirements(requirements):
+    reqs, expected = requirements
+    is_available = um.check_requirements(requirements=reqs)
+    assert is_available is expected
