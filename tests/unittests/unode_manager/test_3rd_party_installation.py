@@ -1,3 +1,5 @@
+import pytest
+
 
 
 def test__test_command():
@@ -22,3 +24,10 @@ def test__check_for_module():
     pandas_version = um._check_for_module("pandas")
     assert pandas_version is not None
 
+
+@pytest.mark.parametrize(
+    "requirements",
+    [
+    ],
+)
+def test_check_pypackage_requirements(requirements):
