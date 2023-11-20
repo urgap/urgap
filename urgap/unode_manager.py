@@ -65,6 +65,29 @@ class UNodeManager(UserDict):
         }
         self.node_availability_lookup = {}
 
+        try:
+        except importlib.metadata.PackageNotFoundError:
+            return None
+
+        is_available = False
+        try:
+            proc = subprocess.run(
+                command_list,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if proc.returncode == 0:
+                if regex_pattern is not None:
+                    for line in proc.stdout.split("\n"):
+                        if re.search(regex_pattern, line) is not None:
+                            is_available = True
+                else:
+                    is_available = True
+        except FileNotFoundError:
+            pass
+        return is_available
+
     def generate_wrapper_lookup(self) -> dict:
 
 
