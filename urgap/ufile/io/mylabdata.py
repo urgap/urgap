@@ -54,6 +54,9 @@ class IOMyLabData(UIOBase):
         """
         tags = None
         response = requests.get(
+            url=url,
+            verify=self._api_cert,
+            headers=self._api_token,
         )
         if response.status_code == 200:
             tags = json.loads(response.content)
@@ -75,6 +78,9 @@ class IOMyLabData(UIOBase):
 
     @make_expiration_safe_request
         response = requests.get(
+            url=url,
+            verify=self._api_cert,
+            headers=self._api_token,
         )
         if response.status_code == 200:
             url += ".tag"
@@ -97,6 +103,9 @@ class IOMyLabData(UIOBase):
                     equip_task_id_fragment,
         )
         response = requests.get(
+            url=url,
+            verify=self._api_cert,
+            headers=self._api_token,
         )
         while len(response.json()["data"].get("nextPage", "")) != 0:
             response = requests.get(
