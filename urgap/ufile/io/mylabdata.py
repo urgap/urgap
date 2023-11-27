@@ -41,6 +41,8 @@ class IOMyLabData(UIOBase):
         files_cred = {
         }
         response = requests.post(
+            json=files_cred,
+            verify=self._api_cert,
         )
         if response.status_code == 200:
             token = response.json()["data"]["token"]
