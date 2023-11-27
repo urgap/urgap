@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 from time import sleep
 
@@ -78,6 +79,7 @@ def simplify_output_names(
     Args:
     """
     uris = retrieve_processed_uris(uris=uris)
+    if len(uris) == 0:
     source_uris = retrieve_processed_uris(uris=sources)
     source_object_names = set()
     for uri in source_uris:
