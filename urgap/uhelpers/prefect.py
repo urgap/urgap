@@ -96,6 +96,7 @@ def simplify_output_names(
 
     Returns:
     """
+    uris = retrieve_processed_uris(uris=uris)
     filtered_ufile_list = ufile_list.keep_uftypes(uftype)
     return [uf.as_uri() for uf in filtered_ufile_list]
 
