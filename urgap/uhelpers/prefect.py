@@ -103,6 +103,15 @@ def simplify_output_names(
     return [uf.as_uri() for uf in filtered_ufile_list]
 
 
+@task(name="Rebase", retries=3, retry_delay_seconds=20)
+
+    Args:
+    """
+    uris = retrieve_processed_uris(uris=uris)
+    for uf in ufile_list:
+        uf.rebase(uri=storage_base_uri, upload=True)
+
+
 @flow(name="Import Flow")
 
     Args:
