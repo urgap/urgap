@@ -90,6 +90,16 @@ def simplify_output_names(
     )
 
 
+@task(name="Filter uftypes", retries=3, retry_delay_seconds=10)
+
+    Args:
+
+    Returns:
+    """
+    filtered_ufile_list = ufile_list.keep_uftypes(uftype)
+    return [uf.as_uri() for uf in filtered_ufile_list]
+
+
 @flow(name="Import Flow")
 
     Args:
