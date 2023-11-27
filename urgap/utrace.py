@@ -17,8 +17,10 @@ class UTrace:
         """Construct a new UTrace instance.
 
         Args:
+            input_files: UFileList of (unfiltered) UFiles.
             unode_meta: UNode meta information dictionary.
             umeta_io: UMeta interface to use.
+            output_files: Output files as UFileList.
         """
         self._output_base_storage_uri = None
         self._output_files_stem = None
@@ -112,6 +114,7 @@ class UTrace:
         else:
         return output_storage_uri
 
+    def determine_output_files_stem(self) -> os.PathLike:
         """Determine the root folder for output files.
 
         Returns:

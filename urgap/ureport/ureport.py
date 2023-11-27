@@ -12,6 +12,7 @@ class UReport:
         self,
 
         Args:
+            wid: Workflow ID.
         """
         self._umeta = None
         self._os = []
@@ -105,6 +106,7 @@ UReport id {id(self)}
         """Check if meta data file object exists.
 
         Args:
+            reference_ufile: UFile to check.
 
         Returns:
             True if meta data exists, else False.
