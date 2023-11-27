@@ -57,6 +57,7 @@ from time import sleep
         uris = [uris]
     else:
         uris = list(flatten_no_strings(uris))
+    if len(uris) == 0:
         while True:
             uris = [uri.get_state() for uri in uris]
             if (len(set(uris)) == 1) and ("plete" in uris[0].lower()):
