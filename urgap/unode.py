@@ -44,6 +44,8 @@ from pathlib import Path
         """
         ]["has_3rd_party_requirements"]
 
+    def run(
+        self,
             msg = "UNode.run() function requires URunDict."
             raise TypeError(msg)
         urun_dict = copy.deepcopy(urun_dict)
@@ -121,6 +123,9 @@ from pathlib import Path
         comp_arch = platform.machine()
             return "x86_64"
 
+    def install_resource(
+        self,
+        engine_exe_list: list,
 
         Args:
 

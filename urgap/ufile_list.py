@@ -29,6 +29,9 @@ class UFileList(UserList):
                 break
         return r_value
 
+    def __setitem__(
+        self,
+        i: int,
 
         Args:
         """
@@ -59,6 +62,9 @@ class UFileList(UserList):
         self._eval_if_item_is_of_correct_type(item)
         super().append(item)
 
+    def insert(
+        self,
+        i: int,
 
         Args:
         """
@@ -91,6 +97,7 @@ class UFileList(UserList):
                 flat_list.append(entry)
 
     def filter(
+        self,
 
         Args:
 
@@ -130,6 +137,7 @@ class UFileList(UserList):
         return self.get_indices_matching_tag(tag="uftype", search_value=uftype)
 
     def get_indices_matching_tag(
+        self,
     ) -> list[int]:
 
         Args:
@@ -257,12 +265,17 @@ class UFileList(UserList):
 
 
     @classmethod
+    def from_uri_list(
+        cls,
+        uri_list: list[str],
 
 
         """
         return [u.as_uri() for u in self]
 
     def simplify_names(
+        self,
+        source_object_names: set,
 
         Args:
             source_object_names: Set of intended object name stems.

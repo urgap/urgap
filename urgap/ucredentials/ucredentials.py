@@ -51,6 +51,8 @@ class UCredentialManager:
             self.ingest_cred_entry(cred_entry)
 
     def get_user(
+        self,
+        force: bool = False,
 
         Args:
 
@@ -65,6 +67,8 @@ class UCredentialManager:
         return user
 
     def get_password(
+        self,
+        force: bool = False,
 
         Args:
 
@@ -78,6 +82,10 @@ class UCredentialManager:
             password = None
         return password
 
+    def extract_credentials(
+        self,
+        cred_key: str,
+        force: bool = False,
 
         Args:
 

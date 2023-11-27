@@ -10,6 +10,8 @@ from pathlib import Path
 
 
 
+def copy_resources_if_needed(
+    force: bool = False,
 
 
     Args:

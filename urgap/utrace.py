@@ -132,6 +132,7 @@ class UTrace:
         else:
         return new_fragment
 
+        self,
         if run_folder_name is None:
         else:
             top_level_folder = run_folder_name
@@ -192,6 +193,8 @@ class UTrace:
         uris = [uri for uri in uris if uri is not None]
 
     def get_output_file_uri(
+        self,
+        uftype: str,
 
         Args:
             n: Current number of files matching uftype.
@@ -301,6 +304,7 @@ class UTrace:
 
     @classmethod
     def load_from_umeta(
+        cls,
 
         Args:
             umeta_io: UMeta interface to be used.

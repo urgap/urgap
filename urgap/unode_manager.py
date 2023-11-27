@@ -110,6 +110,9 @@ class UNodeManager(UserDict):
         unode_class = getattr(module, class_name)
 
 
+    def check_unode_dependencies(
+        self,
+        unode: str,
 
         Args:
 
@@ -136,6 +139,10 @@ class UNodeManager(UserDict):
         tmp[unode]["requirements_available"] = all(
         )
 
+    def check_requirements(
+        self,
+        requirements: dict,
+    ) -> bool:
 
         Args:
 

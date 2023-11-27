@@ -8,6 +8,7 @@ import networkx.classes.digraph
 class UTreeQuerier:
 
     """
+
         """Build a directed graph from a file providing namespacing.
 
         Args:

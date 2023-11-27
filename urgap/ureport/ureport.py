@@ -69,6 +69,11 @@ UReport id {id(self)}
             )
         return graph
 
+    def walk(
+        self,
+        wid: str,
+        graph: nx.DiGraph,
+    ) -> nx.DiGraph:
 
         Args:
 
@@ -91,6 +96,10 @@ UReport id {id(self)}
                     )
         return graph
 
+    def was_skipped(
+        self,
+        wid: str,
+    ) -> bool:
 
         Args:
 

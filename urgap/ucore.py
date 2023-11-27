@@ -20,6 +20,7 @@ from pathlib import Path
 
 
 def calculate_file_hash(
+    hash_algorithm: str,
 ) -> str:
 
     Args:
