@@ -30,6 +30,7 @@ class UFile:
         self._io = None
 
     @property
+    def tags(self) -> dict:
 
         Returns:
         """
@@ -40,8 +41,10 @@ class UFile:
         return self._tags
 
     @property
+    def is_borg(self) -> bool:
 
     @property
+    def is_part_of_collection(self) -> bool:
 
     @property
 
@@ -70,6 +73,7 @@ class UFile:
             self.io.download()
         return self.io.scratch_path
 
+    def __repr__(self) -> str:
 
         Returns:
         """
@@ -87,11 +91,13 @@ class UFile:
         """
 
     @property
+    def object_name(self) -> str:
 
         Returns:
         """
 
     @property
+    def simple_name(self) -> str:
 
         Returns:
         """
@@ -125,6 +131,7 @@ class UFile:
             )
 
     @property
+    def uftype(self) -> str:
 
         Returns:
         """
@@ -132,6 +139,10 @@ class UFile:
         if uftype is None:
         return uftype
 
+    def upload(
+        self,
+        verify: bool = False,
+        retries: int = 3,
 
     @property
 
@@ -142,18 +153,23 @@ class UFile:
         return self._io
 
     @classmethod
+        cls,
 
         Args:
 
         Returns:
         """
 
+    def as_uri(
+        self,
+    ) -> str:
 
         Args:
 
         Returns:
         """
 
+    def as_storage_base_uri(self) -> str:
 
         Returns:
         """
@@ -212,6 +228,9 @@ class UFile:
         return compressed_ufile
 
 
+    def uncompress(
+        self,
+        recursive: bool = True,
 
         Args:
 
@@ -230,6 +249,7 @@ class UFile:
 
         self._tags = None
 
+    def identify_lineage_root_files(self, use_umeta: bool = True) -> list:
 
         Args:
 
@@ -242,6 +262,7 @@ class UFile:
             ]
         return self._lineage_root_files
 
+    def create_lineage_graph(self, use_umeta: bool = True) -> nx.DiGraph:
 
         Args:
 
@@ -276,11 +297,14 @@ class UFile:
         return graph
 
     @property
+    def parents(self) -> list:
 
         Returns:
         """
 
     def simplify_name(
+        self,
+        source_object_names: set,
 
         Args:
 
