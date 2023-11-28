@@ -64,6 +64,7 @@ class IOGoogleCloudStorage(UIOBase):
         """
         return container_objects
 
+    def remote_object_exists(self) -> bool:
 
         Returns:
         """

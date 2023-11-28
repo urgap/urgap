@@ -12,14 +12,18 @@ class IOAzureBlobStorage(UIOBase):
         """
 
     @property
+    def remote_path(self) -> None:
 
         Returns:
+            None.
         """
         return None
 
     @property
+    def remote_tag_path(self) -> None:
 
         Returns:
+            None.
         """
         return None
 
@@ -59,6 +63,7 @@ class IOAzureBlobStorage(UIOBase):
         """
         return container_objects
 
+    def remote_object_exists(self) -> bool:
 
         Returns:
         """

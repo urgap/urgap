@@ -4,6 +4,10 @@ import json
 
 
 def _check_if_config_key_value_is_valid(
+    config: dict,
+    config_key: str,
+    config_value: str,
+    verbose: bool = False,
     is_valid = True
         is_valid = False
     else:
@@ -11,6 +15,10 @@ def _check_if_config_key_value_is_valid(
     return is_valid
 
 
+def set_config(
+    config_key: str,
+    config_value: str,
+    verbose: bool = False,
         config = json.load(config_json)
     kv_is_valid = _check_if_config_key_value_is_valid(
         config,

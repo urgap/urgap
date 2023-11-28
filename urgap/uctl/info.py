@@ -9,6 +9,7 @@ import click
 
 
     Args:
+        condition: Availability of 3rd party/executable.
 
     Returns:
     """

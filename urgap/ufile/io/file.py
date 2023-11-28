@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import re
 import shutil
 from pathlib import Path
@@ -38,11 +39,15 @@ class IOPython(UIOBase):
             if tags is not None:
                     json.dump(tags, remote_tag_file)
 
+    def remote_object_exists(self) -> bool:
         """Verify referenced remote object exists.
 
         Returns:
         """
 
+    def create_container(
+        self,
+        exist_ok: bool = True,
 
         Args:
         """
@@ -55,6 +60,9 @@ class IOPython(UIOBase):
         """
         if container_name is None:
 
+    def list_container_items(
+        self,
+    ) -> list:
 
         Args:
 

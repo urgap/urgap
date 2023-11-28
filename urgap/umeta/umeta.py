@@ -57,16 +57,19 @@ class UMeta:
         Returns:
         """
 
+    def retrieve_interface_statistics(self) -> dict:
         return self.io.retrieve_interface_statistics()
 
 
         Args:
         """
 
+    def find_last_processed_files(self, unode: str, last: int = 10) -> list:
 
         Args:
 
         Returns:
+            List of node_exe_details sorted from newest to oldest.
         """
         return self.io.find_last_processed_files(unode, last=last)
 

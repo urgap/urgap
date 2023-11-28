@@ -1,3 +1,4 @@
+from __future__ import annotations
 import bz2
 import copy
 import gzip
@@ -185,6 +186,7 @@ class UFile:
         Returns:
         """
 
+    def remote_object_exists(self) -> bool:
         return self.io.remote_object_exists()
 
 

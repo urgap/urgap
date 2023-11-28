@@ -21,6 +21,7 @@ class IOHTTPS(UIOBase):
             except json.decoder.JSONDecodeError:
         return tags
 
+    def get_object(self) -> str:
         """Get referenced URL.
 
         Returns:
@@ -37,6 +38,7 @@ class IOHTTPS(UIOBase):
             self.scratch_path.unlink()
 
 
+    def remote_object_exists(self) -> bool:
         """Verify referenced remote object exists.
 
         Returns:

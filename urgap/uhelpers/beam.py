@@ -9,6 +9,9 @@ from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
 
 
 
+def parse_inputs(
+    argv: list,
+    save_main_session: bool,
 
     Args:
 

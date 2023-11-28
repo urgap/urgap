@@ -20,6 +20,7 @@ class UIOBase:
 
 
 
+    def local_object_exists(self) -> bool:
 
         Returns:
         """
