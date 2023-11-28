@@ -34,6 +34,7 @@ from time import sleep
     return urd, input_json
 
 
+def flatten_no_strings(iterable: Iterable) -> Generator:
 
     Args:
 
@@ -50,6 +51,8 @@ from time import sleep
     """
 
 
+def retrieve_processed_uris(
+) -> list:
 
     Args:
 
@@ -67,6 +70,10 @@ from time import sleep
 
 
 @task(retries=3, retry_delay_seconds=10)
+def run_unode(
+    unode: str,
+    config: dict,
+) -> list:
 
     Args:
 
@@ -77,8 +84,18 @@ from time import sleep
 
 @task(retries=10, retry_delay_seconds=10)
 def simplify_output_names(
+    ucredentials: dict,
+    config: dict,
+    sources: list,
+    prefix: str,
+    suffix: str,
+    storage_base_uri: str,
+) -> None:
 
     Args:
+
+    Returns:
+        None.
     """
     uris = retrieve_processed_uris(uris=uris)
     if len(uris) == 0:
@@ -95,6 +112,7 @@ def simplify_output_names(
 
 
 @task(name="Filter uftypes", retries=3, retry_delay_seconds=10)
+def filter_by_uftype(
 
     Args:
 

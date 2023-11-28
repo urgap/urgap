@@ -6,6 +6,7 @@ from pathlib import Path
 
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
+from pyvis.network import Network
 
 
 
@@ -85,6 +86,8 @@ def parse_inputs(
 
 
     def __init__(
+        self,
+        unode: str = "None",
 
         Args:
         """
@@ -105,6 +108,9 @@ def parse_inputs(
         if self._check_input(unode=unode, urd=urd):
             self.ready = True
 
+    def _check_input(
+        self,
+    ) -> bool:
 
         Args:
 
@@ -145,6 +151,7 @@ def parse_inputs(
 
 
 
+    Note:
 
     Args:
 
@@ -168,6 +175,11 @@ def parse_inputs(
 
 class Concat(beam.DoFn):
 
+    def process(
+        self,
+        element: tuple,
+        key_aware: bool = False,
+    ) -> tuple:
 
         Args:
 
@@ -184,6 +196,11 @@ class Concat(beam.DoFn):
 
 class FilterByUftype(beam.DoFn):
 
+    def process(
+        self,
+        element: tuple,
+        mode: str = "remove",
+    ) -> tuple:
 
         Args:
 
@@ -201,6 +218,9 @@ class FilterByUftype(beam.DoFn):
 class OutputRenamer(beam.DoFn):
     """Copy and rename output UFiles to user-friendly specifications."""
 
+    def process(
+        self,
+    ) -> tuple:
         """Copy and rename input UFiles.
 
         Files are renamed so that: <working_dir>/<prefix><source_file_stem><suffix>
