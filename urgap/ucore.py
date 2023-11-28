@@ -1,6 +1,8 @@
 import hashlib
+import logging
 import re
 import shutil
+import subprocess
 from functools import partial
 from pathlib import Path
 

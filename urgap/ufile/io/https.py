@@ -2,6 +2,8 @@ import json
 import logging
 import urllib
 
+import requests
+
 
 
 class IOHTTPS(UIOBase):

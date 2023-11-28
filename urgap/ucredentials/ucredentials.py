@@ -3,6 +3,7 @@ import logging
 import os
 from pathlib import Path
 
+from jsonschema import validate
 
 
 DEFAULT_CREDENTIALS_SCHEME = {
