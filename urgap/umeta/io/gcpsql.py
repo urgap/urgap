@@ -8,6 +8,7 @@ class UMeta(SQLAlchemyBaseUMeta):
         self._session = None
         self.name = "UMeta GCP SQL"
 
+    def generate_connection_string(self) -> str:
 
         Returns:
         """

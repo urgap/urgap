@@ -9,9 +9,11 @@ class UMeta(SQLAlchemyBaseUMeta):
         self._session = None
         self.name = "UMeta postgresql"
 
+    def generate_connection_string(self) -> str:
         """Generate SQLAlchemy compatible connection string.
 
         Returns:
+            Connection string.
         """
         )
         )

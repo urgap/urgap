@@ -51,6 +51,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         return {
         }
 
+        self,
 
         Args:
         """

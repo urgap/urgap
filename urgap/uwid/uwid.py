@@ -24,6 +24,7 @@ class UWIDGenerator:
         word_file = Path(__file__).parent / f"{word_type}"
 
     @property
+    def n(self) -> int:
 
         Returns:
         """
@@ -38,6 +39,7 @@ class UWIDGenerator:
         """
         return self.generate_wid()
 
+    def generate_wid(self) -> str:
 
         Returns:
         """

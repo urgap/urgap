@@ -8,6 +8,7 @@ class UMeta(UMetaIOBase):
         """Needs to be implemented."""
         self.name = "UMeta for test purposes"
 
+    def load(self) -> dict:
         """Needs to be implemented."""
         return {"history": [], "urun_dict": {}}
 
