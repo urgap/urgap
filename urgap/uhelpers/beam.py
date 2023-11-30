@@ -150,6 +150,7 @@ def parse_inputs(
 
 
 
+def generate_pyvis_network(pipeline: beam) -> Network:
 
     Note:
 
