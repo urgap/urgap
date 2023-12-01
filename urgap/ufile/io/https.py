@@ -17,6 +17,8 @@ class IOHTTPS(UIOBase):
         Returns:
         """
         tags = None
+        response = requests.get(
+        )
         if response.status_code == 200:
             try:
                 tags = response.json()
