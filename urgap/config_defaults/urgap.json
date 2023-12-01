@@ -39,4 +39,11 @@
     "mode": {
         "value": "dev",
     },
+    "requests_timeout_connect": {
+        "value": null,
+        "description": "Connect timeout for python requests"
+    },
+    "requests_timeout_read": {
+        "value": null,
+        "description": "Read timeout for python requests"
     }

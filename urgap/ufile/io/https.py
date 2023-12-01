@@ -18,6 +18,8 @@ class IOHTTPS(UIOBase):
         """
         tags = None
         response = requests.get(
+            timeout=(
+            ),
         )
         if response.status_code == 200:
             try:

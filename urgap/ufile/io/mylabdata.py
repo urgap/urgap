@@ -43,6 +43,8 @@ class IOMyLabData(UIOBase):
         response = requests.post(
             json=files_cred,
             verify=self._api_cert,
+            timeout=(
+            ),
         )
         if response.status_code == 200:
             token = response.json()["data"]["token"]
@@ -57,6 +59,8 @@ class IOMyLabData(UIOBase):
             url=url,
             verify=self._api_cert,
             headers=self._api_token,
+            timeout=(
+            ),
         )
         if response.status_code == 200:
             tags = json.loads(response.content)
@@ -67,12 +71,16 @@ class IOMyLabData(UIOBase):
                 url=url,
                 verify=self._api_cert,
                 headers=self._api_token,
+                timeout=(
+                ),
             )
             url += ".tag"
                 url=url,
                 data=json.dumps(tags).encode("utf-8"),
                 verify=self._api_cert,
                 headers=self._api_token,
+                timeout=(
+                ),
             )
         return response
 
@@ -81,6 +89,8 @@ class IOMyLabData(UIOBase):
             url=url,
             verify=self._api_cert,
             headers=self._api_token,
+            timeout=(
+            ),
         )
         if response.status_code == 200:
             url += ".tag"
@@ -110,11 +120,15 @@ class IOMyLabData(UIOBase):
             url=url,
             verify=self._api_cert,
             headers=self._api_token,
+            timeout=(
+            ),
         )
         while len(response.json()["data"].get("nextPage", "")) != 0:
             response = requests.get(
                 verify=self._api_cert,
                 headers=self._api_token,
+                timeout=(
+                ),
             )
         return container_objects
 
