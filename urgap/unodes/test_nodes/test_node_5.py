@@ -25,6 +25,8 @@
     }
 
 
+    def execute(
+        self,
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.
@@ -35,6 +37,8 @@
         super().execute(utrace)
         return utrace
 
+    def preflight(
+        self,
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.
