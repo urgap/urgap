@@ -5,6 +5,9 @@ import google_crc32c
 
 
 
+class IOGCPCreds(IOBaseCreds):
+
+        """Create new IOGCPCreds class."""
         self.version_id = kwargs["version_id"]
         self.project_id = kwargs["project_id"]
 

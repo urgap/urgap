@@ -1,6 +1,8 @@
 import os
 
 
+
+class IOEnvCreds(IOBaseCreds):
     """IO class interface Env."""
 
         """Create new IOEnvCreds class."""

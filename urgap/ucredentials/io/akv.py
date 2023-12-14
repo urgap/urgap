@@ -2,7 +2,10 @@ from azure.identity import DefaultAzureCredential
 
 
 
+class IOAzureCreds(IOBaseCreds):
+
         """Create new IOAzureCreds class."""
+        self.secret_name = self.secret_id
         self.vault_name = kwargs["vault_name"]
 
     def get_secret(self) -> str:
