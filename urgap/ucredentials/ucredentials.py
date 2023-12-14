@@ -51,6 +51,23 @@ class UCredentialManager:
         for cred_entry in self.read_credentials(json_path=json_path):
             self.ingest_cred_entry(cred_entry)
 
+
+    def init_io_class(
+        self,
+        secret_store: str,
+        secret_id: str,
+        if secret_store == "env":
+        elif secret_store == "gcp":
+                secret_id=secret_id,
+                project_id=cloud_host_pid,
+                version_id="latest",
+            )
+        elif secret_store == "akv":
+                secret_id=secret_id,
+                vault_name=cloud_host_pid,
+            )
+        else:
+
     def get_user(
         self,
         force: bool = False,

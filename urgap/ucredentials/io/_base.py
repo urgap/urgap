@@ -9,5 +9,8 @@ class IOBaseCreds:
         """Create new IOBaseCreds instance with secret_id attribute set from kwargs.
 
         Args:
+            **kwargs: Used to set secret_id attribute from key.
         """
         self.secret_id = kwargs["secret_id"]
+
+        """Get_secret method is implemented in subclass."""

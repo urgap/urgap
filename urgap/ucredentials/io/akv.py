@@ -3,6 +3,7 @@ from azure.identity import DefaultAzureCredential
 
 
 class IOAzureCreds(IOBaseCreds):
+    """IO class interface Azure."""
 
         """Create new IOAzureCreds class."""
         self.secret_name = self.secret_id
