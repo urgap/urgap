@@ -51,6 +51,10 @@ class UCredentialManager:
         for cred_entry in self.read_credentials(json_path=json_path):
             self.ingest_cred_entry(cred_entry)
 
+        self._io = None
+
+    @property
+        return self._io
 
     def init_io_class(
         self,
@@ -67,6 +71,8 @@ class UCredentialManager:
                 vault_name=cloud_host_pid,
             )
         else:
+                f"Don't know secret backend {secret_store}."
+            )
 
     def get_user(
         self,
