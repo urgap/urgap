@@ -35,6 +35,7 @@ class IOGCPCreds(IOBaseCreds):
             auth.exceptions.DefaultCredentialsError,
             google.api_core.exceptions.PermissionDenied,
         ):
+            logging.warning("Secret could not be retrieved from GCP.")
 
         if client is not None and response is not None:
             # Verify payload checksum.
