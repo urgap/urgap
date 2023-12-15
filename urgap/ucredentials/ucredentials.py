@@ -54,6 +54,7 @@ class UCredentialManager:
         self._io = None
 
     @property
+        """IO Property can be set with init_io_class()."""
         return self._io
 
     def init_io_class(
