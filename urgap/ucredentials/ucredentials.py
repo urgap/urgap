@@ -71,8 +71,10 @@ class UCredentialManager:
                 secret_id=secret_id,
                 vault_name=cloud_host_pid,
             )
+        elif secret_store == "echo":
         else:
                 f"Don't know secret backend {secret_store}."
+                f"Currently supported secret_stores are 'echo', 'env', 'gcp' and 'akv'."
             )
 
     def get_user(
