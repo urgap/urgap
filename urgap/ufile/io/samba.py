@@ -41,6 +41,10 @@ class IOSMB(UIOBase):
         Returns:
         """
         try:
+        except OperationFailure:
+            return False
+
+        """Get objects in folder/'container'.
 
 
         Args:
