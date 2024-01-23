@@ -13,6 +13,8 @@ class IOSMB(UIOBase):
             use_ntlm_v2=True,
             is_direct_tcp=True,
         )
+        self.conn_object.connect(
+        )
         self.conn_object.close()
 
         """Get remote tags associated with referenced file.
