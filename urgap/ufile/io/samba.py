@@ -1,4 +1,7 @@
+import json
 import logging
+import re
+from io import BytesIO
 
 
 
@@ -38,3 +41,11 @@ class IOSMB(UIOBase):
         Returns:
         """
         try:
+
+
+        Args:
+        Returns:
+        """
+        if pattern is not None:
+            container_objects = [
+            ]
