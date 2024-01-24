@@ -20,6 +20,19 @@ class IOSMB(UIOBase):
         )
         self.conn_object.close()
 
+    @property
+        """Get remote file path.
+
+        Returns:
+        """
+        return None
+
+    @property
+        """Get remote file tag path.
+
+        Returns:
+        """
+
         """Get remote tags associated with referenced file.
 
         Returns:
