@@ -252,6 +252,7 @@ class UFile:
 
         self._tags = None
 
+
     def identify_lineage_root_files(self, use_umeta: bool = True) -> list:
 
         Args:
