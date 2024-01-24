@@ -46,6 +46,7 @@ class IOSMB(UIOBase):
             with BytesIO() as bio:
                 bio.seek(0)
                 file_content = bio.read()
+                json_data = file_content.decode("utf-8")
                 tags = json.loads(json_data)
             pass
         return tags
