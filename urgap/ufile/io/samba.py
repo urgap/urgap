@@ -52,9 +52,24 @@ class IOSMB(UIOBase):
 
         """
 
+        if not self._remote_path_exists():
             self._create_fragment_directory()
 
+        try:
+
+            json_data = json.dumps(tags)
+            json_bytes = json_data.encode("utf-8")
+            with BytesIO(json_bytes) as bio:
+
     def remote_object_exists(self) -> bool:
+
+        Returns:
+        """
+        try:
+        except OperationFailure:
+            return False
+
+    def _remote_path_exists(self) -> bool:
 
         Returns:
         """
@@ -71,3 +86,4 @@ class IOSMB(UIOBase):
         if pattern is not None:
             container_objects = [
             ]
+
