@@ -41,6 +41,14 @@ class IOSMB(UIOBase):
 
         Returns:
         """
+        tags = None
+        try:
+            with BytesIO() as bio:
+                bio.seek(0)
+                file_content = bio.read()
+                tags = json.loads(json_data)
+            pass
+        return tags
 
     def get_object(self) -> str:
 
