@@ -5,6 +5,7 @@ from io import BytesIO
 
 
 
+
 class IOSMB(UIOBase):
 
         """Create new UIO class for processing smb scheme.
@@ -18,6 +19,9 @@ class IOSMB(UIOBase):
         )
         self.conn_object.connect(
         )
+        self._validate_share_name()
+
+
         self.conn_object.close()
 
     @property
@@ -48,6 +52,7 @@ class IOSMB(UIOBase):
 
         """
 
+            self._create_fragment_directory()
 
     def remote_object_exists(self) -> bool:
 
