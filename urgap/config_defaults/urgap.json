@@ -39,6 +39,8 @@
     "mode": {
         "value": "dev",
     },
+    "clean_scratch_at_exit": {
+    },
     "requests_timeout_connect": {
         "value": null,
         "description": "Connect timeout for python requests"
