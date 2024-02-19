@@ -35,6 +35,9 @@ class IOAzureBlobStorage(UIOBase):
 
         Args:
         """
+            )
+            tags["ParentsRemoved"] = "Yes"
+
         download_object = False
         if self.scratch_path.exists():
             )
