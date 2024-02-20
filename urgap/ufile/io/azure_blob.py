@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 import sys
@@ -36,6 +37,7 @@ class IOAzureBlobStorage(UIOBase):
 
         Args:
         """
+        if (len(tags.keys()) > 100) or (sys.getsizeof(json.dumps(tags)) > 7000):
             )
             tags["ParentsRemoved"] = "Yes"
 
