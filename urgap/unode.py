@@ -265,3 +265,8 @@ from pathlib import Path
         else:
             execute_answer.append("Command list is empty")
         if proc.returncode != 0:
+            msg = (
+                f"Node {self.META_INFO['name']} finished with exit code {proc.returncode}!\n"
+                f"Command: {' '.join(utrace.urun_dict.command_list)}\n"
+                f"Input Files: {[uf.object_name for uf in utrace.input_files]}\n"
+            )
