@@ -41,6 +41,8 @@ class IOAzureBlobStorage(UIOBase):
             )
             tags["ParentsRemoved"] = "Yes"
 
+            self.blob.upload_blob(data, metadata=tags, overwrite=True)
+
         download_object = False
         if self.scratch_path.exists():
             )
