@@ -100,6 +100,7 @@ def show_banner() -> str:
         r"""
         r"""
         """,
+        """,
     ]
     constellations = [
         [
