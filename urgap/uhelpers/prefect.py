@@ -80,6 +80,9 @@ def run_unode(
     Returns:
     """
     uris = retrieve_processed_uris(uris=uris)
+    if None in uris:
+        return [None]
+    return [uf.as_uri() if uf is not None else None for uf in result]
 
 
 @task(retries=10, retry_delay_seconds=10)
