@@ -103,6 +103,7 @@ def simplify_output_names(
         None.
     """
     uris = retrieve_processed_uris(uris=uris)
+    if None in uris:
     if len(uris) == 0:
     source_uris = retrieve_processed_uris(uris=sources)
     source_object_names = set()
@@ -124,6 +125,8 @@ def filter_by_uftype(
     Returns:
     """
     uris = retrieve_processed_uris(uris=uris)
+    if None in uris:
+        return None
     filtered_ufile_list = ufile_list.keep_uftypes(uftype)
     return [uf.as_uri() for uf in filtered_ufile_list]
 
@@ -133,6 +136,7 @@ def filter_by_uftype(
     Args:
     """
     uris = retrieve_processed_uris(uris=uris)
+    if None in uris:
     for uf in ufile_list:
         uf.rebase(uri=storage_base_uri, upload=True)
 
