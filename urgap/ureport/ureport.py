@@ -1,3 +1,4 @@
+
 import logging
 from collections import defaultdict
 from pprint import pformat
@@ -171,3 +172,27 @@ UReport id {id(self)}
                     query_results += ut.output_files
                 else:
         return query_results
+
+
+        Returns:
+        """
+        summary = {}
+
+            }
+        return summary
+
+
+
+        Returns:
+        """
+        reverse_graph = self.graph.reverse()
+        root_nodes = set()
+        visited_nodes = set()
+
+            if node in visited_nodes:
+            visited_nodes.add(node)
+            if self.graph.in_degree(node) == 0:
+                root_nodes.add(node)
+
+            for neighbor in reverse_graph.neighbors(node):
+            return root_nodes
