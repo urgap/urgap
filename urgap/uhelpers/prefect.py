@@ -58,10 +58,12 @@ def retrieve_processed_uris(
 
     Returns:
     """
+    if isinstance(uris, str) or (uris is None):
         uris = [uris]
     else:
         uris = list(flatten_no_strings(uris))
     if len(uris) == 0:
+    elif not (isinstance(uris[0], str) or (uris[0] is None)):
         while True:
             uris = [uri.get_state() for uri in uris]
             if (len(set(uris)) == 1) and ("plete" in uris[0].lower()):
