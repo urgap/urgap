@@ -39,6 +39,7 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     )
     filtered_results = []
         filtered_results.append(results[i])
+        assert ufile.object_name == filtered_results.data[i].object_name
 
 
 @pytest.mark.parametrize(
