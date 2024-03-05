@@ -51,6 +51,14 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     "provide_clean_node_dirs",
     [
         (
+            ),
+                {
+                    "parameters": {
+                    },
+                    "unode_parameters": {
+                        "force": True,
+                    },
+            ),
     ],
     indirect=["provide_clean_node_dirs"],
 )
