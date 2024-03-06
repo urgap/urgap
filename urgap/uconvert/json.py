@@ -1,3 +1,4 @@
+
 import datetime
 import json
 
@@ -17,6 +18,13 @@ class JSONEncoder(json.JSONEncoder):
                 "_type": "UFile",
                 "uri": obj.as_uri(),
             }
+            d = {"_type": "UFileList", "uris": []}
+            for x in obj:
+                if x is None:
+                    d["uris"].append(x)
+                else:
+                    d["uris"].append(x.as_uri())
+            return d
 
 
 
