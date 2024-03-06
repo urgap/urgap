@@ -1,3 +1,4 @@
+
 import copy
 import datetime
 import logging
@@ -298,8 +299,20 @@ class UTrace:
 
         Operation is performed inplace.
         """
+        if len(self.rerun_reasons) == 0:
         else:
+            self.output_files.complete_file_counts()
+        self.output_files = self.output_files.create_flat_and_non_redundant_list()
 
+        unique_parents = set()
+        for ifile in self.input_files:
+            unique_parents.update(ifile.parents)
+            unique_parents.add(ifile.object_name)
+        parents_str = ",".join(sorted(unique_parents))
+        for ofile in self.output_files:
+            if ofile is None:
+                continue
+            ofile.tags.update(parent_tag_dict)
 
 
     @classmethod

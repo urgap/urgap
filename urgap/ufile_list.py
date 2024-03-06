@@ -1,3 +1,4 @@
+
 import collections.abc
 import logging
 from collections.abc import Iterable
@@ -93,6 +94,7 @@ class UFileList(UserList):
         Raises:
         """
         already_seen_objects = set()
+            if entry is None:
             else:
                 flat_list.append(entry)
 
