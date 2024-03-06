@@ -95,6 +95,8 @@ class UFileList(UserList):
         """
         already_seen_objects = set()
             if entry is None:
+                flat_list.append(None)
+            elif isinstance(entry, Iterable):
             else:
                 flat_list.append(entry)
 
@@ -148,12 +150,18 @@ class UFileList(UserList):
         Returns:
         """
         indices = []
+        if tag is None:
+            for idx, ufile in enumerate(self):
+                if ufile is None:
+                    indices.append(idx)
         return indices
 
     def get_index_groups_by_uftypes(self) -> dict:
 
         Returns:
         """
+        if None in self:
+            all_uftypes.add(None)
         return {uftype: self.get_indices_by_uftype(uftype) for uftype in all_uftypes}
 
     def get_path_object_groups_by_uftypes(self) -> dict:
@@ -179,6 +187,8 @@ class UFileList(UserList):
         """
         dynamic_index_groups = {}
         for uftype, idx_list in self.get_index_groups_by_uftypes().items():
+            if uftype is None:
+                continue
             if self[idx_list[0]].is_borg:
                 dynamic_index_groups[uftype] = idx_list
                 for i in idx_list:
