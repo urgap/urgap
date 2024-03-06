@@ -44,6 +44,7 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     )
     filtered_results = []
         filtered_results.append(results[i])
+    for i, ufile in enumerate(queried_results.data):
         assert ufile.object_name == filtered_results.data[i].object_name
 
 
