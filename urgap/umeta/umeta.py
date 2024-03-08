@@ -17,6 +17,9 @@ class UMeta:
         if io is None:
         self._io_id = io
 
+    def load_utrace(
+        self,
+        wid: str,
 
         Args:
         """

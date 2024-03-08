@@ -28,6 +28,8 @@ class UTrace:
         self._remote_output_files = None
         self.rerun_reasons = None
         self.unode_meta = self._init_unode_meta(unode_meta)
+        self.umeta_io = umeta_io
+        self._umeta = None
 
         self.urun_dict = self._init_urun_dict(urun_dict)
         if input_files is None:
@@ -37,6 +39,13 @@ class UTrace:
             self.evaluate_retain_uftype()
         else:
             self.output_files = output_files
+
+    @property
+
+        Returns:
+        """
+        if self._umeta is None:
+        return self._umeta
 
     @property
     def remote_output_files(self) -> dict:

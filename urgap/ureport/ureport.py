@@ -19,6 +19,7 @@ class UReport:
         self._umeta = None
         self._os = []
         self.node_aliases = {}
+        self._traces = {}
         if umeta_io is None:
         self.umeta_io = umeta_io
 
@@ -36,7 +37,11 @@ class UReport:
         return self._umeta
 
 
+        Returns:
         """
+                )
+                wid=wid,
+            )
 
         return f"""
 UReport id {id(self)}
@@ -82,11 +87,14 @@ UReport id {id(self)}
         Returns:
         """
 
+
+            for ofile in ut.output_files:
                 graph.add_edge(
                     weight=4.7,
                     arrow=True,
                 )
 
+            for ifile in ut.input_files:
                 graph.add_edge(
                     weight=4.7,
                     arrow=True,
@@ -102,6 +110,29 @@ UReport id {id(self)}
         self,
         wid: str,
     ) -> bool:
+        """Check if a run was skipped.
+
+        Args:
+
+        Returns:
+        """
+
+    def was_run(
+        self,
+        wid: str,
+    ) -> bool:
+        """Check if a run was executed.
+
+        Args:
+
+        Returns:
+        """
+
+    def crashed(
+        self,
+        wid: str,
+    ) -> bool:
+        """Check if a run crashed.
 
         Args:
 
@@ -173,6 +204,7 @@ UReport id {id(self)}
                 else:
         return query_results
 
+    def summary(self) -> dict:
 
         Returns:
         """
