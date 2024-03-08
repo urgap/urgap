@@ -271,3 +271,5 @@ from pathlib import Path
                 f"Command: {' '.join(utrace.urun_dict.command_list)}\n"
                 f"Input Files: {[uf.object_name for uf in utrace.input_files]}\n"
             )
+            if utrace.urun_dict.unode_parameters["crash_on_resource_crash"] is True:
+                raise RuntimeError(msg)
