@@ -1,3 +1,4 @@
+
 from __future__ import annotations
 
 import bz2
@@ -170,6 +171,7 @@ class UFile:
 
         Returns:
         """
+            )
 
     def as_storage_base_uri(self) -> str:
 

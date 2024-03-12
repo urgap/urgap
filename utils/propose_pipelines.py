@@ -20,6 +20,7 @@ from pyvis.network import Network
                 unode_name,
                 weight=4.7,
                 arrow=True,
+                color="black",
             )
             leafs = []
             if len(leafs) > 1:
@@ -29,6 +30,7 @@ from pyvis.network import Network
                         sft,
                         weight=4.7,
                         arrow=True,
+                        color="black",
                     )
             graph.add_node(oft, color="blue", size=12)
             graph.add_edge(
@@ -36,6 +38,7 @@ from pyvis.network import Network
                 oft,
                 weight=4.7,
                 arrow=True,
+                color="black",
             )
 
     nodes_in_subgraph = set()

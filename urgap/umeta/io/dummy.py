@@ -1,4 +1,5 @@
 """UMeta dummy class for designing additional UMeta interfaces."""
+
 from ._base import UMetaIOBase
 
 

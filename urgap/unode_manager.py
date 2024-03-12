@@ -3,6 +3,7 @@
 This module defines the UNode Manager class which is used to initialize UNodes
 and check if their requirements are met, so they can actually be run.
 """
+
 import importlib
 import inspect
 import logging
@@ -42,6 +43,7 @@ class UNodeManager(UserDict):
         "R-3.x.x": {
             "command": ["R", "--version"],
             "regex_pattern": r"^R version 3\.[0-9]*\.[0-9]* ",
+        },
     }
 
 
