@@ -329,6 +329,7 @@ class UTrace:
                 continue
             ofile.tags.update(parent_tag_dict)
 
+        self.umeta.save_utrace(self)
 
     @classmethod
     def load_from_umeta(
