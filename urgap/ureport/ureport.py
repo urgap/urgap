@@ -1,4 +1,5 @@
 
+import json
 import logging
 from collections import defaultdict
 from pprint import pformat
@@ -228,3 +229,89 @@ UReport id {id(self)}
 
             for neighbor in reverse_graph.neighbors(node):
             return root_nodes
+
+
+    def generate_report(self) -> list:
+
+        Returns:
+        """
+        wid = ",".join(self.wids)
+        data = [
+            {
+                "section_title": "Data lineage overview",
+        ]
+        history = {
+            "title": "Execution times",
+            "caption": f"History of execution times for {wid}",
+            "rows": [],
+        }
+        urd_overview = {
+            "title": "Run Parameters HL overview",
+            "caption": f"URun dict information for workflow ID {wid}",
+            "headers": [
+                "input_files",
+                "output_files",
+                "version",
+            ],
+            "rows": [],
+        }
+        execution_graph = {
+            "the magma color palette and scaled according to execution time. "
+            "Purple arrows indicate incoming data and green arrows"
+            " point to data produced. Use scroll wheel to zoom.",
+            "links": [],
+            "nodes": [],
+        }
+        already_seen_nodes = set()
+            ).total_seconds()
+            execution_graph["nodes"].append(
+                {
+                    "id": "process",
+                    "processing_time": processing_time,
+            )
+            history["rows"].append(
+                {
+                    "Node": ut.unode_meta["name"],
+                    "processing time [s]": processing_time,
+            )
+            urd_overview["rows"].append(
+                {
+                    "version": ut.urun_dict["version"],
+            )
+            for ufile in ut.input_files:
+                execution_graph["links"].append(
+                    {
+                        "source": source,
+                        "value": 1,
+                        "type": "incoming",
+                )
+                if source not in already_seen_nodes:
+                    execution_graph["nodes"].append({"name": source, "id": "data"})
+                    already_seen_nodes.add(source)
+            for ufile in ut.output_files:
+                execution_graph["links"].append(
+                    {
+                        "target": target,
+                        "value": 1,
+                        "type": "outgoing",
+                )
+                if target not in already_seen_nodes:
+                    execution_graph["nodes"].append({"name": target, "id": "data"})
+                    already_seen_nodes.add(target)
+
+        execution_graph["links"] = json.dumps(execution_graph["links"])
+        execution_graph["nodes"] = json.dumps(execution_graph["nodes"])
+        data[0]["networks"].append(execution_graph)
+        data[0]["tables"] += [history, urd_overview]
+        return data
+
+    def render_report(
+        data = self.generate_report()
+
+        template_folder = Path(__file__).parent / "templates"
+        template = env.get_template(template_name)
+        html_out = template.render(
+            version="0.7.0",
+            data=data,
+        )
+            print(html_out, file=oo)

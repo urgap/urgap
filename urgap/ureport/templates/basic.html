@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="author" content="Christian Fufezan">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Kaushan+Script" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<nav class="col-md-2 d-none d-md-block bg-dark sidebar">
+				<div class="sidebar-sticky">
+					<h5
+						class="sidebar-logo d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white">
+						<span
+							Dashboard</span>
+					</h5>
+					<h5
+						class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+						<span class="small">{{ version }}</span>
+					</h5>
+					<h7
+						class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+						<span class="small"><i>beta</i></span>
+					</h7>
+				</div>
+			</nav>
+			<main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
+				{%for section in data%}
+				{%set section_loop = loop%}
+				<span>
+					<h2>{{section["section_title"]}}</h2>
+					<p>{{section["section_text"]}}</p>
+					{% if section["tables"]|length != 0 %}
+					<span>
+						{%for e in section["tables"]%}
+						{%set id = "table_" ~ section_loop.index ~ "_" ~ loop.index %}
+						<h3>{{e["title"]}}</h3>
+						<div class="table-responsive">
+							<table class="table table-striped table-hover">
+								<caption>{{ e["caption"]}}</caption>
+								<thead class="thead-dark">
+									<tr>
+										{% for th in e["headers"] %}
+										<th scope="col">{{ th }}</th>
+										{% endfor %}
+									</tr>
+								</thead>
+								<tbody>
+									{%for row in e["rows"]%}
+									<tr>
+										{% for th in e["headers"] %}
+										<td>{{ row[th]}}</td>
+										{% endfor %}
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+
+						</div>
+						{%endfor%}
+					</span>
+					{%endif%}
+					{% if section["figures"]|length != 0 %}
+					<span>
+						{%for e in section["figures"]%}
+						{%set id = "table_" ~ section_loop.index ~ "_" ~ loop.index %}
+						<h3>{{e["title"]}}</h3>
+						{{ e['data'] | safe }}
+						{%endfor%}
+					</span>
+					{%endif%}
+				</span>
+				{%endfor%}
+
+			</main>
+		</div>
+	</div>
+</body>
+</html>
