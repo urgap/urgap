@@ -5,6 +5,8 @@ from ._base import UMetaIOBase
 
 
 class Base(DeclarativeBase):
+    """SQLAlchemy base class."""
+
 
 
 
