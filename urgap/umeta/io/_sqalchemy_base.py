@@ -4,6 +4,10 @@ import sqlalchemy
 from ._base import UMetaIOBase
 
 
+class Base(DeclarativeBase):
+
+
+
 
     )
 
@@ -22,6 +26,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
     @property
         if self._db is None:
             self._db = sqlalchemy.create_engine(self.generate_connection_string())
+            Base.metadata.create_all(self._db)
         return self._db
 
 
@@ -36,6 +41,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
 
         with Session(self.db) as session:
+            )
 
 
         Args:
@@ -43,6 +49,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         Returns:
         """
         with Session(self.db) as session:
+            )
 
 
         Args:
@@ -67,3 +74,4 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             session.commit()
 
         with Session(self.db) as session:
+            )
