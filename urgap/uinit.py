@@ -83,12 +83,17 @@ def copy_resources_if_needed(
         )
 
 
+def set_scratch_disk_path(
+) -> os.PathLike:
 
     Args:
 
     Returns:
     """
     if path is None:
+    if wid is not None:
+        path = path / wid
+    path.mkdir(exist_ok=True, parents=True)
     return path
 
 

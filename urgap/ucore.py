@@ -37,6 +37,8 @@ def calculate_file_hash(
 
     Raises:
     """
+        if wid_folder.name != wid:
+            wid_folder /= wid
         if wid_folder.exists():
             try:
                 subprocess.call(["chmod", "-R", "0777", wid_folder])
