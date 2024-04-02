@@ -306,6 +306,10 @@ UReport id {id(self)}
         return data
 
     def render_report(
+    ) -> None:
+
+        Args:
+        """
         data = self.generate_report()
 
         template_folder = Path(__file__).parent / "templates"
