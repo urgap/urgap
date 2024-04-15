@@ -144,6 +144,7 @@ class UFile:
 
     def upload(
         self,
+        overwrite: bool = True,
         verify: bool = False,
         retries: int = 3,
 
@@ -207,6 +208,7 @@ class UFile:
         try:
         except (shutil.SameFileError, FileNotFoundError):
 
+            self.upload(**kwargs)
 
 
         Args:
@@ -325,5 +327,8 @@ class UFile:
         if suffix is not None:
             simple_name += suffix
         if storage_base_uri is None:
+            self.rebase(uri=f"#{simple_name}", upload=True, overwrite=False)
         else:
+            self.rebase(
+            )
         return self
