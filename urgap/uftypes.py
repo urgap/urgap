@@ -104,6 +104,7 @@ any.SVG = ".any.svg"
 any.TSV = ".any.tsv"
 any.XML = ".any.xml"
 any.TXT = ".any.txt"
+any.PARQUET = ".any.parquet"
 
 # Metabolomics==================================================================
 mx = types.SimpleNamespace()
@@ -214,8 +215,13 @@ flow_cytometry.gating_strategy.ANY = "flow_cytometry.gating_strategy.ANY"
 flow_cytometry.gating_strategy.FLOWJO_WSP = ".flowjo.wsp"
 flow_cytometry.gating_strategy.CYTOBANK_XML = ".cytobank.xml"
 
+flow_cytometry.meta = types.SimpleNamespace()
+flow_cytometry.meta.FPREPPY_EXP_METADATA_XLSX = ".fpreppy_exp_metadata.xlsx"
+flow_cytometry.meta.FPREPPY_PLATE_METADATA_CSV = ".fpreppy_plate_metadata.csv"
+
 flow_cytometry.stats = types.SimpleNamespace()
 flow_cytometry.stats.STATS_CSV = ".fc_stats.csv"
+flow_cytometry.stats.STATS_PARQUET = ".fc_stats.parquet"
 flow_cytometry.stats.GATING_TREE = ".fc_gating_tree.txt"
 flow_cytometry.stats.FREQS_CSV = ".fc_freqs.csv"
 
