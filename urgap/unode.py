@@ -89,16 +89,36 @@ from pathlib import Path
                 )
         self.tmp_files = []
 
+        custom_exe_path = self.META_INFO.get("exe_path", None)
+        if self.META_INFO["platform_independent"] is True:
+            base_path = (
                 / "resources"
                 / "platform_independent"
                 / "arc_independent"
             )
+            try:
+                rel_exe_path = (
+                    Path(self.META_INFO["name"])
+                    / self.META_INFO["engine"]["platform_independent"][
+                        "arc_independent"
+                    ]["exe"]
                 )
+            except KeyError:
+                rel_exe_path = None
+        else:
             sys_platform = sys.platform
             comp_arch = self.get_comp_arch()
             try:
+                )
             except KeyError:
+                rel_exe_path = ""
+
+        if self.META_INFO["engine"].get("system", None) is not None:
+        elif custom_exe_path is not None:
+            exe_path = base_path / custom_exe_path
         else:
+            exe_path = base_path / rel_exe_path
+
 
         Returns:
         """
