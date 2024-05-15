@@ -50,6 +50,7 @@ class UFile:
     def is_part_of_collection(self) -> bool:
 
     @property
+    def path(self) -> Path:
 
 
         Returns:
@@ -158,6 +159,7 @@ class UFile:
 
     @classmethod
         cls,
+        path_object: Path,
         number_of_parents: int = 1,
 
         Args:
