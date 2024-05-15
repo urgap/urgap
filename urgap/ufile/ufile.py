@@ -158,11 +158,16 @@ class UFile:
 
     @classmethod
         cls,
+        number_of_parents: int = 1,
 
         Args:
 
         Returns:
         """
+        basefolder = path_object.parent.resolve()
+        container_content = path_object.name
+        for _ in range(number_of_parents):
+            basefolder = basefolder.parent.resolve()
 
     def as_uri(
         self,
