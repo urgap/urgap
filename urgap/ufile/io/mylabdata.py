@@ -75,7 +75,9 @@ class IOMyLabData(UIOBase):
                 timeout=(
                 ),
             )
+        if tags is not None:
             url += ".tag"
+            tag_response = requests.post(
                 url=url,
                 data=json.dumps(tags).encode("utf-8"),
                 verify=self._api_cert,
