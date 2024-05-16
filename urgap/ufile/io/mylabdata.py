@@ -85,6 +85,8 @@ class IOMyLabData(UIOBase):
                 timeout=(
                 ),
             )
+                    f"Uploading tag failed with status code: {tag_response.status_code}"
+                )
         return response
 
     @make_expiration_safe_request
