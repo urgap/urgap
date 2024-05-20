@@ -25,6 +25,7 @@ dependencies = [
     'nbformat>=4.2.0',
     'openpyxl',
     'plotly',
+    'requests>=2.26,<2.33',
 ]
 
 [project.optional-dependencies]
