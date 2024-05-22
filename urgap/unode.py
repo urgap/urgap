@@ -291,6 +291,10 @@ from pathlib import Path
                 f"Node {self.META_INFO['name']} finished with exit code {proc.returncode}!\n"
                 f"Command: {' '.join(utrace.urun_dict.command_list)}\n"
                 f"Input Files: {[uf.object_name for uf in utrace.input_files]}\n"
+                f"Output Files: {[uf.object_name for uf in utrace.output_files]}\n"
+                f"StdOut: \n"
             )
+            for line in execute_answer:
+                msg += line + "\n"
             if utrace.urun_dict.unode_parameters["crash_on_resource_crash"] is True:
                 raise RuntimeError(msg)
