@@ -218,6 +218,8 @@ flow_cytometry.gating_strategy.CYTOBANK_XML = ".cytobank.xml"
 flow_cytometry.meta = types.SimpleNamespace()
 flow_cytometry.meta.FPREPPY_EXP_METADATA_XLSX = ".fpreppy_exp_metadata.xlsx"
 flow_cytometry.meta.FPREPPY_PLATE_METADATA_CSV = ".fpreppy_plate_metadata.csv"
+flow_cytometry.meta.MARKER_MAPPING_JSON = ".flow_marker_mapping.json"
+flow_cytometry.meta.GATE_MAPPING_JSON = ".flow_gate_mapping.json"
 
 flow_cytometry.stats = types.SimpleNamespace()
 flow_cytometry.stats.STATS_CSV = ".fc_stats.csv"
