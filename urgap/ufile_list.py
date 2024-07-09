@@ -181,6 +181,18 @@ class UFileList(UserList):
         idxs = self.get_indices_by_uftype(uftype)
         return [self[i].path for i in idxs]
 
+    def get_index_groups_by_tag(self, tag: str) -> dict:
+
+        Args:
+
+        Returns:
+        """
+        index_groups = defaultdict(list)
+        for idx, ufile in enumerate(self):
+            if ufile.tags.get(tag, None) is not None:
+                index_groups[ufile.tags[tag]].append(idx)
+        return dict(index_groups)
+
     def complete_file_counts(self) -> dict:
 
         Returns:

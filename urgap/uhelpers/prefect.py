@@ -132,6 +132,20 @@ def filter_by_uftype(
     return [uf.as_uri() for uf in filtered_ufile_list]
 
 
+@task(name="Group by tag", retries=3, retry_delay_seconds=10)
+def group_by_tag(
+    tag: str,
+
+    Args:
+
+    Returns:
+    """
+    uris = retrieve_processed_uris(uris=uris)
+    if None in uris:
+        return None
+    index_groups = ufile_list.get_index_groups_by_tag(tag=tag)
+
+
 @task(name="Rebase", retries=3, retry_delay_seconds=20)
 
     Args:
