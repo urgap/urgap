@@ -144,6 +144,7 @@ def group_by_tag(
     if None in uris:
         return None
     index_groups = ufile_list.get_index_groups_by_tag(tag=tag)
+    return {k: [ufile_list[idx].as_uri() for idx in v] for k, v in index_groups.items()}
 
 
 @task(name="Rebase", retries=3, retry_delay_seconds=20)
