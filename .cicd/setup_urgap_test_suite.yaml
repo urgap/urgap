@@ -1,4 +1,6 @@
 steps:
+  - template: misc/checkout_package.yaml@templates
+    parameters:
   - template: misc/setup_python.yaml@templates
   - script: |
       uctl info version
