@@ -30,6 +30,9 @@ class UWIDGenerator:
 
         Returns:
         """
+        n_nouns = len(self.nouns)
+        n_adj = len(self.adjectives)
+        n_verbs = len(self.verbs)
         return n_adj * n_nouns * n_verbs * n_adj * n_nouns
 
 
@@ -46,5 +49,10 @@ class UWIDGenerator:
 
         Returns:
         """
+        noun_a = secrets.choice(self.nouns)
+        noun_b = secrets.choice(self.nouns)
+        adjective_a = secrets.choice(self.adjectives)
+        adjective_b = secrets.choice(self.adjectives)
+        verbs = secrets.choice(self.verbs)
         self.issued_wids.append(new_wid)
         return new_wid
