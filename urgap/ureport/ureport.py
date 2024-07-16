@@ -315,6 +315,8 @@ UReport id {id(self)}
         data = self.generate_report()
 
         template_folder = Path(__file__).parent / "templates"
+        env = Environment(
+        )
         template = env.get_template(template_name)
         html_out = template.render(
             version="0.7.0",

@@ -1,4 +1,5 @@
 
+import secrets
 
 
 # https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go
@@ -29,6 +30,7 @@ class UWIDGenerator:
 
         Returns:
         """
+        return n_adj * n_nouns * n_verbs * n_adj * n_nouns
 
 
         Returns:

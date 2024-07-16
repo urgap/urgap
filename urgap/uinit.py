@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import secrets
 import shutil
 import sys
 import tempfile
@@ -111,4 +112,6 @@ def show_banner() -> str:
         [
         ],
     ]
+
+    banner = secrets.choice(banners)
     return f"""{banner}

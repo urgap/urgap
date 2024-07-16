@@ -2,6 +2,7 @@
     "umeta": {
         "value": "sqlite3",
         "description": "Storage interface for meta data. Might require 3rd party installations",
+        "options": ["mongodb", "sqlite3", "postgresql", "gcpsql"]
     },
     "logging_level": {
         "value": "DEBUG",
@@ -38,6 +39,7 @@
     },
     "mode": {
         "value": "dev",
+        "options": ["dev", "prod"]
     },
     "clean_scratch_at_exit": {
     },
@@ -49,3 +51,4 @@
         "value": null,
         "description": "Read timeout for python requests"
     }
+}
