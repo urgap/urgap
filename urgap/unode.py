@@ -9,6 +9,7 @@ import logging
 import os
 import platform
 import shutil
+import stat
 import subprocess
 import sys
 import time
