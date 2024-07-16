@@ -203,6 +203,7 @@ from pathlib import Path
                     path.unlink()
         self.tmp_files = []
 
+    def has_all_required_installations(self) -> bool:
 
         Returns:
         """

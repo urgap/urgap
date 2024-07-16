@@ -99,6 +99,7 @@ class IOMyLabData(UIOBase):
         )
         if response.status_code == 200:
             url += ".tag"
+            self.get_remote_tags()
         return response
 
     def list_container_items(

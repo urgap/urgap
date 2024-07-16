@@ -114,6 +114,7 @@ class UCredentialManager:
         self,
         cred_key: str,
         force: bool = False,
+    ) -> dict:
 
         Args:
 

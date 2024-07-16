@@ -3,6 +3,8 @@ import logging
 
 import google.api_core.exceptions
 import google_crc32c
+from google import auth
+from google.cloud import secretmanager
 
 
 
