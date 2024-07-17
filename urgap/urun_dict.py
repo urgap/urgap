@@ -23,14 +23,22 @@ class URunDict(UserDict):
             "user_dict": {},
             "unode_parameters": {
                 "additional_filters": None,
+                "crash_on_resource_crash": True,
                 "dry_run": False,
+                "file_io_timeout": None,
                 "force": False,
                 "override_folder_creation": False,
                 "prefix": None,
                 "record_skipped_runs": False,
+                "remote_execution_timeout": 7200,  # 2h
+                "remote_url": None,
                 "remove_temporary_files": False,
                 "retain_uftype": False,
+                "run_folder_name": None,
                 "run_resource_as": "subprocess_run",
+                "skip_data_versioning": False,
+                "skip_pre_checks": False,
+                "storage_base_uri": None,
             },
         }
         self._default_setup_that_cannot_be_set_by_user = {

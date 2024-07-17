@@ -66,6 +66,8 @@ class UNodeManager(UserDict):
             "other_dependencies": {},
         }
         self.node_availability_lookup = {}
+        self._module_not_installed = set()
+        self._requirements_not_met = set()
 
         try:
         except importlib.metadata.PackageNotFoundError:

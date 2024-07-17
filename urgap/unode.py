@@ -58,6 +58,20 @@ from pathlib import Path
         self.tmp_files = []
             urun_dict.unode_parameters.update(kwargs)
 
+        if urun_dict["unode_parameters"]["remote_url"] is None:
+            output_files = self._run_locally(ufiles=ufiles, urun_dict=urun_dict)
+        else:
+            output_files = self._run_remotely(ufiles=ufiles, urun_dict=urun_dict)
+        return output_files
+
+    def _run_remotely(
+        self,
+        try:
+                timeout=urun_dict["unode_parameters"]["remote_execution_timeout"],
+            )
+
+    def _run_locally(
+        self,
             urun_dict=urun_dict,
             input_files=ufiles,
             unode_meta=self.META_INFO,
@@ -115,11 +129,18 @@ from pathlib import Path
                 rel_exe_path = ""
 
         if self.META_INFO["engine"].get("system", None) is not None:
+            path_to_system_exe = shutil.which(self.META_INFO["engine"]["system"])
+            if path_to_system_exe is not None:
+                exe_path = Path(path_to_system_exe)
+            else:
+                exe_path = None
         elif custom_exe_path is not None:
             exe_path = base_path / custom_exe_path
         else:
             exe_path = base_path / rel_exe_path
 
+        if exe_path is not None:
+            return Path(exe_path)
 
         Returns:
         """
