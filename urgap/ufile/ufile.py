@@ -200,6 +200,11 @@ class UFile:
     def remote_object_exists(self) -> bool:
         return self.io.remote_object_exists()
 
+    def recalculate_hashes(self, force_local: bool = False) -> None:
+
+        Args:
+        """
+            else:
 
 
         Args:
