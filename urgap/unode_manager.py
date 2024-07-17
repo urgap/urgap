@@ -153,6 +153,17 @@ class UNodeManager(UserDict):
         Returns:
         """
         availabilities = []
+        availabilities = self._check_python_packages(
+            availabilities=availabilities,
+            requirements=requirements,
+        )
+        availabilities = self._check_other_dependencies(
+            availabilities=availabilities,
+            requirements=requirements,
+            unode=unode,
+        )
+        return all(availabilities)
+
         for pypackage in requirements.get("python_packages", []):
             self.availability["python_packages"][pypackage] = False
             with_operator = False
@@ -175,6 +186,8 @@ class UNodeManager(UserDict):
                 if package_version is not None:
                     self.availability["python_packages"][pypackage] = True
             availabilities.append(self.availability["python_packages"][pypackage])
+        return availabilities
+
         for resource in requirements.get("other_dependencies", []):
                     f"Wrapper {unode} contains requirements {resource} and we don't"
                     " know how to validate this. Please reach out to the dev team "
@@ -189,3 +202,4 @@ class UNodeManager(UserDict):
                     )
                     self.availability["other_dependencies"][resource] = is_available
                 availabilities.append(self.availability["other_dependencies"][resource])
+        return availabilities
