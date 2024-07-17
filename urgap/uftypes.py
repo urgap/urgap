@@ -147,6 +147,7 @@ transcriptomics.KALLISTO_INDEX = ".kallisto.idx"
 transcriptomics.KALLISTO_QUANT_TSV = ".kallisto_quant.tsv"
 transcriptomics.FASTQC_HTML = ".fastqc.html"
 transcriptomics.FASTQC_ZIP = ".fastqc.zip"
+transcriptomics.cellranger = types.SimpleNamespace()
 
 # Imaging=======================================================================
 
