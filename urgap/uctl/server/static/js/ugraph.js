@@ -106,6 +106,7 @@ function getNodeDefinitions() {
 }
 
 function setupDefinitions(svg, arrowHead, radius) {
+    svg.append('defs')
         .selectAll("marker")
         .data(Object.keys(arrowHead))
         .enter().append("marker")
