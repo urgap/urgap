@@ -57,6 +57,7 @@ def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
             unode_meta=node_obj.META_INFO,
         )
         for output_file in ut.output_files:
+            output_file.remove_remote_object()
     return unodes_dict, ufiles, urun_dict
 
 
