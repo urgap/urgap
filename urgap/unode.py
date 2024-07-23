@@ -233,6 +233,7 @@ from pathlib import Path
 
         Args:
         """
+        output_file.remove_remote_object()
 
         """Remove umeta data for a given output_file.
 
