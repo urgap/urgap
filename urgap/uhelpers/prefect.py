@@ -121,6 +121,7 @@ def simplify_output_names(
 
 @task(name="Filter uftypes", retries=3, retry_delay_seconds=10)
 def filter_by_uftype(
+) -> list | None:
 
     Args:
 
@@ -136,6 +137,7 @@ def filter_by_uftype(
 @task(name="Group by tag", retries=3, retry_delay_seconds=10)
 def group_by_tag(
     tag: str,
+) -> dict | None:
 
     Args:
 

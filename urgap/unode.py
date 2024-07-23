@@ -309,6 +309,12 @@ from pathlib import Path
             )
         else:
             execute_answer.append("Command list is empty")
+        if (proc is not None) and (proc.stdout is not None):
+            for line in proc.stdout.split("\n"):
+                try:
+                    execute_answer.append(line)
+                except ValueError:
+                    )
         if proc.returncode != 0:
             msg = (
                 f"Node {self.META_INFO['name']} finished with exit code {proc.returncode}!\n"

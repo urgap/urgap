@@ -12,6 +12,8 @@ def _check_if_config_key_value_is_valid(
         is_valid = False
     else:
         options = config[config_key].get("options", None)
+        if (options is not None) and (config_value not in options):
+            is_valid = False
     return is_valid
 
 

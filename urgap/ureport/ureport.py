@@ -241,6 +241,9 @@ UReport id {id(self)}
         data = [
             {
                 "section_title": "Data lineage overview",
+                "networks": [],
+                "figures": [],
+                "tables": [],
         ]
         history = {
             "title": "Execution times",
