@@ -148,6 +148,11 @@ transcriptomics.KALLISTO_QUANT_TSV = ".kallisto_quant.tsv"
 transcriptomics.FASTQC_HTML = ".fastqc.html"
 transcriptomics.FASTQC_ZIP = ".fastqc.zip"
 transcriptomics.cellranger = types.SimpleNamespace()
+transcriptomics.cellranger.SAMPLE_SHEET = ".cellranger_sample_sheet.csv"
+transcriptomics.cellranger.NOVASEQ_INPUT_TAR = ".cellranger_novaseq_input.tar"
+transcriptomics.cellranger.MKFASTQ_OUTPUT_TAR = ".cellranger_mkfastq_output.tar"
+transcriptomics.cellranger.REFERENCE_VDJ = ".10xreference_vdj.tar"
+transcriptomics.cellranger.REFERENCE_GENOME = ".10xreference_genome.tar"
 
 # Imaging=======================================================================
 
