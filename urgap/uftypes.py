@@ -153,6 +153,7 @@ transcriptomics.cellranger.NOVASEQ_INPUT_TAR = ".cellranger_novaseq_input.tar"
 transcriptomics.cellranger.MKFASTQ_OUTPUT_TAR = ".cellranger_mkfastq_output.tar"
 transcriptomics.cellranger.REFERENCE_VDJ = ".10xreference_vdj.tar"
 transcriptomics.cellranger.REFERENCE_GENOME = ".10xreference_genome.tar"
+transcriptomics.cellranger.FEATUREREF_MULTI_CSV = ".cellranger_featureref_multi.csv"
 
 # Imaging=======================================================================
 
