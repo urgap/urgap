@@ -40,5 +40,14 @@ class JSONDecoder(json.JSONDecoder):
 
         Returns:
         """
+        if "_type" not in obj:
+            return obj
+        match obj["_type"]:
+            case "datetime":
                 return datetime.datetime.fromisoformat(obj["value"])
+            case "set":
                 return set(obj["value"])
+            case "UFile":
+            case "UFileList":
+                uri_list = [
+                ]
