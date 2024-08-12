@@ -78,6 +78,7 @@ class UTrace:
             umeta_dict: Dict containing umeta information.
         """
 
+
     @property
     def output_base_storage_uri(self) -> str:
         if self._output_base_storage_uri is None:
