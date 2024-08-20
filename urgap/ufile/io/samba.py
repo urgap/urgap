@@ -87,6 +87,19 @@ class IOSMB(UIOBase):
         except OperationFailure:
             return False
 
+        smb_objects = []
+        for obj in listed_objects:
+            if obj.filename in (".", ".."):
+                continue
+            if obj.isDirectory is True:
+                smb_objects.extend(
+                )
+            else:
+                smb_objects.append(subpath + "/" + obj.filename)
+        return smb_objects
+
+    def list_container_items(
+    ) -> list:
         """Get objects in folder/'container'.
 
 
@@ -95,5 +108,7 @@ class IOSMB(UIOBase):
         """
         if pattern is not None:
             container_objects = [
+                f for f in container_objects if re.search(pattern, f) is not None
             ]
+        return container_objects
 
