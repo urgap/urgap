@@ -49,6 +49,7 @@ class IOSMB(UIOBase):
                 file_content = bio.read()
                 json_data = file_content.decode("utf-8")
                 tags = json.loads(json_data)
+        except OperationFailure:
             pass
         return tags
 
