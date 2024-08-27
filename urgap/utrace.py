@@ -78,6 +78,9 @@ class UTrace:
             umeta_dict: Dict containing umeta information.
         """
 
+        log_message += "|   ]\n"
+        log_message += "| - output_files: [\n"
+        log_message += "|   ]\n"
 
     @property
     def output_base_storage_uri(self) -> str:
