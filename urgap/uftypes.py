@@ -154,6 +154,9 @@ transcriptomics.cellranger.MKFASTQ_OUTPUT_TAR = ".cellranger_mkfastq_output.tar"
 transcriptomics.cellranger.REFERENCE_VDJ = ".10xreference_vdj.tar"
 transcriptomics.cellranger.REFERENCE_GENOME = ".10xreference_genome.tar"
 transcriptomics.cellranger.FEATUREREF_MULTI_CSV = ".cellranger_featureref_multi.csv"
+transcriptomics.cellranger.MULTI_OUTPUT_TAR = ".cellranger_multi_output.tar"
+transcriptomics.cellranger.FILTERED_OUTPUT_TAR = ".cellranger_filtered_output.tar"
+transcriptomics.cellranger.SCRIPT = ".SCRIPT.sh"
 
 # Imaging=======================================================================
 
