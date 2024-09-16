@@ -25,6 +25,8 @@ import click
     )
     click.secho(
     )
+    click.secho(
+    )
     counter = collections.defaultdict(int)
     tags = set()
             counter["test_nodes"] += 1
