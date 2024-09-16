@@ -95,11 +95,26 @@ class UFileList(UserList):
         Raises:
         """
         already_seen_objects = set()
+        already_seen_objects, flat_list = self._get_flat_list(
+            list_to_flatten=self.data,
+            already_seen_objects=already_seen_objects,
+            flat_list=flat_list,
+        )
+        return flat_list
+
+        for entry in list_to_flatten:
             if entry is None:
                 flat_list.append(None)
             elif isinstance(entry, Iterable):
+                already_seen_objects, flat_list = self._get_flat_list(
+                    list_to_flatten=entry,
+                    already_seen_objects=already_seen_objects,
+                    flat_list=flat_list,
+                )
+                continue
             else:
                 flat_list.append(entry)
+        return already_seen_objects, flat_list
 
     def filter(
         self,

@@ -21,6 +21,8 @@ def set_config(
     config_key: str,
     config_value: str,
     verbose: bool = False,
+    if config_value in ("true", "false", "null"):
+        config_value = json.loads(config_value)
         config = json.load(config_json)
     kv_is_valid = _check_if_config_key_value_is_valid(
         config,

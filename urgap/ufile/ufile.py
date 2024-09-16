@@ -255,6 +255,23 @@ class UFile:
 
         Returns:
         """
+            case "zip":
+                with ZipFile(self.path, "r") as z_file:
+                    z_file.extractall(path=temp_folder)
+            case "gz":
+                temp_folder.mkdir(parents=True, exist_ok=True)
+                gz_output = temp_folder / self.path.stem
+                try:
+                except UnicodeDecodeError:
+            case "tar":
+                with tarfile.open(self.path, mode="r:") as tfile:
+            case "bz2":
+                temp_folder.mkdir(parents=True, exist_ok=True)
+                with bz2.BZ2File(self.path) as bz_file:
+                    file_names = [str(self.path.with_suffix("").name)]
+                        shutil.copyfileobj(bz_file, f)
+            case _:
+                )
                     )
 
         self.io.create_container()

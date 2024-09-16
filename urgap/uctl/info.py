@@ -19,6 +19,7 @@ import click
 
 
 @click.command()
+    placeholder_str = "|      "
     click.secho("Available Unodes", fg="bright_green")
     click.secho(
     )
