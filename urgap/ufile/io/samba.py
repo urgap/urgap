@@ -67,6 +67,13 @@ class IOSMB(UIOBase):
             self._create_fragment_directory()
 
         try:
+        except (
+            FileNotFoundError,
+            IsADirectoryError,
+            PermissionError,
+            ValueError,
+            OperationFailure,
+            NotConnectedError,
 
             json_data = json.dumps(tags)
             json_bytes = json_data.encode("utf-8")
