@@ -7,6 +7,8 @@ from time import sleep
 from prefect import flow, task
 
 
+INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
+
 
 
     Args:
