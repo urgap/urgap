@@ -122,3 +122,4 @@ class IOSMB(UIOBase):
 
 
             try:
+            except OperationFailure as e:
