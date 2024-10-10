@@ -121,5 +121,6 @@ class IOSMB(UIOBase):
         return container_objects
 
 
+            path_to_create = "/".join(fragment_dirs[: level + 1])
             try:
             except OperationFailure as e:
