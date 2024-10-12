@@ -4,6 +4,7 @@ import logging
 import re
 from io import BytesIO
 
+from smb.base import NotConnectedError, SMBTimeout
 
 
 
@@ -62,6 +63,8 @@ class IOSMB(UIOBase):
         """Download referenced remote object.
 
         """
+        try:
+            self.scratch_path.unlink(missing_ok=True)
 
         if not self._remote_path_exists():
             self._create_fragment_directory()
