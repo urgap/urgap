@@ -2,6 +2,7 @@
 import json
 import logging
 import tempfile
+from pathlib import Path
 
 
 
@@ -27,6 +28,8 @@ class IOOmiq(UIOBase):
             self._omiq_user_info = self._api.get_user()
             if self._omiq_user_info is not None:
                 )
+        self._dataset_id = int(self._workflow["datasetId"])
+
     @property
 
         Returns:
@@ -64,10 +67,15 @@ class IOOmiq(UIOBase):
         return self._tags
 
     def download(self) -> None:
+        else:
+
+
     @property
     def file_id(self) -> int:
         tags = self.get_remote_tags()
         return tags["id"]
+
+        return self._api.list_files_in_dataset(self._dataset_id)
 
 
     def list_container_items(
