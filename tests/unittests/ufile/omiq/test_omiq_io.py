@@ -80,11 +80,18 @@ def test_get_remote_tags(io_omiq_instance):
 
 
     )
+        return_value={
+            "id": 456,
+            "features": [{"name": "feature1"}, {"name": "feature2"}],
     )
+    )
+
 
         file_id=456,
         from_task_id=123,
         feature_names=["feature1", "feature2"],
+        filter_ids=["filter1", "filter3"],
+        add_row_nums=True,
     )
 
 
