@@ -57,6 +57,7 @@ class IOOmiq(UIOBase):
             "jobName",
             "status",
             "size",
+            "features",
         ]
         self._tags = {"omiq_tags": True}
         for file_dict in self._list_files_in_dataset():
@@ -74,6 +75,11 @@ class IOOmiq(UIOBase):
     def file_id(self) -> int:
         tags = self.get_remote_tags()
         return tags["id"]
+
+    @property
+    def features(self) -> dict:
+        tags = self.get_remote_tags()
+        return tags["features"]
 
         return self._api.list_files_in_dataset(self._dataset_id)
 

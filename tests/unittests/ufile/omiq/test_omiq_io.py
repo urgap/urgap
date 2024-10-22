@@ -35,6 +35,9 @@ def mock_omiq_api():
 @pytest.fixture
 
 
+@pytest.fixture
+
+
     assert io_omiq_instance._api is not None
     assert io_omiq_instance._omiq_user_info == {
         "name": "Test User",
@@ -74,6 +77,15 @@ def test_get_remote_tags(io_omiq_instance):
 
     assert tags["omiq_tags"] is True
     assert tags["id"] == 456
+
+
+    )
+    )
+
+        file_id=456,
+        from_task_id=123,
+        feature_names=["feature1", "feature2"],
+    )
 
 
 def test_download(io_omiq_instance):
