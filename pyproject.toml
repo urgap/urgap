@@ -22,6 +22,7 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Chemistry',
 ]
 dependencies = [
+    'flask-wtf==1.2.2',
     'nbformat>=4.2.0',
     'openpyxl',
     'plotly',
