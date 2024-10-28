@@ -70,6 +70,7 @@ class IOOmiq(UIOBase):
     def download(self) -> None:
         else:
 
+        self._api.upload_files_to_dataset(self._dataset_id, [self.scratch_path])
 
     @property
     def file_id(self) -> int:
