@@ -3,6 +3,7 @@ import collections.abc
 import logging
 from collections import UserList, defaultdict, defaultdict as ddict
 from collections.abc import Iterable
+from pathlib import Path
 
 
 
@@ -311,6 +312,15 @@ class UFileList(UserList):
 
 
         """
+    @classmethod
+    def from_folder(
+
+        Args:
+
+        Returns:
+            Initialized UFileList.
+        """
+
         return [u.as_uri() for u in self]
 
     def simplify_names(
