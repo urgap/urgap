@@ -97,6 +97,11 @@ def test_get_remote_tags(io_omiq_instance):
 
 def test_download(io_omiq_instance):
     io_omiq_instance._list_files_in_dataset = MagicMock(
+        return_value=[
+            {
+                "displayName": "file.txt",
+                "id": 123,
+                "features": ["feature1"],
     )
 
     io_omiq_instance.get_remote_tags = MagicMock(return_value={"id": 123})
@@ -127,6 +132,8 @@ def test_download_artifact(io_omiq_instance2):
 
 
 def test_list_container_items(io_omiq_instance):
+    mock_file_list = [
+    ]
     io_omiq_instance._list_files_in_dataset = MagicMock(return_value=mock_file_list)
     io_omiq_instance._list_artifacts = MagicMock(return_value=["artifact1.txt"])
 
