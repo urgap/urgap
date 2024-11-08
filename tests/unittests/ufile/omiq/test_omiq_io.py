@@ -66,6 +66,8 @@ def test_get_remote_tags(io_omiq_instance):
         {
             "id": 456,
             "datasetId": 123,
+            "fileName": "file001.txt",
+            "displayName": "file.txt",
             "rawFileBlobId": 789,
             "jobName": "Job 1",
             "status": "completed",
@@ -77,6 +79,8 @@ def test_get_remote_tags(io_omiq_instance):
 
     assert tags["omiq_tags"] is True
     assert tags["id"] == 456
+    assert tags["fileName"] == "file001.txt"
+    assert tags["displayName"] == "file.txt"
 
 
     )
@@ -99,6 +103,7 @@ def test_download(io_omiq_instance):
     io_omiq_instance._list_files_in_dataset = MagicMock(
         return_value=[
             {
+                "fileName": "file001.txt",
                 "displayName": "file.txt",
                 "id": 123,
                 "features": ["feature1"],
