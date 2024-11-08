@@ -68,6 +68,8 @@ class IOOmiq(UIOBase):
         return self._tags
 
     def download(self) -> None:
+            i["displayName"] for i in self._list_files_in_dataset()
+        ]:
         else:
 
         self._api.upload_files_to_dataset(self._dataset_id, [self.scratch_path])

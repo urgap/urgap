@@ -138,11 +138,21 @@ def test_download_artifact(io_omiq_instance2):
 
 def test_list_container_items(io_omiq_instance):
     mock_file_list = [
+        {
+            "fileName": "A1 0001_24h_U_Plate_001.fcs",
+            "displayName": "A1 0001_24h_U_Plate001.fcs",
+        },
+        {
+            "fileName": "A2 0001_24h_FS1_Plate_001.fcs",
+            "displayName": "A2 0001_24h_FS1_Plate001.fcs",
+        },
     ]
     io_omiq_instance._list_files_in_dataset = MagicMock(return_value=mock_file_list)
     io_omiq_instance._list_artifacts = MagicMock(return_value=["artifact1.txt"])
 
 
+    assert set(items) == {
+    }
 
 
 def test_remote_object_exists(io_omiq_instance):
