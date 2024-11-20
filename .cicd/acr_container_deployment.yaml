@@ -3,3 +3,4 @@ pool:
 stages:
     jobs:
         steps:
+              azureSubscription: 'ARM-RD-dso-AppResources-prod'
