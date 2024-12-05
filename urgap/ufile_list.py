@@ -1,6 +1,8 @@
 
 import collections.abc
 import logging
+import os
+import subprocess
 from collections import UserList, defaultdict, defaultdict as ddict
 from collections.abc import Iterable
 from pathlib import Path
@@ -215,12 +217,22 @@ class UFileList(UserList):
         Returns:
         """
         dynamic_index_groups = {}
+        old_files = []
         for uftype, idx_list in self.get_index_groups_by_uftypes().items():
             if uftype is None:
                 continue
             if self[idx_list[0]].is_borg:
                 dynamic_index_groups[uftype] = idx_list
                 for i in idx_list:
+                    if "_of_N" in self[i].object_name:
+                        new_object_name = self[i].object_name.replace(
+                            "_of_N",
+                            f"_of_{len(idx_list)}",
+                        )
+                        old_files.append(self[i].path)
+                        self[i].rebase(uri=f"#{new_object_name}")
+        for path in old_files:
+            path.unlink(missing_ok=True)
         return dynamic_index_groups
 
     def number_of_uftypes(self) -> dict:
@@ -314,12 +326,22 @@ class UFileList(UserList):
         """
     @classmethod
     def from_folder(
+        cls,
+        folder: str | Path,
 
         Args:
 
         Returns:
             Initialized UFileList.
         """
+            if (
+                file.is_file()
+                and file.name.startswith(".") is False
+                and file.name.endswith(".tag") is False
+            uri_list=sorted(uri_list),
+            number_of_threads=number_of_threads,
+            uftype=uftype,
+        )
 
         return [u.as_uri() for u in self]
 
@@ -342,3 +364,34 @@ class UFileList(UserList):
                     storage_base_uri=storage_base_uri,
             )
         return renamed_ufile_list
+
+
+        Args:
+        """
+            args_list=self,
+            number_of_threads=number_of_threads,
+        )
+
+
+        Args:
+        """
+            args_list=self,
+            number_of_threads=number_of_threads,
+        )
+
+
+        Args:
+        """
+        workdir = Path.cwd()
+        Path.mkdir(destination, parents=True, exist_ok=True)
+        os.chdir(destination)
+        try:
+            with subprocess.Popen(
+            ) as tar_process:
+                        tar_process.stdin.write(split_file.read())
+            tar_process.stdin.close()
+            tar_process.wait()
+            if tar_process.returncode != 0:
+            else:
+        finally:
+            os.chdir(workdir)

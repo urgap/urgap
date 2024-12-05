@@ -332,6 +332,7 @@ class UTrace:
             if ofile is None:
                 continue
             ofile.tags.update(parent_tag_dict)
+            files_to_upload.append(ofile)
 
         self.umeta.save_utrace(self)
 

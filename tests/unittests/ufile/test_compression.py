@@ -40,3 +40,12 @@ def test_multiple_files(tmp_scratch_disk):
     assert len(new_ufl) == 2
     assert new_ufl[0].path.read_text() == f"test_{new_ufl[0].simple_name}"
     assert new_ufl[1].path.read_text() == f"test_{new_ufl[1].simple_name}"
+
+
+def test_uncompress_split_tar(tmp_scratch_disk):
+    content = Path("test_part_aa")
+    )
+    new_ufl = uf.uncompress()
+    assert len(new_ufl) == 2
+    assert new_ufl[0].object_name == "test.txt"
+    assert new_ufl[1].object_name == "test2.txt"

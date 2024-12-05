@@ -255,6 +255,8 @@ class UFile:
 
         Returns:
         """
+        if compression_format is None:
+        match compression_format:
             case "zip":
                 with ZipFile(self.path, "r") as z_file:
                     z_file.extractall(path=temp_folder)
@@ -262,9 +264,13 @@ class UFile:
                 temp_folder.mkdir(parents=True, exist_ok=True)
                 gz_output = temp_folder / self.path.stem
                 try:
+                    self._unpack_gz(gz_output=gz_output, encoding="utf-8")
                 except UnicodeDecodeError:
+                    self._unpack_gz(gz_output=gz_output, encoding="ISO-8859-1")
             case "tar":
                 with tarfile.open(self.path, mode="r:") as tfile:
+            case "split_tar":
+                ).uncompress(temp_folder)
             case "bz2":
                 temp_folder.mkdir(parents=True, exist_ok=True)
                 with bz2.BZ2File(self.path) as bz_file:
@@ -272,7 +278,18 @@ class UFile:
                         shutil.copyfileobj(bz_file, f)
             case _:
                 )
+        if recursive is True:
                     )
+                    try:
+                        Path.unlink(uf.path)
+                    except (FileExistsError, IsADirectoryError, NotADirectoryError):
+                        )
+                        to_be_removed = uf.path
+                        uf.rebase(
+                            uri=f"#{uf.object_name}.renamed",
+                            upload=True,
+                        )
+                        uf.purge_local()
 
         self.io.create_container()
 
