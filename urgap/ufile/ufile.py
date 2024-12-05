@@ -289,6 +289,7 @@ class UFile:
                             uri=f"#{uf.object_name}.renamed",
                             upload=True,
                         )
+                        Path.unlink(to_be_removed)
                         uf.purge_local()
 
         self.io.create_container()
