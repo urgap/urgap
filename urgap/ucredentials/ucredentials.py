@@ -1,4 +1,5 @@
 
+import importlib
 import json
 import logging
 import os
@@ -46,6 +47,14 @@ class UCredentialManager:
         Args:
         """
 
+        io_modules = (
+            "echo",
+            "env",
+            "gcp",
+        )
+        for io_module in io_modules:
+                )
+
         self.ID_KEY = credentials_id_key
         self._extracted_secrets = {}
 
@@ -62,7 +71,10 @@ class UCredentialManager:
         self,
         secret_store: str,
         secret_id: str,
+                f"IO class {secret_store} cannot be imported due to missing dependencies."
+            )
         if secret_store == "env":
+            )
         elif secret_store == "gcp":
                 secret_id=secret_id,
                 project_id=cloud_host_pid,
@@ -73,6 +85,7 @@ class UCredentialManager:
                 vault_name=cloud_host_pid,
             )
         elif secret_store == "echo":
+            )
         else:
                 f"Don't know secret backend {secret_store}."
                 f"Currently supported secret_stores are 'echo', 'env', 'gcp' and 'akv'."
