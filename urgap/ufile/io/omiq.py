@@ -68,11 +68,64 @@ class IOOmiq(UIOBase):
         return self._tags
 
     def download(self) -> None:
+            self._handle_derived_fcs()
             i["displayName"] for i in self._list_files_in_dataset()
         ]:
+            self._download_file_from_dataset()
+            self._download_file_from_artifacts()
         else:
+            self._handle_file_not_found()
 
         self._api.upload_files_to_dataset(self._dataset_id, [self.scratch_path])
+
+    def _handle_derived_fcs(self) -> None:
+        file_id = self.file_id
+        if file_id is None:
+        self._set_query_params(file_id)
+
+    def _set_query_params(self, file_id: str) -> None:
+        self._query_params["filter_usage_mode"] = self._query_params.get(
+        )
+        self._query_params["dataset_id"] = self._dataset_id
+        self._query_params["file_id"] = file_id
+        self._query_params["filepath"] = Path(str(self.scratch_path).split("?")[0])
+        )
+        )
+        self._query_params["workflow"] = self._workflow
+        self._query_params["feature_names"] = [ftr["name"] for ftr in self.features]
+        self._set_optional_task_and_filter_params()
+
+    def _set_optional_task_and_filter_params(self) -> None:
+        if "from_task_id" not in self._query_params:
+            self._set_from_task_id()
+        if "filter_ids" not in self._query_params:
+            self._query_params["filter_ids"] = omiq_api.get_available_filters(
+            )
+
+    def _set_from_task_id(self) -> None:
+        for task in self._workflow["tasks"]:
+            if task.get("type") == "GatingTask":
+                self._query_params["from_task_id"] = int(task["id"])
+                break
+
+    def _download_file_from_dataset(self) -> None:
+        self._api.download_file(
+            dataset_id=self._dataset_id,
+            file_id=self.file_id,
+            filepath=self._scratch_path,
+        )
+
+    def _download_file_from_artifacts(self) -> None:
+        self._api.download_artifact(
+            task_id=task_id,
+            filepath=self._scratch_path,
+        )
+
+    def _get_task_id_for_artifact(self, filename: str) -> str:
+            i["taskId"]
+            if i["file"] == filename
+
+    def _handle_file_not_found(self) -> None:
 
     @property
     def file_id(self) -> int:
