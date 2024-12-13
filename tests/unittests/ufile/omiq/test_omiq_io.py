@@ -91,6 +91,7 @@ def test_get_remote_tags(io_omiq_instance):
     )
 
 
+        reverse_scaling=True,
         file_id=456,
         from_task_id=123,
         feature_names=["feature1", "feature2"],
