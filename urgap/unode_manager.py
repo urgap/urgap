@@ -11,6 +11,8 @@ import re
 import subprocess
 from collections import UserDict
 
+from packaging.version import Version
+
 
 
 class UNodeManager(UserDict):
@@ -98,6 +100,10 @@ class UNodeManager(UserDict):
         Returns:
         """
         lookup = {}
+        for _path in [wrapper_path, unode_path]:
+            for wrapper in _path.glob("**/*.py"):
+                if wrapper.stem.startswith("_"):
+                    continue
         return lookup
 
 
