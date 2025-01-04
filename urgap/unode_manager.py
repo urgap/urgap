@@ -116,6 +116,7 @@ class UNodeManager(UserDict):
 
         Args:
         """
+        class_path_string, class_name = self.wrapper_lookup[unode]
         module = importlib.import_module(module_path)
         unode_class = getattr(module, class_name)
 
@@ -137,6 +138,7 @@ class UNodeManager(UserDict):
                 "has_3rd_party_requirements": False,
                 "requirements_available_by_uftype": {},
         }
+            tmp[unode]["resource_available"] = None
 
             is_available = self.check_requirements(requirements, unode)
             tmp[unode]["requirements_available_by_uftype"][uftype] = is_available

@@ -52,6 +52,7 @@ from pathlib import Path
             msg = "UNode.run() function requires URunDict."
             raise TypeError(msg)
         urun_dict = copy.deepcopy(urun_dict)
+
         if urun_dict.unode_parameters["skip_pre_checks"] is False:
             self._pre_checks()
 
@@ -145,6 +146,10 @@ from pathlib import Path
 
         Returns:
         """
+            return self._construct_exe_path_u2()
+        else:
+
+        else:
 
     @property
     def resource_subfolder(self) -> str:
