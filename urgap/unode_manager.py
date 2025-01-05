@@ -138,8 +138,13 @@ class UNodeManager(UserDict):
                 "has_3rd_party_requirements": False,
                 "requirements_available_by_uftype": {},
         }
+        if ":" in unode:
+
+                "to be supplied by "
+            )
             tmp[unode]["resource_available"] = None
 
+        for uftype, requirements in unode_obj.META_INFO.get("requires", {}).items():
             is_available = self.check_requirements(requirements, unode)
             tmp[unode]["requirements_available_by_uftype"][uftype] = is_available
 

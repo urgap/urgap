@@ -55,7 +55,14 @@ class UTrace:
             self._remote_output_files = self._query_remote_by_uftype()
         return self._remote_output_files
 
+            if urun_dict is None:
+            else:
+                urun_dict = copy.deepcopy(urun_dict)
+            urun_dict.register_unode_meta_info(self.unode_meta)
         else:
+            if urun_dict is None:
+            else:
+            urun_dict.register_unode_meta_info(self.unode_meta)
         return urun_dict
 
         input_files = input_files.filter(
@@ -153,6 +160,7 @@ class UTrace:
         return new_fragment
 
         self,
+    ) -> os.PathLike:
         if run_folder_name is None:
         else:
             top_level_folder = run_folder_name
