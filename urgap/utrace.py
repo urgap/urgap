@@ -62,6 +62,8 @@ class UTrace:
         else:
             if urun_dict is None:
             else:
+                wid = urun_dict.wid
+                urun_dict["wid"] = wid
             urun_dict.register_unode_meta_info(self.unode_meta)
         return urun_dict
 

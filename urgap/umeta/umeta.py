@@ -23,6 +23,19 @@ class UMeta:
 
         Args:
         """
+                {
+                    "parameters": node_exe_details["parameters"],
+                    "user_dict": {
+                        "!NOTE!": "User dicts can be modified from run to run and"
+                    },
+            )
+        else:
+                {
+                    "parameters": node_exe_details["parameters"],
+                    "user_dict": {
+                        "!NOTE!": "User dicts can be modified from run to run and"
+                    },
+            )
         urd.command_list = node_exe_details["command"].split(" ")
         urd["wid"] = wid  # not using urd.wid to avoid the warning :)
             urun_dict=urd,
