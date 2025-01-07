@@ -142,6 +142,7 @@ class UNodeManager(UserDict):
 
                 "to be supplied by "
             )
+            # exe_path supplied by urun_dict['unode_parameters']['latest_exe_paths']
             tmp[unode]["resource_available"] = None
 
         for uftype, requirements in unode_obj.META_INFO.get("requires", {}).items():

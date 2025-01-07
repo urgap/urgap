@@ -39,6 +39,7 @@ class URunDict(UserDict):
                 "skip_data_versioning": False,
                 "skip_pre_checks": False,
                 "storage_base_uri": None,
+                "latest_exe_paths": {},
             },
         }
         self._default_setup_that_cannot_be_set_by_user = {

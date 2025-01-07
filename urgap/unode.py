@@ -22,6 +22,7 @@ from pathlib import Path
         self.status = None
         self.tmp_files = []
         self.utrace_history = []
+        self.latest_exe_paths = None
 
     @property
     def exe_path(self) -> os.PathLike:
