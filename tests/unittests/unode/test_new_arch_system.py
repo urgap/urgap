@@ -5,6 +5,13 @@ import pytest
 @pytest.mark.parametrize(
 )
 def test_new_arch_hierarchy(node_name):
+    # TODO: Add new Unode tests
+        for platform, arcs in node.META_INFO["engine"].items():
+            if platform == "platform_independent":
+                assert "arc_independent" in arcs
+            else:
+                assert "arm64" or "x86_64" in arcs
+                assert "64bit" not in arcs
 
 
 @pytest.mark.parametrize(
