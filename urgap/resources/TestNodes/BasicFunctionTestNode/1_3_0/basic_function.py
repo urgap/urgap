@@ -1,10 +1,23 @@
+"""BasicFunction Test Resource v1.3.0."""
+
 import argparse
 
 
+    """Write Test file v1.3.0.
+
+    Args:
+        input_files (str, optional): dOooo. Defaults to None.
+        output_files (str, optional): Where to write the dummy content in. Defaults to None.
+        params (str, optional): doOOoo. Defaults to None.
+
+    Returns:
+        str: Test String
+    """
     if output_files is not None:
         for output_file in output_files:
                 print(params, file=oo)
                 print(input_files, file=oo)
+                print(main.__doc__, file=oo)
     return "I am a yummy test dummy!"
 
 
