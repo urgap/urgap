@@ -31,6 +31,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
             )
             if unode_version == "latest":
                 urun_dict["unode_parameters"]["latest_exe_paths"][
+                    test_node1.META_INFO["unode_full_identifier"]
                 ] = (
                     / "resources"
                     / "BasicFunctionTestNode"

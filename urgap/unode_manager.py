@@ -4,6 +4,7 @@ This module defines the UNode Manager class which is used to initialize UNodes
 and check if their requirements are met, so they can actually be run.
 """
 
+import copy
 import importlib
 import inspect
 import logging

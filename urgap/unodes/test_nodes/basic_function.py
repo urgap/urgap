@@ -2,8 +2,26 @@
 
 
 
+    META_INFO = {
+        "name": "BasicFunctionTestNode",
+        "versions": [
+        ],
+        "parameters_not_triggering_rerun": [
+            "cpu",
+            "triggers_nuttin",
+        ],
+        "engine_type": ("test_engine",),
+        "input_uftypes": {
+                "min": 1,
+                "max": 1,
             },
+        },
+        "output_uftypes": {
+                "min": 1,
+                "max": 1,
             },
+        },
+    }
 
         """Initialize BasicFunctionTestNode class."""
 
