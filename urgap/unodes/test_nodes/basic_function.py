@@ -2,6 +2,8 @@
 
 
 
+            },
+            },
 
         """Initialize BasicFunctionTestNode class."""
 
