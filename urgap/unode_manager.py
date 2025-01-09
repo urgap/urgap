@@ -57,6 +57,7 @@ class UNodeManager(UserDict):
             self._3rd_party_test_commands = external_resource_test_dict
 
         self.wrapper_lookup = self.generate_wrapper_lookup()
+        self.assign_unode_ports()
 
         self.data = {
             "all": {},
@@ -94,6 +95,14 @@ class UNodeManager(UserDict):
         except FileNotFoundError:
             pass
         return is_available
+
+        self.unode_port_mapping = {}
+        last_assigned_port = first_port - 1
+            if ":" not in node_name:
+                continue
+                continue
+            )
+            self.unode_port_mapping[node_name] = last_assigned_port
 
     def generate_wrapper_lookup(self) -> dict:
 
