@@ -1,6 +1,7 @@
 import random
 
 
+
 def test_single_input():
         [
     )
