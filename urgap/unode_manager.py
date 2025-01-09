@@ -112,6 +112,13 @@ class UNodeManager(UserDict):
 
         Returns:
         """
+            unode_obj = self.import_class(unode)
+            if (
+                self.node_availability_lookup[unode]["has_3rd_party_requirements"]
+                and not self.node_availability_lookup[unode]["requirements_available"]
+            ):
+            if self.node_availability_lookup[unode]["resource_available"] is False:
+            return unode_obj
 
 
 
@@ -129,6 +136,8 @@ class UNodeManager(UserDict):
         for engine_type in engine_types:
                 self.data["by_type"][engine_type] = {}
             self.data["by_type"][engine_type][unode] = unode_class
+        self.node_availability_lookup.update(node_availability_lookup)
+        return unode_obj
 
     def check_unode_dependencies(
         self,
@@ -147,8 +156,19 @@ class UNodeManager(UserDict):
                 "has_3rd_party_requirements": False,
                 "requirements_available_by_uftype": {},
         }
+        unode_obj = self.data["all"][unode]()
+        unode_obj.META_INFO = copy.deepcopy(self.data["all"][unode].META_INFO)
         if ":" in unode:
+            unode_name, unode_version = unode.split(":")
+            unode_obj.META_INFO["unode_version"] = unode_version
+            unode_obj.META_INFO["unode_name"] = unode_name
+            unode_obj.META_INFO["unode_full_identifier"] = unode
+        else:
+            unode_obj.META_INFO["unode_version"] = None
+            unode_obj.META_INFO["unode_name"] = unode
+            unode_obj.META_INFO["unode_full_identifier"] = unode
 
+        if unode_obj.META_INFO["unode_version"] == "latest":
                 "to be supplied by "
             )
             # exe_path supplied by urun_dict['unode_parameters']['latest_exe_paths']
@@ -165,6 +185,7 @@ class UNodeManager(UserDict):
 
         tmp[unode]["requirements_available"] = all(
         )
+        return unode_obj, tmp
 
     def check_requirements(
         self,

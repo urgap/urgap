@@ -39,6 +39,7 @@ from pathlib import Path
 
         Returns:
         """
+            self.META_INFO["unode_full_identifier"]
         ]["resource_available"]
 
     @property
@@ -46,6 +47,7 @@ from pathlib import Path
 
         Returns:
         """
+            self.META_INFO["unode_full_identifier"]
         ]["has_3rd_party_requirements"]
 
     def run(
@@ -78,6 +80,7 @@ from pathlib import Path
             urun_dict=urun_dict,
             input_files=ufiles,
             unode_meta=self.META_INFO,
+            unode_version=self.META_INFO["unode_version"],
         )
         starting_time = time.time()
         self.utrace_history.append(ut.id)
@@ -147,6 +150,7 @@ from pathlib import Path
 
         Returns:
         """
+        if self.META_INFO["unode_version"] is None:
             return self._construct_exe_path_u2()
         else:
 
@@ -236,6 +240,7 @@ from pathlib import Path
 
         Returns:
         """
+            self.META_INFO["unode_full_identifier"]
         ]["requirements_available"]
 
 
