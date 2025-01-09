@@ -20,6 +20,7 @@ class UTrace:
         Args:
             input_files: UFileList of (unfiltered) UFiles.
             unode_meta: UNode meta information dictionary.
+            unode_version: UNode tag / version, introduced in u3.
             umeta_io: UMeta interface to use.
             output_files: Output files as UFileList.
         """

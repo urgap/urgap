@@ -29,6 +29,7 @@ class UMeta:
                         "!NOTE!": "User dicts can be modified from run to run and"
                     },
             )
+            _, unode_version = node_exe_details["unode"].split(":")
         else:
                 {
                     "parameters": node_exe_details["parameters"],
@@ -36,9 +37,11 @@ class UMeta:
                         "!NOTE!": "User dicts can be modified from run to run and"
                     },
             )
+            unode_version = None
         urd.command_list = node_exe_details["command"].split(" ")
         urd["wid"] = wid  # not using urd.wid to avoid the warning :)
             urun_dict=urd,
+            unode_version=unode_version,
         )
 
 

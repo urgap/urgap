@@ -16,9 +16,11 @@ import pytest
 )
 def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_tested):
     ufiles = check_if_ufilelist_can_be_tested
+    for unode_version in ["1.3.0", "latest"]:
         with tempfile.TemporaryDirectory() as tmpdirname:
                 {
                     "parameters": {
+                        f"BasicFunctionTestNode:{unode_version}": {
                             "triggers_nuttin": 100,
                             "triggers_rerun": 100,
                             "triggers_rerun_-3": 100,
@@ -27,6 +29,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
                         "record_skipped_runs": True,
                     },
             )
+            if unode_version == "latest":
                 urun_dict["unode_parameters"]["latest_exe_paths"][
                 ] = (
                     / "resources"
