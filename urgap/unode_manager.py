@@ -120,6 +120,14 @@ class UNodeManager(UserDict):
         module = importlib.import_module(module_path)
         unode_class = getattr(module, class_name)
 
+        self.data["all"][unode] = unode_class
+        try:
+            engine_types = unode_class.META_INFO["engine_type"]
+        except AttributeError:
+            engine_types = unode_class().META_INFO["engine_type"]
+        for engine_type in engine_types:
+                self.data["by_type"][engine_type] = {}
+            self.data["by_type"][engine_type][unode] = unode_class
 
     def check_unode_dependencies(
         self,
