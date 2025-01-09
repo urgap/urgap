@@ -7,6 +7,23 @@ import pandas as pd
     Allows to filter and merge multiple csv files based on a pandas query string.
     """
 
+    META_INFO = {
+        "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
+        "versions": [
+        ],
+        "input_uftypes": {
+                "min": 1,
+                "max": -1,
+        },
+        "output_uftypes": {
+                "min": 1,
+                "max": 1,
+            },
+        },
+        "engine": None,
+        "engine_type": ("io",),
+    }
+
 
     def preflight(
         self,
