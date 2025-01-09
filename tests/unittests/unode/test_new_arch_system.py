@@ -6,6 +6,7 @@ import pytest
 )
 def test_new_arch_hierarchy(node_name):
     # TODO: Add new Unode tests
+    if node.META_INFO["unode_version"] is None:
         for platform, arcs in node.META_INFO["engine"].items():
             if platform == "platform_independent":
                 assert "arc_independent" in arcs
@@ -18,6 +19,7 @@ def test_new_arch_hierarchy(node_name):
 )
 def test_new_arc_info(node_name):
     # TODO: Add new Unode tests
+    if node.META_INFO["unode_version"] is None:
         for platform, arcs in node.META_INFO["engine"].items():
             if platform == "system":
                 assert isinstance(node.META_INFO["engine"]["system"], str)

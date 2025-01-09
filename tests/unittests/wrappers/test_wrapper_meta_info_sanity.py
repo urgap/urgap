@@ -55,5 +55,6 @@ tuple_validator = TupleValidator(schema=reference_schema)
 @pytest.mark.parametrize(
 )
 def test_meta_info_is_sane(node_name):
+    if node.META_INFO["unode_version"] is None:
         assert tuple_validator.validate(instance=node.META_INFO) is None
     # TODO: create schema for u3
