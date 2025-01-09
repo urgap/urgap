@@ -11,6 +11,7 @@ import pandas as pd
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
         "versions": [
         ],
+        "parameters_not_triggering_rerun": [],
         "input_uftypes": {
                 "min": 1,
                 "max": -1,
