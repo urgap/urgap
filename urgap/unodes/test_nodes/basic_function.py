@@ -10,6 +10,7 @@
             "cpu",
             "triggers_nuttin",
         ],
+        "engine": None,
         "engine_type": ("test_engine",),
         "input_uftypes": {
                 "min": 1,
