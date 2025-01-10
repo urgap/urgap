@@ -44,6 +44,7 @@ import pandas as pd
                 str(utrace.output_files[0].path),
         )
         for parameter_key, parameter_value in utrace.urun_dict.parameters[
+            f"{self.META_INFO['unode_full_identifier']}"
         ].items():
             if parameter_value is not None:
 
