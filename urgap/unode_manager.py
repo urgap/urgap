@@ -98,9 +98,11 @@ class UNodeManager(UserDict):
 
         self.unode_port_mapping = {}
         last_assigned_port = first_port - 1
+        for node_name in sorted(self.wrapper_lookup.keys(), key=sort_versions):
             if ":" not in node_name:
                 continue
                 continue
+            last_assigned_port = get_next_port(
             )
             self.unode_port_mapping[node_name] = last_assigned_port
 

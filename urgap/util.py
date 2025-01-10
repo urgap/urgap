@@ -5,6 +5,7 @@ import logging
 import os
 import re
 
+from packaging.version import Version
 
 
 def sense_compression_format(file: os.PathLike) -> str:
@@ -69,3 +70,35 @@ def execute_threaded_function(
             else:
                 results = list(executor.map(func, args_list))
     return results
+
+
+
+    Args:
+
+    Returns:
+    """
+    if ":" not in item:
+        return (item, 1, None)
+    tool, version = item.split(":")
+    is_latest = -1 if version == "latest" else 0
+    parsed_version = Version(version) if version != "latest" else None
+    return (tool, is_latest, parsed_version)
+
+
+def get_next_port(
+) -> int:
+
+    Args:
+
+    Returns:
+    """
+    if is_lastest is True:
+        if (last_assigned_port % 10) != 0:
+            return ((last_assigned_port // 10) + 1) * 10
+    next_port = last_assigned_port + 1
+    if next_port % 10 == 0:
+        next_port += 1
+    if next_port > last_port:
+            "Not enough ports available. Increase number of available ports in config."
+        )
+    return next_port

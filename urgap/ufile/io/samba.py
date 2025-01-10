@@ -5,6 +5,7 @@ import re
 from io import BytesIO
 
 from smb.base import NotConnectedError, SMBTimeout
+from smb.smb_structs import OperationFailure
 
 
 
