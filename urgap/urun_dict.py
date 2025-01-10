@@ -57,6 +57,7 @@ class URunDict(UserDict):
                     self[k][k2] = v2
 
         for k, v in self._default_setup_that_cannot_be_set_by_user.items():
+            self.assign_wid()
 
         default_storage_parameters = copy.deepcopy(
         )
