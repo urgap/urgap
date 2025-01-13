@@ -31,5 +31,6 @@ def create_app(name: str) -> FastAPI:
     thread.join()
 
 @click.command()
+
     """
 
