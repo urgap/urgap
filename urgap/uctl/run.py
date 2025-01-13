@@ -1,4 +1,5 @@
 
+import asyncio
 import logging
 import multiprocessing
 import signal
@@ -9,6 +10,7 @@ def create_app(name: str) -> FastAPI:
 
     @app.post("/v1/run")
     async def run_unode(request: Request) -> JSONResponse:
+        payload = await request.json()
 
 
     @app.post("/v1/terminate")
