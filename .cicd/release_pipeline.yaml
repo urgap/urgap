@@ -1,0 +1,59 @@
+trigger:
+  tags:
+    include:
+      - v*
+resources:
+  repositories:
+      type: github
+      ref: main
+      endpoint: DSO-R1-Github
+pool:
+  vmImage: ubuntu-latest
+stages:
+  - stage: PythonPackage
+    variables:
+      PACKAGE_VERSION: $[stageDependencies.create_variables_stage.create_variables_job.outputs['ADO_variables.PACKAGE_VERSION']]
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    dependsOn:
+    jobs:
+      - job: BuildPackage
+        displayName: 'Build Package'
+        steps:
+          - checkout: self
+            clean: true
+            persistCredentials: true
+          - script: |
+              git fetch --all --tags
+              git switch $(basename $(Build.SourceBranch))
+              git log | head -n 5
+          - script: |
+              pip install build twine wheel
+              python -m build
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish package'
+            inputs:
+              pathToPublish: './dist/'
+              artifactName: 'package'
+      - job: UploadWheel
+        dependsOn: BuildPackage
+        condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+        displayName: Upload Wheel
+        steps:
+          - task: DownloadBuildArtifacts@1
+            inputs:
+              artifactName: 'package'
+              downloadPath: './dist/'
+          - task: GitHubRelease@1
+            inputs:
+              gitHubConnection: DSO-R1-Github
+              repositoryName: $(REPOSITORY_NAME)
+              action: edit
+              target: $(Build.SourceVersion)
+              tag: $(Build.SourceBranchName)
+              assets: ./dist/package/*.whl
+              assetUploadMode: replace
+      - job: PushVersion
+        steps:
+            clean: true
+            fetchDepth: 0
+            persistCredentials: true
