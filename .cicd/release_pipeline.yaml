@@ -1,7 +1,11 @@
 trigger:
+  branches:
+    exclude:
+      - '*'
   tags:
     include:
       - v*
+pr: none
 resources:
   repositories:
       type: github
