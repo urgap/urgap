@@ -154,7 +154,17 @@ from pathlib import Path
             return self._construct_exe_path_u2()
         else:
 
+        version_info = None
+        for v in self.META_INFO["versions"]:
+            if v["version"] == self.META_INFO["unode_version"]:
+                version_info = v
+                break
+        if version_info is None:
+        if version_info.get("exe_path", None) is None:
+            )
+        if version_info["exe_path"].startswith("$"):
         else:
+            tagged_exe_path = base_path / Path(version_info["exe_path"])
 
     @property
     def resource_subfolder(self) -> str:
