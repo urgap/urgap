@@ -46,8 +46,11 @@ docs = [
     'sphinx-rtd-theme',
 ]
 legacy = [
+    'unimod-mapper~=0.6.4',
     'uparma~=1.0.1',
+    'chemical-composition~=1.0.6',
 ]
+
 all = [
     'cloud-sql-python-connector~=1.0',
     'pg8000~=1.29',
