@@ -9,6 +9,7 @@ import pytest
             ),
                 {
                     "parameters": {
+                            "-q": "`spectrum_id` > 3000",
                     },
                     "unode_parameters": {
                         "force": True,

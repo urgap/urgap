@@ -60,6 +60,22 @@ def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
             output_file.remove_remote_object()
     return unodes_dict, ufiles, urun_dict
 
+@pytest.fixture
+def provide_clean_test_node_dirs(request):
+    unodes, ufiles, urun_dict = init_nodes(
+        ufile_path_list=request.param[0],
+        urun_dict=request.param[1],
+        unodes=request.param[2],
+    )
+    tmp_dir_name = tempfile.TemporaryDirectory()
+    yield unodes, ufiles, urun_dict
+    tmp_dir_name.cleanup()
+    unodes, ufiles, urun_dict = init_nodes(
+        ufile_path_list=request.param[0],
+        urun_dict=request.param[1],
+        unodes=request.param[2],
+    )
+
 
 @pytest.fixture
 def provide_clean_node_dirs(request):

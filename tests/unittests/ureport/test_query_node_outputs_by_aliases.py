@@ -55,6 +55,7 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
             ),
                 {
                     "parameters": {
+                            "-q": "`spectrum_id` > 3000",
                     },
                     "unode_parameters": {
                         "force": True,
