@@ -3,6 +3,7 @@ steps:
     parameters:
   - template: misc/setup_python.yaml@templates
   - script: |
+  - script: |
       uctl info version
       uctl info unodes
     env:
