@@ -30,6 +30,9 @@ class IOOmiq(UIOBase):
             if self._omiq_user_info is not None:
                 )
         self._dataset_id = int(self._workflow["datasetId"])
+        else:
+            self._corresponding_fcs_filename = None
+        self._scratch_path = self.scratch_path
 
     @property
 
@@ -127,6 +130,9 @@ class IOOmiq(UIOBase):
             if i["file"] == filename
 
     def _handle_file_not_found(self) -> None:
+        if self._corresponding_fcs_filename is None:
+        else:
+            f = self._corresponding_fcs_filename
 
     @property
     def file_id(self) -> int:
@@ -162,4 +168,5 @@ class IOOmiq(UIOBase):
         Returns:
         """
         return (
+            or self._corresponding_fcs_filename in self._list_artifacts()
         )

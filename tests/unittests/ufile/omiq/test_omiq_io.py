@@ -28,10 +28,13 @@ def mock_omiq_api():
 
 @pytest.fixture
 
+@pytest.fixture
+
 
 @pytest.fixture
 
 
+@pytest.fixture
 @pytest.fixture
 
 
@@ -83,20 +86,29 @@ def test_get_remote_tags(io_omiq_instance):
     assert tags["displayName"] == "file.txt"
 
 
+def test_download_derived_from_fcs(io_omiq_instance3):
+    io_omiq_instance3._list_files_in_dataset = MagicMock(
     )
+    io_omiq_instance3.get_remote_tags = MagicMock(
         return_value={
             "id": 456,
             "features": [{"name": "feature1"}, {"name": "feature2"}],
     )
+    io_omiq_instance3._api.get_available_filters = MagicMock(
     )
 
+    io_omiq_instance3.download()
 
+    io_omiq_instance3._api.export_data.assert_called_once_with(
         filter_usage_mode="BOOLCOLS",
         reverse_scaling=True,
+        dataset_id=io_omiq_instance3._dataset_id,
         file_id=456,
+        filepath=io_omiq_instance3._scratch_path,
         from_task_id=123,
         feature_names=["feature1", "feature2"],
         filter_ids=["filter1", "filter3"],
+        workflow=io_omiq_instance3._workflow,
         add_row_nums=True,
     )
 
