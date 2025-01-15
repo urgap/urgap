@@ -30,6 +30,8 @@ class IOOmiq(UIOBase):
             if self._omiq_user_info is not None:
                 )
         self._dataset_id = int(self._workflow["datasetId"])
+            self._corresponding_fcs_filename = str(
+            )
         else:
             self._corresponding_fcs_filename = None
         self._scratch_path = self.scratch_path
@@ -65,6 +67,9 @@ class IOOmiq(UIOBase):
         ]
         self._tags = {"omiq_tags": True}
         for file_dict in self._list_files_in_dataset():
+            if (
+                or file_dict["displayName"] == self._corresponding_fcs_filename
+            ):
                 for key in keys_to_grab:
                     file_value = file_dict.get(key, None)
                     if file_value is None:
@@ -72,6 +77,7 @@ class IOOmiq(UIOBase):
         return self._tags
 
     def download(self) -> None:
+        if self._corresponding_fcs_filename is not None:
             self._handle_derived_fcs()
             i["displayName"] for i in self._list_files_in_dataset()
         ]:
