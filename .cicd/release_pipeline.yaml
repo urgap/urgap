@@ -57,6 +57,7 @@ stages:
               assets: ./dist/package/*.whl
               assetUploadMode: replace
       - job: PushVersion
+        dependsOn: UploadWheel
         steps:
             clean: true
             fetchDepth: 0
