@@ -10,6 +10,7 @@ def test_info_unodes():
     for wrapper in wrappers:
             continue
         assert wrapper in result.stdout
+        assert "ERROR" not in result.stdout
 
 
 def test_info_umeta():
