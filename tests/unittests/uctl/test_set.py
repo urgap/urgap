@@ -11,6 +11,7 @@ def load_credentials(scheme=None):
 
 
 def test_set_credentials(provide_changeable_credentials):
+
     creds = load_credentials()
     pw = "test"
     for entry in creds:
