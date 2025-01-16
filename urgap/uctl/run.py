@@ -3,6 +3,8 @@ import asyncio
 import logging
 import multiprocessing
 import signal
+import threading
+from fastapi.responses import JSONResponse
 
 
 
@@ -35,4 +37,10 @@ def create_app(name: str) -> FastAPI:
 @click.command()
 
     """
+    processes = []
+            target=run_server,
+            args=(
+                port,
+            ),
+        )
 
