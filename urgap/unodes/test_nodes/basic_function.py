@@ -11,6 +11,7 @@
             "cpu",
             "triggers_nuttin",
         ],
+        "wrapper_version": {"major": 4, "minor": 2, "patch": 0},
         "engine": None,
         "engine_type": ("test_engine",),
         "input_uftypes": {
