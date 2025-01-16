@@ -8,7 +8,9 @@ trigger:
 pr: none
 resources:
   repositories:
+    - repository: containerhub
       type: github
+      name: gsk-tech/dso-container-hub
       ref: main
       endpoint: DSO-R1-Github
 pool:
@@ -58,7 +60,11 @@ stages:
               assetUploadMode: replace
       - job: PushVersion
         dependsOn: UploadWheel
+        displayName: 'Push Version to Containerhub'
         steps:
+          - checkout: containerhub
+            path: containerhub
             clean: true
             fetchDepth: 0
             persistCredentials: true
+              cd $(Pipeline.Workspace)/containerhub
