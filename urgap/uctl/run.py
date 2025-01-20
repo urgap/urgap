@@ -46,3 +46,5 @@ def create_app(name: str) -> FastAPI:
             ),
         )
 
+
+    for process in processes:
