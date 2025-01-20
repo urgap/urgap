@@ -54,6 +54,8 @@ def create_app(name: str) -> FastAPI:
         processes.append(p)
         p.start()
 
+        for proc in processes:
+            proc.terminate()
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
