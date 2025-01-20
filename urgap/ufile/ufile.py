@@ -55,7 +55,9 @@ class UFile:
 
         Returns:
         """
+        download_file = True
         if self.io.local_object_exists() is True:
+            download_file = False
             remote_tags = self.io.get_remote_tags()
             if remote_tags is None:
                 if len(non_standard_tags) > 0:

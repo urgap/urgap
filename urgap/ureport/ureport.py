@@ -147,6 +147,7 @@ UReport id {id(self)}
         Returns:
             True if data exists, else False.
         """
+        return self.ufile.remote_object_exists()
 
         """Check if meta data file object exists.
 
