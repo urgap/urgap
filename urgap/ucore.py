@@ -46,3 +46,6 @@ def calculate_file_hash(
                 subprocess.call(["chmod", "-R", "0777", wid_folder])
                 shutil.rmtree(wid_folder)
 
+
+            run_payload = {"be humble": "sit down"}
+            run_url = f"http://127.0.0.1:{port}/v1/terminate"
