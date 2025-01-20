@@ -20,3 +20,6 @@ resources:
 pool:
   vmImage: ubuntu-latest
 stages:
+  - stage: CodeQuality
+    jobs:
+        steps:

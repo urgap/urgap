@@ -16,11 +16,19 @@ resources:
 pool:
   vmImage: ubuntu-latest
 stages:
+  - stage: SetVariables
+    jobs:
+        steps:
+          - script: |
+              PACKAGE_VERSION=$(python -m setuptools_scm | sed "s/\.dev0//")
+              echo "##vso[task.setvariable variable=PACKAGE_VERSION;isOutput=true]$PACKAGE_VERSION"
+            displayName: Set variable PACKAGE_VERSION
   - stage: PythonPackage
     variables:
       PACKAGE_VERSION: $[stageDependencies.create_variables_stage.create_variables_job.outputs['ADO_variables.PACKAGE_VERSION']]
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     dependsOn:
+      - SetVariables
     jobs:
       - job: BuildPackage
         displayName: 'Build Package'
