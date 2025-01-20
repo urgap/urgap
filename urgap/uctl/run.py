@@ -25,11 +25,14 @@ def create_app(name: str) -> FastAPI:
 
     """
     app = create_app(name)
+    app.state.shutdown_event = shutdown_event
     config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="info")
     server = uvicorn.Server(config)
 
     thread = threading.Thread(target=server.run)
     thread.start()
+
+    shutdown_event.wait()
 
     server.should_exit = True
     thread.join()
@@ -40,11 +43,20 @@ def create_app(name: str) -> FastAPI:
 
     """
     processes = []
+    shutdown_event = multiprocessing.Event()
+        p = multiprocessing.Process(
             target=run_server,
             args=(
                 port,
+                shutdown_event,
             ),
         )
+        processes.append(p)
+        p.start()
 
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
     for process in processes:
+        process.join()
