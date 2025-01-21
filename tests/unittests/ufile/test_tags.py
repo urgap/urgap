@@ -69,3 +69,4 @@ def test_setting_tags_merges_with_remote(tmp_scratch_disk):
     uf.upload()
     uf.purge_local()
     assert uf2.tags.get("lo", None) == "12"
+    assert uf2.tags.get("k", None) == 12
