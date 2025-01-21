@@ -41,6 +41,7 @@ def create_app(name: str) -> FastAPI:
 @click.option(
     "--nodes",
     "-n",
+    help="Nodes for which to start server.",
     required=True,
     multiple=True,
 )
