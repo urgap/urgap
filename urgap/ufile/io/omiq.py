@@ -99,7 +99,9 @@ class IOOmiq(UIOBase):
         self._query_params["dataset_id"] = self._dataset_id
         self._query_params["file_id"] = file_id
         self._query_params["filepath"] = Path(str(self.scratch_path).split("?")[0])
+        self._query_params["add_row_nums"] = self._query_params.get(
         )
+        self._query_params["reverse_scaling"] = self._query_params.get(
         )
         self._query_params["workflow"] = self._workflow
         self._query_params["feature_names"] = [ftr["name"] for ftr in self.features]
