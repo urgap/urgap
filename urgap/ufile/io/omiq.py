@@ -30,6 +30,7 @@ class IOOmiq(UIOBase):
             if self._omiq_user_info is not None:
                 )
         self._dataset_id = int(self._workflow["datasetId"])
+        if self._query_params.get("derived_from_fcs", False) is True:
             self._corresponding_fcs_filename = str(
             )
         else:
@@ -92,6 +93,8 @@ class IOOmiq(UIOBase):
         file_id = self.file_id
         if file_id is None:
         self._set_query_params(file_id)
+        self._api.export_data(
+        )
 
     def _set_query_params(self, file_id: str) -> None:
         self._query_params["filter_usage_mode"] = self._query_params.get(
