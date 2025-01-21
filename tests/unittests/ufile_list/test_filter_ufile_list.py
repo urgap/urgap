@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 
 
 def test_filtering_on_single_file_(tmp_scratch_disk):
@@ -138,4 +140,32 @@ def test_wrapper_defintions_are_not_met_with_additional_filters(tmp_scratch_disk
     ]
 
 
+    with pytest.raises(ValueError):
+            input_uftypes={
+            },
+            additional_filters={
+            },
+        )
+
+
+def test_filter_ufile_list_too_many_files(tmp_dir):
+    ufiles = (
+            [
+                ),
+                ),
+        ),
     )
+        {
+            "parameters": {
+                "BasicFunctionTestNode:1.1.0": {
+                    "triggers_nuttin": 100,
+                    "triggers_rerun": 100,
+                    "triggers_rerun_-3": 100,
+            },
+            "unode_parameters": {
+                "record_skipped_runs": True,
+                "storage_base_uri": f"file://{tmp_dir}",
+            },
+    )
+
+    with pytest.raises(ValueError):

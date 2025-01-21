@@ -146,8 +146,12 @@ class UFileList(UserList):
                 if max_number_allowed == -1 or len(ufile_sublist) <= max_number_allowed:
                     filtered_ufile_list += ufile_sublist
                 else:
+                        f"Received {len(ufile_sublist)} files with datatype {file_data_type}"
+                        f"but expected a maximum of {max_number_allowed}."
                     )
             else:
+                    f"Received only {len(ufile_sublist)} files with datatype {file_data_type}"
+                    f"but expected a minimum of {min_number_required}"
                 )
         return filtered_ufile_list
 
