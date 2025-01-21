@@ -7,12 +7,32 @@ import pandas as pd
     df = pd.read_csv(filtered_csv[0].path)
 
 
+        [
+    )
+        {
+            "parameters": {
+            },
+            "unode_parameters": {
+                "storage_base_uri": f"file://{tmp_dir}",
+            },
+    )
     assert filtered_csv[0].path.exists()
     assert filtered_csv[0].uftype == ".any.csv"
     df = pd.read_csv(filtered_csv[0].path)
     assert df.shape[0] == 2
 
 
+        [
+    )
+        {
+            "parameters": {
+                    "-q": None,
+            },
+            "unode_parameters": {
+                "storage_base_uri": f"file://{tmp_dir}",
+            },
+    )
     assert filtered_csv[0].path.exists()
     assert filtered_csv[0].uftype == ".any.csv"
     df = pd.read_csv(filtered_csv[0].path)
+    assert df.shape[0] == 3

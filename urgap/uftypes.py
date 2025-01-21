@@ -105,6 +105,7 @@ any.TSV = ".any.tsv"
 any.XML = ".any.xml"
 any.TXT = ".any.txt"
 any.PARQUET = ".any.parquet"
+any.XLSX = ".any.xlsx"
 
 # Metabolomics==================================================================
 mx = types.SimpleNamespace()

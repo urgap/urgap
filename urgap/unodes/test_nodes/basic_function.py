@@ -6,6 +6,12 @@
     META_INFO = {
         "name": "BasicFunctionTestNode",
         "versions": [
+            {
+                "version": "1.1.0",
+            },
+            {
+                "version": "1.3.0",
+            },
         ],
         "parameters_not_triggering_rerun": [
             "cpu",

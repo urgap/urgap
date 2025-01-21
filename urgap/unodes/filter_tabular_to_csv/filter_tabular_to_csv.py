@@ -49,6 +49,7 @@ import pandas as pd
             f"{self.META_INFO['unode_full_identifier']}"
         ].items():
             if parameter_value is not None:
+                utrace.urun_dict.command_list.extend([parameter_key, parameter_value])
 
         return utrace
 
