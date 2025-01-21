@@ -39,6 +39,10 @@ def create_app(name: str) -> FastAPI:
 
 @click.command()
 @click.option(
+    "--nodes",
+    "-n",
+    required=True,
+    multiple=True,
 )
 
     """
@@ -47,6 +51,7 @@ def create_app(name: str) -> FastAPI:
         p = multiprocessing.Process(
             target=run_server,
             args=(
+                unode,
                 port,
                 shutdown_event,
             ),
