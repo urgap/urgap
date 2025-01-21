@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
+
 import pytest
 import urllib3
 
