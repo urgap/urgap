@@ -93,6 +93,21 @@ class IOOmiq(UIOBase):
         file_id = self.file_id
         if file_id is None:
         self._set_query_params(file_id)
+        relevant_keys = (
+            "dataset_id",
+            "file_id",
+            "feature_names",
+            "add_row_nums",
+            "filter_ids",
+            "workflow",
+            "from_task_id",
+            "filepath",
+            "filter_usage_mode",
+            "drop_not_filtered",
+            "reverse_scaling",
+            "overwrite",
+            "verbose",
+        )
         self._api.export_data(
         )
 
