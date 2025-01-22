@@ -14,6 +14,8 @@ import pandas as pd
     """
 
 
+    for file in input_files:
+        input_file_type = sense_file_format(file)
     else:
 
 
