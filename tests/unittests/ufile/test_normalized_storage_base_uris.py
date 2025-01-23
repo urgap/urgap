@@ -5,6 +5,7 @@
     )
         {
             "parameters": {
+                "FilterTabularToCSV:1.0.0": {
                     "-q": "spectrum_title != 'DiesDasAnanas'",
     )
 

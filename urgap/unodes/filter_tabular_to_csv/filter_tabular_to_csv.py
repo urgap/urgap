@@ -8,6 +8,7 @@ import pandas as pd
     """
 
     META_INFO = {
+        "name": "FilterTabularToCSV",
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
         "versions": [
             {"version": "1.0.0", "exe_path": "FilterTabular/1_0_0/filter_tabular.py"},
@@ -26,9 +27,11 @@ import pandas as pd
         "engine_type": ("io",),
     }
 
+        """Initialize FilterTabularToCSV class."""
 
     def preflight(
         self,
+        """Preflight routine for FilterTabularToCSV wrapper.
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.

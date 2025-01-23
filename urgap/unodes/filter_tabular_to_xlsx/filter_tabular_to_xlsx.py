@@ -6,6 +6,7 @@
     """
 
     META_INFO = {
+        "name": "FilterTabularToXlsx",
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
         "versions": [
             {"version": "1.0.0", "exe_path": "FilterTabular/1_0_0/filter_tabular.py"},
@@ -25,9 +26,11 @@
         "engine_type": ("io",),
     }
 
+        """Initialize FilterTabularToXlsx class."""
 
     def preflight(
         self,
+        """Preflight routine for FilterTabularToXlsx wrapper.
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.

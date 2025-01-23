@@ -55,17 +55,21 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
             ),
                 {
                     "parameters": {
+                        "FilterTabularToCSV:1.0.0": {
                             "-q": "`spectrum_id` > 3000",
                     },
                     "unode_parameters": {
                         "force": True,
                     },
             ),
+            ["FilterTabularToCSV:1.0.0"],
     ],
     indirect=["provide_clean_node_dirs"],
 )
     test_nodes, ufiles, urun_dict = provide_clean_node_dirs
+    test_node = test_nodes["FilterTabularToCSV:1.0.0"]
     results = test_node.run(ufiles=ufiles, urun_dict=urun_dict)
+    urun_dict.parameters["FilterTabularToCSV:1.0.0"]["-q"] = "`spectrum_id` < 3100"
 
     report.draw_execution_dag()
     queried_results = report.query_node_outputs_by_aliases(nodes={0: []})

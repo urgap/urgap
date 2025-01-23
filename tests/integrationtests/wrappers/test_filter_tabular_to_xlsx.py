@@ -11,6 +11,7 @@ import pandas as pd
                 "storage_base_uri": f"file://{tmp_dir}",
             },
     )
+    filtered_xlsx = FilterTabularToXlsx_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_xlsx[0].path.exists()
     df = pd.read_excel(filtered_xlsx[0].path)
 
@@ -25,6 +26,7 @@ import pandas as pd
                 "storage_base_uri": f"file://{tmp_dir}",
             },
     )
+    filtered_xlsx = FilterTabularToXlsx_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_xlsx[0].path.exists()
     df = pd.read_excel(filtered_xlsx[0].path)
     assert df.shape[0] == 4
@@ -41,5 +43,6 @@ import pandas as pd
                 "storage_base_uri": f"file://{tmp_dir}",
             },
     )
+    filtered_xlsx = FilterTabularToXlsx_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_xlsx[0].path.exists()
     df = pd.read_excel(filtered_xlsx[0].path)
