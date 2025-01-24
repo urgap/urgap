@@ -25,6 +25,10 @@ class UTreeQuerier:
             parent_node = "ANY"
 
         for key, value in namespace.items():
+                continue
+                extension = parent_node.replace("ANY", "") + key + ".ANY"
+            elif isinstance(value, str):
+                extension = value
             else:
                 continue
             if parent_node == "ANY":
