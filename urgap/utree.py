@@ -19,6 +19,9 @@ class UTreeQuerier:
         """
         if namespace is None:
             namespace = namespace.__dict__
+        if graph is None:
+            graph = nx.DiGraph()
+            graph.add_node("ANY", ext=".ANY")
             parent_node = "ANY"
 
         for key, value in namespace.items():
@@ -30,13 +33,20 @@ class UTreeQuerier:
                 new_node_name = parent_node.replace(".ANY", "") + "." + key
             if new_node_name[-1].islower():
                 new_node_name += ".ANY"
+            graph.add_node(new_node_name, ext=extension)
+            graph.add_edge(parent_node, new_node_name)
             if isinstance(value, types.SimpleNamespace):
+        return graph
 
         general_types = self.get_leafs_from_node(node="any.ANY")
         for leaf, ext in general_types:
             for node in leafs_with_ext:
+                graph.add_edge(leaf, node)
+        return graph
 
         for leaf in ["any.CSV", "any.XLSX", "any.PARQUET"]:
+            graph.add_edge("any.TABULAR", leaf)
+        return graph
 
     def get_nodes_with_ext(self, ext: str) -> list:
 
