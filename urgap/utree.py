@@ -10,10 +10,14 @@ class UTreeQuerier:
 
     """
 
+    def __init__(
+        self,
         """Build a directed graph from a file providing namespacing.
 
         Args:
             namespace: Provides the namespace which is basis for the edges.
+            graph: Graph to use as basis.
+            parent_node: Parent node of the graph.
 
         Note:
         """
@@ -22,7 +26,11 @@ class UTreeQuerier:
         if graph is None:
             graph = nx.DiGraph()
             graph.add_node("ANY", ext=".ANY")
+        if parent_node is None:
             parent_node = "ANY"
+        self.G = self._walk_tree(namespace, graph=graph, parent_node=parent_node)
+        self.G = self._connect_general_types(self.G)
+        self.G = self._connect_tabular_types(self.G)
 
         for key, value in namespace.items():
                 continue
