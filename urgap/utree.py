@@ -36,6 +36,8 @@ class UTreeQuerier:
         for leaf, ext in general_types:
             for node in leafs_with_ext:
 
+        for leaf in ["any.CSV", "any.XLSX", "any.PARQUET"]:
+
     def get_nodes_with_ext(self, ext: str) -> list:
 
         Args:
