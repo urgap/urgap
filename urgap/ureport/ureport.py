@@ -262,6 +262,7 @@ UReport id {id(self)}
             "rows": [],
         }
         execution_graph = {
+            "title": "Execution graph",
             "the magma color palette and scaled according to execution time. "
             "Purple arrows indicate incoming data and green arrows"
             " point to data produced. Use scroll wheel to zoom.",

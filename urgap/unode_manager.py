@@ -147,12 +147,14 @@ class UNodeManager(UserDict):
         for engine_type in engine_types:
                 self.data["by_type"][engine_type] = {}
             self.data["by_type"][engine_type][unode] = unode_class
+        unode_obj, node_availability_lookup = self.check_unode_dependencies(unode)
         self.node_availability_lookup.update(node_availability_lookup)
         return unode_obj
 
     def check_unode_dependencies(
         self,
         unode: str,
+    ) -> tuple:
 
         Args:
 
