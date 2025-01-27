@@ -60,6 +60,7 @@ from pathlib import Path
             self._pre_checks()
 
         self.tmp_files = []
+        if len(kwargs.keys()) != 0:
             urun_dict.unode_parameters.update(kwargs)
 
         if urun_dict["unode_parameters"]["remote_url"] is None:
