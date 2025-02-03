@@ -53,5 +53,6 @@
     },
     "terminate_remote_servers_on_exit": {
         "value": false,
+    },
     }
 }

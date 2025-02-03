@@ -67,6 +67,7 @@ from pathlib import Path
             output_files = self._run_locally(ufiles=ufiles, urun_dict=urun_dict)
         else:
             output_files = self._run_remotely(ufiles=ufiles, urun_dict=urun_dict)
+
         return output_files
 
     def _run_remotely(
@@ -332,6 +333,7 @@ from pathlib import Path
             )
 
         utrace.urun_dict.command_list = [str(x) for x in utrace.urun_dict.command_list]
+        cmd_msg = f"Executing command list: {' '.join(utrace.urun_dict.command_list)}"
         execute_answer = []
         proc = None
         if len(utrace.urun_dict.command_list) != 0:
