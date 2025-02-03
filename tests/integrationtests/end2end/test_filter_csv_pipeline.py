@@ -6,6 +6,7 @@ def test_filter_csv_pipeline(tmp_dir):
     )
         {
             "parameters": {
+                    "-q": "500 < `exp_mz` < 1000",
             },
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
