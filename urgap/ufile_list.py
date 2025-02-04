@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import collections.abc
 import logging
 import os
@@ -93,6 +95,7 @@ class UFileList(UserList):
             kosha = True
         if kosha is False:
 
+    def create_flat_and_non_redundant_list(self) -> UFileList:
 
 
         Raises:
@@ -121,6 +124,7 @@ class UFileList(UserList):
 
     def filter(
         self,
+    ) -> UFileList:
 
         Args:
 
@@ -135,10 +139,47 @@ class UFileList(UserList):
 
         ufile_classes = ddict(list)
         for ufile in self.create_flat_and_non_redundant_list():
+            uftype = self.check_tags_on_ufile_for_uftype(
+                input_uftypes=input_uftypes,
+                ufile=ufile,
             )
+            if uftype is not None:
+                ufile_classes[uftype].append(ufile)
+            ufile_classes=ufile_classes,
+            input_uftypes=input_uftypes,
+        )
 
+    def check_tags_on_ufile_for_uftype(
+        self,
+        input_uftypes: dict,
 
+        Args:
 
+        Returns:
+        """
+        mappable_uftypes = list(
+        )
+        if len(mappable_uftypes) == 0:
+            return None
+
+        for uftype in mappable_uftypes:
+            ufile_has_all_tags = True
+            for k, v in input_uftypes[uftype].get("tags", {}).items():
+                if ufile.tags.get(k, None) != v:
+                    ufile_has_all_tags = False
+
+            if ufile_has_all_tags:
+                return uftype
+
+    def check_input_uftype_count(
+        self,
+        ufile_classes: dict,
+        input_uftypes: dict,
+
+        Args:
+
+        Returns:
+        """
         for file_data_type, ufile_sublist in ufile_classes.items():
             min_number_required = input_uftypes[file_data_type].get("min", 1)
             max_number_allowed = input_uftypes[file_data_type].get("max", -1)
@@ -177,6 +218,18 @@ class UFileList(UserList):
             for idx, ufile in enumerate(self):
                 if ufile is None:
                     indices.append(idx)
+            return indices
+        for idx, ufile in enumerate(self):
+            if ufile is None:
+                continue
+            leafs_with_matching_tag = [
+                ext
+                )
+            ]
+            if (".any." in search_value) or search_value.endswith(".ANY"):
+                leafs_with_matching_tag.append(search_value)
+            if ufile.tags.get(tag, None) in leafs_with_matching_tag:
+                indices.append(idx)
         return indices
 
     def get_index_groups_by_uftypes(self) -> dict:
@@ -285,6 +338,7 @@ class UFileList(UserList):
         """
         return [x.as_storage_base_uri() for x in self]
 
+    def remove_uftypes(self, uftype_list: list) -> UFileList:
 
         Args:
 
@@ -303,6 +357,7 @@ class UFileList(UserList):
                 indices.extend(value)
 
 
+    def keep_uftypes(self, uftype_list: list) -> UFileList:
 
         Args:
 
@@ -325,6 +380,7 @@ class UFileList(UserList):
     def from_uri_list(
         cls,
         uri_list: list[str],
+    ) -> UFileList:
 
 
         """
@@ -352,6 +408,7 @@ class UFileList(UserList):
     def simplify_names(
         self,
         source_object_names: set,
+    ) -> UFileList:
 
         Args:
             source_object_names: Set of intended object name stems.
