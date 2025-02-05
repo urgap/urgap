@@ -89,6 +89,10 @@ from pathlib import Path
         reasons = ut.evaluate_if_rerun_is_required()
         ut.info()
         if len(reasons) > 0:
+            ut = self.execute_rerun(
+                utrace=ut,
+                starting_time=starting_time,
+            )
         else:
             ut.fix_dynamic_output_file_names()
         ut.save_umeta_information()
@@ -96,6 +100,37 @@ from pathlib import Path
             self.delete_tmp_files()
 
         return ut.output_files
+
+    def execute_rerun(
+        self,
+        starting_time: float,
+
+        Args:
+
+        Returns:
+        """
+        flight_sequence = ["preflight", "execute", "postflight"]
+        for flight_stage in flight_sequence:
+            if hasattr(self, flight_stage) is False:
+                continue
+
+            stage_function = getattr(self, flight_stage)
+
+            utrace = stage_function(utrace)
+                raise TypeError
+        utrace.fix_dynamic_output_file_names()
+        execution_time = time.time() - starting_time
+        if (
+            utrace.urun_dict.unode_parameters["file_io_timeout"] is not None
+            and execution_time >= utrace.urun_dict.unode_parameters["file_io_timeout"]
+        ):
+                f"Node execution took {execution_time:.3f} seconds which is"
+                f" longer than the timeout value {utrace.urun_dict['file_io_timeout']}."
+                "Therefore re-initializing IO classes for all UFiles."
+            )
+            )
+        utrace.upload_output_files()
+        return utrace
 
 
         """
@@ -344,6 +379,14 @@ from pathlib import Path
             )
         else:
             execute_answer.append("Command list is empty")
+        utrace, msg = self._check_proc_outcome(
+            proc=proc,
+            execute_answer=execute_answer,
+            utrace=utrace,
+        )
+        return utrace
+
+        msg = ""
         if (proc is not None) and (proc.stdout is not None):
             for line in proc.stdout.split("\n"):
                 try:
@@ -362,3 +405,4 @@ from pathlib import Path
                 msg += line + "\n"
             if utrace.urun_dict.unode_parameters["crash_on_resource_crash"] is True:
                 raise RuntimeError(msg)
+        return utrace, msg
