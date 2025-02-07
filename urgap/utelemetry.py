@@ -16,6 +16,9 @@ class UTelemetry:
 
     def init_meter(self) -> metrics.Meter:
         if UTelemetry.metric_was_initialized is False:
+            if self.otlp_type == "OTLP":
+                exporter = OTLPMetricExporter(endpoint=self.otlp_url)
+            elif self.otlp_type == "AZ-Insights":
                 )
                 exporter = AzureMonitorMetricExporter.from_connection_string(
                 )
@@ -37,8 +40,10 @@ class UTelemetry:
                         {
                     ),
             )
+            if self.otlp_type == "OTLP":
                 exporter = OTLPSpanExporter(
                 )
+            elif self.otlp_type == "AZ-Insights":
                 )
                 exporter = AzureMonitorTraceExporter.from_connection_string(
                 )
