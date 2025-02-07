@@ -16,10 +16,15 @@ class UTelemetry:
 
     def init_meter(self) -> metrics.Meter:
         if UTelemetry.metric_was_initialized is False:
+                )
+                exporter = AzureMonitorMetricExporter.from_connection_string(
+                )
+            else:
             metrics.set_meter_provider(
                 MeterProvider(
                     metric_readers=[
                         PeriodicExportingMetricReader(
+                            exporter,
                             export_interval_millis=5000,
             )
             UTelemetry.metric_was_initialized = True
@@ -32,7 +37,13 @@ class UTelemetry:
                         {
                     ),
             )
+                exporter = OTLPSpanExporter(
                 )
+                )
+                exporter = AzureMonitorTraceExporter.from_connection_string(
+                )
+            else:
+            trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(exporter))
 
 
         """

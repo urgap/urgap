@@ -54,6 +54,10 @@
     "terminate_remote_servers_on_exit": {
         "value": false,
     },
+    "opentelemetry_collector_url": {
         "value": null,
+        "description": "Open Telementry Collector url, e.g. http://localhost:4317"
+    },
+    "opentelemetry_exporter_type": {
     }
 }
