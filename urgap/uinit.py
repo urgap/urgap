@@ -40,6 +40,11 @@ def copy_resources_if_needed(
     formatter = logging.Formatter(
     )
     sh.setFormatter(formatter)
+    logger = logging.getLogger()
+
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+
     logging.getLogger().addHandler(sh)
     if "/bin/uctl" in execution_traceback[0]:
         logging.getLogger().setLevel(level="INFO")

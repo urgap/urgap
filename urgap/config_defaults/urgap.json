@@ -59,5 +59,7 @@
         "description": "Open Telementry Collector url, e.g. http://localhost:4317"
     },
     "opentelemetry_exporter_type": {
+        "value": null,
+        "description": "Open Telementry Exporter Type. Null will disable OTEL.",
     }
 }

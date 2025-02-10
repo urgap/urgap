@@ -14,6 +14,7 @@ class UTelemetry:
         self.span_lookup = {}
         self.counters = {}
 
+
     def init_meter(self) -> metrics.Meter:
         if UTelemetry.metric_was_initialized is False:
             if self.otlp_type == "OTLP":
