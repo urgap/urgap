@@ -133,6 +133,16 @@ class UTelemetry:
         else:
             span.set_attributes(attributes)
 
+        self,
+        nested_span_list: list,
+        status: StatusCode,
+
+        Args:
+        """
+        if span is None:
+        else:
+            span.set_status(status)
+
         container = self._find_container(nested_span_list)
         if container is None:
 
