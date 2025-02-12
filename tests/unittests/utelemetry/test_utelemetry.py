@@ -16,6 +16,7 @@ def test_utelemetry_run(provide_changeable_config):
 
 def test_utelemetry_generates_output():
     result = subprocess.run(
+        ["pytest", "-s", f"{__file__}::test_utelemetry_run"],
         capture_output=True,
         text=True,
     )
