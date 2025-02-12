@@ -61,5 +61,6 @@
     "opentelemetry_exporter_type": {
         "value": null,
         "description": "Open Telementry Exporter Type. Null will disable OTEL.",
+        "options": [null, "OTPL", "AZ-Insights", "Console"]
     }
 }
