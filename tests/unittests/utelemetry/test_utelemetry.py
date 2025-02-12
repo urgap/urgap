@@ -15,4 +15,12 @@ def test_utelemetry_run(provide_changeable_config):
 
 
 def test_utelemetry_generates_output():
+    result = subprocess.run(
+        capture_output=True,
+        text=True,
+    )
     assert '"name": "ufiles-uploaded"' in result.stdout
+    assert (
+        '"name": "|       #0 Not all expected output file of type .any.csv exist."'
+        in result.stdout
+    )
