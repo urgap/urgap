@@ -16,7 +16,26 @@ class UTelemetry:
         self.trace_tree = {}
         self.span_lookup = {}
         self.counters = {}
+        self._meter = None
+        self._tracer = None
 
+    @property
+
+    @property
+
+    @property
+
+    @property
+
+        Returns:
+        """
+        return self._meter
+
+    @property
+
+        Returns:
+        """
+        return self._tracer
 
     def init_meter(self) -> metrics.Meter:
         if UTelemetry.metric_was_initialized is False:
