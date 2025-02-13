@@ -16,6 +16,7 @@ class UFileIOManager:
             "https": "https",
             "mylabdata": "mylabdata",
             "omiq": "omiq",
+            "samba": "smb",
         }
         for io_module, schema in io_modules_schema_map.items():
                 )
