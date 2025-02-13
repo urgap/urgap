@@ -20,21 +20,31 @@ class UTelemetry:
         self._tracer = None
 
     @property
+    def otlp_url(self) -> str | None:
 
     @property
+    def otlp_type(self) -> str | None:
 
     @property
+    def tracing_enabled(self) -> bool:
+        return self.otlp_type is not None
 
     @property
+    def meter(self) -> metrics.Meter | None:
 
         Returns:
         """
+        if self._meter is None and self.tracing_enabled is True:
+            self._meter = self.init_meter()
         return self._meter
 
     @property
+    def tracer(self) -> trace.Tracer | None:
 
         Returns:
         """
+        if self._tracer is None and self.tracing_enabled is True:
+            self._tracer = self.init_tracer()
         return self._tracer
 
     def init_meter(self) -> metrics.Meter:
