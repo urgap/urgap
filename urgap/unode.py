@@ -78,6 +78,7 @@ from pathlib import Path
 
     def _run_locally(
         self,
+            if all(isinstance(file, str) for file in ufiles):
             else:
         ufiles = ufiles.create_flat_and_non_redundant_list()
             urun_dict=urun_dict,
