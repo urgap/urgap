@@ -88,6 +88,7 @@ def run_unode(
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
         return [None]
+    result = node.run(ufiles=uris, urun_dict=urd, **kwargs)
     return [uf.as_uri() if uf is not None else None for uf in result]
 
 
