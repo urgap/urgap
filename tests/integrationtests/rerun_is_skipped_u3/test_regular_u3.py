@@ -27,6 +27,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
+                        # "remote_url": "http://localhost",
                     },
             )
             if unode_version == "latest":

@@ -1,6 +1,7 @@
 
 import datetime
 import json
+import pathlib
 
 
 # inspired by https://gist.github.com/simonw/7000493
@@ -15,8 +16,20 @@ class JSONEncoder(json.JSONEncoder):
         """
         if isinstance(obj, datetime.datetime):
             return {
+                "_type": "datetime",
+                "value": obj.isoformat(),
+            }
+            return {
+                "_type": "set",
+                "value": list(obj),
+            }
+            return {
                 "_type": "UFile",
                 "uri": obj.as_uri(),
+            }
+            return {
+                "_type": "Path",
+                "value": str(obj),
             }
             d = {"_type": "UFileList", "uris": []}
             for x in obj:
@@ -47,6 +60,8 @@ class JSONDecoder(json.JSONDecoder):
                 return datetime.datetime.fromisoformat(obj["value"])
             case "set":
                 return set(obj["value"])
+            case "Path":
+                return pathlib.Path(obj["value"])
             case "UFile":
             case "UFileList":
                 uri_list = [
