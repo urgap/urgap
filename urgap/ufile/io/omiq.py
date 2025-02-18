@@ -6,6 +6,8 @@ import tempfile
 from pathlib import Path
 
 
+omiq_api_available = True
+
 
 class IOOmiq(UIOBase):
 
