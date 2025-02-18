@@ -9,7 +9,12 @@ from fastapi.responses import JSONResponse
 
 
 
+    uf = payload["ufiles"]
+    ur["unode_parameters"]["remote_url"] = None
+
 def create_app(name: str) -> FastAPI:
+    app = FastAPI(title=name)
+    app.state.name = name
 
     @app.post("/v1/run")
     async def run_unode(request: Request) -> JSONResponse:
@@ -17,6 +22,7 @@ def create_app(name: str) -> FastAPI:
         payload = json.loads(
             payload,
         )
+        loop = asyncio.get_running_loop()
 
 
     @app.post("/v1/terminate")
@@ -30,6 +36,8 @@ def create_app(name: str) -> FastAPI:
     """
     app = create_app(name)
     app.state.shutdown_event = shutdown_event
+    app.state.executor = ProcessPoolExecutor()
+
     config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="info")
     server = uvicorn.Server(config)
 
