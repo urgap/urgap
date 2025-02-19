@@ -29,6 +29,12 @@ def create_app(name: str) -> FastAPI:
         app.state.shutdown_event.set()
         return {"message": "Server shutdown initiated."}
 
+    @app.get("/livez")
+        return JSONResponse(status_code=200, content={"status": "livez"})
+
+    @app.get("/readyz")
+        return JSONResponse(status_code=200, content={"status": "readyz"})
+
     return app
 
 
