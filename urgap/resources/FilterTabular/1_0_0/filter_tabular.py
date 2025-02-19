@@ -62,6 +62,7 @@ def get_input_file_lists(input_files: list) -> dict:
     return dfs
 
 
+def write_dfs(df: pd.DataFrame, mode: str, output: str) -> None:
     """Write any of the CSV, Parquet and XLSX files.
 
     Args:
