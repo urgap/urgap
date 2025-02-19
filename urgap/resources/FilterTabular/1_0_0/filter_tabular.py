@@ -90,6 +90,8 @@ def main(
 
         output (str): Path to output file post filtering.
     """
+    if len(input_files) == 0:
+
     else:
         if query_string is not None:
             try:
