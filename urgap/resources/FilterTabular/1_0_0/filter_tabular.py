@@ -54,6 +54,7 @@ def sense_file_format(file: str) -> str:
 
     """
 
+
     """Merge all parquet files and write to the destination file path.
 
     Args:
@@ -73,6 +74,7 @@ def sense_file_format(file: str) -> str:
             for batch in pf.iter_batches(batch_size=6553600):
                 table = pa.Table.from_batches([batch])
                 writer.write_table(table)
+
 
 def main(
 
