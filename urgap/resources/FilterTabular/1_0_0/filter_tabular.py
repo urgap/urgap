@@ -129,6 +129,7 @@ def main(
         and len(grouped_input_files.get("xlsx", [])) == 0
         and query_string is None
     ):
+        merge_parquet_files(grouped_input_files, output)
 
     else:
         if query_string is not None:
