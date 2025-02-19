@@ -38,8 +38,11 @@ def sense_file_format(file: str) -> str:
     Returns:
         Input files split up in corresponding lists.
     """
+    files = {"csv": [], "parquet": [], "xlsx": []}
     for file in input_files:
         input_file_type = sense_file_format(file)
+        files[input_file_type].append(file)
+    return files
 
 
 
@@ -47,14 +50,35 @@ def sense_file_format(file: str) -> str:
 
     Returns:
     """
+    pd_functions = {
+        "csv": {"function": pd.read_csv},
+        "parquet": {"function": pd.read_parquet},
+        "xlsx": {"function": pd.read_excel},
+    }
+    dfs = []
+    for file_type, file_list in grouped_input_files.items():
+    return dfs
 
 
 
     Args:
 
+    Raises:
     """
+    if mode == "csv":
+        df.to_csv(output, index=False)
+    elif mode == "parquet":
+        df.to_parquet(output, index=False)
+    elif mode == "xlsx":
+        df.to_excel(output, index=False)
+    else:
+            f"Filter mode has to be defined with -m."
+            f"You defined filter mode {mode} which is currently not supported."
+            f"Supported modes are 'csv', 'parquet' and 'xlsx'."
+        )
 
 
+def merge_parquet_files(grouped_input_files: dict, output_file_path: str) -> None:
     """Merge all parquet files and write to the destination file path.
 
     Args:
@@ -65,6 +89,7 @@ def sense_file_format(file: str) -> str:
     """
     import pyarrow as pa
 
+    parquet_files = grouped_input_files["parquet"]
     with pq.ParquetWriter(
     ) as writer:
         for parquet in parquet_files:
@@ -91,6 +116,12 @@ def main(
         output (str): Path to output file post filtering.
     """
     if len(input_files) == 0:
+
+    grouped_input_files = get_input_file_lists(input_files)
+    if (
+        mode == "parquet"
+        and query_string is None
+    ):
 
     else:
         if query_string is not None:
