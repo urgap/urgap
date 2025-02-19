@@ -45,6 +45,7 @@ def sense_file_format(file: str) -> str:
     return files
 
 
+    """Read any of the CSV, Parquet and XLSX files.
 
     Args:
 
@@ -60,6 +61,7 @@ def sense_file_format(file: str) -> str:
     return dfs
 
 
+    """Write any of the CSV, Parquet and XLSX files.
 
     Args:
 
