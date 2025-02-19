@@ -54,6 +54,25 @@ def sense_file_format(file: str) -> str:
 
     """
 
+    """Merge all parquet files and write to the destination file path.
+
+    Args:
+        output_file_path: Output parquet file path.
+
+    Returns:
+        True when successful else False.
+    """
+    import pyarrow as pa
+
+    with pq.ParquetWriter(
+    ) as writer:
+        for parquet in parquet_files:
+            if Path(parquet).exists() is False:
+            pf = pq.ParquetFile(parquet)
+
+            for batch in pf.iter_batches(batch_size=6553600):
+                table = pa.Table.from_batches([batch])
+                writer.write_table(table)
 
 def main(
 
@@ -70,6 +89,9 @@ def main(
         output (str): Path to output file post filtering.
     """
     else:
+        if query_string is not None:
+            try:
+
 
 
 if __name__ == "__main__":
