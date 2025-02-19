@@ -57,6 +57,7 @@ from pathlib import Path
             raise TypeError(msg)
         urun_dict = copy.deepcopy(urun_dict)
 
+
         if urun_dict.unode_parameters["skip_pre_checks"] is False:
             self._pre_checks()
 
@@ -194,8 +195,16 @@ from pathlib import Path
         """
         if self.META_INFO["unode_version"] is None:
             return self._construct_exe_path_u2()
-        else:
+            return self._construct_latest_exe_path()
 
+        if self.latest_exe_paths is None:
+                "If latest is used, exp_path must be set in "
+                "urun_dict['unode_parameters']['latest_exe_paths']"
+            )
+        else:
+            exe_path = self.latest_exe_paths
+
+    def _construct_exe_path_u3(self) -> os.PathLike | None:
         tagged_exe_path = None
         version_info = None
         for v in self.META_INFO["versions"]:
