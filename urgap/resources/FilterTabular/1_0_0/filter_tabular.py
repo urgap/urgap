@@ -30,6 +30,7 @@ def sense_file_format(file: str) -> str:
         return "csv"
 
 
+def get_input_file_lists(input_files: list) -> dict:
     """Get the separate input file lists for csv, parquet and xlsx.
 
     Args:
@@ -122,6 +123,9 @@ def main(
     grouped_input_files = get_input_file_lists(input_files)
     if (
         mode == "parquet"
+        and len(grouped_input_files.get("csv", [])) == 0
+        and len(grouped_input_files.get("parquet", [])) > 1
+        and len(grouped_input_files.get("xlsx", [])) == 0
         and query_string is None
     ):
 
