@@ -31,6 +31,7 @@ from pathlib import Path
         Returns:
         """
         if self._exe_path is None:
+            self._exe_path = self.construct_exe_path()
         return self._exe_path
 
     @property
