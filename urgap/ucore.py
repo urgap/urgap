@@ -47,6 +47,7 @@ def calculate_file_hash(
                 shutil.rmtree(wid_folder)
 
 
+
     Args:
     """
             run_payload = {"be humble": "sit down"}
