@@ -47,5 +47,7 @@ def calculate_file_hash(
                 shutil.rmtree(wid_folder)
 
 
+    Args:
+    """
             run_payload = {"be humble": "sit down"}
             run_url = f"http://127.0.0.1:{port}/v1/terminate"
