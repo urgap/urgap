@@ -117,7 +117,10 @@ class UTelemetry:
         for n, name in enumerate(span_context):
             if n == 0:
                 kind = SpanKind.SERVER
+            elif spankind is None:
+                kind = SpanKind.INTERNAL
             else:
+                kind = spankind
             if name not in current_tree:
                 new_span = self.tracer.start_span(
                 )
