@@ -25,3 +25,4 @@ def test_utelemetry_generates_output():
         '"name": "|       #0 Not all expected output file of type .any.csv exist."'
         in result.stdout
     )
+    assert '"name": "| - run should be triggered, reasons:"' in result.stdout
