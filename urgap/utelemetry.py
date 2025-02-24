@@ -94,9 +94,16 @@ class UTelemetry:
 
         """
 
+
+        Args:
+        """
+        for counter_name in counter_name_list:
+            self.increase_counter(counter_name, count=count)
+
     def init_span(
         self,
         span_context: list,
+        spankind: SpanKind = None,
     ) -> trace.Span:
         """Start and return a new OpenTelemetry span.
 
@@ -108,7 +115,17 @@ class UTelemetry:
         parent_context = None
 
         for n, name in enumerate(span_context):
+            if n == 0:
+                kind = SpanKind.SERVER
+            else:
             if name not in current_tree:
+                new_span = self.tracer.start_span(
+                )
+                if self.otlp_type == "AZ-Insights":
+                    new_span.set_attribute("db.system", "Microsoft.ServiceBus")
+                if attributes is not None:
+                    new_span.set_attributes(attributes)
+
                 new_context = trace.set_span_in_context(new_span, parent_context)
 
                 current_tree[name] = {

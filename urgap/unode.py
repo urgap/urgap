@@ -19,6 +19,7 @@ from pathlib import Path
 
 
 
+
         self._exe_path = None
         self.status = None
         self.tmp_files = []
@@ -80,6 +81,8 @@ from pathlib import Path
                 remote_url,
                 timeout=urun_dict["unode_parameters"]["remote_execution_timeout"],
             )
+                span.set_attribute("exception.type", type(e).__name__)
+                span.set_attribute("exception.message", str(e))
 
     def _run_locally(
         self,
