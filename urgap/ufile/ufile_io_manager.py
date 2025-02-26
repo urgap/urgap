@@ -10,6 +10,7 @@ class UFileIOManager:
         io_modules_schema_map = {
             "_base": "_base",
             "azure_blob": "azure",
+            "azure_smb": "az-smb",
             "file": "file",
             "ftp": "ftp",
             "google_storage": "gcs",
