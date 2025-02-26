@@ -207,6 +207,7 @@ from pathlib import Path
             )
         else:
             exe_path = self.latest_exe_paths
+        return Path(exe_path)
 
     def _construct_exe_path_u3(self) -> os.PathLike | None:
         tagged_exe_path = None
