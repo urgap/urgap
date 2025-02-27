@@ -67,6 +67,8 @@ def create_app(name: str) -> FastAPI:
     """
     processes = []
     shutdown_event = multiprocessing.Event()
+    nodes_list = get_all_relevant_nodes(nodes=nodes)
+    for unode in nodes_list:
         p = multiprocessing.Process(
             target=run_server,
             args=(
