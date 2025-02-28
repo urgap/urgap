@@ -17,6 +17,8 @@ class IOAzureSMB(UIOBase):
             )
         self.directory_client = self.share_client.get_directory_client(
         )
+        self.object_directory_client = self.share_client.get_directory_client(
+        )
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
         )
 
