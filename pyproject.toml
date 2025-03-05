@@ -25,6 +25,7 @@ classifiers = [
 ]
 dependencies = [
     'flask-wtf==1.2.2',
+    'Jinja2==3.1.6',
     'nbformat>=4.2.0',
     'openpyxl',
     'plotly',
