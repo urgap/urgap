@@ -76,6 +76,7 @@ from pathlib import Path
 
     def _run_remotely(
         self,
+        urun_dict["is_remote_run"] = True
         try:
             response = requests.post(
                 remote_url,
