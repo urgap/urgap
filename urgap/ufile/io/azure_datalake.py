@@ -20,6 +20,7 @@ class IOAzureDL(UIOBase):
         self.client_keys = ["tenant-id", "client-id"]
         for key_name in self.client_keys:
         self.datalake_service_client = DataLakeServiceClient(
+            account_url=f"https://{account_name}.dfs.core.windows.net",
             credential=ClientSecretCredential(
             ),
         )
