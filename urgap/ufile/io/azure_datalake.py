@@ -13,6 +13,7 @@ from azure.core.exceptions import (
 
 class IOAzureDL(UIOBase):
 
+
         Args:
         """
         self.client_keys = ["tenant-id", "client-id"]
@@ -39,19 +40,23 @@ class IOAzureDL(UIOBase):
         """Close datalake connection on object deletion."""
 
     @property
+
         Returns:
         """
         return None
+
 
         Returns:
         """
         if self.remote_object_exists() is True:
             return self.file_client.get_file_properties()
 
+
         Returns:
         """
         if self.remote_object_exists() is True:
             return self.get_file_properties()["metadata"]
+
 
         Returns:
         """
@@ -91,11 +96,13 @@ class IOAzureDL(UIOBase):
             self.file_client.set_metadata(tags)
 
     def remote_object_exists(self) -> bool:
+
         Returns:
         """
         return self.file_client.exists()
 
     def _remote_path_exists(self) -> bool:
+
         Returns:
         """
         try:
