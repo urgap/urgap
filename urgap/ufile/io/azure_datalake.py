@@ -15,6 +15,7 @@ class IOAzureDL(UIOBase):
 
 
         Args:
+
         """
         self.client_keys = ["tenant-id", "client-id"]
         for key_name in self.client_keys:
@@ -111,7 +112,9 @@ class IOAzureDL(UIOBase):
         except ResourceNotFoundError:
             return False
 
+
         Args:
+
         Returns:
         """
         container_objects = self.file_system_client.get_paths(recursive=False)
