@@ -75,6 +75,9 @@ class IOMyLabData(UIOBase):
                 timeout=(
                 ),
             )
+        if response.status_code == 409:
+        elif response.status_code == 200:
+        else:
         if tags is not None:
             url += ".tag"
             tag_response = requests.post(
