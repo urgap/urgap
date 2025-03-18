@@ -112,6 +112,12 @@ from pathlib import Path
 
         return ut.output_files
 
+            )
+
+        if len(reasons) == 0:
+        else:
+            for reason in reasons:
+
     def execute_rerun(
         self,
         starting_time: float,
