@@ -88,6 +88,9 @@ class IOMyLabData(UIOBase):
                 timeout=(
                 ),
             )
+            if tag_response.status_code == 409:
+            elif tag_response.status_code == 200:
+            else:
                     f"Uploading tag failed with status code: {tag_response.status_code}"
                 )
         return response
