@@ -202,6 +202,7 @@ flow_cytometry.qc.reports.FLOWAI_REPORT_HTML = ".flowai_report.html"
 flow_cytometry.qc.reports.PEACOQC_REPORT_TXT = ".peacoqc_report.txt"
 flow_cytometry.qc.reports.PEACOQC_REPORT_PNG = ".peacoqc_report.png"
 flow_cytometry.qc.reports.FLOWCUT_REPORT_TXT = ".flowcut_report.txt"
+flow_cytometry.qc.reports.FLOWCUT_REPORT_PNG = ".flowcut_report.png"
 
 flow_cytometry.qc.summary = types.SimpleNamespace()
 flow_cytometry.qc.summary.ANY = "flow_cytometry.qc.summary.ANY"
@@ -209,6 +210,8 @@ flow_cytometry.qc.summary.FLOWAI_QCSTATS_XLSX = ".flowai_qc_stats.xlsx"
 flow_cytometry.qc.summary.FLOWAI_QCSTATS_JPG = ".flowai_qc_stats.jpg"
 flow_cytometry.qc.summary.PEACOQC_REPORT_TXT = ".peacoqc_summary.txt"
 flow_cytometry.qc.summary.PEACOQC_REPORT_PNG = ".peacoqc_summary.png"
+flow_cytometry.qc.summary.FLOWCUT_QCSTATS_XLSX = ".flowcut_qc_stats.xlsx"
+flow_cytometry.qc.summary.FLOWCUT_QCSTATS_JPG = ".flowcut_qc_stats.jpg"
 flow_cytometry.qc.summary.ROUTINE_GATING_STATS_XLSX = ".routine_gating_summary.xlsx"
 flow_cytometry.qc.summary.ROUTINE_GATING_STATS_JPG = ".routine_gating_summary.jpg"
 
