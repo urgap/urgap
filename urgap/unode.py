@@ -112,6 +112,8 @@ from pathlib import Path
 
         return ut.output_files
 
+    def _open_execution_span(
+        self,
             )
 
         if len(reasons) == 0:
