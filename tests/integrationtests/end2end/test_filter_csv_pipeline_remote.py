@@ -39,15 +39,18 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
             "wid": urun_dict_filter["wid"],
     )
 
+    filter_1 = filter_tab_to_csv_node.run(urun_dict=urun_dict_filter, ufiles=ufiles)
     df = pd.read_csv(filter_1[0].path)
     assert df["sequence_start"].sum() == 9925
     assert df.shape[0] == 31
 
+    tar_1 = compress_to_tar_node.run(urun_dict=urun_dict_compress, ufiles=filter_1)
     assert tar_1[0].path.suffix == ".tar"
     untar_1 = tar_1[0].uncompress()
 
     urun_dict_filter.parameters["FilterTabularToCSV:latest"].update(
     )
+    filtered_1a = filter_tab_to_csv_node.run(urun_dict=urun_dict_filter, ufiles=untar_1)
     df = pd.read_csv(filtered_1a[0].path)
     assert df["sequence_start"].sum() == 1144
     assert df.shape[0] == 4
