@@ -51,6 +51,8 @@ class IOMyLabData(UIOBase):
             token = response.json()["data"]["token"]
             self._api_token = {"Authorization": f"Bearer {token}"}
         else:
+            msg = f"Login failed with status code: {response.status_code}"
+            raise ConnectionError(msg)
 
 
         Returns:
@@ -78,6 +80,7 @@ class IOMyLabData(UIOBase):
         if response.status_code == 409:
         elif response.status_code == 200:
         else:
+            raise ValueError(msg)
         if tags is not None:
             url += ".tag"
             tag_response = requests.post(
@@ -91,8 +94,10 @@ class IOMyLabData(UIOBase):
             if tag_response.status_code == 409:
             elif tag_response.status_code == 200:
             else:
+                msg = (
                     f"Uploading tag failed with status code: {tag_response.status_code}"
                 )
+                raise ValueError(msg)
         return response
 
     @make_expiration_safe_request
