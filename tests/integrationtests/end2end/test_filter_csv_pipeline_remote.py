@@ -2,6 +2,12 @@ import pandas as pd
 
 
 
+@pytest.mark.parametrize(
+    "provide_uctl_server",
+    [("FilterTabularToCSV:latest", "CompressToTar:latest")],
+    indirect=["provide_uctl_server"],
+)
+def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
         [
     )
         {

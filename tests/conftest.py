@@ -162,3 +162,11 @@ def provide_changeable_credentials():
     yield None
     shutil.copy(backup, default)
     os.remove(backup)
+
+
+@pytest.fixture
+def provide_uctl_server(request):
+        call.extend(["-n", unode])
+    proc = subprocess.Popen(call)
+    yield None
+    proc.terminate()
