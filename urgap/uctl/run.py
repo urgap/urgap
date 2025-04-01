@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 
 
+def run_unode_in_loop(payload: dict, name: str) -> list:
 
     Args:
 
@@ -16,6 +17,7 @@ from fastapi.responses import JSONResponse
     """
     uf = payload["ufiles"]
     ur["unode_parameters"]["remote_url"] = None
+    return [o.as_uri() for o in output_files]
 
 
 def create_app(name: str) -> FastAPI:
