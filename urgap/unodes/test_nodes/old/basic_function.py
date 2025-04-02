@@ -18,6 +18,7 @@
         "wrapper_version": {"major": 4, "minor": 2, "patch": 0},
         "engine": None,
         "engine_type": ("test_engine",),
+        "is_old": True,
         "input_uftypes": {
                 "min": 1,
                 "max": 1,
