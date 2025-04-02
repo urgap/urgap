@@ -9,6 +9,8 @@ def test_wrapper_lookup_with_old_wrappers():
             "BasicFunctionTestNode:1.1.0",
         ]
     )
+    assert str(unode.exe_path).endswith(
+    )
     assert (
         unode.META_INFO["versions"][0]["exe_path"]
         == "BasicFunctionTestNode/0_0_5/basic_function.py"

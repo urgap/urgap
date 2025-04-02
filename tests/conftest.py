@@ -171,6 +171,8 @@ def provide_uctl_server(request):
         unode = request.param
         call.extend(["-n", unode])
     else:
+            required_ports.append(
+            )
     proc = subprocess.Popen(call)
     for _ in range(30):
         if all(
