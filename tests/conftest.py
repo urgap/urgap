@@ -167,7 +167,10 @@ def provide_changeable_credentials():
 @pytest.fixture
 def provide_uctl_server(request):
     required_ports = []
+    if isinstance(request.param, str):
+        unode = request.param
         call.extend(["-n", unode])
+    else:
     proc = subprocess.Popen(call)
     for _ in range(30):
         if all(
