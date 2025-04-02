@@ -118,6 +118,41 @@ class UNodeManager(UserDict):
                     continue
         return lookup
 
+    def _add_to_lookup(
+        self,
+        lookup: dict,
+        class_path_string = str(
+        )
+        spec = importlib.util.spec_from_file_location("node", wrapper)
+        mod = importlib.util.module_from_spec(spec)
+        try:
+            spec.loader.exec_module(mod)
+        except ImportError:
+        classes = inspect.getmembers(mod, inspect.isclass)
+        node_name = None
+        class_name = None
+        for name, cls in classes:
+            if mod.__name__ == cls.__module__:
+                try:
+                except AttributeError:
+                    meta_info = cls().META_INFO
+                node_name = meta_info["name"]
+                class_name = name
+                versions = meta_info.get("versions", None)
+                break
+        if versions is not None:
+            version_objects = sorted(
+            )
+            for n, v in enumerate(version_objects):
+                lookup[f"{node_name}:{v}"] = class_path_string, class_name
+                if n == 0 and meta_info.get("is_old", None) is None:
+                    lookup[f"{node_name}:latest"] = (
+                        class_path_string,
+                        class_name,
+                    )
+        else:
+            lookup[node_name] = class_path_string, class_name
+
 
 
 
