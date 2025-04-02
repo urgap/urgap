@@ -14,6 +14,7 @@ class IOHTTPS(UIOBase):
         Args:
         """
 
+    def get_remote_tags(self) -> dict | None:
 
         Returns:
         """

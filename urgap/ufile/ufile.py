@@ -175,6 +175,11 @@ class UFile:
 
     def as_uri(
         self,
+        scheme: str | None = None,
+        netloc: str | None = None,
+        path: str | None = None,
+        fragment: str | None = None,
+        query: str | None = None,
     ) -> str:
 
         Args:
@@ -195,6 +200,7 @@ class UFile:
         """
             )
 
+    def get_object(self) -> Path | None:
 
         Returns:
         """
@@ -362,6 +368,9 @@ class UFile:
     def simplify_name(
         self,
         source_object_names: set,
+        prefix: str | None = None,
+        suffix: str | None = None,
+        storage_base_uri: str | None = None,
 
         Args:
 

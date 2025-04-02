@@ -16,6 +16,7 @@ class IOPython(UIOBase):
         """
         self.driver = "Local Python Power :)"
 
+    def get_remote_tags(self) -> dict | None:
         """Get remote tags associated with referenced file.
 
         Returns:
@@ -54,6 +55,7 @@ class IOPython(UIOBase):
         """
         container_folder.mkdir(exist_ok=exist_ok, parents=True)
 
+    def get_container(self, container_name: str | None = None) -> os.PathLike:
 
         Args:
 
@@ -63,6 +65,8 @@ class IOPython(UIOBase):
 
     def list_container_items(
         self,
+        container_name: str | None = None,
+        pattern: str | None = None,
     ) -> list:
 
         Args:

@@ -204,6 +204,7 @@ from pathlib import Path
         if exe_path is not None:
             return Path(exe_path)
 
+    def construct_exe_path(self) -> os.PathLike | None:
         Returns:
         """
         if self.META_INFO["unode_version"] is None:
@@ -264,6 +265,7 @@ from pathlib import Path
     def install_resource(
         self,
         engine_exe_list: list,
+    ) -> bool | None:
 
         Args:
 
@@ -339,6 +341,7 @@ from pathlib import Path
         umeta.delete(output_file)
 
     @property
+    def required_3rd_party_installation(self) -> dict | None:
 
         Returns:
         """

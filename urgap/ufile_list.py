@@ -124,6 +124,8 @@ class UFileList(UserList):
 
     def filter(
         self,
+        input_uftypes: dict | None = None,
+        additional_filters: dict | None = None,
     ) -> UFileList:
 
         Args:
@@ -152,6 +154,7 @@ class UFileList(UserList):
     def check_tags_on_ufile_for_uftype(
         self,
         input_uftypes: dict,
+    ) -> str | None:
 
         Args:
 
@@ -206,6 +209,8 @@ class UFileList(UserList):
 
     def get_indices_matching_tag(
         self,
+        tag: str | None = None,
+        search_value: str | None = None,
     ) -> list[int]:
 
         Args:
@@ -408,6 +413,9 @@ class UFileList(UserList):
     def simplify_names(
         self,
         source_object_names: set,
+        prefix: str | None = None,
+        suffix: str | None = None,
+        storage_base_uri: str | None = None,
     ) -> UFileList:
 
         Args:

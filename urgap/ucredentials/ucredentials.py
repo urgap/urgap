@@ -41,6 +41,7 @@ class UCredentialManager:
 
     def __init__(
         self,
+        json_path: str | os.PathLike | None = None,
         credentials_id_key: str = "{scheme}://{host}",
         """Initialize UCredentials.
 
@@ -71,6 +72,7 @@ class UCredentialManager:
         self,
         secret_store: str,
         secret_id: str,
+        cloud_host_pid: str | None = None,
                 f"IO class {secret_store} cannot be imported due to missing dependencies."
             )
         if secret_store == "env":
@@ -93,7 +95,9 @@ class UCredentialManager:
 
     def get_user(
         self,
+        ce_or_ck: str | dict,
         force: bool = False,
+    ) -> str | None:
 
         Args:
 
@@ -109,7 +113,9 @@ class UCredentialManager:
 
     def get_password(
         self,
+        ce_or_ck: str | dict,
         force: bool = False,
+    ) -> str | None:
 
         Args:
 
@@ -173,6 +179,7 @@ class UCredentialManager:
             c_key = self.ID_KEY.format(**cred_entry)
         return c_key
 
+    def read_credentials(self, json_path: str | os.PathLike | None = None) -> dict:
         """Read from credentials_lookup.json.
 
         Args:
@@ -187,6 +194,7 @@ class UCredentialManager:
 
     def write_credentials(
         self,
+        json_path: str | os.PathLike | None = None,
 
         Args:
 

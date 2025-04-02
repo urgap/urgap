@@ -89,6 +89,8 @@ def parse_inputs(
     def __init__(
         self,
         unode: str = "None",
+        ucredentials: list | None = None,
+        config: dict | None = None,
 
         Args:
         """
@@ -111,6 +113,7 @@ def parse_inputs(
 
     def _check_input(
         self,
+        unode: str | None = None,
     ) -> bool:
 
         Args:
@@ -201,6 +204,7 @@ class FilterByUftype(beam.DoFn):
     def process(
         self,
         element: tuple,
+        uftypes: list | None = None,
         mode: str = "remove",
     ) -> tuple:
 

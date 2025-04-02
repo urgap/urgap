@@ -30,6 +30,7 @@ class IOAzureBlobStorage(UIOBase):
         """
         return None
 
+    def get_remote_tags(self) -> dict | None:
 
         Returns:
         """

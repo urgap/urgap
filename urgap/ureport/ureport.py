@@ -15,6 +15,8 @@ class UReport:
 
     def __init__(
         self,
+        wid: str | None = None,
+        umeta_io: str | None = None,
 
         Args:
             wid: Workflow ID.

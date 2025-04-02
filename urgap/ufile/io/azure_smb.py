@@ -24,16 +24,19 @@ class IOAzureSMB(UIOBase):
 
 
     @property
+    def remote_path(self) -> str | None:
 
         Returns:
         """
         return None
 
+    def get_file_properties(self) -> dict | None:
 
         Returns:
         """
         return self.file_client.get_file_properties()
 
+    def get_remote_tags(self) -> dict | None:
 
         Returns:
         """

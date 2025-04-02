@@ -56,6 +56,7 @@ def flatten_no_strings(iterable: Iterable) -> Generator:
 
 
 def retrieve_processed_uris(
+    uris: list[str] | str,
 ) -> list:
 
     Args:
@@ -77,6 +78,7 @@ def retrieve_processed_uris(
 
 @task(retries=3, retry_delay_seconds=10)
 def run_unode(
+    uris: list[str] | str,
     unode: str,
     config: dict,
 ) -> list:
@@ -94,6 +96,7 @@ def run_unode(
 
 @task(retries=10, retry_delay_seconds=10)
 def simplify_output_names(
+    uris: list[str] | str,
     ucredentials: dict,
     config: dict,
     sources: list,
@@ -124,6 +127,7 @@ def simplify_output_names(
 
 @task(name="Filter uftypes", retries=3, retry_delay_seconds=10)
 def filter_by_uftype(
+    uris: list[str] | str,
 ) -> list | None:
 
     Args:
@@ -139,6 +143,7 @@ def filter_by_uftype(
 
 @task(name="Group by tag", retries=3, retry_delay_seconds=10)
 def group_by_tag(
+    uris: list[str] | str,
     tag: str,
 ) -> dict | None:
 

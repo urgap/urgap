@@ -12,6 +12,7 @@ from pathlib import Path
 
 
 def copy_resources_if_needed(
+    target_dir: str | os.PathLike,
     force: bool = False,
 
 
@@ -68,6 +69,7 @@ def copy_resources_if_needed(
             shutil.copy(config_json, target_json_path)
 
 
+def read_config(home_dir: str | os.PathLike | None = None) -> dict:
 
     Args:
 

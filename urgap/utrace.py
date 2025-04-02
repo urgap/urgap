@@ -17,6 +17,8 @@ class UTrace:
 
     def __init__(
         self,
+        unode_version: str | None = None,
+        umeta_io: str | None = None,
         """Construct a new UTrace instance.
 
         Args:
@@ -229,6 +231,9 @@ class UTrace:
     def get_output_file_uri(
         self,
         uftype: str,
+        n: int | None = None,
+        max_n: str | int = "N",
+    ) -> str | None:
 
         Args:
             n: Current number of files matching uftype.
@@ -255,6 +260,8 @@ class UTrace:
     def extend_output_files_by_uftype(
         self,
         uftype: str,
+        n: int | None = None,
+        max_n: str | int = "N",
 
         Args:
             n: Current number of files matching uftype.
@@ -353,6 +360,7 @@ class UTrace:
     @classmethod
     def load_from_umeta(
         cls,
+        umeta_io: str | None = None,
 
         Args:
             umeta_io: UMeta interface to be used.

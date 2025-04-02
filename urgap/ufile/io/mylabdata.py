@@ -26,6 +26,7 @@ class IOMyLabData(UIOBase):
         self._get_token_bearer()
 
     @property
+    def remote_path(self) -> str | None:
         """Get remote file path.
 
         Returns:
@@ -33,6 +34,7 @@ class IOMyLabData(UIOBase):
         return None
 
     @property
+    def remote_tag_path(self) -> str | None:
         """Get remote file tag path.
 
         Returns:
@@ -54,6 +56,7 @@ class IOMyLabData(UIOBase):
             msg = f"Login failed with status code: {response.status_code}"
             raise ConnectionError(msg)
 
+    def get_remote_tags(self) -> dict | None:
 
         Returns:
         """
@@ -115,6 +118,7 @@ class IOMyLabData(UIOBase):
 
     def list_container_items(
         self,
+        pattern: str | None = None,
         limit: int = 1000,
     ) -> list:
 

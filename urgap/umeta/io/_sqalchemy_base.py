@@ -62,6 +62,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         }
 
         self,
+        wid: str | None = None,
 
         Args:
         """

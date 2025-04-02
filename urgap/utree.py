@@ -12,6 +12,9 @@ class UTreeQuerier:
 
     def __init__(
         self,
+        namespace: str | None = None,
+        graph: nx.DiGraph | None = None,
+        parent_node: str | None = None,
         """Build a directed graph from a file providing namespacing.
 
         Args:

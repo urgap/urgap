@@ -40,17 +40,20 @@ class IOOmiq(UIOBase):
         self._scratch_path = self.scratch_path
 
     @property
+    def remote_path(self) -> str | None:
 
         Returns:
         """
         return None
 
     @property
+    def remote_tag_path(self) -> str | None:
 
         Returns:
         """
         return None
 
+    def get_remote_tags(self) -> dict | None:
 
         Returns:
         """
@@ -177,6 +180,7 @@ class IOOmiq(UIOBase):
 
     def list_container_items(
         self,
+        pattern: str | None = None,
     ) -> list:
 
         Args:

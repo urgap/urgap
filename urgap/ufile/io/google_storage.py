@@ -14,6 +14,7 @@ class IOGoogleCloudStorage(UIOBase):
         """
 
     @property
+    def remote_path(self) -> str | None:
         """Get remote file path.
 
         Returns:
@@ -21,12 +22,14 @@ class IOGoogleCloudStorage(UIOBase):
         return None
 
     @property
+    def remote_tag_path(self) -> str | None:
         """Get remote file tag path.
 
         Returns:
         """
         return None
 
+    def get_remote_tags(self) -> dict | None:
         """Get remote tags associated with referenced file.
 
         Returns:
