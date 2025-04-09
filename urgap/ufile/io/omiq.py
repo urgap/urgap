@@ -31,6 +31,7 @@ class IOOmiq(UIOBase):
             self._omiq_user_info = self._api.get_user()
             if self._omiq_user_info is not None:
                 )
+        self._workflow = self._api.get_workflow(self._workflow_id)
         self._dataset_id = int(self._workflow["datasetId"])
         if self._query_params.get("derived_from_fcs", False) is True:
             self._corresponding_fcs_filename = str(
@@ -85,6 +86,10 @@ class IOOmiq(UIOBase):
     def download(self) -> None:
         if self._corresponding_fcs_filename is not None:
             self._handle_derived_fcs()
+        elif (
+            self._query_params.get("uftype", None)
+        ):
+            self._download_file_from_workflow()
             i["displayName"] for i in self._list_files_in_dataset()
         ]:
             self._download_file_from_dataset()
@@ -155,6 +160,9 @@ class IOOmiq(UIOBase):
             task_id=task_id,
             filepath=self._scratch_path,
         )
+
+        dict_workflow = {"dataset": self._dataset_id, "workflow": self._workflow}
+            json.dump(dict_workflow, gfile, indent=4)
 
     def _get_task_id_for_artifact(self, filename: str) -> str:
             i["taskId"]

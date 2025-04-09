@@ -231,6 +231,7 @@ flow_cytometry.gating_strategy = types.SimpleNamespace()
 flow_cytometry.gating_strategy.ANY = "flow_cytometry.gating_strategy.ANY"
 flow_cytometry.gating_strategy.FLOWJO_WSP = ".flowjo.wsp"
 flow_cytometry.gating_strategy.CYTOBANK_XML = ".cytobank.xml"
+flow_cytometry.gating_strategy.OMIQ_GFILE = ".omiq.gfile"
 
 flow_cytometry.meta = types.SimpleNamespace()
 flow_cytometry.meta.FPREPPY_EXP_METADATA_XLSX = ".fpreppy_exp_metadata.xlsx"
