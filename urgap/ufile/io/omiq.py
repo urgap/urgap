@@ -166,6 +166,7 @@ class IOOmiq(UIOBase):
 
     def _get_task_id_for_artifact(self, filename: str) -> str:
             i["taskId"]
+            for i in self._workflow.get("taskArtifacts", [])
             if i["file"] == filename
 
     def _handle_file_not_found(self) -> None:
@@ -185,6 +186,7 @@ class IOOmiq(UIOBase):
 
         return self._api.list_files_in_dataset(self._dataset_id)
 
+        return [i["file"] for i in self._workflow.get("taskArtifacts", [])]
 
     def list_container_items(
         self,
