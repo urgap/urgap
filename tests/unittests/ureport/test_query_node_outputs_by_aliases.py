@@ -79,3 +79,5 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     assert results == queried_results
     assert results_with_less == queried_results_with_less
     assert len(results) + len(results_with_less) == len(queried_results_combined)
+    results.append(results_with_less[0])
+    assert queried_results_combined == results
