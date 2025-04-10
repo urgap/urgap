@@ -63,6 +63,7 @@ def create_app(name: str) -> FastAPI:
     server.should_exit = True
     thread.join()
 
+
 @click.command()
 @click.option(
     "--nodes",
