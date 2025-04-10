@@ -14,6 +14,7 @@ class URunDict(UserDict):
 
 
 
+
     """
 
 
@@ -59,6 +60,8 @@ class URunDict(UserDict):
                     self[k][k2] = v2
 
         for k, v in self._default_setup_that_cannot_be_set_by_user.items():
+            self[k] = v
+
             self.assign_wid()
 
         default_storage_parameters = copy.deepcopy(
@@ -209,9 +212,15 @@ class URunDict(UserDict):
 
 
         """
+        umeta_info = self.unode_rinfo["meta_info"]
+        unode_full_identifier = umeta_info["unode_full_identifier"]
         if rerun_only:
+            no_rerun_params = set(umeta_info["parameters_not_triggering_rerun"])
         else:
+        param_set = sorted(
+        )
         tmp_json = json.dumps(
+            param_set,
         )
         sorted_json = json.dumps(
         )
@@ -255,3 +264,4 @@ class URunDict(UserDict):
 
         Args:
         """
+        self.data["unode_rinfo"]["meta_info"] = copy.deepcopy(meta_info)
