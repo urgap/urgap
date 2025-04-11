@@ -163,6 +163,10 @@ transcriptomics.cellranger.SCRIPT = ".SCRIPT.sh"
 # Imaging=======================================================================
 
 # Beacon========================================================================
+beacon = types.SimpleNamespace()
+beacon.IMAGE_TIFF = ".image.tiff"
+beacon.ESSAY_XML = ".essay.xml"
+beacon.OPTOSELECT_XML = ".optoselect.xml"
 
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
