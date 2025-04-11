@@ -82,6 +82,7 @@ from pathlib import Path
                 remote_url,
                 timeout=urun_dict["unode_parameters"]["remote_execution_timeout"],
             )
+        except Exception as e:
                 span.set_attribute("exception.type", type(e).__name__)
                 span.set_attribute("exception.message", str(e))
 
