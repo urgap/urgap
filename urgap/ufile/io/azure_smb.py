@@ -2,6 +2,14 @@
 import logging
 import re
 
+from azure.core.exceptions import (
+    AzureError,
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ServiceRequestError,
+)
 
 
 

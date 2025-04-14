@@ -1,4 +1,6 @@
+import logging
 import sys
+
 import networkx as nx
 from pyvis.network import Network
 

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 
+
 def test_execute_threaded_function_nested_args():
     arg_list = [
         ("One Ring to rule them all.", r"One Ring"),

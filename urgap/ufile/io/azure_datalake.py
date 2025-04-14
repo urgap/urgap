@@ -7,7 +7,11 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceNotFoundError,
+    ServiceRequestError,
 )
+from azure.identity import ClientSecretCredential
+from azure.storage.filedatalake import DataLakeServiceClient
 
 
 

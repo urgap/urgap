@@ -11,6 +11,8 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import os
 import sys
+from importlib.metadata import version
+from pathlib import Path
 
 sys.path.insert(0, os.path.abspath("../"))
 for example_file in Path("../../example_scripts").glob("**/*.py"):

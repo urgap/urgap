@@ -7,6 +7,7 @@
 """
 
 import logging
+from pathlib import Path
 
 
 def source_sphinx(inc, path_to_inc):
