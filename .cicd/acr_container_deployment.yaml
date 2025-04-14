@@ -1,6 +1,7 @@
 pool:
   vmImage: ubuntu-latest
 stages:
+  - stage: Build
     jobs:
         steps:
               azureSubscription: 'ARM-RD-dso-AppResources-prod'
