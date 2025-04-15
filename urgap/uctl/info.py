@@ -29,6 +29,7 @@ import click
     )
     counter = collections.defaultdict(int)
     tags = set()
+        if "TestNode" in k:
             counter["test_nodes"] += 1
             continue
         counter["unodes"] += 1

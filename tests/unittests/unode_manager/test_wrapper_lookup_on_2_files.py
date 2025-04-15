@@ -15,3 +15,4 @@ def test_wrapper_lookup_with_old_wrappers():
         unode.META_INFO["versions"][0]["exe_path"]
         == "BasicFunctionTestNode/0_0_5/basic_function.py"
     )
+    assert len(unode.META_INFO["versions"]) >= 2
