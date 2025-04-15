@@ -50,6 +50,7 @@ import click
     )
     click.echo(f"Total number of tags {len(tags)}")
     for _ in range(0, len(sorted_tags), 7):
+        click.echo(f"       {', '.join(sorted_tags[_ : _ + 7])}")
 
 
 @click.command()
