@@ -11,21 +11,25 @@ import pytest
             ),
                 {
                     "parameters": {
+                        "TestNode5:1.0.0": {
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
             ),
+            ["TestNode5:1.0.0"],
         ),
         (
             ),
                 {
                     "parameters": {
+                        "TestNode5:1.0.0": {
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
             ),
+            ["TestNode5:1.0.0"],
         ),
         (
             [
@@ -34,21 +38,25 @@ import pytest
             ],
                 {
                     "parameters": {
+                        "TestNode5:1.0.0": {
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
             ),
+            ["TestNode5:1.0.0"],
         ),
         (
             ),
                 {
                     "parameters": {
+                        "TestNode5:1.0.0": {
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
             ),
+            ["TestNode5:1.0.0"],
         ),
     ],
     indirect=["provide_clean_test_node_dirs"],
@@ -56,8 +64,10 @@ import pytest
 def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
     with tempfile.TemporaryDirectory() as tmpdirname:
+        test_node9 = test_nodes["TestNode5:1.0.0"]
         return_file = test_node9.run(ufiles=ufiles, urun_dict=urun_dict)
 
+        for uftype, n in urun_dict.parameters["TestNode5:1.0.0"].items():
             assert n == return_file.number_of_uftypes().get(uftype, 0)
 
 
@@ -65,6 +75,7 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
             ufiles=ufiles,
             urun_dict=urun_dict,
         )
+        for uftype, n in urun_dict.parameters["TestNode5:1.0.0"].items():
             assert n == second_run_return_file.number_of_uftypes().get(uftype, 0)
 
 

@@ -3,6 +3,16 @@
 
 
     META_INFO = {
+        "name": "TestNode5",
+        "versions": [
+            {
+                "version": "1.0.0",
+                "exe_path": "TestNodes/TestNode5/1_0_0/test_resource_5.py",
+        ],
+        "parameters_not_triggering_rerun": ["no_rerun_node_trigger"],
+        "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
+        "engine": None,
+        "engine_type": ("test_engine",),
         "input_uftypes": {
                 "min": 0,
                 "max": -1,
@@ -27,6 +37,7 @@
 
     def execute(
         self,
+        """Execute routine for TestNode5 wrapper.
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.
@@ -39,6 +50,7 @@
 
     def preflight(
         self,
+        """Preflight routine for TestNode5 wrapper.
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.
@@ -47,6 +59,9 @@
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
         minimal_dataset = utrace.output_files.number_of_uftypes()
+        for filetype, n in utrace.urun_dict.parameters[
+            self.META_INFO["unode_full_identifier"]
+        ].items():
             difference = n - minimal_dataset.get(filetype, 0)
                 utrace.extend_output_files_by_uftype(uftype=filetype)
 
@@ -54,6 +69,7 @@
             "python",
             str(self.exe_path),
             "--params",
+            utrace.urun_dict.parameters[self.META_INFO["unode_full_identifier"]],
             "--input",
         ]
         for ufile in utrace.input_files:

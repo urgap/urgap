@@ -217,6 +217,10 @@ class URunDict(UserDict):
         if rerun_only:
             no_rerun_params = set(umeta_info["parameters_not_triggering_rerun"])
         else:
+        try:
+            parameters = self.parameters[unode_full_identifier]
+        except KeyError as e:
+            parameters = self.parameters
         param_set = sorted(
         )
         tmp_json = json.dumps(
@@ -264,4 +268,5 @@ class URunDict(UserDict):
 
         Args:
         """
+            meta_info["parameters_not_triggering_rerun"] = []
         self.data["unode_rinfo"]["meta_info"] = copy.deepcopy(meta_info)

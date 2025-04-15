@@ -5,15 +5,19 @@ import pytest
 
 
 @pytest.mark.parametrize(
+    "provide_standard_TestNode1_setup_and_set_umeta_interface",
     [
         ("mongodb",),
     ],
+    indirect=["provide_standard_TestNode1_setup_and_set_umeta_interface"],
 )
 def test_each_pipeline_run_creates_one_wid(
+    provide_standard_TestNode1_setup_and_set_umeta_interface,
 ):
     (
         ufiles,
         run_dict,
+    ) = provide_standard_TestNode1_setup_and_set_umeta_interface
 
     with tempfile.TemporaryDirectory() as tmpdirname:
         for x in range(4):

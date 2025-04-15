@@ -9,11 +9,13 @@ import pytest
             ),
                 {
                     "parameters": {
+                        "FilterTabularToCSV:1.0.0": {
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
             ),
+            ["FilterTabularToCSV:1.0.0"],
         ),
     ],
     indirect=["provide_clean_test_node_dirs"],

@@ -8,9 +8,11 @@
         "versions": [
             {
                 "version": "1.1.0",
+                "exe_path": "TestNodes/BasicFunctionTestNode/1_1_0/basic_function.py",
             },
             {
                 "version": "1.3.0",
+                "exe_path": "TestNodes/BasicFunctionTestNode/1_3_0/basic_function.py",
             },
         ],
         "parameters_not_triggering_rerun": [

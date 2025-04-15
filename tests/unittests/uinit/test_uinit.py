@@ -16,6 +16,7 @@ def test_copy_resources_if_needed(tmp_dir):
 
 def test_copy_resources_if_needed_fails_due_to_md5_mismatch(tmp_dir):
 
+    file = Path(f"{tmp_dir}/resources/TestNodes/TestNode1/1_0_0/test_resource_1.py")
     assert file.exists() is True
     with open(file, "w") as f:
         f.write("New Content")
