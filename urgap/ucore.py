@@ -52,3 +52,4 @@ def calculate_file_hash(
     """
             run_payload = {"be humble": "sit down"}
             run_url = f"http://127.0.0.1:{port}/v1/terminate"
+    """Shut down Utelemetry servers."""
