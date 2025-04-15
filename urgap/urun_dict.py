@@ -4,6 +4,7 @@ from __future__ import annotations
 import copy
 import json
 import logging
+
 from collections import UserDict
 
 
@@ -57,6 +58,7 @@ class URunDict(UserDict):
             if k not in self.keys():
                 self[k] = {}
             for k2, v2 in v.items():
+                if k2 not in self[k]:
                     self[k][k2] = v2
 
         for k, v in self._default_setup_that_cannot_be_set_by_user.items():
@@ -232,6 +234,7 @@ class URunDict(UserDict):
     def _generate_container_folder_name(
         self,
         if run_folder_name is None:
+            container_folder_name = "{}_w{}".format(
                 self.unode_rinfo["meta_info"]["name"],
                 self.unode_rinfo["meta_info"]["wrapper_version"]["major"],
             )

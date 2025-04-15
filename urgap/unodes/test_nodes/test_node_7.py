@@ -25,6 +25,7 @@
         },
     }
 
+        """Initialize test_node_v12 class."""
 
     def execute(
         self,

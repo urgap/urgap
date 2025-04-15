@@ -34,6 +34,7 @@
         },
     }
 
+        """Initialize test_node_v9 class."""
 
     def execute(
         self,

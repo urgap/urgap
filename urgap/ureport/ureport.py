@@ -1,12 +1,14 @@
 
 import json
 import logging
+
 from collections import defaultdict
 from pathlib import Path
 from pprint import pformat
 
 import networkx as nx
 import plotly.graph_objects as go
+
 from plotly.offline import init_notebook_mode, iplot
 
 
@@ -52,6 +54,7 @@ class UReport:
 UReport id {id(self)}
 
 
+UMeta:
     {self.umeta}
         """
 
@@ -109,6 +112,7 @@ UReport id {id(self)}
                         wid=wid,
                         graph=graph,
                     )
+                    raise OSError(msg)
         return graph
 
     def was_skipped(
@@ -172,6 +176,7 @@ UReport id {id(self)}
         targets = []
         colors = []
         shortened_nodes = []
+        for source, target in links:
             sources.append(source)
             targets.append(target)
         for node in nodes:
@@ -185,11 +190,31 @@ UReport id {id(self)}
         fig = go.Figure(
             data=[
                 go.Sankey(
+                    node={
+                        "pad": 15,
+                        "thickness": 20,
+                        "line": {"color": "black", "width": 0.5},
+                        "label": shortened_nodes,
+                        "color": colors,
+                        "customdata": custom_hover_data,
+                        "hovertemplate": "%{customdata}<extra></extra>",
+                    },
+                    link={
+                        "arrowlen": 15,
+                        "source": sources,
+                        "target": targets,
+                        "value": list(links.values()),
+                    },
             ],
             layout=go.Layout(
                 title="Simplified DAG with aliases",
                 showlegend=False,
                 hovermode="closest",
+                margin={"b": 20, "l": 5, "r": 5, "t": 40},
+                xaxis={
+                },
+                yaxis={
+                },
             ),
         )
 
@@ -320,6 +345,7 @@ UReport id {id(self)}
         Args:
         """
         data = self.generate_report()
+        from jinja2 import Environment, FileSystemLoader
 
         template_folder = Path(__file__).parent / "templates"
         env = Environment(

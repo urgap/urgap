@@ -21,11 +21,16 @@ import click
 @click.command()
     placeholder_str = "|      "
     click.secho("Available Unodes", fg="bright_green")
+    click.secho("{: >45}".format("name"))
+    click.secho("{: >45} {}".format("    ", "Executable available"))
     click.secho(
+        "{: >45} {} {}".format(
     )
     click.secho(
+        "{: >45} {} {} {}".format(
     )
     click.secho(
+        "{: >45} {} {} {}".format(
     )
     counter = collections.defaultdict(int)
     tags = set()
@@ -49,6 +54,7 @@ import click
         "\nIn summary a total {unodes} wrappers are available. Not showing {test_nodes} test_nodes".format(
     )
     click.echo(f"Total number of tags {len(tags)}")
+    sorted_tags = sorted(tags)
     for _ in range(0, len(sorted_tags), 7):
         click.echo(f"       {', '.join(sorted_tags[_ : _ + 7])}")
 

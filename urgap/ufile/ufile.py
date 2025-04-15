@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import bz2
+import contextlib
 import copy
 import gzip
 import logging
@@ -10,6 +11,7 @@ import shutil
 import tarfile
 import zipfile
 import zlib
+
 from base64 import b64decode
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
@@ -198,6 +200,7 @@ class UFile:
 
         Raises:
         """
+        if scheme not in available_io_classes:
             )
 
     def get_object(self) -> Path | None:
@@ -257,6 +260,7 @@ class UFile:
 
     def uncompress(
         self,
+        compression_format: str | None = None,
         recursive: bool = True,
 
         Args:
@@ -307,6 +311,7 @@ class UFile:
         self.purge_local_file()
         self.purge_local_tags()
 
+        with contextlib.suppress(FileNotFoundError):
             self.io.scratch_path.unlink()
 
         self._tags = None
@@ -382,6 +387,7 @@ class UFile:
         simple_name = ""
         if prefix is not None:
             simple_name += prefix
+        simple_name += str(Path(next(iter(matching_source))).name.split(".")[0])
         if suffix is not None:
             simple_name += suffix
         if storage_base_uri is None:

@@ -14,12 +14,15 @@ import stat
 import subprocess
 import sys
 import time
+
 from pathlib import Path
 
 import requests
 
 
 
+
+class UNodeBase:
 
         self._exe_path = None
         self.status = None
@@ -165,6 +168,7 @@ import requests
             self.META_INFO.get("input_uftypes").values(),
             self.META_INFO.get("output_uftypes").values(),
         ):
+            if set(uftype_spec.keys()) != {"min", "max"}:
                 )
         self.tmp_files = []
 
@@ -207,6 +211,7 @@ import requests
             return Path(exe_path)
 
     def construct_exe_path(self) -> os.PathLike | None:
+
         Returns:
         """
         if self.META_INFO["unode_version"] is None:
@@ -262,7 +267,9 @@ import requests
         """
         comp_platform = sys.platform
         comp_arch = platform.machine()
+        if comp_platform == "win32" or comp_platform.startswith("linux"):
             return "x86_64"
+            return comp_arch
 
     def install_resource(
         self,
@@ -395,6 +402,7 @@ import requests
         Returns:
 
         """
+        if "command_list" not in utrace.urun_dict.unode_rinfo:
                 "No command_list was found in urun_dict."
                 "Convention is to define the command list during "
                 "preflight in the UNode engine class."
