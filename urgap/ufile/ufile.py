@@ -115,6 +115,7 @@ class UFile:
         Returns:
         """
         object_name = self.object_name
+        return object_name.split("/")[-1].rsplit(".", maxsplit=1)[0].replace(".", "-")
 
     @property
 
@@ -210,6 +211,7 @@ class UFile:
         if scheme not in available_io_classes:
             msg = (
             )
+            raise ImportError(msg)
 
     def get_object(self) -> Path | None:
 
@@ -247,15 +249,18 @@ class UFile:
 
         Returns:
         """
+        if compression_format == "zip":
             suffix = ".zip"
             new_path = self.path.with_suffix(self.path.suffix + suffix)
             with ZipFile(new_path, "w", zipfile.ZIP_DEFLATED) as file:
                 file.write(self.path, arcname=self.path.name)
 
+        elif compression_format == "gz":
             suffix = ".gz"
             new_path = self.path.with_suffix(self.path.suffix + suffix)
                 out_file.writelines(file)
 
+        elif compression_format == "tar":
             suffix = ".tar"
             new_path = self.path.with_suffix(self.path.suffix + suffix)
             with tarfile.open(new_path, mode="w:") as file:

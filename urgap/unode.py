@@ -229,6 +229,7 @@ class UNodeBase:
                 "If latest is used, exp_path must be set in "
                 "urun_dict['unode_parameters']['latest_exe_paths']"
             )
+            raise RuntimeError(msg)
         if str(self.latest_exe_paths).startswith("$"):
         else:
             exe_path = self.latest_exe_paths
@@ -242,8 +243,12 @@ class UNodeBase:
                 version_info = v
                 break
         if version_info is None:
+            raise RuntimeError(msg)
         if version_info.get("exe_path", None) is None:
+            msg = (
+                f"Tag {self.META_INFO['unode_version']} has not exe_path entry in UMETA"
             )
+            raise RuntimeError(msg)
         if version_info["exe_path"].startswith("$"):
             path_to_system_resource = shutil.which(version_info["exe_path"].lstrip("$"))
             if path_to_system_resource is not None:
@@ -423,6 +428,7 @@ class UNodeBase:
                 "Convention is to define the command list during "
                 "preflight in the UNode engine class."
             )
+            raise KeyError(msg)
 
         utrace.urun_dict.command_list = [str(x) for x in utrace.urun_dict.command_list]
         cmd_msg = f"Executing command list: {' '.join(utrace.urun_dict.command_list)}"
