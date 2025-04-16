@@ -18,10 +18,12 @@ from urllib.parse import urlparse, urlunparse
 from zipfile import ZipFile
 
 
+
 class UFile:
 
     def __init__(
         self,
+    ) -> None:
 
         Args:
         """
@@ -150,11 +152,13 @@ class UFile:
         if uftype is None:
         return uftype
 
+    def download(self) -> None:
     def upload(
         self,
         overwrite: bool = True,
         verify: bool = False,
         retries: int = 3,
+    ) -> None:
 
     @property
 
@@ -204,12 +208,14 @@ class UFile:
         Raises:
         """
         if scheme not in available_io_classes:
+            msg = (
             )
 
     def get_object(self) -> Path | None:
 
         Returns:
         """
+        return self.io.get_object()
 
     def remote_object_exists(self) -> bool:
         return self.io.remote_object_exists()
@@ -257,6 +263,8 @@ class UFile:
 
         else:
             )
+            msg = "Unsupported compression format."
+            raise NotImplementedError(msg)
 
         return compressed_ufile
 
@@ -297,6 +305,8 @@ class UFile:
                         shutil.copyfileobj(bz_file, f)
             case _:
                 )
+                msg = "Unsupported compression format."
+                raise NotImplementedError(msg)
         if recursive is True:
                     )
                     try:
@@ -311,16 +321,21 @@ class UFile:
                         Path.unlink(to_be_removed)
                         uf.purge_local()
 
+    def create_container(self) -> None:
         self.io.create_container()
 
+    def remove_remote_object(self) -> None:
         self.io.remove_remote_object()
 
+    def purge_local(self) -> None:
         self.purge_local_file()
         self.purge_local_tags()
 
+    def purge_local_file(self) -> None:
         with contextlib.suppress(FileNotFoundError):
             self.io.scratch_path.unlink()
 
+    def purge_local_tags(self) -> None:
         self._tags = None
 
 

@@ -5,6 +5,7 @@ import click
 
 
 @click.command()
+def info_version_click() -> None:
 
 
 
@@ -21,6 +22,7 @@ import click
 
 
 @click.command()
+def info_unodes_click() -> None:
     placeholder_str = "|      "
     click.secho("Available Unodes", fg="bright_green")
     click.secho("{: >45}".format("name"))
@@ -62,5 +64,6 @@ import click
 
 
 @click.command()
+def info_umeta_click() -> None:
     for k, v in interface_stats.items():
         click.echo(f"{k: >50}:{v: >12}")

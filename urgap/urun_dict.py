@@ -79,12 +79,15 @@ class URunDict(UserDict):
         return self["wid"]
 
     @wid.setter
+    def wid(self, wid: str) -> None:
 
         Args:
         """
         self["wid"] = wid
 
+    def assign_wid(self) -> None:
 
+    def reassign_wid(self) -> None:
         self.assign_wid()
 
     @property
@@ -96,6 +99,7 @@ class URunDict(UserDict):
         return self.get("parameters", {})
 
     @parameters.setter
+    def parameters(self, parameters: dict) -> None:
 
         Args:
         """
@@ -109,6 +113,7 @@ class URunDict(UserDict):
         return self.get("user_dict", {})
 
     @user_dict.setter
+    def user_dict(self, user_dict: dict) -> None:
 
         Args:
         """
@@ -122,10 +127,13 @@ class URunDict(UserDict):
         return self["unode_parameters"]
 
     @unode_parameters.setter
+    def unode_parameters(self, unode_parameters: dict) -> None:
 
         Args:
         """
         if isinstance(unode_parameters, dict) is False:
+            msg = "Unode parameters must be a dict!"
+            raise TypeError(msg)
 
         self["unode_parameters"] = self._update_default_storage(
         )
@@ -138,10 +146,13 @@ class URunDict(UserDict):
         return self["unode_rinfo"]
 
     @unode_rinfo.setter
+    def unode_rinfo(self, unode_rinfo: dict) -> None:
 
         Args:
         """
         if isinstance(unode_rinfo, dict) is False:
+            msg = "Unode rinfo must be a dict!"
+            raise TypeError(msg)
         self["unode_rinfo"] = self._update_default_storage("unode_rinfo", unode_rinfo)
 
     @property
@@ -152,6 +163,7 @@ class URunDict(UserDict):
         return self.unode_rinfo["meta_info"]
 
     @meta_info.setter
+    def meta_info(self, meta_info: dict) -> None:
 
         Args:
         """
@@ -169,6 +181,8 @@ class URunDict(UserDict):
 
         Raises:
         """
+            msg = "Input files must be instance of UFileList"
+            raise TypeError(msg)
         self.data["input_files"] = input_files
 
     @property
@@ -183,6 +197,8 @@ class URunDict(UserDict):
 
         Raises:
         """
+            msg = "Output files must be instance of UFileList"
+            raise TypeError(msg)
         self.data["output_files"] = output_files
 
     @property
@@ -193,12 +209,15 @@ class URunDict(UserDict):
         return self.unode_rinfo["command_list"]
 
     @command_list.setter
+    def command_list(self, command_list: list[str]) -> None:
 
         Args:
 
         Raises:
         """
         if isinstance(command_list, list) is False:
+            msg = "command_list must be instance of list"
+            raise TypeError(msg)
         self.unode_rinfo["command_list"] = command_list
 
     @property
@@ -257,6 +276,8 @@ class URunDict(UserDict):
             ufiles = self.input_files
 
         if ufiles is None or len(ufiles) == 0:
+            msg = "Cannot determine output name based on empty ufile list"
+            raise ValueError(msg)
         self.data["object_folder"] = self._generate_container_folder_name(
             skip_data_versioning=self.unode_parameters["skip_data_versioning"],
             run_folder_name=self.unode_parameters["run_folder_name"],
@@ -268,6 +289,7 @@ class URunDict(UserDict):
         else:
         return new_fragment
 
+    def register_unode_meta_info(self, meta_info: dict) -> None:
 
         Args:
         """

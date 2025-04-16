@@ -19,6 +19,7 @@ class UReport:
         self,
         wid: str | None = None,
         umeta_io: str | None = None,
+    ) -> None:
 
         Args:
             wid: Workflow ID.
@@ -167,6 +168,7 @@ UMeta:
 
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
 
+    def draw_execution_dag(self) -> None:
         init_notebook_mode(connected=True)
         custom_hover_data = []
         for i, node in enumerate(nodes):

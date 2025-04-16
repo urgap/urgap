@@ -157,6 +157,7 @@ class UNodeBase:
         utrace.upload_output_files()
         return utrace
 
+    def _pre_checks(self) -> None:
 
         """
         if self.has_all_required_installations() is False:
@@ -211,6 +212,7 @@ class UNodeBase:
 
         if exe_path is not None:
             return Path(exe_path)
+        return None
 
     def construct_exe_path(self) -> os.PathLike | None:
 
@@ -223,6 +225,7 @@ class UNodeBase:
         return self._construct_exe_path_u3()
 
         if self.latest_exe_paths is None:
+            msg = (
                 "If latest is used, exp_path must be set in "
                 "urun_dict['unode_parameters']['latest_exe_paths']"
             )
@@ -251,6 +254,7 @@ class UNodeBase:
                 tagged_exe_path = None
         if tagged_exe_path is not None:
             return tagged_exe_path
+        return None
 
     @property
     def resource_subfolder(self) -> str:
@@ -322,6 +326,7 @@ class UNodeBase:
             return False
         return True
 
+    def delete_tmp_files(self) -> None:
 
         Note:
         """
@@ -413,6 +418,7 @@ class UNodeBase:
 
         """
         if "command_list" not in utrace.urun_dict.unode_rinfo:
+            msg = (
                 "No command_list was found in urun_dict."
                 "Convention is to define the command list during "
                 "preflight in the UNode engine class."
