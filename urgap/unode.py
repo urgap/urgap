@@ -89,6 +89,7 @@ class UNodeBase:
         except Exception as e:
                 span.set_attribute("exception.type", type(e).__name__)
                 span.set_attribute("exception.message", str(e))
+            raise requests.HTTPError(msg) from e
 
     def _run_locally(
         self,
@@ -317,6 +318,7 @@ class UNodeBase:
 
         Note:
         """
+        self.tmp_files = [Path(p) for p in self.tmp_files]
         for path in self.tmp_files:
             if str(path) in [".", "/", "./", "../"]:
                 continue
@@ -393,6 +395,7 @@ class UNodeBase:
                     for k, v in um.urun_dict["parameters"].items()
                 ],
         )
+        if hasattr(cls, "generate_wrapper_vis") and callable(cls.generate_wrapper_vis):
             data += cls.generate_wrapper_vis(ufile)
         return data
 
@@ -417,6 +420,8 @@ class UNodeBase:
                 utrace.urun_dict.command_list,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
+                text=True,
+                check=False,
             )
         else:
             execute_answer.append("Command list is empty")

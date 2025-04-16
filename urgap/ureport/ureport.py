@@ -212,8 +212,16 @@ UMeta:
                 hovermode="closest",
                 margin={"b": 20, "l": 5, "r": 5, "t": 40},
                 xaxis={
+                    "showgrid": False,
+                    "zeroline": False,
+                    "showticklabels": False,
+                    "visible": False,
                 },
                 yaxis={
+                    "showgrid": False,
+                    "zeroline": False,
+                    "showticklabels": False,
+                    "visible": False,
                 },
             ),
         )

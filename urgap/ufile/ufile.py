@@ -257,6 +257,10 @@ class UFile:
 
         return compressed_ufile
 
+        with (
+        ):
+            decom_str = gzip.decompress(gz_file.read()).decode(encoding=encoding)
+            out_file.write(decom_str)
 
     def uncompress(
         self,
