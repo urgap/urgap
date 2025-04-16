@@ -164,6 +164,7 @@ class UNodeBase:
                 f"it requires {self.required_3rd_party_installation} "
                 "which not available on this system ..."
             )
+            return
 
         for uftype_spec in itertools.chain(
             self.META_INFO.get("input_uftypes").values(),
@@ -217,12 +218,15 @@ class UNodeBase:
         """
         if self.META_INFO["unode_version"] is None:
             return self._construct_exe_path_u2()
+        if self.META_INFO["unode_version"] == "latest":
             return self._construct_latest_exe_path()
+        return self._construct_exe_path_u3()
 
         if self.latest_exe_paths is None:
                 "If latest is used, exp_path must be set in "
                 "urun_dict['unode_parameters']['latest_exe_paths']"
             )
+        if str(self.latest_exe_paths).startswith("$"):
         else:
             exe_path = self.latest_exe_paths
         return Path(exe_path)
@@ -270,7 +274,9 @@ class UNodeBase:
         comp_arch = platform.machine()
         if comp_platform == "win32" or comp_platform.startswith("linux"):
             return "x86_64"
+        if comp_arch == "arm64":
             return comp_arch
+        return "x86_64"
 
     def install_resource(
         self,
@@ -314,6 +320,7 @@ class UNodeBase:
 
         if len(missing_exe) != 0:
             return False
+        return True
 
 
         Note:

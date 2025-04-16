@@ -15,7 +15,9 @@ import click
     """
     if condition is True:
         return click.style("[ yes ]", fg="bright_green")
+    if condition is False:
         return click.style("[ no! ]", fg="red")
+    return click.style("[ ... ]", fg="white")
 
 
 @click.command()

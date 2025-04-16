@@ -261,6 +261,7 @@ UMeta:
         visited_nodes = set()
 
             if node in visited_nodes:
+                return None
             visited_nodes.add(node)
             if self.graph.in_degree(node) == 0:
                 root_nodes.add(node)

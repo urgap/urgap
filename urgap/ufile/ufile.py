@@ -86,17 +86,20 @@ class UFile:
         Returns:
         """
 
+    def __eq__(self, other: object) -> bool:
 
         Args:
 
         Returns:
         """
+        return False
 
 
         Args:
 
         Returns:
         """
+        return False
 
     @property
     def object_name(self) -> str:
