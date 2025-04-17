@@ -167,6 +167,7 @@ beacon = types.SimpleNamespace()
 beacon.IMAGE_TIFF = ".image.tiff"
 beacon.ESSAY_XML = ".essay.xml"
 beacon.OPTOSELECT_XML = ".optoselect.xml"
+beacon.RESULT_PNG = ".result.png"
 
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
