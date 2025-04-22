@@ -45,6 +45,7 @@ def calculate_file_hash(
             try:
                 subprocess.call(["chmod", "-R", "0777", wid_folder])
                 shutil.rmtree(wid_folder)
+            except OSError:
 
 
 
