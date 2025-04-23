@@ -26,6 +26,7 @@ import requests
 
 class UNodeBase:
 
+    def __init__(self) -> None:
         self._exe_path = None
         self.status = None
         self.tmp_files = []
