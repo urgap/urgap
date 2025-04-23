@@ -184,6 +184,7 @@ class UNodeBase:
                 )
         self.tmp_files = []
 
+    def _construct_exe_path_u2(self) -> Path | None:
         custom_exe_path = self.META_INFO.get("exe_path", None)
         if self.META_INFO["platform_independent"] is True:
             base_path = (
@@ -234,6 +235,7 @@ class UNodeBase:
             return self._construct_latest_exe_path()
         return self._construct_exe_path_u3()
 
+    def _construct_latest_exe_path(self) -> Path:
         if self.latest_exe_paths is None:
             msg = (
                 "If latest is used, exp_path must be set in "
