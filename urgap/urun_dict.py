@@ -66,6 +66,7 @@ class URunDict(UserDict):
 
             self.assign_wid()
 
+    def _update_default_storage(self, storage_key: str, user_dict: dict) -> str:
         default_storage_parameters = copy.deepcopy(
         )
         default_storage_parameters.update(user_dict)
@@ -252,6 +253,8 @@ class URunDict(UserDict):
 
     def _generate_container_folder_name(
         self,
+        skip_data_versioning: bool = False,
+    ) -> str:
         if run_folder_name is None:
             container_folder_name = "{}_w{}".format(
                 self.unode_rinfo["meta_info"]["name"],

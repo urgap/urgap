@@ -3,6 +3,8 @@
 This module defines the UnodeBase class, which is inherited by wrappers.
 """
 
+from __future__ import annotations
+
 import copy
 import itertools
 import json
@@ -116,6 +118,7 @@ class UNodeBase:
         if ut.urun_dict.unode_parameters["remove_temporary_files"] is True:
             self.delete_tmp_files()
 
+        msg = f"Finished execution of {self.META_INFO['name']} node with utrace.id {ut.id}"
         return ut.output_files
 
     def _open_execution_span(
@@ -137,9 +140,12 @@ class UNodeBase:
         flight_sequence = ["preflight", "execute", "postflight"]
         for flight_stage in flight_sequence:
             if hasattr(self, flight_stage) is False:
+                msg = f"Skipping {flight_stage} as it is not defined ..."
                 continue
 
             stage_function = getattr(self, flight_stage)
+
+            msg = f"Running {flight_stage} ..."
 
             utrace = stage_function(utrace)
                 raise TypeError
@@ -149,6 +155,7 @@ class UNodeBase:
             utrace.urun_dict.unode_parameters["file_io_timeout"] is not None
             and execution_time >= utrace.urun_dict.unode_parameters["file_io_timeout"]
         ):
+            msg = (
                 f"Node execution took {execution_time:.3f} seconds which is"
                 f" longer than the timeout value {utrace.urun_dict['file_io_timeout']}."
                 "Therefore re-initializing IO classes for all UFiles."
@@ -161,6 +168,7 @@ class UNodeBase:
 
         """
         if self.has_all_required_installations() is False:
+            msg = (
                 f"Cannot execute {self.META_INFO['name']}, "
                 f"it requires {self.required_3rd_party_installation} "
                 "which not available on this system ..."
@@ -197,6 +205,7 @@ class UNodeBase:
             try:
                 )
             except KeyError:
+                msg = f"Your platform ({sys_platform} {comp_arch}) does not seem to be supported by {self.META_INFO['name']}."
                 rel_exe_path = ""
 
         if self.META_INFO["engine"].get("system", None) is not None:
@@ -231,6 +240,7 @@ class UNodeBase:
             )
             raise RuntimeError(msg)
         if str(self.latest_exe_paths).startswith("$"):
+            msg = f"Using system resource {self.latest_exe_paths} as exe path"
         else:
             exe_path = self.latest_exe_paths
         return Path(exe_path)
@@ -328,6 +338,7 @@ class UNodeBase:
                     missing_exe.append(exe)
 
         if len(missing_exe) != 0:
+            msg = f"The following executables are missing: {','.join(missing_exe)}"
             return False
         return True
 
@@ -335,9 +346,11 @@ class UNodeBase:
 
         Note:
         """
+        msg = f"Removing tmp_files ... {self.tmp_files}"
         self.tmp_files = [Path(p) for p in self.tmp_files]
         for path in self.tmp_files:
             if str(path) in [".", "/", "./", "../"]:
+                msg = f"Not deleting {path}, might be unsafe"
                 continue
             if path.exists():
                 if path.is_dir():
@@ -365,6 +378,7 @@ class UNodeBase:
 
         Args:
         """
+        msg = f"Removing {output_file}"
 
         umeta.delete(output_file)
 
@@ -451,6 +465,10 @@ class UNodeBase:
         )
         return utrace
 
+    def _check_proc_outcome(
+        self,
+        proc: subprocess.CompletedProcess,
+        execute_answer: list,
         msg = ""
         if (proc is not None) and (proc.stdout is not None):
             for line in proc.stdout.split("\n"):

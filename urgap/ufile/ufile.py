@@ -122,6 +122,7 @@ class UFile:
         Returns:
         """
 
+    def __deepcopy__(self, memo: dict) -> UFile:
 
         Args:
 
@@ -271,8 +272,10 @@ class UFile:
             msg = "Unsupported compression format."
             raise NotImplementedError(msg)
 
+        msg = f"Compressed UFile to {compressed_ufile.as_uri()}"
         return compressed_ufile
 
+    def _unpack_gz(self, gz_output: str | Path, encoding: str = "utf-8") -> None:
         with (
         ):
             decom_str = gzip.decompress(gz_file.read()).decode(encoding=encoding)
@@ -410,6 +413,7 @@ class UFile:
         """
         matching_source = source_object_names.intersection(self.parents)
         if len(matching_source) != 1:
+            msg = f"Could not find matching source file in parents for {self}"
             return None
         simple_name = ""
         if prefix is not None:

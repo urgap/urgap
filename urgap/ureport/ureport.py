@@ -1,4 +1,5 @@
 
+from __future__ import annotations
 import json
 import logging
 
@@ -367,3 +368,4 @@ UMeta:
             data=data,
         )
             print(html_out, file=oo)
+        msg = f"Writing report to {output_path}"
