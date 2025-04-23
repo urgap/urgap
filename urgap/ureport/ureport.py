@@ -167,6 +167,7 @@ UMeta:
         """
         return self.umeta.umeta_exists(reference_ufile)
 
+    def generate_node_vis(self) -> list:
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
 
     def draw_execution_dag(self) -> None:

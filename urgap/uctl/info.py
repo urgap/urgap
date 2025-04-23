@@ -8,6 +8,7 @@ import click
 def info_version_click() -> None:
 
 
+def get_status(condition: bool | None) -> click.style:
 
     Args:
         condition: Availability of 3rd party/executable.
