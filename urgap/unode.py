@@ -104,6 +104,7 @@ class UNodeBase:
             unode_meta=self.META_INFO,
             unode_version=self.META_INFO["unode_version"],
         )
+        ut.input_files = ut.filter_input_files(ut.input_files)
         starting_time = time.time()
         self.utrace_history.append(ut.id)
         reasons = ut.evaluate_if_rerun_is_required()
