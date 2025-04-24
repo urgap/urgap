@@ -254,6 +254,7 @@ class URunDict(UserDict):
     def _generate_container_folder_name(
         self,
         skip_data_versioning: bool = False,
+        run_folder_name: str | None = None,
     ) -> str:
         if run_folder_name is None:
             container_folder_name = "{}_w{}".format(
