@@ -206,6 +206,9 @@ class UNodeBase:
             sys_platform = sys.platform
             comp_arch = self.get_comp_arch()
             try:
+                rel_exe_path = (
+                    Path(self.META_INFO["name"])
+                    / (self.META_INFO["engine"][sys_platform][comp_arch]["exe"])
                 )
             except KeyError:
                 msg = f"Your platform ({sys_platform} {comp_arch}) does not seem to be supported by {self.META_INFO['name']}."
