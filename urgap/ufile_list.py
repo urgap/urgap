@@ -64,6 +64,8 @@ class UFileList(UserList):
         self._eval_if_item_is_of_correct_type(other)
         return super().__radd__(other)
 
+    def __iadd__(
+    ) -> UFileList:
 
         Args:
         """

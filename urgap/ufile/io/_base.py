@@ -2,6 +2,7 @@
 from pathlib import Path
 
 
+
 class UIOBase:
 
     """
@@ -20,6 +21,7 @@ class UIOBase:
 
         return _scratch_path
 
+    def download(self) -> None:
         msg = "This needs to be implemented in the UIO class"
         raise NotImplementedError(msg)
 

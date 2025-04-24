@@ -87,5 +87,6 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         with Session(self.db) as session:
             )
 
+    def generate_connection_string(self) -> None:
         msg = "Please implement this method in child classes."
         raise NotImplementedError(msg)

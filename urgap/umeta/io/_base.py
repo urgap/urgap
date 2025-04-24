@@ -29,10 +29,12 @@ class UMetaIOBase:
             setattr(result, k, deepcopy(v, memo))
         return result
 
+    def load(self) -> None:
         raise NotImplementedError
 
         raise NotImplementedError
 
+    def find_wid_members(self, wid: str, limit: int | None = None) -> None:
         raise NotImplementedError
 
         raise NotImplementedError

@@ -23,6 +23,20 @@ class UFileIOManager:
             "omiq": "omiq",
             "samba": "smb",
         }
+        class_mappings = {
+            "_base": "UIOBase",
+            "azure": "IOAzureBlobStorage",
+            "az-smb": "IOAzureSMB",
+            "file": "IOPython",
+            "ftp": "IOFTP",
+            "gcs": "IOGoogleCloudStorage",
+            "https": "IOHTTPS",
+            "mylabdata": "IOMyLabData",
+            "omiq": "IOOmiq",
+            "smb": "IOSMB",
+        }
         for io_module, schema in io_modules_schema_map.items():
             with contextlib.suppress(ImportError):
+                self.available_io_classes[schema] = getattr(
+                    class_mappings[schema],
                 )
