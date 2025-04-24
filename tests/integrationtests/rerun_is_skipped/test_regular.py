@@ -11,15 +11,21 @@ import pytest
             ),
                 {
                     "parameters": {
+                        "TestNode1:1.0.0": {
+                            "triggers_nuttin": 100,
+                            "triggers_rerun": 100,
+                            "triggers_rerun_-3": 100,
                     },
                     },
             ),
+            ["TestNode1:1.0.0"],
         ),
     ],
     indirect=["provide_clean_test_node_dirs"],
 )
 def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
+    test_node1 = test_nodes["TestNode1:1.0.0"]
     print("Input:")
     pprint.pprint(urun_dict)
     print("UFiles:")

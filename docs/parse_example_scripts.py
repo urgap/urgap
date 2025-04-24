@@ -13,6 +13,7 @@ from pathlib import Path
 def source_sphinx(inc, path_to_inc):
     return f"""
 
+.. autofunction:: {inc.replace(".inc", "")}.main
     :noindex:
 
     """
@@ -44,6 +45,8 @@ def main():
             current_level = current_level[subfolder]
 
         current_level[basename] = doc_path / basename
+        msg = f"Writing {current_level[basename]}"
+        logging.info(msg)
         with open(Path(__file__).resolve().parent / doc_path / basename, "w") as o:
             print(""".. code-block:: python\n""", file=o)
             with open(example_file) as infile:

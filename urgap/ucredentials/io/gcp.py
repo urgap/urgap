@@ -3,6 +3,7 @@ import logging
 
 import google.api_core.exceptions
 import google_crc32c
+
 from google import auth
 from google.cloud import secretmanager
 
@@ -15,6 +16,7 @@ class IOGCPCreds(IOBaseCreds):
         self.version_id = kwargs["version_id"]
         self.project_id = kwargs["project_id"]
 
+    def get_secret(self) -> str:
         """Get secret from GCP secret Manager.
 
         Code adapted from:
@@ -45,6 +47,7 @@ class IOGCPCreds(IOBaseCreds):
             crc32c = google_crc32c.Checksum()
             crc32c.update(response.payload.data)
             if response.payload.data_crc32c != int(crc32c.hexdigest(), 16):
+                msg = f"Secret {self.secret_id} payload is corrupted."
 
             secret = response.payload.data.decode("UTF-8")
         return secret

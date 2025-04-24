@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from copy import deepcopy
 
 
@@ -8,6 +10,7 @@ class UMetaIOBase:
 
     """
 
+    def __init__(self) -> None:
         self.name = "UMetaBase"
 
 
@@ -26,16 +29,13 @@ class UMetaIOBase:
             setattr(result, k, deepcopy(v, memo))
         return result
 
+        raise NotImplementedError
 
+        raise NotImplementedError
 
+        raise NotImplementedError
 
-
-    ) -> list:
-
-        Args:
-
-        Returns:
-        """
+        raise NotImplementedError
 
     ) -> list:
 
@@ -43,12 +43,22 @@ class UMetaIOBase:
 
         Returns:
         """
+        raise NotImplementedError
+
+    ) -> list:
+
+        Args:
+
+        Returns:
+        """
+        raise NotImplementedError
 
     def retrieve_interface_statistics(self) -> str:
 
         Returns:
         """
 
+    def find_last_processed_files(self) -> str:
 
 
         Returns:

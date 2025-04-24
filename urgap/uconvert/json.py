@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import datetime
 import json
 import pathlib
@@ -9,6 +11,11 @@ import pathlib
 
 class JSONEncoder(json.JSONEncoder):
 
+    def default(
+        self,
+        obj: (
+        ),
+    ) -> dict:
 
         Args:
 
@@ -19,6 +26,7 @@ class JSONEncoder(json.JSONEncoder):
                 "_type": "datetime",
                 "value": obj.isoformat(),
             }
+        if isinstance(obj, set):
             return {
                 "_type": "set",
                 "value": list(obj),
@@ -27,6 +35,7 @@ class JSONEncoder(json.JSONEncoder):
                 "_type": "UFile",
                 "uri": obj.as_uri(),
             }
+        if isinstance(obj, pathlib.PosixPath):
             return {
                 "_type": "Path",
                 "value": str(obj),
@@ -39,15 +48,18 @@ class JSONEncoder(json.JSONEncoder):
                     d["uris"].append(x.as_uri())
             return d
 
+        return obj
 
 
 class JSONDecoder(json.JSONDecoder):
 
+        super().__init__(
             *args,
             object_hook=self.object_hook,
             **kwargs,
         )
 
+    def object_hook(
 
         Args:
 

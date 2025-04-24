@@ -2,6 +2,7 @@
 
 
 
+
 class UMeta(SQLAlchemyBaseUMeta):
     """UMeta GCP Cloud SQL class."""
 

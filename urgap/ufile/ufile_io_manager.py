@@ -1,4 +1,5 @@
 
+import contextlib
 import importlib
 
 
@@ -6,7 +7,10 @@ class UFileIOManager:
 
     """
 
+    def __init__(self) -> None:
+        super().__init__()
 
+        self.available_io_classes = {}
         io_modules_schema_map = {
             "_base": "_base",
             "azure_blob": "azure",
@@ -20,4 +24,5 @@ class UFileIOManager:
             "samba": "smb",
         }
         for io_module, schema in io_modules_schema_map.items():
+            with contextlib.suppress(ImportError):
                 )

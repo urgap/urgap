@@ -13,13 +13,18 @@ class UIOBase:
         """
 
     @property
+    def scratch_path(self) -> Path:
         _scratch_path = (
         ).resolve()
         _scratch_path.parent.mkdir(exist_ok=True, parents=True)
 
         return _scratch_path
 
+        msg = "This needs to be implemented in the UIO class"
+        raise NotImplementedError(msg)
 
+        msg = "This needs to be implemented in the UIO class"
+        raise NotImplementedError(msg)
 
     def local_object_exists(self) -> bool:
 

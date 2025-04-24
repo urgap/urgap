@@ -10,9 +10,12 @@ import inspect
 import logging
 import re
 import subprocess
+
 from collections import UserDict
+from pathlib import Path
 
 from packaging.version import Version
+
 
 
 
@@ -49,6 +52,7 @@ class UNodeManager(UserDict):
         },
     }
 
+    def __init__(self, external_resource_test_dict: dict | None = None) -> None:
 
 
         Args:
@@ -59,6 +63,7 @@ class UNodeManager(UserDict):
         self.wrapper_lookup = self.generate_wrapper_lookup()
         self.assign_unode_ports()
 
+        super().__init__()
         self.data = {
             "all": {},
             "by_type": {},
@@ -73,10 +78,14 @@ class UNodeManager(UserDict):
         self._module_not_installed = set()
         self._requirements_not_met = set()
 
+    def _check_for_module(self, pypackage: str) -> str | None:
         try:
+            return importlib.metadata.version(pypackage)
         except importlib.metadata.PackageNotFoundError:
             return None
 
+    def _test_command(
+    ) -> bool:
         is_available = False
         try:
             proc = subprocess.run(
@@ -96,11 +105,13 @@ class UNodeManager(UserDict):
             pass
         return is_available
 
+    def assign_unode_ports(self) -> None:
         self.unode_port_mapping = {}
         last_assigned_port = first_port - 1
         for node_name in sorted(self.wrapper_lookup.keys(), key=sort_versions):
             if ":" not in node_name:
                 continue
+            if node_name.startswith("TestNode"):
                 continue
             last_assigned_port = get_next_port(
             )
@@ -116,11 +127,17 @@ class UNodeManager(UserDict):
             for wrapper in _path.glob("**/*.py"):
                 if wrapper.stem.startswith("_"):
                     continue
+                self._add_to_lookup(
+                    lookup=lookup,
+                    wrapper=wrapper,
+                )
         return lookup
 
     def _add_to_lookup(
         self,
         lookup: dict,
+        wrapper: Path,
+    ) -> None:
         class_path_string = str(
         )
         spec = importlib.util.spec_from_file_location("node", wrapper)
@@ -128,12 +145,15 @@ class UNodeManager(UserDict):
         try:
             spec.loader.exec_module(mod)
         except ImportError:
+            msg = f"Cannot import {mod} due to missing dependencies."
+            return
         classes = inspect.getmembers(mod, inspect.isclass)
         node_name = None
         class_name = None
         for name, cls in classes:
             if mod.__name__ == cls.__module__:
                 try:
+                    meta_info = cls.META_INFO
                 except AttributeError:
                     meta_info = cls().META_INFO
                 node_name = meta_info["name"]
@@ -153,18 +173,28 @@ class UNodeManager(UserDict):
         else:
             lookup[node_name] = class_path_string, class_name
 
+    def init_unode(self, unode: str) -> None:
 
 
 
         Returns:
         """
+        if unode in self.wrapper_lookup:
             unode_obj = self.import_class(unode)
             if (
                 self.node_availability_lookup[unode]["has_3rd_party_requirements"]
                 and not self.node_availability_lookup[unode]["requirements_available"]
             ):
+                msg = f"UNode {unode} could not be initialized because requirements are missing."
             if self.node_availability_lookup[unode]["resource_available"] is False:
+                msg = f"UNode {unode} could not be initialized the resource/executable are missing."
             return unode_obj
+        msg = f"UNode {unode} not available."
+        for available_unode in self.data["all"]:
+            if unode.upper() in available_unode.upper():
+                msg = f"Did you mean {available_unode}?"
+        )
+        return None
 
 
 
@@ -180,6 +210,7 @@ class UNodeManager(UserDict):
         except AttributeError:
             engine_types = unode_class().META_INFO["engine_type"]
         for engine_type in engine_types:
+            if engine_type not in self.data["by_type"]:
                 self.data["by_type"][engine_type] = {}
             self.data["by_type"][engine_type][unode] = unode_class
         unode_obj, node_availability_lookup = self.check_unode_dependencies(unode)
@@ -221,6 +252,10 @@ class UNodeManager(UserDict):
             )
             # exe_path supplied by urun_dict['unode_parameters']['latest_exe_paths']
             tmp[unode]["resource_available"] = None
+        elif unode_obj.exe_path is not None:
+            tmp[unode]["resource_available"] = (
+                unode_obj.exe_path.exists() and unode_obj.exe_path.is_file()
+            )
 
         for uftype, requirements in unode_obj.META_INFO.get("requires", {}).items():
             is_available = self.check_requirements(requirements, unode)
@@ -232,12 +267,14 @@ class UNodeManager(UserDict):
             tmp[unode]["has_3rd_party_requirements"] = True
 
         tmp[unode]["requirements_available"] = all(
+            v for k, v in tmp[unode]["requirements_available_by_uftype"].items()
         )
         return unode_obj, tmp
 
     def check_requirements(
         self,
         requirements: dict,
+        unode: str | None = None,
     ) -> bool:
 
         Args:
@@ -256,6 +293,7 @@ class UNodeManager(UserDict):
         )
         return all(availabilities)
 
+    def _check_python_packages(self, availabilities: list, requirements: dict) -> list:
         for pypackage in requirements.get("python_packages", []):
             self.availability["python_packages"][pypackage] = False
             with_operator = False
@@ -267,11 +305,14 @@ class UNodeManager(UserDict):
                 "<": lambda version: version.__lt__,
                 "!=": lambda version: version.__ne__,
             }
+            for operator, version_function in operators.items():
                 if operator in pypackage:
                     with_operator = True
                     pypackage_clean, required_pypackage_version = pypackage.split(
                     )
                     package_version = self._check_for_module(pypackage_clean)
+                    self.availability["python_packages"][pypackage] = version_function(
+                    )(required_pypackage_version)
                     break
             if with_operator is False:
                 package_version = self._check_for_module(pypackage)
@@ -280,13 +321,18 @@ class UNodeManager(UserDict):
             availabilities.append(self.availability["python_packages"][pypackage])
         return availabilities
 
+    def _check_other_dependencies(
+    ) -> list:
         for resource in requirements.get("other_dependencies", []):
+            if resource not in self._3rd_party_test_commands:
+                msg = (
                     f"Wrapper {unode} contains requirements {resource} and we don't"
                     " know how to validate this. Please reach out to the dev team "
                     f" Currently, availabililty can be tested for {self._3rd_party_test_commands.keys()}"
                 )
                 is_available = None
             else:
+                if resource not in self.availability["other_dependencies"]:
                     command_list = self._3rd_party_test_commands[resource]["command"]
                     regex_pattern = self._3rd_party_test_commands[resource].get(
                     )

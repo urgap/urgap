@@ -96,12 +96,20 @@ import pandas as pd
         """
         import plotly.graph_objs as go
 
+        from plotly import offline
+
+        input_csv_df = pd.read_csv(ufile.path)
+        describe_df = input_csv_df.describe().reset_index()
         data = []
         wrapper_version = "{major}.{minor}.{patch}".format(
         )
+        n = min(10, input_csv_df.shape[0])
 
+        fig = go.Figure()
+        for col in input_csv_df.columns:
             fig.add_trace(
                 go.Violin(
+                    y=input_csv_df[col],
                     name=col,
                     box_visible=True,
                     meanline_visible=True,
@@ -112,10 +120,14 @@ import pandas as pd
             "tables": [
                 {
                     "title": "Data Sample",
+                    "headers": list(input_csv_df.columns),
+                    "rows": input_csv_df.sample(n).to_dict("records"),
                     "caption": "",
                 },
                 {
                     "title": "Data description",
+                    "headers": list(describe_df.columns),
+                    "rows": describe_df.to_dict("records"),
                 },
             ],
             "figures": [

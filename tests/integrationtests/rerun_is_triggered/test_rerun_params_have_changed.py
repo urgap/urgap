@@ -19,6 +19,10 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
     with tempfile.TemporaryDirectory() as tmpdirname:
             {
                 "parameters": {
+                    "BasicFunctionTestNode:1.1.0": {
+                        "triggers_nuttin": 100,
+                        "triggers_rerun": 100,
+                        "triggers_rerun_-3": 100,
                 },
                 "unode_parameters": {
                     "record_skipped_runs": True,
@@ -40,6 +44,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
             """
             executing second time should be trigger rerun since re-run param has changed
         )
+        urun_dict["parameters"]["BasicFunctionTestNode:1.1.0"]["triggers_rerun"] = 200
         print(
             """
         ------- Second run -------
@@ -47,6 +52,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
         urun_dict.assign_wid()
 
         print("Input:", urun_dict)
+        test_node1.run(
             ufiles=ufiles,
             urun_dict=urun_dict,
         )

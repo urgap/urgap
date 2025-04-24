@@ -1,6 +1,9 @@
 
+import contextlib
 import logging
 import re
+
+from pathlib import Path
 
 from azure.core.exceptions import (
     AzureError,
@@ -13,6 +16,7 @@ from azure.core.exceptions import (
 
 
 
+
 class IOAzureSMB(UIOBase):
 
 
@@ -22,7 +26,9 @@ class IOAzureSMB(UIOBase):
         self.share_service_client = ShareServiceClient(
         )
         available_shares = [x["name"] for x in self.share_service_client.list_shares()]
+            msg = (
             )
+            raise OSError(msg)
         self.directory_client = self.share_client.get_directory_client(
         )
         self.object_directory_client = self.share_client.get_directory_client(
@@ -30,6 +36,7 @@ class IOAzureSMB(UIOBase):
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
         )
 
+    def __del__(self) -> None:
 
     @property
     def remote_path(self) -> str | None:
@@ -53,6 +60,7 @@ class IOAzureSMB(UIOBase):
         Returns:
         """
 
+    def download(self) -> None:
 
         """
         try:
@@ -66,10 +74,12 @@ class IOAzureSMB(UIOBase):
             HttpResponseError,
             self.scratch_path.unlink(missing_ok=True)
 
+    def upload(self, tags: dict | None = None) -> None:
         file_dir_list = self.file_client.directory_path.split("/")
         for n in range(len(file_dir_list)):
             tmp_dir_client = self.share_client.get_directory_client(
             )
+            with contextlib.suppress(ResourceExistsError):
                 tmp_dir_client.create_directory()
         try:
                 self.file_client.upload_file(data)
@@ -79,6 +89,7 @@ class IOAzureSMB(UIOBase):
             ClientAuthenticationError,
             ResourceNotFoundError,
             HttpResponseError,
+            msg = f"File {self.scratch_path} couldn't be uploaded!"
 
         if tags is not None:
             self.file_client.set_file_metadata(tags)
@@ -97,11 +108,14 @@ class IOAzureSMB(UIOBase):
             self.directory_client.get_directory_properties()
         except ResourceNotFoundError:
             return False
+        else:
+            return True
 
     def list_container_items(
     ) -> list:
 
         Args:
+
         Returns:
         """
         if pattern is not None:

@@ -1,6 +1,10 @@
 """UMeta subclass for using the sqlite interface."""
 
+from __future__ import annotations
+
 import sqlalchemy
+
+
 from ._base import UMetaIOBase
 
 
@@ -26,6 +30,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         self._db = None
 
     @property
+    def db(self) -> sqlalchemy.engine.Engine:
         if self._db is None:
             self._db = sqlalchemy.create_engine(self.generate_connection_string())
             Base.metadata.create_all(self._db)
@@ -40,6 +45,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
         Args:
         """
+        raise NotImplementedError(msg)
 
 
         with Session(self.db) as session:
@@ -63,12 +69,14 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
         self,
         wid: str | None = None,
+        limit: int | None = None,
 
         Args:
         """
         query = []
         if wid is not None:
         with Session(self.db) as session:
+            if limit is not None:
 
 
         Args:
@@ -78,3 +86,6 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
         with Session(self.db) as session:
             )
+
+        msg = "Please implement this method in child classes."
+        raise NotImplementedError(msg)

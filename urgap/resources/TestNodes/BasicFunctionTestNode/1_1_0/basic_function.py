@@ -3,6 +3,11 @@
 import argparse
 
 
+def main(
+    input_files: str | None = None,
+    output_files: str | None = None,
+    params: str | None = None,
+) -> str:
     """Write Test file v1.1.0.
 
     Args:

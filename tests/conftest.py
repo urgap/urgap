@@ -26,6 +26,7 @@ def ping(host):
 
 
 @pytest.fixture
+def check_if_ufilelist_can_be_tested(request):
     for u in request.param:
         check_ufile_can_be_tested(u)
     return request.param
@@ -122,6 +123,7 @@ def provide_clean_scratch_and_remote(request):
 
 
 @pytest.fixture
+def provide_standard_TestNode1_setup_and_set_umeta_interface(request):
     if str(request.param[0]) == "mongodb":
         host, port = parsed_url.netloc.split(":")
         try:

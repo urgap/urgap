@@ -1,6 +1,8 @@
 
 import json
 import logging
+
+from collections.abc import Generator, Iterable
 from pathlib import Path
 from time import sleep
 
@@ -15,6 +17,7 @@ INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
 
     Returns:
     """
+    default_config_json = input_json.get("default_pipeline_config_json")
     if default_config_json is not None:
             default_pipeline_args = json.load(jf)
     else:
@@ -46,6 +49,7 @@ def flatten_no_strings(iterable: Iterable) -> Generator:
     """
     for e in iterable:
         if hasattr(e, "__iter__") and not isinstance(e, str):
+            yield from flatten_no_strings(e)
         else:
             yield e
 
@@ -73,6 +77,7 @@ def retrieve_processed_uris(
             uris = [uri.get_state() for uri in uris]
             if (len(set(uris)) == 1) and ("plete" in uris[0].lower()):
                 break
+            sleep(5)
     return uris
 
 
@@ -112,7 +117,9 @@ def simplify_output_names(
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
+        return
     if len(uris) == 0:
+        return
     source_uris = retrieve_processed_uris(uris=sources)
     source_object_names = set()
     for uri in source_uris:

@@ -1,16 +1,23 @@
+"""Possible Pipeline Visualizer."""
+
+import contextlib
 import logging
 
 import networkx as nx
+
 from pyvis.network import Network
 
 
 
+def main() -> None:
+    """Build network with all possible pipelines."""
     graph = nx.DiGraph()
 
     for (
         unode_name,
         unode_class,
         graph.add_node(unode_name, color="red", size=7)
+        for sft in unode_class.META_INFO.get("input_uftypes", {}):
             graph.add_node(sft, color="blue", size=12)
             graph.add_edge(
                 sft,
@@ -20,6 +27,7 @@ from pyvis.network import Network
                 color="black",
             )
             leafs = []
+            with contextlib.suppress(KeyError):
             if len(leafs) > 1:
                 for the_any_child in leafs:
                     graph.add_edge(
@@ -29,6 +37,8 @@ from pyvis.network import Network
                         arrow=True,
                         color="black",
                     )
+            msg = f"Added {sft} to {unode_name}"
+        for oft in unode_class.META_INFO.get("output_uftypes", {}):
             graph.add_node(oft, color="blue", size=12)
             graph.add_edge(
                 unode_name,
@@ -37,6 +47,7 @@ from pyvis.network import Network
                 arrow=True,
                 color="black",
             )
+            msg = f"Added {oft} to {unode_name}"
 
     net = Network(
         height="750px",

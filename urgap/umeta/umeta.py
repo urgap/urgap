@@ -1,4 +1,6 @@
 
+from __future__ import annotations
+
 import logging
 
 
@@ -10,6 +12,7 @@ class UMeta:
 
     """
 
+    def __init__(self, io: str | None = None) -> None:
 
         Args:
         """
@@ -51,6 +54,7 @@ class UMeta:
 
         Args:
         """
+            raise OSError
 
         """Delete UMeta entries for a given reference file.
 
@@ -82,6 +86,7 @@ class UMeta:
 
         Args:
         """
+        return self.io.find_wid_members(wid=wid, limit=limit)
 
     def find_last_processed_files(self, unode: str, last: int = 10) -> list:
 

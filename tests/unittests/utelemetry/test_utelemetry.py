@@ -13,6 +13,7 @@ def test_utelemetry_run(provide_changeable_config):
             "unode_parameters": {
             },
     )
+    FilterTabularToCSV_node.run(urun_dict=urun_dict, ufiles=ufiles)
 
 
 def test_utelemetry_generates_output():

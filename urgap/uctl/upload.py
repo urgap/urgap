@@ -2,6 +2,7 @@
 from pathlib import Path
 
 import click
+
 from tqdm import tqdm
 
 
@@ -10,12 +11,15 @@ from tqdm import tqdm
 @click.argument("folder")
 @click.argument("storage_base_uri")
 @click.argument("bucket_structure")
+def upload_folder_click(
+) -> None:
 
 
 
     """
 
 
+def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> None:
 
     Args:
     """

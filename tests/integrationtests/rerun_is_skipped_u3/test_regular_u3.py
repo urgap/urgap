@@ -35,6 +35,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
                     test_node1.META_INFO["unode_full_identifier"]
                 ] = (
                     / "resources"
+                    / "TestNodes"
                     / "BasicFunctionTestNode"
                     / "1_3_0"
                     / "basic_function.py"

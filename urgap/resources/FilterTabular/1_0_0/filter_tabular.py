@@ -3,6 +3,7 @@
 import argparse
 import logging
 import zipfile
+
 from pathlib import Path
 
 import pandas as pd
@@ -76,28 +77,34 @@ def write_dfs(df: pd.DataFrame, mode: str, output: str) -> None:
     elif mode == "xlsx":
         df.to_excel(output, index=False)
     else:
+        msg = (
             f"Filter mode has to be defined with -m."
             f"You defined filter mode {mode} which is currently not supported."
             f"Supported modes are 'csv', 'parquet' and 'xlsx'."
         )
+        raise ValueError(msg)
 
 
 def merge_parquet_files(grouped_input_files: dict, output_file_path: str) -> None:
     """Merge all parquet files and write to the destination file path.
 
     Args:
+        grouped_input_files: Input grouped_input_files.
         output_file_path: Output parquet file path.
 
     Returns:
         True when successful else False.
     """
     import pyarrow as pa
+    import pyarrow.parquet as pq
 
     parquet_files = grouped_input_files["parquet"]
     with pq.ParquetWriter(
     ) as writer:
         for parquet in parquet_files:
             if Path(parquet).exists() is False:
+                msg = f"Parquet file {parquet} does not exist!"
+                raise FileNotFoundError(msg)
             pf = pq.ParquetFile(parquet)
 
             for batch in pf.iter_batches(batch_size=6553600):
@@ -106,6 +113,12 @@ def merge_parquet_files(grouped_input_files: dict, output_file_path: str) -> Non
 
 
 def main(
+    input_files: str | Path | list | None = None,
+    query_string: str | None = None,
+    output: str | None = None,
+    mode: str | None = None,
+) -> None:
+    r"""Filter and merge node.
 
     Args:
         sep: Seperator or delimiter. Defaults to ','
@@ -120,6 +133,8 @@ def main(
         output (str): Path to output file post filtering.
     """
     if len(input_files) == 0:
+        msg = "I need input files!..."
+        raise OSError(msg)
 
     grouped_input_files = get_input_file_lists(input_files)
     if (
@@ -132,9 +147,18 @@ def main(
         merge_parquet_files(grouped_input_files, output)
 
     else:
+        concatenated_df = pd.concat(dfs)
         if query_string is not None:
+            old_len = len(concatenated_df)
             try:
+                concatenated_df = concatenated_df.query(query_string)
+                msg = f"Query string {query_string} is invalid"
 
+            msg = f"Filtered {old_len - concatenated_df.shape[0]} rows"
+
+        if concatenated_df.empty is True:
+        concatenated_df = concatenated_df.reset_index(drop=True)
+        write_dfs(concatenated_df, mode=mode, output=output)
 
 
 if __name__ == "__main__":

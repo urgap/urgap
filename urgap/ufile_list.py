@@ -5,6 +5,7 @@ import collections.abc
 import logging
 import os
 import subprocess
+
 from collections import UserList, defaultdict, defaultdict as ddict
 from collections.abc import Iterable
 from pathlib import Path
@@ -15,6 +16,7 @@ class UFileList(UserList):
 
     """
 
+    def __init__(self, initlist: list | None = None) -> None:
 
         Args:
         """
@@ -39,18 +41,23 @@ class UFileList(UserList):
     def __setitem__(
         self,
         i: int,
+    ) -> None:
 
         Args:
         """
         self._eval_if_item_is_of_correct_type(item)
         super().__setitem__(i, item)
 
+    def __add__(
+    ) -> UFileList:
 
         Args:
         """
         self._eval_if_item_is_of_correct_type(other)
         return super().__add__(other)
 
+    def __radd__(
+    ) -> UFileList:
 
         Args:
         """
@@ -72,6 +79,7 @@ class UFileList(UserList):
     def insert(
         self,
         i: int,
+    ) -> None:
 
         Args:
         """
@@ -89,11 +97,16 @@ class UFileList(UserList):
         Returns:
         """
 
+    def _eval_if_item_is_of_correct_type(
+    ) -> None:
 
         """
         kosha = False
             kosha = True
+        elif isinstance(item, list | tuple) is True:
         if kosha is False:
+            msg = f"Item {item} cannot be used in UFileLists!"
+            raise TypeError(msg)
 
     def create_flat_and_non_redundant_list(self) -> UFileList:
 
@@ -108,6 +121,7 @@ class UFileList(UserList):
         )
         return flat_list
 
+    def _get_flat_list(
         for entry in list_to_flatten:
             if entry is None:
                 flat_list.append(None)
@@ -117,6 +131,8 @@ class UFileList(UserList):
                     already_seen_objects=already_seen_objects,
                     flat_list=flat_list,
                 )
+                msg = "Input files can only be list of UFiles and/or list of lists of Ufiles"
+                raise TypeError(msg)
                 continue
             else:
                 flat_list.append(entry)
@@ -136,6 +152,7 @@ class UFileList(UserList):
             input_uftypes = {}
         if additional_filters is not None:
             for k, v_dict in additional_filters.items():
+                if k not in input_uftypes:
                     input_uftypes[k] = {}
                 input_uftypes[k].update(v_dict)
 
@@ -147,6 +164,7 @@ class UFileList(UserList):
             )
             if uftype is not None:
                 ufile_classes[uftype].append(ufile)
+        return self.check_input_uftype_count(
             ufile_classes=ufile_classes,
             input_uftypes=input_uftypes,
         )
@@ -163,6 +181,7 @@ class UFileList(UserList):
         mappable_uftypes = list(
         )
         if len(mappable_uftypes) == 0:
+            msg = f"Filtered {ufile.uftype} UFile {ufile} - uftype is not compatible with wrapper uftype requirement"
             return None
 
         for uftype in mappable_uftypes:
@@ -173,6 +192,9 @@ class UFileList(UserList):
 
             if ufile_has_all_tags:
                 return uftype
+            msg = f"Filtered {ufile.uftype} UFile {ufile} - missing tags"
+            return None
+        return None
 
     def check_input_uftype_count(
         self,
@@ -190,13 +212,17 @@ class UFileList(UserList):
                 if max_number_allowed == -1 or len(ufile_sublist) <= max_number_allowed:
                     filtered_ufile_list += ufile_sublist
                 else:
+                    msg = (
                         f"Received {len(ufile_sublist)} files with datatype {file_data_type}"
                         f"but expected a maximum of {max_number_allowed}."
                     )
+                    raise ValueError(msg)
             else:
+                msg = (
                     f"Received only {len(ufile_sublist)} files with datatype {file_data_type}"
                     f"but expected a minimum of {min_number_required}"
                 )
+                raise ValueError(msg)
         return filtered_ufile_list
 
     def get_indices_by_uftype(self, uftype: str) -> list[int]:
@@ -241,6 +267,7 @@ class UFileList(UserList):
 
         Returns:
         """
+        all_uftypes = {ufile.uftype for ufile in self if ufile is not None}
         if None in self:
             all_uftypes.add(None)
         return {uftype: self.get_indices_by_uftype(uftype) for uftype in all_uftypes}
@@ -249,6 +276,7 @@ class UFileList(UserList):
 
         Returns:
         """
+        all_uftypes = {ufile.uftype for ufile in self}
         return {
             uftype: self.get_path_objects_by_uftype(uftype) for uftype in all_uftypes
         }
@@ -315,10 +343,13 @@ class UFileList(UserList):
         needs_quantifier = False
         safe_to_create_new_file = False
         current_counts = self.number_of_uftypes()
+        if uftype in self.output_definitions["uftypes"]:
             current_count = current_counts[uftype]
             if self.output_definitions["uftypes"][uftype].get(
             ) != self.output_definitions["uftypes"][uftype].get("max", -1):
                 needs_quantifier = True
+                safe_to_create_new_file = True
+            elif current_count <= self.output_definitions["uftypes"][uftype]["max"]:
                 safe_to_create_new_file = True
         else:
             current_count = 1
@@ -385,6 +416,7 @@ class UFileList(UserList):
     def from_uri_list(
         cls,
         uri_list: list[str],
+        uftype: str | None = None,
     ) -> UFileList:
 
 
@@ -393,21 +425,30 @@ class UFileList(UserList):
     def from_folder(
         cls,
         folder: str | Path,
+        uftype: str | None = None,
+    ) -> UFileList:
 
         Args:
 
         Returns:
             Initialized UFileList.
         """
+        uri_list = [
+            f"file://{folder}#{str(file).replace(f'{folder}/', '')}"
+            for file in Path(folder).rglob("*")
             if (
                 file.is_file()
                 and file.name.startswith(".") is False
                 and file.name.endswith(".tag") is False
+            )
+        ]
+        return UFileList.from_uri_list(
             uri_list=sorted(uri_list),
             number_of_threads=number_of_threads,
             uftype=uftype,
         )
 
+    def as_uri_list(self) -> list:
         return [u.as_uri() for u in self]
 
     def simplify_names(
@@ -437,6 +478,7 @@ class UFileList(UserList):
 
         Args:
         """
+        msg = f"Starting download of UFileList in parallel with {number_of_threads} threads."
             args_list=self,
             number_of_threads=number_of_threads,
         )
@@ -444,10 +486,12 @@ class UFileList(UserList):
 
         Args:
         """
+        msg = f"Starting upload of UFileList in parallel with {number_of_threads} threads."
             args_list=self,
             number_of_threads=number_of_threads,
         )
 
+    def uncompress(self, destination: Path) -> None:
 
         Args:
         """
@@ -461,6 +505,7 @@ class UFileList(UserList):
             tar_process.stdin.close()
             tar_process.wait()
             if tar_process.returncode != 0:
+                msg = f"Tar extraction failed with returncode: {tar_process.returncode}"
             else:
         finally:
             os.chdir(workdir)

@@ -3,7 +3,9 @@ import json
 import logging
 import urllib
 
+
 import requests
+
 
 
 
@@ -35,16 +37,20 @@ class IOHTTPS(UIOBase):
         Returns:
         """
 
+    def download(self) -> None:
         """Download referenced remote object.
 
         """
         try:
 
         except urllib.error.URLError:
+            msg = (
                 "[ - HTTP - ] For OSX, make sure that certificates are installed (/Applications/Python 3.x/Install Certificates.command)",
             )
             self.scratch_path.unlink()
 
+        msg = "Cannot upload via https!"
+        raise NotImplementedError(msg)
 
     def remote_object_exists(self) -> bool:
         """Verify referenced remote object exists.

@@ -5,6 +5,8 @@ import logging
 import os
 import re
 
+from collections.abc import Callable
+
 from packaging.version import Version
 
 
@@ -31,8 +33,10 @@ def sense_compression_format(file: os.PathLike) -> str:
             compression_format = "tar"
         else:
             compression_format = "split_tar"
+            msg = f"{file} is last file of split tar"
     elif signature[257 * 2 :].startswith("7573746172"):
         compression_format = "split_tar"
+        msg = f"{file} is first file of split tar"
     elif signature.startswith("504b0304"):
         compression_format = "zip"
     elif signature.startswith("425a68"):
@@ -48,21 +52,28 @@ def extract_from_string(any_string: str, regex_pattern: str) -> list:
 
     Returns:
     """
+    return re.findall(regex_pattern, any_string)
 
 
 def execute_threaded_function(
     func: Callable,
     number_of_threads: int = 8,
+) -> list:
 
     Args:
     """
 
+    def _is_nested(arg: str | list | tuple) -> bool:
+        return isinstance(arg, list | tuple)
 
     if len(args_list) == 0:
+        msg = f"Can't execute function without args! Args list is {args_list}"
         results = None
     else:
         first_is_nested = _is_nested(args_list[0])
         if not all(_is_nested(arg) == first_is_nested for arg in args_list):
+            msg = "Inconsistent nesting: All elements must be either nested or not nested."
+            raise ValueError(msg)
         with concurrent.futures.ThreadPoolExecutor(
         ) as executor:
             if first_is_nested:
@@ -72,6 +83,7 @@ def execute_threaded_function(
     return results
 
 
+def sort_versions(item: str) -> tuple:
 
     Args:
 
@@ -95,10 +107,13 @@ def get_next_port(
     if is_lastest is True:
         if (last_assigned_port % 10) != 0:
             return ((last_assigned_port // 10) + 1) * 10
+        return last_assigned_port + 10
     next_port = last_assigned_port + 1
     if next_port % 10 == 0:
         next_port += 1
     if next_port > last_port:
+        msg = (
             "Not enough ports available. Increase number of available ports in config."
         )
+        raise IndexError(msg)
     return next_port

@@ -19,6 +19,7 @@ def test_uncompress_tar_gz(tmp_scratch_disk):
 def test_compress_zip(tmp_scratch_disk):
     content = Path("compressions/test.txt")
     )
+    new_uf = uf.compress(compression_format="zip")
     assert new_uf.path.exists() is True
     assert new_uf.uncompress()[0].path.read_text() == "twas_uncompressed"
     assert uf.as_uri() + ".zip" == new_uf.as_uri()
@@ -27,6 +28,8 @@ def test_compress_zip(tmp_scratch_disk):
 def test_compress_tar_gz(tmp_scratch_disk):
     content = Path("compressions/test.txt")
     )
+    new_uf = uf.compress(compression_format="tar")
+    new_uf = new_uf.compress(compression_format="gz")
     assert new_uf.path.exists() is True
     assert new_uf.uncompress()[0].path.read_text() == "twas_uncompressed"
     assert uf.as_uri() + ".tar.gz" == new_uf.as_uri()

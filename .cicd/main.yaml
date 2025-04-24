@@ -22,4 +22,5 @@ pool:
 stages:
   - stage: CodeQuality
     jobs:
+      - job: Ruff
         steps:

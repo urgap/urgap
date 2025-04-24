@@ -1,6 +1,8 @@
 
 import secrets
 
+from collections.abc import Iterator
+from pathlib import Path
 
 # https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go
 # ^--- too look at ...
@@ -13,6 +15,7 @@ class UWIDGenerator:
     All issued WIDs are captured in self.issued_wids and those
     """
 
+    def __init__(self) -> None:
 
         """
         self.nouns = self._read_word_file("nouns.txt")
@@ -23,7 +26,9 @@ class UWIDGenerator:
         self.indefinitpronomen = self._read_word_file("indefinitpronomen.txt")
         self.issued_wids = []
 
+    def _read_word_file(self, word_type: str) -> list:
         word_file = Path(__file__).parent / f"{word_type}"
+            return [line.strip() for line in wf]
 
     @property
     def n(self) -> int:
@@ -35,11 +40,13 @@ class UWIDGenerator:
         n_verbs = len(self.verbs)
         return n_adj * n_nouns * n_verbs * n_adj * n_nouns
 
+    def __iter__(self) -> Iterator[str]:
 
         Returns:
         """
         return self
 
+    def __next__(self) -> str:
 
         Returns:
         """
@@ -54,5 +61,6 @@ class UWIDGenerator:
         adjective_a = secrets.choice(self.adjectives)
         adjective_b = secrets.choice(self.adjectives)
         verbs = secrets.choice(self.verbs)
+        new_wid = f"u_{adjective_a}_{noun_a}_{verbs}_{adjective_b}_{noun_b}"
         self.issued_wids.append(new_wid)
         return new_wid

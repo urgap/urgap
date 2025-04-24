@@ -2,6 +2,7 @@
 
 
 
+
 class UMeta(SQLAlchemyBaseUMeta):
     """UMeta postgresql class."""
 

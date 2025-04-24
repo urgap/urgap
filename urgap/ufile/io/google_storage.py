@@ -6,6 +6,7 @@ from google.cloud import storage
 
 
 
+
 class IOGoogleCloudStorage(UIOBase):
 
         """Create new UIO class for processing Google Cloud Storage.
@@ -45,6 +46,7 @@ class IOGoogleCloudStorage(UIOBase):
             self.blob.metadata = tags
         self.blob.upload_from_filename(filename=self.scratch_path)
 
+    def download(self) -> None:
         download_object = False
         if self.scratch_path.exists():
             )
@@ -59,7 +61,9 @@ class IOGoogleCloudStorage(UIOBase):
         if download_object is True:
             if self.remote_object_exists():
                 self.blob.download_to_filename(filename=self.scratch_path)
+                msg = f"Downloaded {self.blob.name} into {self.scratch_path.parent}"
             else:
+                msg = f"{self.blob.name} does not exist remotely. Skipping download."
 
 
         Args:

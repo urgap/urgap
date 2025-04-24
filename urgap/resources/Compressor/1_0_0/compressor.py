@@ -15,6 +15,8 @@ def main(
     compression_format: str,
     file_list: list,
     output_file_path: str,
+    max_tar_size: int | None = None,
+) -> None:
     """Create tar or zip archive from input file list.
 
     Selecting split_tar splits tar archive into parts.
@@ -46,16 +48,25 @@ def main(
         split_process.communicate()
         tar_process.wait()
         if tar_process.returncode != 0:
+            msg = f"Tar process failed with code {tar_process.returncode}"
         if split_process.returncode != 0:
+            msg = f"Split process failed with code {split_process.returncode}"
         else:
     elif compression_format == "tar":
         with tarfile.open(output_file_path, mode="w:") as tar:
             for file, tag in file_list:
                 tar.add(file, arcname=Path(file).name)
-    elif compression_format == "zip":
-            for file, tag in file_list:
                 if tag is not None:
+                    tar.add(tag, arcname=Path(tag).name)
+    elif compression_format == "zip":
+        with ZipFile(output_file_path, "w") as zip_file:
+            for file, tag in file_list:
+                zip_file.write(file, arcname=Path(file).name)
+                if tag is not None:
+                    zip_file.write(tag, arcname=Path(tag).name)
     else:
+        msg = "Only zip and tar are valid compression formats."
+        raise NotImplementedError(msg)
 
 
 if __name__ == "__main__":

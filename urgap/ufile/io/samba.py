@@ -2,10 +2,13 @@
 import json
 import logging
 import re
+
 from io import BytesIO
+from pathlib import Path
 
 from smb.base import NotConnectedError, SMBTimeout
 from smb.smb_structs import OperationFailure
+from smb.SMBConnection import SMBConnection
 
 
 
@@ -24,7 +27,10 @@ class IOSMB(UIOBase):
         )
         self._validate_share_name()
 
+    def _validate_share_name(self) -> None:
+            raise ValueError(msg)
 
+    def __del__(self) -> None:
         self.conn_object.close()
 
     @property
@@ -64,6 +70,7 @@ class IOSMB(UIOBase):
         """
         return self.remote_path
 
+    def download(self) -> None:
         """Download referenced remote object.
 
         """
@@ -81,6 +88,7 @@ class IOSMB(UIOBase):
             ValueError,
             OperationFailure,
             NotConnectedError,
+            msg = f"Could not copy file {self.scratch_path}"
 
             json_data = json.dumps(tags)
             json_bytes = json_data.encode("utf-8")
@@ -91,6 +99,7 @@ class IOSMB(UIOBase):
         Returns:
         """
         try:
+            return any(f.filename == filename for f in files)
         except OperationFailure:
             return False
 
@@ -101,7 +110,10 @@ class IOSMB(UIOBase):
         try:
         except OperationFailure:
             return False
+        else:
+            return True
 
+    def _get_files_recursively(self, subpath: str | Path) -> list:
         smb_objects = []
         for obj in listed_objects:
             if obj.filename in (".", ".."):
@@ -127,7 +139,10 @@ class IOSMB(UIOBase):
             ]
         return container_objects
 
+    def _create_fragment_directory(self) -> None:
 
+        for level, _directory in enumerate(fragment_dirs):
             path_to_create = "/".join(fragment_dirs[: level + 1])
             try:
             except OperationFailure as e:
+                msg = f"Could not create folder {path_to_create} with {e}"

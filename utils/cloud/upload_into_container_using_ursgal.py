@@ -1,8 +1,12 @@
+"""Container Uploader."""
+
 import sys
+
 from pathlib import Path
 
 
 
+def main(scheme: str, container_name: str, input_file: str) -> None:
     """Upload local file into cloud container.
 
     Args:
@@ -12,6 +16,8 @@ from pathlib import Path
     """
     input_file = Path(input_file).resolve()
     if input_file.exists() is False:
+        msg = "Local file does not exist!"
+        raise OSError(msg)
 
     input_file = Path(input_file).resolve()
     fragment = "/".join(input_file.as_posix().split("/")[-2:])
@@ -23,4 +29,5 @@ from pathlib import Path
 
 if __name__ == "__main__":
     if len(sys.argv) != 4:
+        sys.exit(1)
     main(*sys.argv[1:])

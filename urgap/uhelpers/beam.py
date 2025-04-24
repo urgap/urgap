@@ -3,9 +3,12 @@ import argparse
 import copy
 import json
 import logging
+
+from collections.abc import Generator
 from pathlib import Path
 
 import apache_beam as beam
+
 from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
 from pyvis.network import Network
 
@@ -65,6 +68,7 @@ def parse_inputs(
 
     for pos, _ in enumerate(pipeline_args):
         if "job_name" in _:
+            pipeline_args[pos] += f"-{urd.wid.replace('_', '-')}"
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
@@ -74,6 +78,7 @@ def parse_inputs(
     return pipeline_options, urd, input_json
 
 
+def flatten_to_list(pcol_input: list) -> list:
 
     Args:
 
@@ -91,6 +96,7 @@ def parse_inputs(
         unode: str = "None",
         ucredentials: list | None = None,
         config: dict | None = None,
+    ) -> None:
 
         Args:
         """
@@ -123,10 +129,13 @@ def parse_inputs(
         input_is_ok = True
             input_is_ok = False
             input_is_ok = False
+            msg = (
             )
         return input_is_ok
 
+    def setup(self) -> None:
 
+    def start_bundle(self) -> None:
         """Execute before a bundle starts."""
 
 
@@ -135,10 +144,13 @@ def parse_inputs(
         Yields:
         """
         if len(utuple) != 2:
+            msg = (
             )
         input_group_key, elements = utuple
 
+        def _unpack_list(nested_list: list) -> Generator:
             for x in nested_list:
+                    yield from _unpack_list(x)
                 else:
                     yield x
 
@@ -151,7 +163,9 @@ def parse_inputs(
             )
             yield input_group_key, [u.as_uri() for u in output_ufiles]
 
+    def finish_bundle(self) -> None:
 
+    def teardown(self) -> None:
 
 
 def generate_pyvis_network(pipeline: beam) -> Network:
@@ -183,6 +197,7 @@ class Concat(beam.DoFn):
     def process(
         self,
         element: tuple,
+        side: list[tuple] | None = None,
         key_aware: bool = False,
     ) -> tuple:
 
@@ -226,6 +241,10 @@ class OutputRenamer(beam.DoFn):
 
     def process(
         self,
+        element: tuple | None = None,
+        source_pcol: tuple | None = None,
+        prefix: str | None = None,
+        suffix: str | None = None,
     ) -> tuple:
         """Copy and rename input UFiles.
 

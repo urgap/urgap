@@ -44,6 +44,7 @@ def test_single_input_with_run_folder_name():
         {
             "parameters": {},
             "unode_parameters": {
+                "run_folder_name": "MoRunFolder",
             },
     )
         urun_dict=urd,

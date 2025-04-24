@@ -7,6 +7,7 @@ import shutil
 import sys
 import tempfile
 import traceback
+
 from pathlib import Path
 
 
@@ -14,6 +15,7 @@ from pathlib import Path
 def copy_resources_if_needed(
     target_dir: str | os.PathLike,
     force: bool = False,
+) -> None:
 
 
     Args:
@@ -31,9 +33,12 @@ def copy_resources_if_needed(
                 target_rfile.parent.mkdir(exist_ok=True, parents=True)
                 shutil.copy(rfile, target_rfile)
                 if force is False:
+                    msg = f"Copied resource {target_rfile.name}"
                 else:
+                    msg = f"Resource {target_rfile.name} has been overwritten"
 
 
+def configure_logger() -> None:
 
     """
     execution_traceback = [line.strip() for line in traceback.format_stack()]
@@ -53,12 +58,14 @@ def copy_resources_if_needed(
         logging.getLogger().setLevel(level="DEBUG")
 
 
+def create_home_folder(home_dir_parent: str | os.PathLike) -> None:
 
     Args:
     """
     Path(home_dir).mkdir(exist_ok=True, parents=True)
 
 
+def copy_config_if_needed(target_dir: str | os.PathLike) -> None:
 
     Args:
     """
@@ -83,11 +90,13 @@ def read_config(home_dir: str | os.PathLike | None = None) -> dict:
     return {k: v["value"] for k, v in config.items() if isinstance(v, dict)}
 
 
+def load_certificates() -> None:
 
     """
     cert_path.mkdir(exist_ok=True)
     for certificate in cert_path.glob("*"):
         cert_url = certificate.stem
+        msg = (
             f"Using custom SSL certificate for {cert_url}."
             "Consider using a non-self-signed certificate."
         )

@@ -1,6 +1,12 @@
+"""Test Node Code."""
+
 import argparse
 
+from collections.abc import Sequence
 
+
+def main(argv: Sequence[str] | None = None) -> str:
+    """Test node function."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", dest="input_files", nargs="+")
     parser.add_argument("--output", dest="output_files", nargs="+")

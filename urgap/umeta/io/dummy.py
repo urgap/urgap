@@ -15,5 +15,6 @@ class UMeta(UMetaIOBase):
 
         """Needs to be implemented."""
 
+    def umeta_exists(self) -> bool:
         """Needs to be implemented."""
         return False

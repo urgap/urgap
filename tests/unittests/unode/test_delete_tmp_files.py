@@ -39,16 +39,19 @@ def test_unode_delete_tmp_dir():
                         "remove_temporary_files": False,
                     },
             ),
+            ["TestNode1:1.0.0"],
     ],
     indirect=["provide_clean_test_node_dirs"],
 )
 def test_unode_delete_tmp_file_pior_run(provide_clean_test_node_dirs):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
+    test_node1 = test_nodes["TestNode1:1.0.0"]
 
         fin.write("This is gonna be deleted")
     assert tmp_file.exists() is True
     test_node1.tmp_files.append(tmp_file)
 
+    test_node1.run(ufiles=ufiles, urun_dict=urun_dict)
 
     assert test_node1.tmp_files == []
     tmp_file.unlink()

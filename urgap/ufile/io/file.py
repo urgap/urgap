@@ -4,6 +4,7 @@ import logging
 import os
 import re
 import shutil
+
 from pathlib import Path
 
 
@@ -32,6 +33,7 @@ class IOPython(UIOBase):
         Returns:
         """
 
+    def download(self) -> None:
 
         """
         try:
@@ -50,9 +52,11 @@ class IOPython(UIOBase):
     def create_container(
         self,
         exist_ok: bool = True,
+    ) -> None:
 
         Args:
         """
+        msg = f"Creating {container_folder} if needed"
         container_folder.mkdir(exist_ok=exist_ok, parents=True)
 
     def get_container(self, container_name: str | None = None) -> os.PathLike:
@@ -79,6 +83,9 @@ class IOPython(UIOBase):
             try:
                 is_file = obj.is_file()
             except PermissionError:
+                msg = f"Cannot determine if {obj} is file or directory, skipping..."
                 continue
             if is_file:
                 name = str(obj).replace(str(container), "").lstrip("/")
+
+    def remove_remote_object(self) -> None:

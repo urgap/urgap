@@ -8,6 +8,7 @@ from azure.storage.blob import BlobServiceClient
 
 
 
+
 class IOAzureBlobStorage(UIOBase):
 
 
@@ -35,16 +36,19 @@ class IOAzureBlobStorage(UIOBase):
         Returns:
         """
         if self.remote_object_exists():
+        return None
 
 
         Args:
         """
         if (len(tags.keys()) > 100) or (sys.getsizeof(json.dumps(tags)) > 7000):
+            msg = (
             )
             tags["ParentsRemoved"] = "Yes"
 
             self.blob.upload_blob(data, metadata=tags, overwrite=True)
 
+    def download(self) -> None:
         download_object = False
         if self.scratch_path.exists():
             )
@@ -60,9 +64,11 @@ class IOAzureBlobStorage(UIOBase):
             if self.remote_object_exists():
                     blob_data = self.blob.download_blob()
                     blob_data.readinto(local_blob)
+                msg = (
                     f"Downloaded {self.blob.blob_name} into {self.scratch_path.parent}"
                 )
             else:
+                msg = (
                     f"{self.blob.blob_name} does not exist remotely. Skipping download."
                 )
 

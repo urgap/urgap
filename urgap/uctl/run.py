@@ -6,9 +6,11 @@ import multiprocessing
 import os
 import signal
 import threading
+
 from concurrent.futures import ProcessPoolExecutor
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+
 
 
 
@@ -37,13 +39,16 @@ def create_app(name: str) -> FastAPI:
 
 
     @app.post("/v1/terminate")
+    def terminate_server() -> dict:
         app.state.shutdown_event.set()
         return {"message": "Server shutdown initiated."}
 
     @app.get("/livez")
+    async def livez() -> JSONResponse:
         return JSONResponse(status_code=200, content={"status": "livez"})
 
     @app.get("/readyz")
+    async def readyz() -> JSONResponse:
         return JSONResponse(status_code=200, content={"status": "readyz"})
 
     return app

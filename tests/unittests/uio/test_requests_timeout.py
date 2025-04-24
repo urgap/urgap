@@ -33,6 +33,7 @@ def test_setting_requests_timeouts(tmp_dir):
             indent=4,
         )
     with pytest.raises(Exception):
+        requests.get(
             "https://google.com",
             timeout=(
                 _config["requests_timeout_connect"],

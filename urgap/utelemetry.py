@@ -26,6 +26,7 @@ class UTelemetry:
     trace_was_initialized = False
     metric_was_initialized = False
 
+    def __init__(self) -> None:
         self.trace_tree = {}
         self.span_lookup = {}
         self.counters = {}
@@ -63,6 +64,7 @@ class UTelemetry:
         return self._tracer
 
     @staticmethod
+    def shutdown() -> None:
     def init_meter(self) -> metrics.Meter:
         if UTelemetry.metric_was_initialized is False:
             if self.otlp_type == "OTLP":
@@ -74,6 +76,8 @@ class UTelemetry:
                 exporter = AzureMonitorMetricExporter.from_connection_string(
                 )
             else:
+                msg = f"Do not know how to handle {self.otlp_type} as opentelemetry_exporter_type"
+                raise ValueError(msg)
             metrics.set_meter_provider(
                 MeterProvider(
                     metric_readers=[
@@ -101,11 +105,15 @@ class UTelemetry:
                 exporter = AzureMonitorTraceExporter.from_connection_string(
                 )
             else:
+                msg = f"Do not know how to handle {self.otlp_type} as opentelemetry_exporter_type"
+                raise ValueError(msg)
             trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(exporter))
 
+    def increase_counter(self, counter_name: str, count: float = 1) -> None:
 
         """
 
+    def increase_counters(self, counter_name_list: list, count: float = 1) -> None:
 
         Args:
         """
@@ -115,6 +123,8 @@ class UTelemetry:
     def init_span(
         self,
         span_context: list,
+        attributes: dict | None = None,
+        event: str | None = None,
         spankind: SpanKind = None,
     ) -> trace.Span:
         """Start and return a new OpenTelemetry span.
@@ -166,10 +176,13 @@ class UTelemetry:
         self,
         nested_span_list: list,
         event: str,
+    ) -> None:
 
         Args:
         """
+        span = self.find_span(nested_span_list)
         if span is None:
+            msg = f"Cannot add {event} for {nested_span_list}"
         else:
             span.add_event(event)
 
@@ -177,11 +190,14 @@ class UTelemetry:
         self,
         nested_span_list: list,
         events: list,
+    ) -> None:
 
         Args:
         """
+        span = self.find_span(nested_span_list)
         for event in events:
             if span is None:
+                msg = f"Cannot add {event} for {nested_span_list}"
             else:
                 span.add_event(event)
 
@@ -190,10 +206,13 @@ class UTelemetry:
         nested_span_list: list,
         key: str,
         value: str,
+    ) -> None:
 
         Args:
         """
+        span = self.find_span(nested_span_list)
         if span is None:
+            msg = f"Cannot add {key}, {value} for {nested_span_list}"
         else:
             span.set_attribute(key, value)
 
@@ -201,10 +220,13 @@ class UTelemetry:
         self,
         nested_span_list: list,
         attributes: dict,
+    ) -> None:
 
         Args:
         """
+        span = self.find_span(nested_span_list)
         if span is None:
+            msg = f"Cannot add {attributes} for {nested_span_list}"
         else:
             span.set_attributes(attributes)
 
@@ -212,22 +234,36 @@ class UTelemetry:
         self,
         nested_span_list: list,
         status: StatusCode,
+    ) -> None:
 
         Args:
         """
+        span = self.find_span(nested_span_list)
         if span is None:
+            msg = f"Cannot set {status} for {nested_span_list}"
         else:
             span.set_status(status)
 
+    def find_span(self, nested_span_list: list) -> trace.Span | None:
+
+        Args:
+
+        Returns:
+        """
         container = self._find_container(nested_span_list)
         if container is None:
+            msg = f"Cannot find span for {nested_span_list} in tree"
+            return None
+        return container["span"]
 
     def _find_container(self, nested_span_list: list) -> dict:
         lookup_key = "<|>".join(nested_span_list)
         container = None
+        if lookup_key in self.span_lookup:
             container = self.span_lookup[lookup_key]
         return container
 
+    def close_span(self, nested_span_list: list) -> None:
 
         Args:
         """
@@ -235,6 +271,7 @@ class UTelemetry:
         if container is not None:
             self._close_node_recursive(container)
 
+    def _close_node_recursive(self, node: dict) -> None:
         for child in list(node["children"].values()):
             self._close_node_recursive(child)
         node["span"].end()
@@ -245,6 +282,7 @@ class UTelemetry:
         else:
             self.trace_tree.pop(node["name"])
 
+    def end_all_spans(self) -> None:
         for span in UTelemetry.started_spans[::-1]:
             if span.is_recording() is True:
                 span.end()

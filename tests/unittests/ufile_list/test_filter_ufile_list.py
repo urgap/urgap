@@ -141,6 +141,7 @@ def test_wrapper_defintions_are_not_met_with_additional_filters(tmp_scratch_disk
 
 
     with pytest.raises(ValueError):
+        ufl.filter(
             input_uftypes={
             },
             additional_filters={
@@ -169,3 +170,4 @@ def test_filter_ufile_list_too_many_files(tmp_dir):
     )
 
     with pytest.raises(ValueError):
+        test_node1.run(ufiles=ufiles, urun_dict=urun_dict)

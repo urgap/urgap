@@ -1,6 +1,14 @@
+"""Test Node Code."""
+
 import argparse
 
 
+def main(
+    input_files: list | None = None,
+    output_files: list | None = None,
+    params: str | list | None = None,
+) -> str:
+    """Test node function."""
     if output_files is not None:
         for output_file in output_files:
                 print(params, file=oo)

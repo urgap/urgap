@@ -14,3 +14,5 @@ class IOBaseCreds:
         self.secret_id = kwargs["secret_id"]
 
         """Get_secret method is implemented in subclass."""
+        msg = "This needs to be implemented in the IOCreds class"
+        raise NotImplementedError(msg)

@@ -3,11 +3,17 @@ import json
 import logging
 import re
 
+from collections.abc import Callable
+
 import requests
 
 
 
 
+def make_expiration_safe_request(func: Callable) -> requests.Response:
+
+    def request_func_wrapper(
+    ) -> requests.Response:
         response = func(self, *args, **kwargs)
         if (response is not None) and (response.status_code == 403):
             self._get_token_bearer()
@@ -41,6 +47,7 @@ class IOMyLabData(UIOBase):
         """
         return None
 
+    def _get_token_bearer(self) -> None:
         files_cred = {
         }
         response = requests.post(
@@ -73,6 +80,7 @@ class IOMyLabData(UIOBase):
         return tags
 
     @make_expiration_safe_request
+    def upload(self, tags: dict | None = None) -> requests.Response:
             response = requests.post(
                 url=url,
                 verify=self._api_cert,
@@ -96,6 +104,7 @@ class IOMyLabData(UIOBase):
             )
             if tag_response.status_code == 409:
             elif tag_response.status_code == 200:
+                msg = f"Uploaded tag to remote location {url}"
             else:
                 msg = (
                     f"Uploading tag failed with status code: {tag_response.status_code}"
@@ -104,6 +113,7 @@ class IOMyLabData(UIOBase):
         return response
 
     @make_expiration_safe_request
+    def download(self) -> requests.Response:
         response = requests.get(
             url=url,
             verify=self._api_cert,
@@ -136,6 +146,7 @@ class IOMyLabData(UIOBase):
                         "limit",
                     ),
                     equip_task_id_fragment,
+                    strict=False,
         )
         response = requests.get(
             url=url,

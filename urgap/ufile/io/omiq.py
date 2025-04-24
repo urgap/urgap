@@ -3,7 +3,9 @@ import json
 import logging
 import re
 import tempfile
+
 from pathlib import Path
+
 
 
 omiq_api_available = True
@@ -30,6 +32,7 @@ class IOOmiq(UIOBase):
                 )
             self._omiq_user_info = self._api.get_user()
             if self._omiq_user_info is not None:
+                msg = "Authenticated to OMIQ API as {name} [last login:{lastLoginTime}]".format(
                 )
         self._workflow = self._api.get_workflow(self._workflow_id)
         self._dataset_id = int(self._workflow["datasetId"])
@@ -80,6 +83,7 @@ class IOOmiq(UIOBase):
                 for key in keys_to_grab:
                     file_value = file_dict.get(key, None)
                     if file_value is None:
+                        msg = f"OMIQ API does not provide {key}"
                     self._tags[key] = file_dict.get(key, None)
         return self._tags
 
@@ -102,6 +106,7 @@ class IOOmiq(UIOBase):
     def _handle_derived_fcs(self) -> None:
         file_id = self.file_id
         if file_id is None:
+            raise FileNotFoundError(msg)
         self._set_query_params(file_id)
         relevant_keys = (
             "dataset_id",
@@ -161,18 +166,22 @@ class IOOmiq(UIOBase):
             filepath=self._scratch_path,
         )
 
+    def _download_file_from_workflow(self) -> None:
         dict_workflow = {"dataset": self._dataset_id, "workflow": self._workflow}
             json.dump(dict_workflow, gfile, indent=4)
 
     def _get_task_id_for_artifact(self, filename: str) -> str:
+        return next(
             i["taskId"]
             for i in self._workflow.get("taskArtifacts", [])
             if i["file"] == filename
+        )
 
     def _handle_file_not_found(self) -> None:
         if self._corresponding_fcs_filename is None:
         else:
             f = self._corresponding_fcs_filename
+        raise FileNotFoundError(msg)
 
     @property
     def file_id(self) -> int:
@@ -184,8 +193,10 @@ class IOOmiq(UIOBase):
         tags = self.get_remote_tags()
         return tags["features"]
 
+    def _list_files_in_dataset(self) -> list:
         return self._api.list_files_in_dataset(self._dataset_id)
 
+    def _list_artifacts(self) -> list:
         return [i["file"] for i in self._workflow.get("taskArtifacts", [])]
 
     def list_container_items(

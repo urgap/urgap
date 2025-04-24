@@ -58,6 +58,7 @@ def test_raw_to_pwstats_pipeline():
     # curdir = Path(__file__).resolve()
     )
     assert raw.path.exists()
+        "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Eukaryota#UP000005640/UP000005640_9606.fasta.gz",
     )
     fasta = fasta.uncompress()
     fasta.upload()
