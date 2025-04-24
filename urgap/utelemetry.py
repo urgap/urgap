@@ -23,6 +23,7 @@ from opentelemetry.trace import SpanKind
 
 class UTelemetry:
 
+    started_spans = []
     trace_was_initialized = False
     metric_was_initialized = False
 

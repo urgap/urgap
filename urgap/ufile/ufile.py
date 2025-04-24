@@ -49,9 +49,11 @@ class UFile:
 
     @property
     def is_borg(self) -> bool:
+        return "_1_of_1" not in self.object_name and "_of_" in self.object_name
 
     @property
     def is_part_of_collection(self) -> bool:
+        return "_1_of_1" not in self.object_name and "_of_" in self.object_name
 
     @property
     def path(self) -> Path:
