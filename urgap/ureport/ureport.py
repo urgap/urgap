@@ -173,6 +173,7 @@ UMeta:
 
     def draw_execution_dag(self) -> None:
         init_notebook_mode(connected=True)
+        nodes, links = self._get_history_nodes_and_links()
         custom_hover_data = []
         for i, node in enumerate(nodes):
             custom_hover_data.append(f"<b>UNodeExeID:</b> {node}<br><b>Alias:</b> {i}")
@@ -233,6 +234,18 @@ UMeta:
 
         fig.update_layout(template="simple_white")
         iplot(fig)
+
+    def _get_history_nodes_and_links(self) -> tuple:
+        non_root_ufiles = set()
+            for ufile in ut.output_files:
+        nodes = []
+        exact_sources_to_nodes = defaultdict(set)
+        links = defaultdict(int)
+            for ufile in ut.input_files:
+                new_connection = 1
+                    new_connection = 0
+                else:
+        return nodes, links
 
 
         Args:

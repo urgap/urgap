@@ -64,6 +64,7 @@
             self.META_INFO["unode_full_identifier"]
         ].items():
             difference = n - minimal_dataset.get(filetype, 0)
+            for _ in range(difference):
                 utrace.extend_output_files_by_uftype(uftype=filetype)
 
         utrace.urun_dict.command_list = [

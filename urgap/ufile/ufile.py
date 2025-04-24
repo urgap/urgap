@@ -317,19 +317,29 @@ class UFile:
                 )
                 msg = "Unsupported compression format."
                 raise NotImplementedError(msg)
+        return self._uncompress_recursive(
+        )
+
+    def _uncompress_recursive(
         if recursive is True:
+            for uf in ufl:
                     )
                     try:
+                        ufl += uf.uncompress()
+                        ufl.remove(uf)
                         Path.unlink(uf.path)
                     except (FileExistsError, IsADirectoryError, NotADirectoryError):
                         )
                         to_be_removed = uf.path
+                        ufl.remove(uf)
                         uf.rebase(
                             uri=f"#{uf.object_name}.renamed",
                             upload=True,
                         )
+                        ufl += uf.uncompress(recursive=False)
                         Path.unlink(to_be_removed)
                         uf.purge_local()
+        return ufl
 
     def create_container(self) -> None:
         self.io.create_container()

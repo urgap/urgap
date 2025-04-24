@@ -64,6 +64,7 @@ class URunDict(UserDict):
         for k, v in self._default_setup_that_cannot_be_set_by_user.items():
             self[k] = v
 
+        if "wid" not in kwargs:
             self.assign_wid()
 
     def _update_default_storage(self, storage_key: str, user_dict: dict) -> str:
@@ -239,9 +240,11 @@ class URunDict(UserDict):
         if rerun_only:
             no_rerun_params = set(umeta_info["parameters_not_triggering_rerun"])
         else:
+            no_rerun_params = set()
         try:
             parameters = self.parameters[unode_full_identifier]
         except KeyError as e:
+            msg = f"KeyError for {e}: Parameters have to be supplied under unode_full_identifier"
             parameters = self.parameters
         param_set = sorted(
         )
@@ -297,5 +300,6 @@ class URunDict(UserDict):
 
         Args:
         """
+        if meta_info.get("parameters_not_triggering_rerun") is None:
             meta_info["parameters_not_triggering_rerun"] = []
         self.data["unode_rinfo"]["meta_info"] = copy.deepcopy(meta_info)
