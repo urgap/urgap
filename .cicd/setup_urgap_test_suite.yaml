@@ -3,7 +3,9 @@ steps:
     parameters:
   - template: misc/setup_python.yaml@templates
   - script: |
+    displayName: Install uv
   - script: |
+      hatch build -t wheel
       uctl info version
       uctl info unodes
     env:
