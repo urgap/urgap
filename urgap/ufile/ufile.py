@@ -229,6 +229,8 @@ class UFile:
         """
             else:
 
+    def rebase(
+    ) -> None:
 
         Args:
         """
