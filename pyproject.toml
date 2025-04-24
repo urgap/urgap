@@ -105,6 +105,8 @@ ignore = [
     "RUF012", # Mutable class default
     "LOG015", # Root logger call
     "FBT001", # Boolean type hint positional argument
+    "FBT002", # Boolean default value positional argument,
+    "PYI034", # Wait until we drop 3.10 so Self is in typing
 ]
 
 
