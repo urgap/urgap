@@ -10,6 +10,9 @@ from base64 import b64encode
 from collections import defaultdict as ddict
 
 
+if TYPE_CHECKING:
+    import os
+
 
 class UTrace:
 
