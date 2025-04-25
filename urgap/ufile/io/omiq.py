@@ -101,6 +101,8 @@ class IOOmiq(UIOBase):
         else:
             self._handle_file_not_found()
 
+    def upload(self, tags: dict | None = None) -> None:
+        if tags is not None:
         self._api.upload_files_to_dataset(self._dataset_id, [self.scratch_path])
 
     def _handle_derived_fcs(self) -> None:

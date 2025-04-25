@@ -245,7 +245,19 @@ UMeta:
                 new_connection = 1
                     new_connection = 0
                 else:
+                nodes, source = self._append_ufile_source(
+                )
         return nodes, links
+
+        """Append object source name to nodes.
+
+        Args:
+
+        Returns:
+        """
+        if source not in nodes:
+            nodes.append(source)
+        return nodes, source
 
 
         Args:
@@ -259,6 +271,11 @@ UMeta:
                 if len(requested_uftypes) == 0:
                     query_results += ut.output_files
                 else:
+                    query_results.extend(
+                        output_ufile
+                        for output_ufile in ut.output_files
+                        if output_ufile.uftype in requested_uftypes
+                    )
         return query_results
 
     def summary(self) -> dict:
@@ -270,6 +287,7 @@ UMeta:
             }
         return summary
 
+    def find_root_files(self, target_node: str) -> list | None:
 
 
         Returns:
@@ -278,6 +296,7 @@ UMeta:
         root_nodes = set()
         visited_nodes = set()
 
+        def get_root_nodes(
             if node in visited_nodes:
                 return None
             visited_nodes.add(node)
@@ -285,8 +304,11 @@ UMeta:
                 root_nodes.add(node)
 
             for neighbor in reverse_graph.neighbors(node):
+                root_nodes = get_root_nodes(
+                )
             return root_nodes
 
+        return get_root_nodes(target_node, reverse_graph, visited_nodes, root_nodes)
 
     def generate_report(self) -> list:
 

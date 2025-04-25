@@ -13,6 +13,7 @@ class UMeta(UMetaIOBase):
         """Needs to be implemented."""
         return {"history": [], "urun_dict": {}}
 
+    def save(self, umeta: dict | None = None) -> None:
         """Needs to be implemented."""
 
     def umeta_exists(self) -> bool:

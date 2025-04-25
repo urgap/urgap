@@ -11,6 +11,7 @@ def _check_if_config_key_value_is_valid(
     config_value: str,
     verbose: bool = False,
 ) -> bool:
+    if verbose is True:
     is_valid = True
     if config_key not in config:
         is_valid = False

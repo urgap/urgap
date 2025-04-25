@@ -29,6 +29,7 @@ class IOPython(UIOBase):
             pass
         return tags
 
+    def get_object(self) -> Path:
 
         Returns:
         """

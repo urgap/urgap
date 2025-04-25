@@ -25,6 +25,7 @@ class UIOBase:
         msg = "This needs to be implemented in the UIO class"
         raise NotImplementedError(msg)
 
+    def upload(self) -> None:
         msg = "This needs to be implemented in the UIO class"
         raise NotImplementedError(msg)
 

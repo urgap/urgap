@@ -74,6 +74,7 @@ class IOAzureDL(UIOBase):
             return self.get_file_properties()["metadata"]
         return None
 
+    def get_object(self) -> str | None:
 
         Returns:
         """
