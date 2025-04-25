@@ -94,6 +94,7 @@ exclude = [
     ".git",
     "build",
     "dist",
+    "docs"
 ]
 
 [tool.ruff.lint]
