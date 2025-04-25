@@ -62,6 +62,9 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
             since param would not trigger rerun.
             )
             urun_dict.assign_wid()
+            urun_dict["parameters"][f"BasicFunctionTestNode:{unode_version}"]["cpu"] = (
+                12
+            )
             # executing second time should not trigger rerun
             print("Input:")
             pprint.pprint(urun_dict)
