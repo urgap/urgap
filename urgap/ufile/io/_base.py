@@ -1,6 +1,9 @@
 
 from pathlib import Path
+from typing import ParamSpec
 
+
+P = ParamSpec("P")
 
 
 class UIOBase:
@@ -9,6 +12,7 @@ class UIOBase:
 
     reported_tmp_files = set()
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
 
         Args:
         """

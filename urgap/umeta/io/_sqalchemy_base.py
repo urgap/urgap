@@ -26,8 +26,10 @@ class Base(DeclarativeBase):
 class SQLAlchemyBaseUMeta(UMetaIOBase):
     """UMeta SQLAlchemy Base class."""
 
+    def __init__(self) -> None:
         self.name = "SQLAlchemyBaseUMeta"
         self._db = None
+        super().__init__()
 
     @property
     def db(self) -> sqlalchemy.engine.Engine:

@@ -3,18 +3,23 @@ import json
 import logging
 import urllib
 
+from typing import ParamSpec
 
 import requests
 
 
 
+P = ParamSpec("P")
+
 
 class IOHTTPS(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing https scheme.
 
         Args:
         """
+        super().__init__(**kwargs)
 
     def get_remote_tags(self) -> dict | None:
 

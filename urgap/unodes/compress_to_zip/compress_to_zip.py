@@ -18,7 +18,9 @@ import json
         "engine_type": ("io",),
     }
 
+    def __init__(self) -> None:
         """Initialize CompressToZip class."""
+        super().__init__()
 
     def preflight(
         self,

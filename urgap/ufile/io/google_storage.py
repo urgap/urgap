@@ -2,17 +2,23 @@
 import logging
 import re
 
+from typing import ParamSpec
+
 from google.cloud import storage
 
 
 
+P = ParamSpec("P")
+
 
 class IOGoogleCloudStorage(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing Google Cloud Storage.
 
         Args:
         """
+        super().__init__(**kwargs)
 
     @property
     def remote_path(self) -> str | None:

@@ -6,6 +6,9 @@
 class UMeta(SQLAlchemyBaseUMeta):
     """UMeta postgresql class."""
 
+    def __init__(self) -> None:
+        """Create new UMeta object using postgresql."""
+        super().__init__()
         self._db = None
         self._session = None
         self.name = "UMeta postgresql"

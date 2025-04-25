@@ -27,7 +27,9 @@ import pandas as pd
         "engine_type": ("io",),
     }
 
+    def __init__(self) -> None:
         """Initialize FilterTabularToCSV class."""
+        super().__init__()
 
     def preflight(
         self,

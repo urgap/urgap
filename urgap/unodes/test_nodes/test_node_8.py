@@ -25,7 +25,9 @@
         },
     }
 
+    def __init__(self) -> None:
         """Initialize test_node_v12 class."""
+        super().__init__()
 
     def execute(
         self,

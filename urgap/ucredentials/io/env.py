@@ -1,12 +1,18 @@
 
 import os
 
+from typing import ParamSpec
+
+
+P = ParamSpec("P")
 
 
 class IOEnvCreds(IOBaseCreds):
     """IO class interface Env."""
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOEnvCreds class."""
+        super().__init__(**kwargs)
 
     def get_secret(self) -> str:
         """Extract Secret from ENV for secret_id.

@@ -45,6 +45,7 @@ class UTrace:
 
         self.urun_dict = self._init_urun_dict(urun_dict)
         if input_files is None:
+        self.input_files = input_files
 
         if output_files is None:
             self.populate_minimal_output_file_list()
@@ -199,6 +200,7 @@ class UTrace:
         else:
         return new_fragment
 
+    def _generate_top_level_folder_name(
         self,
         skip_data_versioning: bool = False,
         run_folder_name: str | None = None,

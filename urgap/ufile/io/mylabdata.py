@@ -4,10 +4,13 @@ import logging
 import re
 
 from collections.abc import Callable
+from typing import ParamSpec
 
 import requests
 
 
+
+P = ParamSpec("P")
 
 
 def make_expiration_safe_request(func: Callable) -> requests.Response:
@@ -25,9 +28,11 @@ def make_expiration_safe_request(func: Callable) -> requests.Response:
 
 class IOMyLabData(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
 
         Args:
         """
+        super().__init__(**kwargs)
         self._api_token = None
         self._get_token_bearer()
 

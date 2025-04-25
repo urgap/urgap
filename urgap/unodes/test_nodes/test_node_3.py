@@ -19,7 +19,9 @@
         },
     }
 
+    def __init__(self) -> None:
         """Initialize TestNode3 class."""
+        super().__init__()
 
     def execute(
         self,

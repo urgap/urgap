@@ -6,7 +6,9 @@ from ._base import UMetaIOBase
 class UMeta(UMetaIOBase):
     """UMeta dummy class - always returning True and not storing any run time info! - ya welcome."""
 
+    def __init__(self) -> None:
         """Needs to be implemented."""
+        super().__init__()
         self.name = "UMeta for test purposes"
 
     def load(self) -> dict:

@@ -5,19 +5,24 @@ import re
 
 from io import BytesIO
 from pathlib import Path
+from typing import ParamSpec
 
 from smb.base import NotConnectedError, SMBTimeout
 from smb.smb_structs import OperationFailure
 from smb.SMBConnection import SMBConnection
 
 
+P = ParamSpec("P")
+
 
 class IOSMB(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing smb scheme.
 
         Args:
         """
+        super().__init__(**kwargs)
         self.conn_object = SMBConnection(
             "Target",
             use_ntlm_v2=True,

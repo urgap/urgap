@@ -5,7 +5,10 @@ import datetime
 import json
 import pathlib
 
+from typing import ParamSpec
 
+
+P = ParamSpec("P")
 # inspired by https://gist.github.com/simonw/7000493
 
 
@@ -53,6 +56,7 @@ class JSONEncoder(json.JSONEncoder):
 
 class JSONDecoder(json.JSONDecoder):
 
+    def __init__(self, *args: str, **kwargs: P.kwargs) -> None:
         super().__init__(
             *args,
             object_hook=self.object_hook,

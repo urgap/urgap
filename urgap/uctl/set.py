@@ -2,6 +2,9 @@
 import json
 import logging
 import pprint
+from typing import ParamSpec
+
+P = ParamSpec("P")
 
 
 
@@ -18,6 +21,7 @@ def _check_if_config_key_value_is_valid(
     else:
         options = config[config_key].get("options", None)
         if (options is not None) and (config_value not in options):
+            msg = f"{config_key} cannot be set with {config_value}. Valid options are {options}."
             is_valid = False
     return is_valid
 
@@ -26,6 +30,7 @@ def set_config(
     config_key: str,
     config_value: str,
     verbose: bool = False,
+    **kwargs: P.kwargs,
 ) -> None:
     if config_value in ("true", "false", "null"):
         config_value = json.loads(config_value)

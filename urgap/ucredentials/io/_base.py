@@ -1,4 +1,8 @@
 
+from typing import ParamSpec
+
+P = ParamSpec("P")
+
 
 class IOBaseCreds:
     """IOCreds Local class.
@@ -6,6 +10,7 @@ class IOBaseCreds:
     All IOCreds classes inherit from this class.
     """
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOBaseCreds instance with secret_id attribute set from kwargs.
 
         Args:

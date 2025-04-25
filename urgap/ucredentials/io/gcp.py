@@ -1,6 +1,8 @@
 
 import logging
 
+from typing import ParamSpec
+
 import google.api_core.exceptions
 import google_crc32c
 
@@ -8,11 +10,15 @@ from google import auth
 from google.cloud import secretmanager
 
 
+P = ParamSpec("P")
+
 
 class IOGCPCreds(IOBaseCreds):
     """IO class interface GCP."""
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOGCPCreds class."""
+        super().__init__(**kwargs)
         self.version_id = kwargs["version_id"]
         self.project_id = kwargs["project_id"]
 

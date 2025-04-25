@@ -9,6 +9,9 @@ class UMeta(SQLAlchemyBaseUMeta):
     SQlite is not intended for production use!
     """
 
+    def __init__(self) -> None:
+        """Create new UMeta object for use with sqlite3 interface."""
+        super().__init__()
         self._db = None
         self._session = None
         self.name = "UMeta sqlite3"

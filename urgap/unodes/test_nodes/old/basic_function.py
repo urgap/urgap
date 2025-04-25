@@ -31,7 +31,9 @@
         },
     }
 
+    def __init__(self) -> None:
         """Initialize BasicFunctionTestNode class."""
+        super().__init__()
 
         """Execute routine for BasicFunctionTestNode.
 

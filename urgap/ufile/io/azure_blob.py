@@ -4,16 +4,22 @@ import logging
 import re
 import sys
 
+from typing import ParamSpec
+
 from azure.storage.blob import BlobServiceClient
 
 
 
+P = ParamSpec("P")
+
 
 class IOAzureBlobStorage(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
 
         Args:
         """
+        super().__init__(**kwargs)
 
     @property
     def remote_path(self) -> None:

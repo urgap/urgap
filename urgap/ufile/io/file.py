@@ -6,15 +6,20 @@ import re
 import shutil
 
 from pathlib import Path
+from typing import ParamSpec
 
+
+P = ParamSpec("P")
 
 
 class IOPython(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing file scheme.
 
         Args:
         """
+        super().__init__(**kwargs)
         self.driver = "Local Python Power :)"
 
     def get_remote_tags(self) -> dict | None:

@@ -6,12 +6,15 @@ import logging
 
 from collections.abc import Generator
 from pathlib import Path
+from typing import ParamSpec
 
 import apache_beam as beam
 
 from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
 from pyvis.network import Network
 
+
+P = ParamSpec("P")
 
 
 def parse_inputs(
@@ -96,6 +99,7 @@ def flatten_to_list(pcol_input: list) -> list:
         unode: str = "None",
         ucredentials: list | None = None,
         config: dict | None = None,
+        **kwargs: P.kwargs,
     ) -> None:
 
         Args:

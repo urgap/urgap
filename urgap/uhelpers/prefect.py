@@ -5,10 +5,12 @@ import logging
 from collections.abc import Generator, Iterable
 from pathlib import Path
 from time import sleep
+from typing import ParamSpec
 
 from prefect import flow, task
 
 
+P = ParamSpec("P")
 INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
 
 
@@ -86,6 +88,7 @@ def run_unode(
     uris: list[str] | str,
     unode: str,
     config: dict,
+    **kwargs: P.kwargs,
 ) -> list:
 
     Args:

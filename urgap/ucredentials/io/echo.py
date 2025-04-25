@@ -1,10 +1,16 @@
 
+from typing import ParamSpec
+
+
+P = ParamSpec("P")
 
 
 class IOEchoCreds(IOBaseCreds):
     """IO class interface Echo."""
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOEchoCreds class."""
+        super().__init__(**kwargs)
 
     def get_secret(self) -> str:
         """Echo secret_id as secret for testing.

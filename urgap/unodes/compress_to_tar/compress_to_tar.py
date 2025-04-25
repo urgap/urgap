@@ -20,7 +20,9 @@ from pathlib import Path
         "engine_type": ("io",),
     }
 
+    def __init__(self) -> None:
         """Initialize CompressToTar class."""
+        super().__init__()
 
     def preflight(
         self,

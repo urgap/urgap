@@ -20,7 +20,9 @@
         },
     }
 
+    def __init__(self) -> None:
         """Initialize VennDiagram_1_1_0 class."""
+        super().__init__()
 
     def preflight(
         self,

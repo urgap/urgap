@@ -6,7 +6,10 @@ import json
 import logging
 
 from collections import UserDict
+from typing import ParamSpec
 
+
+P = ParamSpec("P")
 
 
 class URunDict(UserDict):
@@ -18,6 +21,7 @@ class URunDict(UserDict):
 
     """
 
+    def __init__(self, *args: dict, **kwargs: P.kwargs) -> None:
 
 
         """

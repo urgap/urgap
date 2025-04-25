@@ -5,6 +5,7 @@ import pprint
 import re
 
 from pathlib import Path
+from typing import ParamSpec
 
 from azure.core.exceptions import (
     AzureError,
@@ -17,13 +18,17 @@ from azure.core.exceptions import (
 
 
 
+P = ParamSpec("P")
+
 
 class IOAzureSMB(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
 
         Args:
 
         """
+        super().__init__(**kwargs)
         self.share_service_client = ShareServiceClient(
         )
         available_shares = [x["name"] for x in self.share_service_client.list_shares()]

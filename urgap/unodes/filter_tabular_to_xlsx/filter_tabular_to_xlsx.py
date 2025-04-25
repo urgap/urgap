@@ -26,7 +26,9 @@
         "engine_type": ("io",),
     }
 
+    def __init__(self) -> None:
         """Initialize FilterTabularToXlsx class."""
+        super().__init__()
 
     def preflight(
         self,

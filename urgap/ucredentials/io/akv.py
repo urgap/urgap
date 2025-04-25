@@ -1,15 +1,20 @@
 
 import logging
 
+from typing import ParamSpec
+
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
 
+P = ParamSpec("P")
+
 
 class IOAzureCreds(IOBaseCreds):
     """IO class interface Azure."""
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOAzureCreds class."""
         super().__init__(**kwargs)
         self.secret_name = self.secret_id

@@ -3,6 +3,8 @@ import contextlib
 import logging
 import re
 
+from typing import ParamSpec
+
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -15,13 +17,17 @@ from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 
 
+P = ParamSpec("P")
+
 
 class IOAzureDL(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
 
         Args:
 
         """
+        super().__init__(**kwargs)
         self.client_keys = ["tenant-id", "client-id"]
         for key_name in self.client_keys:
                 msg = f"DataLake '{key_name}' was not found in the query!"

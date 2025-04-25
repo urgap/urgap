@@ -6,6 +6,8 @@
 class UMeta(SQLAlchemyBaseUMeta):
     """UMeta GCP Cloud SQL class."""
 
+    def __init__(self) -> None:
+        super().__init__()
         self._db = None
         self._session = None
         self.name = "UMeta GCP SQL"

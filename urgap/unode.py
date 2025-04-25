@@ -23,6 +23,8 @@ import requests
 
 
 
+P = ParamSpec("P")
+
 
 class UNodeBase:
 
@@ -62,6 +64,7 @@ class UNodeBase:
 
     def run(
         self,
+        **kwargs: P.kwargs,
             msg = "UNode.run() function requires URunDict."
             raise TypeError(msg)
         urun_dict = copy.deepcopy(urun_dict)

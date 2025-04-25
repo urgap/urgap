@@ -5,17 +5,21 @@ import re
 import tempfile
 
 from pathlib import Path
+from typing import ParamSpec
 
 
 
+P = ParamSpec("P")
 omiq_api_available = True
 
 
 class IOOmiq(UIOBase):
 
+    def __init__(self, **kwargs: P.kwargs) -> None:
 
         Args:
         """
+        super().__init__(**kwargs)
         self._omiq_user_info = None
         self._file_id = None
         self._tags = None

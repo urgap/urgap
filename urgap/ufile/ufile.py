@@ -18,6 +18,7 @@ from urllib.parse import urlparse, urlunparse
 from zipfile import ZipFile
 
 
+P = ParamSpec("P")
 
 
 class UFile:
