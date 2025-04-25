@@ -47,9 +47,11 @@ def get_input_file_lists(input_files: list) -> dict:
     return files
 
 
+def read_dfs(grouped_input_files: dict, sep: str | None) -> list:
     """Read any of the CSV, Parquet and XLSX files.
 
     Args:
+        sep: Seperator or delimiter for read csv function.
 
     Returns:
     """
@@ -60,6 +62,11 @@ def get_input_file_lists(input_files: list) -> dict:
     }
     dfs = []
     for file_type, file_list in grouped_input_files.items():
+        if file_type == "csv":
+            dfs.extend(
+            )
+        else:
+            dfs.extend(pd_functions[file_type]["function"](file) for file in file_list)
     return dfs
 
 
@@ -117,6 +124,7 @@ def main(
     query_string: str | None = None,
     output: str | None = None,
     mode: str | None = None,
+    sep: str | None = None,
 ) -> None:
     r"""Filter and merge node.
 
@@ -147,6 +155,7 @@ def main(
         merge_parquet_files(grouped_input_files, output)
 
     else:
+        dfs = read_dfs(grouped_input_files, sep)
         concatenated_df = pd.concat(dfs)
         if query_string is not None:
             old_len = len(concatenated_df)
