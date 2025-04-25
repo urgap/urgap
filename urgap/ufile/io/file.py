@@ -40,6 +40,7 @@ class IOPython(UIOBase):
         try:
         except FileNotFoundError:
 
+    def upload(self, tags: dict | None = None) -> None:
         try:
             if tags is not None:
                     json.dump(tags, remote_tag_file)
