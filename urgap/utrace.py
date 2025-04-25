@@ -204,6 +204,7 @@ class UTrace:
         run_folder_name: str | None = None,
     ) -> os.PathLike:
         if run_folder_name is None:
+            top_level_folder = f"{unode_id_win_compatible}_w{self.unode_meta['wrapper_version']['major']}"
         else:
             top_level_folder = run_folder_name
         if skip_data_versioning is False:
