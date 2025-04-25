@@ -82,6 +82,7 @@ class IOSMB(UIOBase):
         try:
             self.scratch_path.unlink(missing_ok=True)
 
+    def upload(self, tags: dict | None = None) -> None:
         if not self._remote_path_exists():
             self._create_fragment_directory()
 
@@ -95,6 +96,8 @@ class IOSMB(UIOBase):
             NotConnectedError,
             msg = f"Could not copy file {self.scratch_path}"
 
+        if tags is None:
+        else:
             json_data = json.dumps(tags)
             json_bytes = json_data.encode("utf-8")
             with BytesIO(json_bytes) as bio:

@@ -59,9 +59,12 @@ class UMetaIOBase:
 
         Returns:
         """
+        raise NotImplementedError
 
     def find_last_processed_files(self) -> str:
+        raise NotImplementedError
 
 
         Returns:
         """
+        raise NotImplementedError

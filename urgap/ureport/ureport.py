@@ -297,6 +297,7 @@ UMeta:
         visited_nodes = set()
 
         def get_root_nodes(
+        ) -> list | None:
             if node in visited_nodes:
                 return None
             visited_nodes.add(node)

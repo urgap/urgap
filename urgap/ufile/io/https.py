@@ -54,6 +54,8 @@ class IOHTTPS(UIOBase):
             )
             self.scratch_path.unlink()
 
+    def upload(self, tags: dict | None = None) -> None:
+        if tags is None:
         msg = "Cannot upload via https!"
         raise NotImplementedError(msg)
 

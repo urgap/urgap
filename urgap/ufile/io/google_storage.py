@@ -45,10 +45,13 @@ class IOGoogleCloudStorage(UIOBase):
             return None
         return blob.metadata
 
+    def upload(self, tags: dict | None = None) -> None:
         """Upload scratch file to remote location with associated tags.
 
         Args:
         """
+        if tags is None:
+        else:
             self.blob.metadata = tags
         self.blob.upload_from_filename(filename=self.scratch_path)
 

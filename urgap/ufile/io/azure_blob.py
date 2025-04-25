@@ -44,9 +44,12 @@ class IOAzureBlobStorage(UIOBase):
         if self.remote_object_exists():
         return None
 
+    def upload(self, tags: dict | None = None) -> None:
 
         Args:
         """
+        if tags is None:
+            tags = {}
         if (len(tags.keys()) > 100) or (sys.getsizeof(json.dumps(tags)) > 7000):
             msg = (
             )
