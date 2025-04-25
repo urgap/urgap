@@ -51,9 +51,11 @@ def read_dfs(grouped_input_files: dict, sep: str | None) -> list:
     """Read any of the CSV, Parquet and XLSX files.
 
     Args:
+        grouped_input_files: Dict with all files mapped to filetype.
         sep: Seperator or delimiter for read csv function.
 
     Returns:
+        List with Dataframe from each file.
     """
     pd_functions = {
         "csv": {"function": pd.read_csv},
@@ -74,8 +76,12 @@ def write_dfs(df: pd.DataFrame, mode: str, output: str) -> None:
     """Write any of the CSV, Parquet and XLSX files.
 
     Args:
+        df: Dataframe to write.
+        mode: Defines output file format.
+        output: Output path.
 
     Raises:
+        ValueError: Unsupported mode is requested.
     """
     if mode == "csv":
         df.to_csv(output, index=False)

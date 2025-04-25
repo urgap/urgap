@@ -11,6 +11,7 @@ class IOAzureCreds(IOBaseCreds):
     """IO class interface Azure."""
 
         """Create new IOAzureCreds class."""
+        super().__init__(**kwargs)
         self.secret_name = self.secret_id
         self.vault_name = kwargs["vault_name"]
 
