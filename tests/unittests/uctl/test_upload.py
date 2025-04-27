@@ -11,6 +11,7 @@ def test_upload_folder_click(tmp_dir, caplog):
             "test",
         ],
     )
+    assert "Upload finished, final uris:" in caplog.text
     expected_tqdm_output = [
         "Uploading:",
         "Processing file human_ecoli_sample_pyiohat.csv:",
