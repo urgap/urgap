@@ -98,6 +98,9 @@ def provide_clean_node_dirs(request):
 
 def tmp_dir():
     with tempfile.TemporaryDirectory() as tmp_dir:
+        tmp_test_dir_path = Path(tmp_dir) / "tmp_test_dir"
+        tmp_test_dir_path.mkdir(exist_ok=True)
+        yield tmp_test_dir_path
 
 
 def tmp_file():
