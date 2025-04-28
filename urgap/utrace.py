@@ -21,6 +21,7 @@ class UTrace:
 
     def __init__(
         self,
+        unode_meta: dict | None = None,
         unode_version: str | None = None,
         umeta_io: str | None = None,
     ) -> None:
@@ -157,6 +158,7 @@ class UTrace:
 
         Returns:
         """
+        return (exeuction_result_time is not None) and (exeuction_result_time > 0)
 
     @property
     def crashed(self) -> bool:
@@ -165,6 +167,7 @@ class UTrace:
         """
 
     @property
+    def execution_time(self) -> float:
 
     def _set_output_storage_uri(self) -> str:
         input_storage_base_uris = set(self.input_files.get_storage_base_uris())
@@ -364,10 +367,20 @@ class UTrace:
         self.rerun_reasons = reasons
         return reasons
 
+    def set_start_time(self) -> None:
+        self.start_time = datetime.datetime.now().astimezone()
 
 
         Args:
         """
+        if skipped is True:
+            self.duration_seconds = 0
+        elif crashed is True:
+            self.duration_seconds = None
+        else:
+            self.duration_seconds = (
+                datetime.datetime.now().astimezone() - self.start_time
+            ).total_seconds()
 
     def get_parent_files(self) -> list:
         """Get list of input files in URunDict.
@@ -421,3 +434,10 @@ class UTrace:
 
         Returns:
         """
+
+        self.umeta.io.add_execution_record(
+            uwid=uwid,
+            start_time=self.start_time,
+            duration=self.duration_seconds,
+            user_dict=self.user_dict,
+        )

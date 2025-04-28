@@ -37,6 +37,7 @@ class UReport:
                 raise KeyError(msg)
                 # is first file
 
+            self.execution_history = {}
         else:
 
     @property

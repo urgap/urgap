@@ -148,6 +148,7 @@ class UNodeBase:
 
         Returns:
         """
+        utrace.set_start_time()
         flight_sequence = ["preflight", "execute", "postflight"]
         for flight_stage in flight_sequence:
             if hasattr(self, flight_stage) is False:
