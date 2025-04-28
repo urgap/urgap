@@ -1,4 +1,5 @@
 import subprocess
+import pytest
 
 
 
@@ -14,6 +15,22 @@ def test_utelemetry_run(provide_changeable_config):
             },
     )
     FilterTabularToCSV_node.run(urun_dict=urun_dict, ufiles=ufiles)
+
+
+def test_utelemetry_run_remote_fails(provide_changeable_config, caplog):
+        [
+    )
+        {
+            "parameters": {
+                "FilterTabularToCSV:1.0.0": {
+                    "-q": "`spectrum_id` > 3000",
+            },
+            "unode_parameters": {
+                "remote_url": "http://localhost",
+            },
+    )
+    with pytest.raises(Exception):
+        FilterTabularToCSV_node.run(urun_dict=urun_dict, ufiles=ufiles)
 
 
 def test_utelemetry_generates_output():

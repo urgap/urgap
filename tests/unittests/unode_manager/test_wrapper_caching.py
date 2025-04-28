@@ -13,3 +13,7 @@ def test_uimporter_import_unodes():
             )
             is not None
         )
+
+
+def test_init_unode_fails(caplog):
+    assert "UNode not_a_unode not available." in caplog.text
