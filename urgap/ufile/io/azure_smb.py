@@ -78,7 +78,9 @@ class IOAzureSMB(UIOBase):
             ClientAuthenticationError,
             ResourceNotFoundError,
             HttpResponseError,
+        ) as e:
             self.scratch_path.unlink(missing_ok=True)
+            raise RuntimeError from e
 
     def upload(self, tags: dict | None = None) -> None:
         file_dir_list = self.file_client.directory_path.split("/")
@@ -95,7 +97,9 @@ class IOAzureSMB(UIOBase):
             ClientAuthenticationError,
             ResourceNotFoundError,
             HttpResponseError,
+        ) as e:
             msg = f"File {self.scratch_path} couldn't be uploaded!"
+            raise RuntimeError(msg) from e
 
         if tags is not None:
             self.file_client.set_file_metadata(tags)

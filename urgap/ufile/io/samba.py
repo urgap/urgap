@@ -80,7 +80,9 @@ class IOSMB(UIOBase):
 
         """
         try:
+        except SMBTimeout as e:
             self.scratch_path.unlink(missing_ok=True)
+            raise RuntimeError from e
 
     def upload(self, tags: dict | None = None) -> None:
         if not self._remote_path_exists():
@@ -94,7 +96,9 @@ class IOSMB(UIOBase):
             ValueError,
             OperationFailure,
             NotConnectedError,
+        ) as e:
             msg = f"Could not copy file {self.scratch_path}"
+            raise RuntimeError(msg) from e
 
         if tags is None:
         else:

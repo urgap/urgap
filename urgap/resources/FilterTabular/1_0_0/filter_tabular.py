@@ -168,7 +168,9 @@ def main(
             old_len = len(concatenated_df)
             try:
                 concatenated_df = concatenated_df.query(query_string)
+            except (pd.errors.UndefinedVariableError, SyntaxError, ValueError) as e:
                 msg = f"Query string {query_string} is invalid"
+                raise RuntimeError(msg) from e
 
             msg = f"Filtered {old_len - concatenated_df.shape[0]} rows"
 

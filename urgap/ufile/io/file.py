@@ -51,6 +51,7 @@ class IOPython(UIOBase):
                     json.dump(tags, remote_tag_file)
         except OSError as e:
             msg = f"Could not copy file {self.scratch_path} due to {e}"
+            raise OSError(msg) from e
 
     def remote_object_exists(self) -> bool:
         """Verify referenced remote object exists.
