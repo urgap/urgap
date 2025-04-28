@@ -108,6 +108,8 @@ ignore = [
     "FBT001", # Boolean type hint positional argument
     "FBT002", # Boolean default value positional argument,
     "PYI034", # Wait until we drop 3.10 so Self is in typing
+    "PLR0913", # Too many arguments -> TODO
+    "TC003", # Causes false positives
 ]
 
 

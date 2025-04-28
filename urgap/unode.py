@@ -125,6 +125,8 @@ class UNodeBase:
             )
         else:
             ut.fix_dynamic_output_file_names()
+            ut.set_start_time()
+            ut.set_stop_time(skipped=True)
         ut.save_umeta_information()
         if ut.urun_dict.unode_parameters["remove_temporary_files"] is True:
             self.delete_tmp_files()
@@ -503,6 +505,7 @@ class UNodeBase:
             )
             for line in execute_answer:
                 msg += line + "\n"
+            utrace.set_stop_time(crashed=True)
             if utrace.urun_dict.unode_parameters["crash_on_resource_crash"] is True:
                 raise RuntimeError(msg)
         return utrace, msg

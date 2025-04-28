@@ -44,6 +44,9 @@ class UTrace:
         self.umeta_io = umeta_io
         self._umeta = None
 
+        if history is not None:
+            self.history = history
+
         self.urun_dict = self._init_urun_dict(urun_dict)
         if input_files is None:
         self.input_files = input_files
@@ -370,6 +373,7 @@ class UTrace:
     def set_start_time(self) -> None:
         self.start_time = datetime.datetime.now().astimezone()
 
+    def set_stop_time(self, skipped: bool = False, crashed: bool = False) -> None:
 
         Args:
         """
@@ -435,6 +439,7 @@ class UTrace:
         Returns:
         """
 
+    def add_execution_record(self) -> None:
         self.umeta.io.add_execution_record(
             uwid=uwid,
             start_time=self.start_time,

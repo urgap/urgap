@@ -2,8 +2,17 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 import sqlalchemy
 
+from sqlalchemy import (
+    JSON,
+    DateTime,
+    ForeignKey,
+    exists,
+    select,
+)
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -15,6 +24,8 @@ from sqlalchemy.orm import (
 
 from ._base import UMetaIOBase
 
+if TYPE_CHECKING:
+
 
 class Base(DeclarativeBase):
     """SQLAlchemy base class."""
@@ -23,11 +34,14 @@ class Base(DeclarativeBase):
 class ExecutionConfigurations(Base):
     __tablename__ = "umeta_execution_configurations"
 
+    run_parameters: Mapped[dict[str, Any]] = mapped_column(JSON)
     command: Mapped[str] = mapped_column()
     unode: Mapped[str] = mapped_column()
 
+    input_ufiles: Mapped[list[InputUFiles]] = relationship(
     )
 
+    output_ufiles: Mapped[list[OutputUFiles]] = relationship(
     )
 
 
@@ -35,6 +49,7 @@ class InputUFiles(Base):
     __tablename__ = "umeta_input_ufiles"
 
 
+    executions_as_input: Mapped[list[ExecutionConfigurations]] = relationship(
     )
 
 
@@ -42,6 +57,7 @@ class OutputUFiles(Base):
     __tablename__ = "umeta_output_ufiles"
 
 
+    executions_as_output: Mapped[list[ExecutionConfigurations]] = relationship(
     )
 
 
@@ -64,11 +80,14 @@ class ExecutionHistory(Base):
 
     started_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     duration_seconds: Mapped[int | None] = mapped_column(nullable=True)
+    user_dict: Mapped[UserDicts] = relationship(
 
 
 class UserDicts(Base):
     __tablename__ = "user_dicts"
 
+    data: Mapped[dict[str, str]] = mapped_column(JSON)
+    execution_history: Mapped[ExecutionHistory] = relationship(
 
 class SQLAlchemyBaseUMeta(UMetaIOBase):
     """UMeta SQLAlchemy Base class."""
@@ -93,6 +112,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             results = session.execute(stmt).one_or_none()
             if not results:
+                raise ValueError(msg)
+            results = results[0]
         return {
             "parameters": results.run_parameters,
             "command": results.command,
@@ -152,6 +173,11 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             statement = select(ExecutionHistory).filter(*query)
             if limit is not None:
                 statement = statement.limit(limit)
+            return {
+                    "started_time": result.started_time,
+                    "duration_seconds": result.duration_seconds,
+                }
+            }
 
 
         Args:
@@ -166,6 +192,12 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                     output_ufiles=output_objs,
                 )
                 session.add(new_config)
+            new_entry = ExecutionHistory(
+                uwid=uwid,
+                started_time=utrace.start_time,
+                duration_seconds=utrace.duration_seconds,
+            )
+            session.add(new_entry)
             session.commit()
 
         with Session(self.db) as session:

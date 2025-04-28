@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 
@@ -17,5 +19,9 @@ def test_read_write_user_dict(check_if_meta_interface_backend_is_available):
         umeta_io=io,
     )
     ut.urun_dict.user_dict["test"] = "u_fresh_cookies_stuff_young_bears"
+    ut.start_time = datetime.now().astimezone()
+    ut.duration_seconds = 1
     print(ut.urun_dict.user_dict, io, "<<<")
     ut.save_umeta_information()
+
+    }
