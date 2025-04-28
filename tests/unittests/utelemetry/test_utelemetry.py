@@ -31,6 +31,10 @@ def test_utelemetry_run_remote_fails(provide_changeable_config, caplog):
     )
     with pytest.raises(Exception):
         FilterTabularToCSV_node.run(urun_dict=urun_dict, ufiles=ufiles)
+    assert (
+        "Remote execution failed with error: HTTPConnectionPool(host='localhost'"
+        in caplog.text
+    )
 
 
 def test_utelemetry_generates_output():

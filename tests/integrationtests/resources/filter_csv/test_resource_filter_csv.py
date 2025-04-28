@@ -70,6 +70,7 @@ def test_filter_combined_str_and_float():
 
 def test_query_string_wrong_format():
 
+    with pytest.raises(RuntimeError):
         main(
             csvs=[input_file],
             output=output_file,
@@ -79,6 +80,7 @@ def test_query_string_wrong_format():
 
 def test_query_string_missing_column():
 
+    with pytest.raises(RuntimeError):
         main(
             csvs=[input_file],
             output=output_file,
