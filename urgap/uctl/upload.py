@@ -20,6 +20,11 @@ def upload_folder_click(
 
 
     """
+    upload_folder(
+        folder=folder,
+        bucket_structure=bucket_structure,
+        storage_base_uri=storage_base_uri,
+    )
 
 
 def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> None:
