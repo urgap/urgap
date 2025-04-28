@@ -12,3 +12,12 @@ def test_get_all_relevant_nodes():
     to_spawn = get_all_relevant_nodes("BasicFunctionTestNode:1.1.0")
     assert len(to_spawn) == 1
     assert to_spawn == ["BasicFunctionTestNode:1.1.0"]
+
+
+def test_run_unode_in_loop(tmp_dir):
+    ufl = run_unode_in_loop(
+        {
+        },
+        "BasicFunctionTestNode:1.3.0",
+    )
+    assert len(ufl) == 1
