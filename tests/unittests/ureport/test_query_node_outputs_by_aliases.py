@@ -6,6 +6,7 @@ import pytest
     "provide_clean_test_node_dirs",
     [
         (
+                f"test_node_data/test.txt",
             ),
                 {
                     "parameters": {
@@ -30,6 +31,7 @@ def test_can_query_node_outputs_by_aliases(provide_clean_test_node_dirs):
     "provide_clean_test_node_dirs",
     [
         (
+                f"test_node_data/test.txt",
             ),
                 {
                     "parameters": {

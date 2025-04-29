@@ -367,6 +367,8 @@ class UFileList(UserList):
             else:
                 counter = current_count
             self.append(
+                    uri=f"{self.output_definitions['storage_base_uri']}?uftype={self.output_definitions['uftype']}"
+                    f"#{self.output_definitions['output_file_stem']}_{counter}{uftype}",
             )
         return len(self) - 1
 

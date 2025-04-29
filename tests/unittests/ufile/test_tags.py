@@ -39,6 +39,7 @@ def test_tags_are_set_via_uri(provide_clean_scratch_and_remote):
 @pytest.mark.parametrize(
     "provide_clean_scratch_and_remote",
     [
+            f"test_node_data/test_FILE.txt",
     ],
     indirect=["provide_clean_scratch_and_remote"],
 )

@@ -28,6 +28,7 @@ def test_unode_delete_tmp_dir():
     "provide_clean_test_node_dirs",
     [
         (
+                f"test_node_data/test.txt",
             ),
                 {
                     "parameters": {
