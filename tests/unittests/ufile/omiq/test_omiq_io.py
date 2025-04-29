@@ -35,6 +35,7 @@ def mock_omiq_api():
 
 
 @pytest.fixture
+    )
 
 
 @pytest.fixture

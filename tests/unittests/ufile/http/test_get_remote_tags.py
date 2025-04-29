@@ -23,6 +23,7 @@ def test_get_remote_tags_no_file():
 
 def test_get_remote_tags_no_tags_but_response():
         uri="https://github.com/gsk-tech/pymx/raw/main/example_scripts"
+        "#filter_nonbiological_ions_1_0_0.py",
     )
     remote_tag = ufile.io.get_remote_tags()
     assert remote_tag is None
