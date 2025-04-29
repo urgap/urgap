@@ -87,6 +87,7 @@ def test_single_input_with_data_versioning():
     assert (
         bool(
             re.search(
+                r"TestNode4_1.0.0_wx_"
                 str(_output),
         )
         is True
@@ -152,6 +153,7 @@ def test_multi_input_with_data_versioning():
     assert (
         bool(
             re.search(
+                r"TestNode4_1.0.0_wx_"
                 str(_output),
         )
         is True
