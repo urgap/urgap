@@ -36,6 +36,7 @@ class UFile:
         self.was_downloaded_to_scratch = False
         self._tags = None
 
+        )
         self._io = None
 
     @property
@@ -91,6 +92,7 @@ class UFile:
 
         Returns:
         """
+        return self.as_uri()
 
     def __eq__(self, other: object) -> bool:
 
@@ -98,6 +100,7 @@ class UFile:
 
         Returns:
         """
+            return self.ucfs == other.ucfs
         return False
 
 
@@ -105,6 +108,7 @@ class UFile:
 
         Returns:
         """
+            return self.ucfs < other.ucfs
         return False
 
     @property
@@ -122,6 +126,7 @@ class UFile:
         return object_name.split("/")[-1].rsplit(".", maxsplit=1)[0].replace(".", "-")
 
     @property
+    def ucfs(self) -> str:
 
         Returns:
         """
@@ -204,7 +209,25 @@ class UFile:
 
         Returns:
         """
+        unparse_args = []
+        if scheme is None:
+        else:
+            unparse_args.append(scheme)
+        if netloc is None:
+        else:
+            unparse_args.append(netloc)
+        if path is None:
+        else:
+            unparse_args.append(path)
+        if query is None:
+            unparse_args.append(
             )
+        else:
+            unparse_args.append(query)
+        if fragment is None:
+        else:
+            unparse_args.append(fragment)
+
 
     def as_storage_base_uri(self) -> str:
 

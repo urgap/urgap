@@ -88,6 +88,7 @@ class UFileList(UserList):
         self._eval_if_item_is_of_correct_type(item)
         super().insert(i, item)
 
+    def calculate_ucfs(self) -> collections.abc.Hashable:
 
 
         Returns:
@@ -98,6 +99,7 @@ class UFileList(UserList):
 
         Returns:
         """
+        return self.calculate_ucfs()
 
     def _eval_if_item_is_of_correct_type(
     ) -> None:
@@ -135,8 +137,10 @@ class UFileList(UserList):
                 )
                 msg = "Input files can only be list of UFiles and/or list of lists of Ufiles"
                 raise TypeError(msg)
+            elif entry.ucfs in already_seen_objects:
                 continue
             else:
+                already_seen_objects.add(entry.ucfs)
                 flat_list.append(entry)
         return already_seen_objects, flat_list
 
