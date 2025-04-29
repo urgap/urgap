@@ -177,6 +177,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 statement = statement.limit(limit)
             results = session.execute(statement).scalars().all()
             if not results:
+                msg = "No ExecutionHistory entries found with given criteria"
+                raise ValueError(msg)
             return {
                     "user_dict": result.user_dict.data if result.user_dict else None,
                     "started_time": result.started_time,
