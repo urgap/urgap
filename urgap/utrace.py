@@ -161,6 +161,7 @@ class UTrace:
 
         Returns:
         """
+        exeuction_result_time = self.umeta.io.get_execution_status(*self.id)
         return (exeuction_result_time is not None) and (exeuction_result_time > 0)
 
     @property
@@ -168,9 +169,11 @@ class UTrace:
 
         Returns:
         """
+        return self.umeta.io.get_execution_status(*self.id) is None
 
     @property
     def execution_time(self) -> float:
+        return self.umeta.io.get_execution_status(*self.id)
 
     def _set_output_storage_uri(self) -> str:
         input_storage_base_uris = set(self.input_files.get_storage_base_uris())

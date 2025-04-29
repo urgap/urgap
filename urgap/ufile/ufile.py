@@ -175,9 +175,12 @@ class UFile:
         return self._io
 
     @classmethod
+    def from_path_object(
         cls,
         path_object: Path,
         number_of_parents: int = 1,
+        query: str | None = None,
+    ) -> UFile:
 
         Args:
 

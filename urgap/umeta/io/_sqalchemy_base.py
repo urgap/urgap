@@ -88,6 +88,8 @@ class UserDicts(Base):
 
     data: Mapped[dict[str, str]] = mapped_column(JSON)
     execution_history: Mapped[ExecutionHistory] = relationship(
+    )
+
 
 class SQLAlchemyBaseUMeta(UMetaIOBase):
     """UMeta SQLAlchemy Base class."""
@@ -173,10 +175,14 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             statement = select(ExecutionHistory).filter(*query)
             if limit is not None:
                 statement = statement.limit(limit)
+            results = session.execute(statement).scalars().all()
+            if not results:
             return {
+                    "user_dict": result.user_dict.data if result.user_dict else None,
                     "started_time": result.started_time,
                     "duration_seconds": result.duration_seconds,
                 }
+                for result in results
             }
 
 

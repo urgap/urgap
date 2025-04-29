@@ -423,6 +423,19 @@ class UFileList(UserList):
 
 
         """
+        import concurrent.futures
+
+            if uftype is not None:
+                uf.tags["uftype"] = uftype
+            return uf
+
+        with concurrent.futures.ThreadPoolExecutor(
+        ) as executor:
+            ufile_list = executor.map(_init_ufile, uri_list)
+        ufl = UFileList(ufile_list)
+            ufl.download_ufiles(number_of_threads=number_of_threads)
+        return ufl
+
     @classmethod
     def from_folder(
         cls,

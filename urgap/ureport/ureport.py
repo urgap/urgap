@@ -38,7 +38,9 @@ class UReport:
                 # is first file
 
             self.execution_history = {}
+                    self.execution_history[key] = history
         else:
+            )
 
     @property
 
@@ -57,6 +59,7 @@ class UReport:
         return f"""
 UReport id {id(self)}
 
+{pformat(self.execution_history, sort_dicts=True, indent=4)}
 
 UMeta:
     {self.umeta}
@@ -67,11 +70,13 @@ UMeta:
 
         Returns:
         """
+        return {w for n, w in self.execution_history}
 
     @property
 
         Returns:
         """
+        return {n for n, w in self.execution_history}
 
     @property
     def graph(self) -> nx.DiGraph:
@@ -285,6 +290,8 @@ UMeta:
         """
         summary = {}
 
+                "execution_time": self.execution_history.execution_time(
+                ),
             }
         return summary
 
