@@ -21,6 +21,7 @@ INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
     """
     default_config_json = input_json.get("default_pipeline_config_json")
     if default_config_json is not None:
+        default_config_json = Path(default_config_json).resolve()
             default_pipeline_args = json.load(jf)
     else:
         default_pipeline_args = {}
@@ -87,6 +88,7 @@ def retrieve_processed_uris(
 def run_unode(
     uris: list[str] | str,
     unode: str,
+    ucredentials: list[dict],
     config: dict,
     **kwargs: P.kwargs,
 ) -> list:
@@ -138,6 +140,7 @@ def simplify_output_names(
 @task(name="Filter uftypes", retries=3, retry_delay_seconds=10)
 def filter_by_uftype(
     uris: list[str] | str,
+    uftype: list,
 ) -> list | None:
 
     Args:
