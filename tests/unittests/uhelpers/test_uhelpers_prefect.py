@@ -87,6 +87,9 @@ def test_filter_by_uftype():
     ]
     assert len(filtered) == 1
 
+    filtered = filter_by_uftype.fn(
+        uris=uris,
+    )
     assert len(filtered) == 2
 
     assert len(filtered) == 0
