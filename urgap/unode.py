@@ -508,4 +508,6 @@ class UNodeBase:
             utrace.set_stop_time(crashed=True)
             if utrace.urun_dict.unode_parameters["crash_on_resource_crash"] is True:
                 raise RuntimeError(msg)
+        else:
+            utrace.set_stop_time()
         return utrace, msg

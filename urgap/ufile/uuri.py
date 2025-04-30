@@ -1,5 +1,6 @@
 
 import ast
+import getpass
 import logging
 
 
@@ -14,6 +15,7 @@ import logging
                 )
                 msg = f"Set credentials for {credentials['user']}"
             except KeyError:
+                credentials = {"user": getpass.getuser(), "password": None}
             self._user = credentials["user"]
             self._password = credentials["password"]
 
