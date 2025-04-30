@@ -42,4 +42,8 @@ def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> 
         miniters=1,
     ) as pbar:
         for file in all_files:
+            pbar.set_description(f"Processing file {file.object_name}")
+            file.rebase(uri=f"{storage_base_uri}#{bucket_structure}/{file.object_name}")
+            file.upload()
+            resulting_uris.append(file.as_uri())
             pbar.update(1)

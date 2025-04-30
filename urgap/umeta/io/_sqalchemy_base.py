@@ -11,6 +11,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     exists,
+    func,
     select,
 )
 from sqlalchemy.orm import (
@@ -191,6 +192,21 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                     "duration_seconds": result.duration_seconds,
                 }
                 for result in results
+            }
+
+    def retrieve_interface_statistics(self) -> dict:
+        with Session(self.db) as session:
+            n_unode_exe_docs = select(func.count()).select_from(ExecutionConfigurations)
+            n_uh_docs = select(func.count()).select_from(ExecutionHistory)
+            n_input_links_docs = select(func.count()).select_from(ExecutionInputLink)
+            n_output_links_docs = select(func.count()).select_from(ExecutionOutputLink)
+            return {
+                "Number of unode_exe_details Documents": session.execute(
+                ).scalar(),
+                "Number of input links Documents": session.execute(
+                ).scalar(),
+                "Number of output links Documents": session.execute(
+                ).scalar(),
             }
 
 
