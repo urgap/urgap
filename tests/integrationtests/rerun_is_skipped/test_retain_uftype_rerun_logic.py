@@ -6,6 +6,7 @@ import pytest
     "provide_clean_test_node_dirs",
     [
         (
+                f"unified_csvs/BSA1_xtandem_alanine_unified.csv",
             ),
                 {
                     "parameters": {

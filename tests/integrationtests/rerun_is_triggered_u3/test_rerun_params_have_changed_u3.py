@@ -9,6 +9,7 @@ import pytest
     "check_if_ufilelist_can_be_tested",
     [
             [
+                    f"test_node_data/test.txt",
     ],
     indirect=["check_if_ufilelist_can_be_tested"],
 )

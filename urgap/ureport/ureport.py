@@ -134,6 +134,8 @@ UMeta:
                     raise OSError(msg)
         return graph
 
+    def _merge_histories(self, other_history: dict) -> None:
+
     def was_skipped(
         self,
         wid: str,

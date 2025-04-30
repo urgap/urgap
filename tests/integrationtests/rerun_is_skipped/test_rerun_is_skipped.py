@@ -8,6 +8,7 @@ import pytest
     "provide_clean_test_node_dirs",
     [
         (
+                f"test_node_data/test.txt",
             ),
                 {
                     "parameters": {
@@ -20,6 +21,7 @@ import pytest
             ["TestNode5:1.0.0"],
         ),
         (
+                f"test_node_data/test.txt",
             ),
                 {
                     "parameters": {
@@ -33,7 +35,9 @@ import pytest
         ),
         (
             [
+                    f"test_node_data/test.txt",
                 ),
+                    f"test_node_data/test.txt",
                 ),
             ],
                 {
@@ -47,6 +51,7 @@ import pytest
             ["TestNode5:1.0.0"],
         ),
         (
+                f"test_node_data/test.txt",
             ),
                 {
                     "parameters": {

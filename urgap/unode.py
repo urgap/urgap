@@ -119,6 +119,7 @@ class UNodeBase:
         reasons = ut.evaluate_if_rerun_is_required()
         ut.info()
         if len(reasons) > 0:
+            ut.set_start_time()
             ut = self.execute_rerun(
                 utrace=ut,
                 starting_time=starting_time,

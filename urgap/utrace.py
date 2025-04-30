@@ -155,6 +155,7 @@ class UTrace:
 
         Returns:
         """
+        return self.umeta.io.get_execution_status(*self.id) == 0
 
     @property
     def was_run(self) -> bool:

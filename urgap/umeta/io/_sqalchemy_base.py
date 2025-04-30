@@ -10,6 +10,7 @@ from sqlalchemy import (
     JSON,
     DateTime,
     ForeignKey,
+    Index,
     exists,
     func,
     select,
@@ -79,13 +80,18 @@ class ExecutionOutputLink(Base):
 class ExecutionHistory(Base):
     __tablename__ = "umeta_execution_history"
 
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    uwid: Mapped[str] = mapped_column(index=True)
     started_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     duration_seconds: Mapped[int | None] = mapped_column(nullable=True)
+
     user_dict: Mapped[UserDicts] = relationship(
 
 
 class UserDicts(Base):
     __tablename__ = "user_dicts"
+
 
     data: Mapped[dict[str, str]] = mapped_column(JSON)
     execution_history: Mapped[ExecutionHistory] = relationship(
@@ -137,6 +143,12 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         raise NotImplementedError(msg)
 
         with Session(self.db) as session:
+            stmt = (
+                select(ExecutionHistory.duration_seconds)
+                .where(
+                )
+                .order_by(desc(ExecutionHistory.started_time))
+                .limit(1)
             )
             return session.execute(stmt).scalar_one_or_none()
 
