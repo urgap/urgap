@@ -25,6 +25,7 @@ def test_can_query_node_outputs_by_aliases(provide_clean_test_node_dirs):
 
     report.draw_execution_dag()
     queried_results = report.query_node_outputs_by_aliases(nodes={0: []})
+    assert set(uf.ucfs for uf in queried_results) == {uf.ucfs for uf in results.data}
 
 
 @pytest.mark.parametrize(
@@ -79,7 +80,9 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     test_node = test_nodes["FilterTabularToCSV:1.0.0"]
     results = test_node.run(ufiles=ufiles, urun_dict=urun_dict)
     urun_dict.parameters["FilterTabularToCSV:1.0.0"]["-q"] = "`spectrum_id` < 3100"
+    results_with_less = test_node.run(ufiles=results, urun_dict=urun_dict, force=True)
 
+    )
     report.draw_execution_dag()
     queried_results = report.query_node_outputs_by_aliases(nodes={0: []})
     queried_results_with_less = report.query_node_outputs_by_aliases(nodes={2: []})

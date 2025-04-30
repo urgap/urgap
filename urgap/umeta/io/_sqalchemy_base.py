@@ -111,6 +111,12 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         """
         with Session(self.db) as session:
             input_link_alias = aliased(ExecutionInputLink)
+            stmt = select(ExecutionConfigurations).where(
+                exists(
+                    select(1)
+                    .select_from(input_link_alias)
+                    .where(
+                ),
             )
             results = session.execute(stmt).one_or_none()
             if not results:

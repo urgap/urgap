@@ -72,6 +72,7 @@ def provide_clean_test_node_dirs(request):
         unodes=request.param[2],
     )
     tmp_dir_name = tempfile.TemporaryDirectory()
+    urun_dict.unode_parameters["storage_base_uri"] = f"file://{tmp_dir_name.name}"
     yield unodes, ufiles, urun_dict
     tmp_dir_name.cleanup()
     unodes, ufiles, urun_dict = init_nodes(

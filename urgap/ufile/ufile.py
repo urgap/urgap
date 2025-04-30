@@ -130,6 +130,8 @@ class UFile:
 
         Returns:
         """
+        if self._ucfs is None:
+        return self._ucfs
 
     def __deepcopy__(self, memo: dict) -> UFile:
 
@@ -211,6 +213,8 @@ class UFile:
         """
         unparse_args = []
         if scheme is None:
+            if parsed_schema is None:
+            unparse_args.append(parsed_schema)
         else:
             unparse_args.append(scheme)
         if netloc is None:
@@ -410,6 +414,7 @@ class UFile:
         """
         if self._lineage_graph is None:
             if use_umeta is True:
+                )
                 graph = ur.graph
             else:
                 graph = nx.DiGraph()

@@ -20,6 +20,7 @@ class UReport:
     def __init__(
         self,
         wid: str | None = None,
+        storage_base_uri: str | None = None,
         umeta_io: str | None = None,
     ) -> None:
 
@@ -30,6 +31,7 @@ class UReport:
         self._os = []
         self.node_aliases = {}
         self._traces = {}
+        self.storage_base_uri = storage_base_uri
         if umeta_io is None:
         self.umeta_io = umeta_io
 
@@ -49,11 +51,13 @@ class UReport:
         if self._umeta is None:
         return self._umeta
 
+    def get_trace(
 
         Returns:
         """
                 )
                 wid=wid,
+                storage_base_uri=storage_base_uri,
             )
 
         return f"""
@@ -89,6 +93,7 @@ UMeta:
                 continue
             graph = self.walk(
                 wid=wid,
+                storage_base_uri=self.storage_base_uri,
                 graph=graph,
             )
         return graph
@@ -97,6 +102,7 @@ UMeta:
         self,
         wid: str,
         graph: nx.DiGraph,
+        storage_base_uri: str | None = None,
     ) -> nx.DiGraph:
 
         Args:
@@ -107,19 +113,23 @@ UMeta:
 
             for ofile in ut.output_files:
                 graph.add_edge(
+                    ofile.ucfs,
                     weight=4.7,
                     arrow=True,
                 )
 
             for ifile in ut.input_files:
                 graph.add_edge(
+                    ifile.ucfs,
                     weight=4.7,
                     arrow=True,
                 )
 
+                )
                     graph = self.walk(
                         wid=wid,
                         graph=graph,
+                        storage_base_uri=storage_base_uri,
                     )
                     raise OSError(msg)
         return graph
@@ -243,10 +253,15 @@ UMeta:
 
     def _get_history_nodes_and_links(self) -> tuple:
         non_root_ufiles = set()
+            ut = self.get_trace(
+            )
             for ufile in ut.output_files:
+                non_root_ufiles.add(ufile.ucfs)
         nodes = []
         exact_sources_to_nodes = defaultdict(set)
         links = defaultdict(int)
+            ut = self.get_trace(
+            )
             for ufile in ut.input_files:
                 new_connection = 1
                     new_connection = 0
@@ -255,12 +270,19 @@ UMeta:
                 )
         return nodes, links
 
+    def _append_ufile_source(
+    ) -> tuple:
         """Append object source name to nodes.
 
         Args:
+            non_root_ufiles: Output ufiles.
 
         Returns:
         """
+        if ufile.ucfs in non_root_ufiles:
+            source = ufile.ucfs
+        else:
+            source = "<" + ufile.uftype + ">"
         if source not in nodes:
             nodes.append(source)
         return nodes, source
@@ -274,6 +296,8 @@ UMeta:
         translated_aliases = {
             self.node_aliases[alias]: value for alias, value in nodes.items()
         }
+            ut = self.get_trace(
+            )
                 if len(requested_uftypes) == 0:
                     query_results += ut.output_files
                 else:
@@ -355,6 +379,8 @@ UMeta:
             "nodes": [],
         }
         already_seen_nodes = set()
+            ut = self.get_trace(
+            )
             ).total_seconds()
             execution_graph["nodes"].append(
                 {

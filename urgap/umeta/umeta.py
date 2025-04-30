@@ -44,7 +44,13 @@ class UMeta:
         urd.command_list = node_exe_details["command"].split(" ")
         urd["wid"] = wid  # not using urd.wid to avoid the warning :)
             urun_dict=urd,
+                [
+                    for ucfs in node_exe_details["input_ufiles"]
+            ),
             unode_version=unode_version,
+                [
+                    for ucfs in node_exe_details["output_ufiles"]
+            ),
         )
 
 
