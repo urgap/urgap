@@ -128,6 +128,8 @@ class UNodeBase:
             ut.fix_dynamic_output_file_names()
             ut.set_start_time()
             ut.set_stop_time(skipped=True)
+        if not hasattr(ut, "duration_seconds"):
+            ut.set_stop_time()
         ut.save_umeta_information()
         if ut.urun_dict.unode_parameters["remove_temporary_files"] is True:
             self.delete_tmp_files()
