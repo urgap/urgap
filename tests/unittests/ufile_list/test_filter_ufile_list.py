@@ -152,6 +152,7 @@ def test_wrapper_defintions_are_not_met_with_additional_filters(tmp_scratch_disk
 def test_filter_ufile_list_too_many_files(tmp_dir):
     ufiles = (
             [
+                    f"test_node_data/test.txt",
                 ),
                 ),
         ),

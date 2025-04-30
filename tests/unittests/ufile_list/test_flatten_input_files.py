@@ -11,6 +11,10 @@ def _random_string(lenght=7):
 
 def test_list_of_Ufiles_is_returned(tmp_file):
     input_files = [
+        ),
+        ),
+        ),
+        ),
     ]
 
     ).create_flat_and_non_redundant_list()
@@ -19,6 +23,10 @@ def test_list_of_Ufiles_is_returned(tmp_file):
 
 def test_list_of_nested_Ufiles_is_returned(tmp_file):
     expected = [
+        ),
+        ),
+        ),
+        ),
     ]
     input_files = [
         expected[0],
