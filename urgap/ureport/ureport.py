@@ -135,6 +135,14 @@ UMeta:
         return graph
 
     def _merge_histories(self, other_history: dict) -> None:
+        for other_key, other_value in other_history.items():
+            if other_key not in self.execution_history:
+                self.execution_history[other_key] = other_value
+            elif (
+                > self.execution_history[other_key]["started_time"]
+            ):
+                msg = f"Overwriting entry for {other_key} with newer timestamp"
+                self.execution_history[other_key] = other_value
 
     def was_skipped(
         self,
