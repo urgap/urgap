@@ -5,6 +5,8 @@ import networkx
         f"unified_csvs/demo.csv",
     )
 
+        storage_base_uri=input_file.as_storage_base_uri(),
+    )
     assert isinstance(ur.graph, networkx.classes.digraph.DiGraph) is True
 
         {
