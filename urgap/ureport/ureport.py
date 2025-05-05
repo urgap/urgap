@@ -19,12 +19,14 @@ class UReport:
 
     def __init__(
         self,
+        ucfs: str | None = None,
         wid: str | None = None,
         storage_base_uri: str | None = None,
         umeta_io: str | None = None,
     ) -> None:
 
         Args:
+            ucfs: Object associated with report.
             wid: Workflow ID.
         """
         self._umeta = None
@@ -36,8 +38,13 @@ class UReport:
         self.umeta_io = umeta_io
 
         if ufile is not None:
+            if ucfs is not None:
+                msg = "You cannot define ufile and ucfs to initialize a report"
                 raise KeyError(msg)
+            ucfs = ufile.ucfs
+        if ucfs is not None:
                 # is first file
+                self._os.append(ucfs)
 
             self.execution_history = {}
                     self.execution_history[key] = history
@@ -412,8 +419,11 @@ UMeta:
             urd_overview["rows"].append(
                 {
                     "version": ut.urun_dict["version"],
+                    "input_files": [x.ucfs for x in ut.input_files],
+                    "output_files": [x.ucfs for x in ut.output_files],
             )
             for ufile in ut.input_files:
+                source = ufile.ucfs
                 execution_graph["links"].append(
                     {
                         "source": source,
@@ -424,6 +434,7 @@ UMeta:
                     execution_graph["nodes"].append({"name": source, "id": "data"})
                     already_seen_nodes.add(source)
             for ufile in ut.output_files:
+                target = ufile.ucfs
                 execution_graph["links"].append(
                     {
                         "target": target,

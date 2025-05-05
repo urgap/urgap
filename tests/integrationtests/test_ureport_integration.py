@@ -5,6 +5,7 @@ import networkx
         f"unified_csvs/demo.csv",
     )
 
+        ucfs=input_file.ucfs,
         storage_base_uri=input_file.as_storage_base_uri(),
     )
     assert isinstance(ur.graph, networkx.classes.digraph.DiGraph) is True
@@ -44,6 +45,7 @@ import networkx
         urun_dict=urun_dict,
     )
 
+        ucfs=filtered_2[0].ucfs,
         storage_base_uri=filtered_2[0].as_storage_base_uri(),
     )
     assert len(ur.graph.nodes) == 9
