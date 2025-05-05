@@ -437,6 +437,7 @@ class UNodeBase:
                 data[0]["tables"][0]["rows"].append(
                 )
 
+        for wid, _object_name in um.history:
             data[0]["tables"][0]["rows"].append({"key": "@wid", "value": wid})
 
         data[0]["tables"].append(

@@ -24,6 +24,7 @@ class UTrace:
         unode_meta: dict | None = None,
         unode_version: str | None = None,
         umeta_io: str | None = None,
+        history: dict | None = None,
     ) -> None:
         """Construct a new UTrace instance.
 

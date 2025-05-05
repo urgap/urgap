@@ -181,9 +181,11 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         return {
         }
 
+    def load_history(
         self,
         wid: str | None = None,
         limit: int | None = None,
+    ) -> dict:
 
         Args:
         """
@@ -215,6 +217,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             return {
                 "Number of unode_exe_details Documents": session.execute(
                 ).scalar(),
+                "Number of history Documents": session.execute(n_uh_docs).scalar(),
                 "Number of input links Documents": session.execute(
                 ).scalar(),
                 "Number of output links Documents": session.execute(
@@ -247,6 +250,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             return session.execute(stmt).scalar()
 
+    def find_wid_members(self, wid: str, limit: int | None = None) -> dict:
+        return self.load_history(wid=wid, limit=limit)
 
     def generate_connection_string(self) -> None:
         msg = "Please implement this method in child classes."

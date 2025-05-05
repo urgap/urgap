@@ -42,6 +42,7 @@ class UReport:
             self.execution_history = {}
                     self.execution_history[key] = history
         else:
+            self.execution_history = self.umeta.load_history(
             )
 
     @property
@@ -55,7 +56,9 @@ class UReport:
 
         Returns:
         """
+                missing_history = self.umeta.load_history(
                 )
+                self._merge_histories(other_history=missing_history)
                 wid=wid,
                 storage_base_uri=storage_base_uri,
             )
@@ -63,6 +66,7 @@ class UReport:
         return f"""
 UReport id {id(self)}
 
+self.history:
 {pformat(self.execution_history, sort_dicts=True, indent=4)}
 
 UMeta:
@@ -126,6 +130,8 @@ UMeta:
                 )
 
                 )
+                    self._merge_histories(other_history=hi2)
+                    exe_id, wid = next(iter(hi2))
                     graph = self.walk(
                         wid=wid,
                         graph=graph,
@@ -391,6 +397,7 @@ UMeta:
         already_seen_nodes = set()
             ut = self.get_trace(
             )
+            processing_time = ut.history.execution_time(
             ).total_seconds()
             execution_graph["nodes"].append(
                 {

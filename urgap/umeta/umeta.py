@@ -23,9 +23,11 @@ class UMeta:
     def load_utrace(
         self,
         wid: str,
+        history: dict | None = None,
 
         Args:
         """
+        if history is None:
                 {
                     "parameters": node_exe_details["parameters"],
                     "user_dict": {
@@ -51,12 +53,15 @@ class UMeta:
                 [
                     for ucfs in node_exe_details["output_ufiles"]
             ),
+            history=history,
         )
 
 
         Args:
         """
 
+    def load_history(
+    ) -> dict:
 
         Args:
         """
@@ -89,8 +94,10 @@ class UMeta:
     def retrieve_interface_statistics(self) -> dict:
         return self.io.retrieve_interface_statistics()
 
+    def find_wid_members(self, wid: str, limit: int | None = None) -> dict:
 
         Args:
+            limit: Maximum number of resulting history objects.
         """
         return self.io.find_wid_members(wid=wid, limit=limit)
 
