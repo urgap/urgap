@@ -21,6 +21,8 @@ from opentelemetry.trace import SpanKind
 
 
 logging.getLogger("azure.monitor").setLevel(logging.WARNING)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
+)
 logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
 
 
