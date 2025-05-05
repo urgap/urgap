@@ -8,6 +8,7 @@ import signal
 import threading
 
 from concurrent.futures import ProcessPoolExecutor
+from types import FrameType
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -97,6 +98,8 @@ def create_app(name: str) -> FastAPI:
         processes.append(p)
         p.start()
 
+    def signal_handler(sig: int, _frame: FrameType | None) -> None:
+        msg = f"Parent process received termination signal {sig}"
         for proc in processes:
             proc.terminate()
 

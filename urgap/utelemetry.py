@@ -20,12 +20,16 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 from opentelemetry.trace import SpanKind
 
 
+logging.getLogger("azure.monitor").setLevel(logging.WARNING)
+logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
+
 
 class UTelemetry:
 
     started_spans = []
     trace_was_initialized = False
     metric_was_initialized = False
+    is_shutdown = False
 
     def __init__(self) -> None:
         self.trace_tree = {}
@@ -109,6 +113,7 @@ class UTelemetry:
                 msg = f"Do not know how to handle {self.otlp_type} as opentelemetry_exporter_type"
                 raise ValueError(msg)
             trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(exporter))
+            UTelemetry.trace_was_initialized = True
 
     def increase_counter(self, counter_name: str, count: float = 1) -> None:
 
