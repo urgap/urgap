@@ -228,6 +228,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         Args:
         """
         with Session(self.db) as session:
+                input_objs, output_objs = self._save_input_and_output_files(
+                )
                 session.flush()
                 new_config = ExecutionConfigurations(
                     run_parameters=utrace.urun_dict.parameters,
@@ -244,6 +246,24 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             session.add(new_entry)
             session.commit()
+
+    def _save_input_and_output_files(
+    ) -> tuple[list, list]:
+        input_objs = []
+        for ifile in utrace.input_files:
+            obj = session.get(InputUFiles, ifile.ucfs)
+            if not obj:
+                session.add(obj)
+            input_objs.append(obj)
+        output_objs = []
+        for ofile in utrace.output_files:
+            if ofile is None:
+                continue
+            obj = session.get(OutputUFiles, ofile.ucfs)
+            if not obj:
+                session.add(obj)
+            output_objs.append(obj)
+        return input_objs, output_objs
 
         with Session(self.db) as session:
             stmt = select(
