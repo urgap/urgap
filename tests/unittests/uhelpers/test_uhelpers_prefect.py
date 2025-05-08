@@ -80,6 +80,11 @@ def test_simplify_output_names(tmp_dir):
     )
     copied_files = list(tmp_dir.iterdir())
     assert len(copied_files) == 2
+    for filename in copied_files:
+        assert filename.name in (
+            "pre_demosuff.txt",
+            "pre_BSA1_xtandem_alanine_unifiedsuff.txt",
+        )
 
 
 def test_filter_by_uftype():
