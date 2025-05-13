@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 import sqlalchemy
@@ -264,6 +265,14 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 session.add(obj)
             output_objs.append(obj)
         return input_objs, output_objs
+
+        with Session(self.db) as session:
+            try:
+                session.add(obj2)
+                session.flush()
+                session.commit()
+            except IntegrityError:
+                session.rollback()
 
         with Session(self.db) as session:
             stmt = select(

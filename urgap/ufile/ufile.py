@@ -233,6 +233,10 @@ class UFile:
             unparse_args.append(fragment)
 
 
+    @property
+    def storage_base_uri(self) -> str:
+        return self.as_storage_base_uri()
+
     def as_storage_base_uri(self) -> str:
 
         Returns:
