@@ -115,3 +115,12 @@ class UMeta:
 
         Returns:
         """
+
+
+    def get_ucfs_object_name_info(
+        self,
+        storage_base_uri: str | None = None,
+        object_name: str | None = None,
+    ) -> list[dict]:
+        self.io.get_ucfs_object_name_info(
+        )

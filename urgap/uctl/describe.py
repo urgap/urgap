@@ -45,3 +45,48 @@ def describe_last_runs_click(unode: str, last: int = 10) -> None:
 
 def describe_last_runs(unode: str, last: int = 10) -> list[tuple]:
     return um.find_last_processed_files(unode, last=last)
+
+
+@click.command()
+@click.option("--storage_base_uri", "-s")
+@click.option("--object_name", "-o")
+def describe_ucfs_click(
+    storage_base_uri: str | None = None,
+    object_name: str | None = None,
+) -> None:
+    rows = describe_ucfs(
+    )
+    log_table(rows=rows)
+
+
+def describe_ucfs(
+    storage_base_uri: str | None = None,
+    object_name: str | None = None,
+    return um.io.get_ucfs_object_name_info(
+    )
+
+
+def log_table(rows: list[dict] | None = None) -> None:
+
+    Args:
+        rows: List of UMeta entries.
+    """
+    if not rows:
+        return
+    # Extract column headers from the first row
+    headers = rows[0].keys()
+    # Calculate column widths
+    col_widths = {
+        key: max([len(str(key))] + [len(str(row[key])) for row in rows])
+        for key in headers
+    }
+    # Format header
+    header_row = " | ".join(f"{key.upper():<{col_widths[key]}}" for key in headers)
+    divider = "-+-".join("-" * col_widths[key] for key in headers)
+    # Format rows
+    row_lines = [
+        " | ".join(f"{row[key]!s:<{col_widths[key]}}" for key in headers)
+        for row in rows
+    ]
+    # Combine and log
+    output = "\n".join([header_row, divider, *row_lines])

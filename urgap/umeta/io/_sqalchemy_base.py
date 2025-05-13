@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+
 from typing import TYPE_CHECKING, Any
 
 import sqlalchemy
@@ -16,6 +17,7 @@ from sqlalchemy import (
     func,
     select,
 )
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -267,6 +269,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         return input_objs, output_objs
 
         with Session(self.db) as session:
+                storage_base_uri=ufile.storage_base_uri,
+            )
             try:
                 session.add(obj2)
                 session.flush()
@@ -285,3 +289,13 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
     def generate_connection_string(self) -> None:
         msg = "Please implement this method in child classes."
         raise NotImplementedError(msg)
+
+    def get_ucfs_object_name_info(
+        self,
+        storage_base_uri: str | None = None,
+        object_name: str | None = None,
+    ) -> list[dict]:
+        if storage_base_uri is not None:
+        if object_name is not None:
+        with Session(self.db) as session:
+            return session.execute(stmt).mappings().all()
