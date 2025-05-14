@@ -13,6 +13,9 @@ def describe_wid_click(wid: str) -> None:
     """
 
 
+    try:
+    except ValueError:
+        return f"No History found for given wid: {wid}"
 
 
 @click.command()
@@ -28,6 +31,8 @@ def describe_object_name(object_name: str) -> dict:
 @click.command()
 
 
+    try:
+    except ValueError:
 
 
 @click.command()
