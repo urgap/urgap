@@ -1,3 +1,4 @@
+import logging
 import os
 import platform
 import shutil
@@ -193,3 +194,8 @@ def provide_uctl_server(request):
         time.sleep(1)
     yield None
     proc.terminate()
+
+
+@pytest.fixture(autouse=True)
+def set_caplog_level(caplog):
+    caplog.set_level(logging.DEBUG)
