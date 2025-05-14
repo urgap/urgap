@@ -1,6 +1,7 @@
 from click.testing import CliRunner
 
 
+
 runner = CliRunner()
 
 
@@ -42,6 +43,7 @@ def test_describe_node_ex_id_click(caplog, tmp_dir):
         [
         ],
     )
+
     runner.invoke(describe_wid_click, ["test_wid"])
 
 
