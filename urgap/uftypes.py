@@ -167,6 +167,10 @@ beacon = types.SimpleNamespace()
 beacon.IMAGE_TIFF = ".image.tiff"
 beacon.ESSAY_XML = ".essay.xml"
 beacon.OPTOSELECT_XML = ".optoselect.xml"
+beacon.MLSUMMARY_PARQUET = ".mlsummary.parquet"
+beacon.MLRAW_PARQUET = ".mlraw.parquet"
+beacon.SUMMARY_PARQUET = ".summary.parquet"
+beacon.BRIGHTFIELD_SUMMARY_PARQUET = ".brightfield_summary.parquet"
 beacon.RESULT_PNG = ".result.png"
 
 # Mass Spec=====================================================================
