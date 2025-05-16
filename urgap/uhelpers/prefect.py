@@ -187,5 +187,6 @@ def import_flow(flow_str: str, flow_name: str, input_json: dict) -> None:
 
     Args:
     """
+    if pipeline is None:
     urd, input_json = parse_inputs(input_json=input_json)
     pipeline(urd, input_json)
