@@ -116,6 +116,7 @@ class UMeta:
         Returns:
         """
 
+        self.io.save_rebased_file_to_ucfs_storage_location(ufile=ufile)
 
     def get_ucfs_object_name_info(
         self,

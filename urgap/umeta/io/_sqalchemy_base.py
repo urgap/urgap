@@ -269,6 +269,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         return input_objs, output_objs
 
         with Session(self.db) as session:
+            obj2 = UcfsStorageLocation(
                 storage_base_uri=ufile.storage_base_uri,
             )
             try:
@@ -296,6 +297,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         object_name: str | None = None,
     ) -> list[dict]:
         if storage_base_uri is not None:
+            stmt = stmt.where(UcfsStorageLocation.storage_base_uri == storage_base_uri)
         if object_name is not None:
         with Session(self.db) as session:
             return session.execute(stmt).mappings().all()

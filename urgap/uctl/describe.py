@@ -67,6 +67,7 @@ def describe_ucfs_click(
 def describe_ucfs(
     storage_base_uri: str | None = None,
     object_name: str | None = None,
+    """Retrieve UMeta information for ucfs storage location."""
     return um.io.get_ucfs_object_name_info(
     )
 
