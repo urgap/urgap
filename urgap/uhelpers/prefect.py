@@ -1,6 +1,7 @@
 
 import json
 import logging
+import tempfile
 
 from collections.abc import Generator, Iterable
 from pathlib import Path
@@ -8,6 +9,7 @@ from time import sleep
 from typing import ParamSpec
 
 from prefect import flow, task
+from prefect.flows import load_flow_from_entrypoint
 
 
 P = ParamSpec("P")
@@ -187,6 +189,15 @@ def import_flow(flow_str: str, flow_name: str, input_json: dict) -> None:
 
     Args:
     """
+    pipeline = None
+
+    with tempfile.NamedTemporaryFile(
+        mode="wt",
+        suffix=".py",
+    ) as tmpfile:
+        tmpfile.write(flow_str)
+        tmpfile.flush()
+        pipeline = load_flow_from_entrypoint(f"{tmpfile.name}:{flow_name}")
     if pipeline is None:
         raise ValueError(msg)
     urd, input_json = parse_inputs(input_json=input_json)
