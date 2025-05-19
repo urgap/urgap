@@ -55,9 +55,11 @@ def describe_last_runs(unode: str, last: int = 10) -> list[tuple]:
 @click.command()
 @click.option("--storage_base_uri", "-s")
 @click.option("--object_name", "-o")
+@click.option("--ucfs", "-u")
 def describe_ucfs_click(
     storage_base_uri: str | None = None,
     object_name: str | None = None,
+    ucfs: str | None = None,
 ) -> None:
     rows = describe_ucfs(
     )
@@ -67,6 +69,7 @@ def describe_ucfs_click(
 def describe_ucfs(
     storage_base_uri: str | None = None,
     object_name: str | None = None,
+    ucfs: str | None = None,
     """Retrieve UMeta information for ucfs storage location."""
     return um.io.get_ucfs_object_name_info(
     )

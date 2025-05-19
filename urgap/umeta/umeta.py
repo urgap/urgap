@@ -122,6 +122,7 @@ class UMeta:
         self,
         storage_base_uri: str | None = None,
         object_name: str | None = None,
+        ucfs: str | None = None,
     ) -> list[dict]:
         self.io.get_ucfs_object_name_info(
         )

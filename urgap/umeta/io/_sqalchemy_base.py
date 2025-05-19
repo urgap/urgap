@@ -53,6 +53,7 @@ class ExecutionConfigurations(Base):
 class InputUFiles(Base):
     __tablename__ = "umeta_input_ufiles"
 
+    input_ucfs: Mapped[str] = mapped_column(primary_key=True)
 
     executions_as_input: Mapped[list[ExecutionConfigurations]] = relationship(
     )
@@ -61,6 +62,8 @@ class InputUFiles(Base):
 class OutputUFiles(Base):
     __tablename__ = "umeta_output_ufiles"
 
+    output_ucfs: Mapped[str] = mapped_column(
+    )
 
     executions_as_output: Mapped[list[ExecutionConfigurations]] = relationship(
     )
@@ -70,6 +73,7 @@ class ExecutionInputLink(Base):
     __tablename__ = "execution_input_link"
 
     )
+    input_ucfs: Mapped[str] = mapped_column(
     )
 
 
@@ -77,6 +81,7 @@ class ExecutionOutputLink(Base):
     __tablename__ = "execution_output_link"
 
     )
+    output_ucfs: Mapped[str] = mapped_column(
     )
 
 
@@ -132,6 +137,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             if not results:
                 raise ValueError(msg)
             results = results[0]
+            input_ufile_list = [r.input_ucfs for r in results.input_ufiles]
+            output_ufile_list = [r.output_ucfs for r in results.output_ufiles]
         return {
             "parameters": results.run_parameters,
             "command": results.command,
@@ -159,7 +166,9 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             stmt = (
                 .join(
                     OutputUFiles,
+                    ExecutionOutputLink.output_ucfs == OutputUFiles.output_ucfs,
                 )
+                .filter(OutputUFiles.output_ucfs == ucfs)
             )
             return session.execute(stmt).scalars().all()
 
@@ -172,7 +181,9 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             stmt = (
                 .join(
                     InputUFiles,
+                    ExecutionInputLink.input_ucfs == InputUFiles.input_ucfs,
                 )
+                .filter(InputUFiles.input_ucfs == ucfs)
             )
             return session.execute(stmt).scalars().all()
 
@@ -256,6 +267,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         for ifile in utrace.input_files:
             obj = session.get(InputUFiles, ifile.ucfs)
             if not obj:
+                obj = InputUFiles(input_ucfs=ifile.ucfs)
                 session.add(obj)
             input_objs.append(obj)
         output_objs = []
@@ -264,6 +276,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 continue
             obj = session.get(OutputUFiles, ofile.ucfs)
             if not obj:
+                obj = OutputUFiles(output_ucfs=ofile.ucfs)
                 session.add(obj)
             output_objs.append(obj)
         return input_objs, output_objs
@@ -271,6 +284,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         with Session(self.db) as session:
             obj2 = UcfsStorageLocation(
                 storage_base_uri=ufile.storage_base_uri,
+                ucfs=ufile.ucfs,
             )
             try:
                 session.add(obj2)
@@ -295,9 +309,14 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         self,
         storage_base_uri: str | None = None,
         object_name: str | None = None,
+        ucfs: str | None = None,
     ) -> list[dict]:
+        stmt = select(UcfsStorageLocation.storage_base_uri, UcfsStorageLocation.ucfs)
         if storage_base_uri is not None:
             stmt = stmt.where(UcfsStorageLocation.storage_base_uri == storage_base_uri)
+        if ucfs is not None:
+            stmt = stmt.where(UcfsStorageLocation.ucfs == ucfs)
         if object_name is not None:
+            stmt = stmt.where(UcfsStorageLocation.ucfs.like(f"{object_name}%"))
         with Session(self.db) as session:
             return session.execute(stmt).mappings().all()
