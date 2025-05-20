@@ -52,6 +52,7 @@ class UFile:
             self._tags = self.io.get_remote_tags()
             if self._tags is None:
                 self._tags = {}
+
         return self._tags
 
     @property

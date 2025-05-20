@@ -48,6 +48,7 @@ def mock_omiq_api():
 
 
 @pytest.fixture
+    )
 
 
     assert io_omiq_instance._api is not None

@@ -207,6 +207,7 @@ class IOOmiq(UIOBase):
 
     def _download_file_from_artifacts(self) -> None:
         """Download file from workflow artifacts to the local scratch path."""
+        task_id = self._get_task_id_for_artifact(self.uuri.fragment)
         self._api.download_artifact(
             task_id=task_id,
             filepath=self._scratch_path,

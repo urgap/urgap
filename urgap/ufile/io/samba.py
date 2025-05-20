@@ -198,6 +198,7 @@ class IOSMB(UIOBase):
 
         Iterates over all levels and creates directories if they do not exist.
         """
+        fragment_dirs = self.uuri.fragment.split("/")[:-1]
 
         for level, _directory in enumerate(fragment_dirs):
             path_to_create = "/".join(fragment_dirs[: level + 1])
