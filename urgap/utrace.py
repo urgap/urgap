@@ -142,8 +142,10 @@ class UTrace:
 
     @property
     def output_base_storage_uri(self) -> str:
+        """Get the output base storage UUri.
 
         Returns:
+            Output base storage UUri as a string.
         """
         if self._output_base_storage_uri is None:
             self._output_base_storage_uri = self._set_output_storage_uri()
@@ -348,12 +350,14 @@ class UTrace:
         n: int | None = None,
         max_n: str | int = "N",
     ) -> str | None:
+        """Compute the UUri for a new extended UFile in output UFiles.
 
         Args:
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
 
         Returns:
+            New UUri as a string or None if not creatable.
         """
         safe_to_create = True
         if n is None:

@@ -24,6 +24,7 @@ def upload_folder_click(
     Example:
         uctl upload folder ~/Download gcs://gcp-project-name/gcs-container-name subfolder/in/bucket
 
+    This will create UFiles with UUris like:
     """
     upload_folder(
         folder=folder,

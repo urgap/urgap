@@ -40,6 +40,7 @@ class IOPython(UIOBase):
         return tags
 
     def get_object(self) -> Path:
+        """Get the referenced UUri as a local Path.
 
         Returns:
             Path object of the file.

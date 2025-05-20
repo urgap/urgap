@@ -84,8 +84,10 @@ class IOSMB(UIOBase):
         return tags
 
     def get_object(self) -> str:
+        """Get referenced UUri.
 
         Returns:
+            Remote UUri (for SMB, handled by the internal API).
         """
         return self.remote_path
 

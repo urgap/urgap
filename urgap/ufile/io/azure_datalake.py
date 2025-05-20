@@ -95,6 +95,7 @@ class IOAzureDL(UIOBase):
         return None
 
     def get_object(self) -> str | None:
+        """Get DataLake file path for referenced UUri if file exists.
 
         Returns:
             File path on the share, or None if file does not exist.

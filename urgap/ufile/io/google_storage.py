@@ -21,6 +21,7 @@ class IOGoogleCloudStorage(UIOBase):
         """Create new UIO class for processing Google Cloud Storage.
 
         Args:
+            **kwargs: Passed to UIOBase. Must contain UUri and relevant parsed attributes.
         """
         super().__init__(**kwargs)
 
@@ -29,6 +30,7 @@ class IOGoogleCloudStorage(UIOBase):
         """Get remote file path.
 
         Returns:
+            Always None for Google Cloud Storage, as the full UUri is managed by GCS.
         """
         return None
 

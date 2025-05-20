@@ -393,6 +393,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         """Retrieve UMeta information for UCFS storage location.
 
         Args:
+            storage_base_uri: Optional storage base UUri.
             object_name: Optional object name prefix.
             ucfs: Optional UCFS string.
 

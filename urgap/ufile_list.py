@@ -487,13 +487,17 @@ class UFileList(UserList):
         return len(self) - 1
 
     def add_ufile(self, uri: str) -> None:
+        """Append a UFile to the list using a UUri.
 
         Args:
+            uri: UUri to use for creating the UFile.
         """
 
     def get_storage_base_uris(self) -> list:
+        """Return storage base UUris for each UFile in the list.
 
         Returns:
+            List of storage base UUris.
         """
         return [x.as_storage_base_uri() for x in self]
 
@@ -547,6 +551,7 @@ class UFileList(UserList):
         uri_list: list[str],
         uftype: str | None = None,
     ) -> UFileList:
+        """Create a UFileList from a list of UUris.
 
 
         """
@@ -595,8 +600,10 @@ class UFileList(UserList):
         )
 
     def as_uri_list(self) -> list:
+        """Get a list of UUris for the UFiles in this list.
 
         Returns:
+            List of UUris.
         """
         return [u.as_uri() for u in self]
 
@@ -613,6 +620,7 @@ class UFileList(UserList):
             source_object_names: Set of intended object name stems.
             prefix: Prefix for new names.
             suffix: Suffix for new names.
+            storage_base_uri: Optional. New base UUri for renamed files.
 
         Returns:
             UFileList with simplified names.

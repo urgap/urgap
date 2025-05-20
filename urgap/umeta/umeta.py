@@ -35,6 +35,7 @@ class UMeta:
 
         Args:
             wid: Workflow ID (WID) to load the UTrace for.
+            storage_base_uri: Storage base UUri for referenced UFiles.
 
         Returns:
             Loaded UTrace object.
@@ -171,6 +172,7 @@ class UMeta:
         """Retrieve UMeta information for a given ucfs storage location.
 
         Args:
+            storage_base_uri: Storage base UUri.
             object_name: Object name.
             ucfs: UCFS string.
 

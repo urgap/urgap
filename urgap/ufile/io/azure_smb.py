@@ -33,6 +33,8 @@ class IOAzureSMB(UIOBase):
         Args:
 
         Notes:
+            Uses SAS token to access. Expiration can be set by &sas_expiration_in_h in the UUri query.
+            Example UUri:
                 az-smb://<account>.file.core.windows.net/<share>/sub_dir_path#<object>
         """
         super().__init__(**kwargs)
@@ -74,6 +76,7 @@ class IOAzureSMB(UIOBase):
         Returns:
         """
 
+        """Get the SMB file path for the referenced UUri.
 
         Returns:
             Path of the file on the share.

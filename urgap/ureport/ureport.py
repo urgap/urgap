@@ -29,6 +29,7 @@ class UReport:
             ufile: UFile associated with report.
             ucfs: Object associated with report.
             wid: Workflow ID.
+            storage_base_uri: Storage base UUri, where to find the referenced UFiles.
         """
         self._umeta = None
         self._os = []
@@ -66,6 +67,7 @@ class UReport:
 
         Args:
             wid: Workflow ID.
+            storage_base_uri: Optionally override storage base UUri.
 
         Returns:
             UTrace object.
@@ -138,6 +140,7 @@ UMeta:
         Args:
             wid: Workflow ID.
             graph: Existing graph object.
+            storage_base_uri: Optionally override storage base UUri.
 
         Returns:
             Updated graph object.

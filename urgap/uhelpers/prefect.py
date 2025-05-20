@@ -73,10 +73,13 @@ def flatten_no_strings(iterable: Iterable) -> Generator:
 def retrieve_processed_uris(
     uris: list[str] | str,
 ) -> list:
+    """Resolve/flatten UUris for further processing.
 
     Args:
+        uris: List of UUri strings or a single UUri string.
 
     Returns:
+        List of resolved UUri strings.
     """
     if isinstance(uris, str) or (uris is None):
         uris = [uris]
@@ -103,12 +106,14 @@ def run_unode(
     """Run a UNode as a Prefect task.
 
     Args:
+        uris: Input UUris (list or single string).
         urd: URunDict configuration.
         unode: UNode name.
         ucredentials: List of credential dicts.
         kwargs: Passed through to UNode.run.
 
     Returns:
+        List of output UUris, or [None] if incomplete.
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
@@ -130,7 +135,9 @@ def simplify_output_names(
     """Copy and rename UFiles to user-friendly output names.
 
     Args:
+        uris: Input UUris (list or single string).
         ucredentials: Credentials dict.
+        sources: List of source file UUris.
         prefix: Prefix for new file names.
         suffix: Suffix for new file names.
         storage_base_uri: If set, output files will be rebased to this storage.
@@ -163,9 +170,11 @@ def filter_by_uftype(
     """Filter a UFileList to keep only specified uftypes.
 
     Args:
+        uris: Input UUris (list or single string).
         uftype: List of uftypes to keep.
 
     Returns:
+        List of filtered UUris, or None if incomplete input.
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
@@ -182,9 +191,11 @@ def group_by_tag(
     """Group UFileList by a tag.
 
     Args:
+        uris: Input UUris (list or single string).
         tag: Tag to group by.
 
     Returns:
+        Dict of tag values to lists of UUris, or None if incomplete input.
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
@@ -195,8 +206,11 @@ def group_by_tag(
 
 @task(name="Rebase", retries=3, retry_delay_seconds=20)
 def rebase(
+    """Rebase UFiles to a new storage base UUri.
 
     Args:
+        uris: List of UUris.
+        storage_base_uri: New storage base UUri.
         ucredentials: List of credentials.
 
     Returns:

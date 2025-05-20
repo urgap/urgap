@@ -29,6 +29,7 @@ class UFile:
         """Create a new UFile instance.
 
         Args:
+            uri: Full UUri to the file.
         """
         self._local_copy = None
         self._io = None
@@ -45,6 +46,7 @@ class UFile:
         """Get tags associated with this UFile.
 
         Returns:
+            A dictionary of tags for this UFile, merged from remote and UUri query if present.
         """
         if self._tags is None:
             self._tags = self.io.get_remote_tags()
@@ -106,6 +108,7 @@ class UFile:
     def __repr__(self) -> str:
 
         Returns:
+            UUri as a string.
         """
         return self.as_uri()
 
@@ -134,6 +137,7 @@ class UFile:
 
     @property
     def object_name(self) -> str:
+        """The object name portion from the UUri.
 
         Returns:
             The object name.
@@ -222,6 +226,7 @@ class UFile:
 
         Args:
             path_object: Path object for the file.
+            number_of_parents: How many parent directories to include in the UUri.
             query: Optional query string for tags.
 
         Returns:
@@ -240,6 +245,7 @@ class UFile:
         fragment: str | None = None,
         query: str | None = None,
     ) -> str:
+        """Get a string UUri representation of this file, optionally overriding UUri components.
 
         Args:
             scheme: Override the scheme.
@@ -249,6 +255,7 @@ class UFile:
             query: Override the query string.
 
         Returns:
+            The UUri as a string.
         """
         unparse_args = []
         if scheme is None:
@@ -274,16 +281,20 @@ class UFile:
 
     @property
     def storage_base_uri(self) -> str:
+        """The storage base UUri, omitting query and fragment.
 
         Returns:
+            The storage base UUri as a string.
         """
         return self.as_storage_base_uri()
 
     def as_storage_base_uri(self) -> str:
 
         Returns:
+            The storage base UUri as a string.
         """
 
+        """Initialize the IO backend for this file, based on the UUri scheme.
 
         Returns:
             The IO class instance for this file.
@@ -321,8 +332,10 @@ class UFile:
 
     def rebase(
     ) -> None:
+        """Change this UFile's UUri and (optionally) upload it to new storage.
 
         Args:
+            uri: New UUri string.
             upload: If True, upload the file after rebasing.
             **kwargs: Passed to upload().
         """

@@ -21,6 +21,7 @@ def run_unode_in_loop(payload: dict, name: str) -> list:
         payload: The JSON payload to configure the node execution.
 
     Returns:
+        List of UFile UUris for output files.
     """
     uf = payload["ufiles"]
     ur["unode_parameters"]["remote_url"] = None

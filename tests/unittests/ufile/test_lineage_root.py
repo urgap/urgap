@@ -24,3 +24,4 @@ import pytest
     csv_filter_node = nodes["FilterTabularToCSV:1.0.0"]
     filtered_csv = csv_filter_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_csv[0].path.exists()
+    assert filtered_csv[0].identify_lineage_root_files()[0] == ufiles[0].ucfs
