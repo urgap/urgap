@@ -15,6 +15,10 @@ P = ParamSpec("P")
 
 def make_expiration_safe_request(func: Callable) -> requests.Response:
 
+    If a request returns status code 403 (forbidden), the function will
+    automatically re-authenticate and try again once.
+    """
+
     def request_func_wrapper(
     ) -> requests.Response:
         response = func(self, *args, **kwargs)
@@ -27,10 +31,16 @@ def make_expiration_safe_request(func: Callable) -> requests.Response:
 
 
 class IOMyLabData(UIOBase):
+    """UIO class interface for mylabdata.
+
+    Provides interaction with the mylabdata REST API for file upload, download, and metadata operations.
+    """
 
     def __init__(self, **kwargs: P.kwargs) -> None:
+        """Create a new UIO class for processing mylabdata.
 
         Args:
+            **kwargs: Passed to UIOBase, contains uri and any configuration keys.
         """
         super().__init__(**kwargs)
         self._api_token = None
@@ -41,6 +51,7 @@ class IOMyLabData(UIOBase):
         """Get remote file path.
 
         Returns:
+            None (remote path is handled via REST endpoints).
         """
         return None
 
@@ -49,10 +60,16 @@ class IOMyLabData(UIOBase):
         """Get remote file tag path.
 
         Returns:
+            None (remote tag path is handled via REST endpoints).
         """
         return None
 
     def _get_token_bearer(self) -> None:
+        """Retrieve and cache the API access token ("bearer" token).
+
+        Raises:
+            ConnectionError: If the login attempt fails.
+        """
         files_cred = {
         }
         response = requests.post(
@@ -69,8 +86,10 @@ class IOMyLabData(UIOBase):
             raise ConnectionError(msg)
 
     def get_remote_tags(self) -> dict | None:
+        """Get remote tags associated with the referenced file.
 
         Returns:
+            A dictionary of tags, or None if tags could not be retrieved.
         """
         tags = None
         response = requests.get(
@@ -86,6 +105,19 @@ class IOMyLabData(UIOBase):
 
     @make_expiration_safe_request
     def upload(self, tags: dict | None = None) -> requests.Response:
+        """Upload the local scratch file to the remote location.
+
+        If tags are provided, they are also uploaded as a .tag file.
+
+        Args:
+            tags: Optional dictionary of tags/metadata to upload alongside the file.
+
+        Returns:
+            The HTTP response from the file upload request.
+
+        Raises:
+            ValueError: If upload fails (not HTTP 200 or 409).
+        """
             response = requests.post(
                 url=url,
                 verify=self._api_cert,
@@ -119,6 +151,13 @@ class IOMyLabData(UIOBase):
 
     @make_expiration_safe_request
     def download(self) -> requests.Response:
+        """Download the file from remote storage to the local scratch path.
+
+        Writes the file content to the local disk. Also attempts to retrieve tags.
+
+        Returns:
+            The HTTP response from the file download request.
+        """
         response = requests.get(
             url=url,
             verify=self._api_cert,
@@ -136,10 +175,14 @@ class IOMyLabData(UIOBase):
         pattern: str | None = None,
         limit: int = 1000,
     ) -> list:
+        """Get objects in the folder/container, optionally filtered by a regex pattern.
 
         Args:
+            pattern: Regex pattern for filtering object names.
+            limit: Maximum number of files to request in one query.
 
         Returns:
+            List of object names matching the filter.
         """
         equip_task_id_fragment.append(limit)
         query = urlencode(
@@ -170,6 +213,8 @@ class IOMyLabData(UIOBase):
         return container_objects
 
     def remote_object_exists(self) -> bool:
+        """Check if the object exists in the container.
 
         Returns:
+            True if the object exists, False otherwise.
         """

@@ -21,11 +21,18 @@ P = ParamSpec("P")
 
 
 class IOAzureDL(UIOBase):
+    """UIO class interface for Azure DataLake file objects.
+
+    Handles connections, uploads, downloads, metadata retrieval and listing for DataLake files.
+    """
 
     def __init__(self, **kwargs: P.kwargs) -> None:
+        """Initialize UIO class for Azure DataLake file storage.
 
         Args:
 
+        Example:
+            az-dl://<account>.dfs.core.windows.net/<filesystem>/sub_dir_path#<object>
         """
         super().__init__(**kwargs)
         self.client_keys = ["tenant-id", "client-id"]
@@ -42,6 +49,7 @@ class IOAzureDL(UIOBase):
             x["name"] for x in self.datalake_service_client.list_file_systems()
         ]
             msg = (
+                f". Available file systems are: {sorted(available_file_systems)}"
             )
             raise OSError(msg)
 
@@ -59,22 +67,28 @@ class IOAzureDL(UIOBase):
 
     @property
     def remote_path(self) -> str | None:
+        """Remote path is not directly applicable to DataLake files.
 
         Returns:
+            None.
         """
         return None
 
     def get_file_properties(self) -> dict | None:
+        """Get properties associated with the referenced file.
 
         Returns:
+            Dictionary of file properties, or None if file does not exist.
         """
         if self.remote_object_exists() is True:
             return self.file_client.get_file_properties()
         return None
 
     def get_remote_tags(self) -> dict | None:
+        """Get remote tags (metadata) associated with the file.
 
         Returns:
+            Dictionary of file metadata, or None if file does not exist.
         """
         if self.remote_object_exists() is True:
             return self.get_file_properties()["metadata"]
@@ -83,13 +97,16 @@ class IOAzureDL(UIOBase):
     def get_object(self) -> str | None:
 
         Returns:
+            File path on the share, or None if file does not exist.
         """
         if self.remote_object_exists() is True:
             return self.get_file_properties()["name"]
         return None
 
     def download(self) -> None:
+        """Download referenced remote object and write to local scratch path.
 
+        If the file is not found or there are connection errors, a RuntimeError is raised.
         """
         try:
             download = self.file_client.download_file()
@@ -105,6 +122,15 @@ class IOAzureDL(UIOBase):
             raise RuntimeError from e
 
     def upload(self, tags: dict | None = None) -> None:
+        """Upload local object from scratch path to remote DataLake location.
+
+        Args:
+            tags: Optional dictionary of metadata tags to attach to the file.
+                  Client keys are removed from the tag dictionary before upload.
+
+        Raises:
+            RuntimeError if upload fails.
+        """
         file_dir_list = self.file_client.path_name.split("/")[:-1]
         for n in range(len(file_dir_list)):
             tmp_dir_client = self.file_system_client.get_directory_client(
@@ -114,6 +140,8 @@ class IOAzureDL(UIOBase):
         try:
             self.file_client.create_file()
             for keyname in self.client_keys:
+                if tags is not None:
+                    tags.pop(keyname, None)
 
                 self.file_client.upload_data(data, metadata=tags, overwrite=True)
         except (
@@ -130,14 +158,18 @@ class IOAzureDL(UIOBase):
             self.file_client.set_metadata(tags)
 
     def remote_object_exists(self) -> bool:
+        """Check if the referenced remote object exists.
 
         Returns:
+            True if the remote file exists, otherwise False.
         """
         return self.file_client.exists()
 
     def _remote_path_exists(self) -> bool:
+        """Check if the referenced remote directory path exists.
 
         Returns:
+            True if the remote directory exists, otherwise False.
         """
         try:
             self.directory_client.get_directory_properties()
@@ -146,10 +178,13 @@ class IOAzureDL(UIOBase):
         else:
             return True
 
+        """List all objects in the file system (container), optionally filtering by regex pattern.
 
         Args:
+            pattern: Optional regex pattern to filter object names.
 
         Returns:
+            List of object names matching the filter, or all object names if no pattern is provided.
         """
         container_objects = self.file_system_client.get_paths(recursive=False)
         if pattern is not None:

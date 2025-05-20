@@ -18,8 +18,10 @@ INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
 
 
     Args:
+        input_json: Configuration as Python dict.
 
     Returns:
+        Tuple of URunDict and updated input_json.
     """
     default_config_json = input_json.get("default_pipeline_config_json")
     if default_config_json is not None:
@@ -47,10 +49,13 @@ INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
 
 
 def flatten_no_strings(iterable: Iterable) -> Generator:
+    """Flatten a nested iterable, but do not treat strings as iterables.
 
     Args:
+        iterable: Nested iterable (may contain strings).
 
     Returns:
+        Generator yielding flattened items.
     """
     for e in iterable:
         if hasattr(e, "__iter__") and not isinstance(e, str):
@@ -61,6 +66,7 @@ def flatten_no_strings(iterable: Iterable) -> Generator:
 
 
     Args:
+        ucredentials: List of credentials dicts.
     """
 
 
@@ -94,8 +100,13 @@ def run_unode(
     config: dict,
     **kwargs: P.kwargs,
 ) -> list:
+    """Run a UNode as a Prefect task.
 
     Args:
+        urd: URunDict configuration.
+        unode: UNode name.
+        ucredentials: List of credential dicts.
+        kwargs: Passed through to UNode.run.
 
     Returns:
     """
@@ -116,8 +127,13 @@ def simplify_output_names(
     suffix: str,
     storage_base_uri: str,
 ) -> None:
+    """Copy and rename UFiles to user-friendly output names.
 
     Args:
+        ucredentials: Credentials dict.
+        prefix: Prefix for new file names.
+        suffix: Suffix for new file names.
+        storage_base_uri: If set, output files will be rebased to this storage.
 
     Returns:
         None.
@@ -144,8 +160,10 @@ def filter_by_uftype(
     uris: list[str] | str,
     uftype: list,
 ) -> list | None:
+    """Filter a UFileList to keep only specified uftypes.
 
     Args:
+        uftype: List of uftypes to keep.
 
     Returns:
     """
@@ -161,8 +179,10 @@ def group_by_tag(
     uris: list[str] | str,
     tag: str,
 ) -> dict | None:
+    """Group UFileList by a tag.
 
     Args:
+        tag: Tag to group by.
 
     Returns:
     """
@@ -177,6 +197,9 @@ def group_by_tag(
 def rebase(
 
     Args:
+        ucredentials: List of credentials.
+
+    Returns:
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
@@ -186,8 +209,11 @@ def rebase(
 
 @flow(name="Import Flow")
 def import_flow(flow_str: str, flow_name: str, input_json: dict) -> None:
+    """Import and run a Prefect flow from source string.
 
     Args:
+        flow_str: Python source code for the flow.
+        flow_name: Name of the flow in the source code.
     """
     pipeline = None
 

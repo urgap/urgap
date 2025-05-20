@@ -14,10 +14,16 @@ omiq_api_available = True
 
 
 class IOOmiq(UIOBase):
+    """UIO class interface for OMIQ storage and workflows.
+
+    Provides interaction with the OMIQ API for file upload, download, and metadata extraction.
+    """
 
     def __init__(self, **kwargs: P.kwargs) -> None:
+        """Create a new UIO class for processing OMIQ data.
 
         Args:
+            **kwargs: Passed to UIOBase, includes the uri and configuration keys.
         """
         super().__init__(**kwargs)
         self._omiq_user_info = None
@@ -49,21 +55,29 @@ class IOOmiq(UIOBase):
 
     @property
     def remote_path(self) -> str | None:
+        """Get the remote file path.
 
         Returns:
+            None (handled internally by API endpoints).
         """
         return None
 
     @property
     def remote_tag_path(self) -> str | None:
+        """Get the remote file tag path.
 
         Returns:
+            None (handled internally by API endpoints).
         """
         return None
 
     def get_remote_tags(self) -> dict | None:
+        """Get remote tags associated with the referenced file.
+
+        Only a subset of tags are extracted from the OMIQ API.
 
         Returns:
+            Dictionary of OMIQ metadata tags for the referenced file, or None if not found.
         """
         if self._tags is not None:
             return self._tags
@@ -92,6 +106,10 @@ class IOOmiq(UIOBase):
         return self._tags
 
     def download(self) -> None:
+        """Download the file to the scratch path from the remote OMIQ location.
+
+        Downloads files or artifacts as needed, or raises FileNotFoundError if not found.
+        """
         if self._corresponding_fcs_filename is not None:
             self._handle_derived_fcs()
         elif (
@@ -106,10 +124,23 @@ class IOOmiq(UIOBase):
             self._handle_file_not_found()
 
     def upload(self, tags: dict | None = None) -> None:
+        """Upload file to OMIQ dataset.
+
+        Args:
+            tags: Tags to upload with the file. (Currently not implemented.)
+
+        Notes:
+            Tag upload is not yet implemented.
+        """
         if tags is not None:
         self._api.upload_files_to_dataset(self._dataset_id, [self.scratch_path])
 
     def _handle_derived_fcs(self) -> None:
+        """Handle the case where the file is derived from an FCS file.
+
+        Raises:
+            FileNotFoundError: If the FCS file does not exist in the workflow.
+        """
         file_id = self.file_id
         if file_id is None:
             raise FileNotFoundError(msg)
@@ -133,6 +164,11 @@ class IOOmiq(UIOBase):
         )
 
     def _set_query_params(self, file_id: str) -> None:
+        """Set query parameters used for file export from OMIQ.
+
+        Args:
+            file_id: ID of the file to export.
+        """
         self._query_params["filter_usage_mode"] = self._query_params.get(
         )
         self._query_params["dataset_id"] = self._dataset_id
@@ -147,6 +183,7 @@ class IOOmiq(UIOBase):
         self._set_optional_task_and_filter_params()
 
     def _set_optional_task_and_filter_params(self) -> None:
+        """Set optional query parameters for 'from_task_id' and 'filter_ids' if missing."""
         if "from_task_id" not in self._query_params:
             self._set_from_task_id()
         if "filter_ids" not in self._query_params:
@@ -154,12 +191,14 @@ class IOOmiq(UIOBase):
             )
 
     def _set_from_task_id(self) -> None:
+        """Set the 'from_task_id' query parameter based on workflow GatingTask."""
         for task in self._workflow["tasks"]:
             if task.get("type") == "GatingTask":
                 self._query_params["from_task_id"] = int(task["id"])
                 break
 
     def _download_file_from_dataset(self) -> None:
+        """Download the file from the OMIQ dataset to the local scratch path."""
         self._api.download_file(
             dataset_id=self._dataset_id,
             file_id=self.file_id,
@@ -167,16 +206,26 @@ class IOOmiq(UIOBase):
         )
 
     def _download_file_from_artifacts(self) -> None:
+        """Download file from workflow artifacts to the local scratch path."""
         self._api.download_artifact(
             task_id=task_id,
             filepath=self._scratch_path,
         )
 
     def _download_file_from_workflow(self) -> None:
+        """Download a JSON file containing the OMIQ workflow."""
         dict_workflow = {"dataset": self._dataset_id, "workflow": self._workflow}
             json.dump(dict_workflow, gfile, indent=4)
 
     def _get_task_id_for_artifact(self, filename: str) -> str:
+        """Get the task ID associated with the given artifact filename.
+
+        Args:
+            filename: The artifact filename to look up.
+
+        Returns:
+            The associated task ID.
+        """
         return next(
             i["taskId"]
             for i in self._workflow.get("taskArtifacts", [])
@@ -184,6 +233,11 @@ class IOOmiq(UIOBase):
         )
 
     def _handle_file_not_found(self) -> None:
+        """Handle the case when a file is not found in the workflow.
+
+        Raises:
+            FileNotFoundError: If the file or artifact is not found.
+        """
         if self._corresponding_fcs_filename is None:
         else:
             f = self._corresponding_fcs_filename
@@ -191,28 +245,51 @@ class IOOmiq(UIOBase):
 
     @property
     def file_id(self) -> int:
+        """Get the OMIQ file ID for the referenced file.
+
+        Returns:
+            The file ID as an integer.
+        """
         tags = self.get_remote_tags()
         return tags["id"]
 
     @property
     def features(self) -> dict:
+        """Get the OMIQ features metadata for the referenced file.
+
+        Returns:
+            Dictionary of feature metadata.
+        """
         tags = self.get_remote_tags()
         return tags["features"]
 
     def _list_files_in_dataset(self) -> list:
+        """List all files in the associated OMIQ dataset.
+
+        Returns:
+            List of file dictionaries.
+        """
         return self._api.list_files_in_dataset(self._dataset_id)
 
     def _list_artifacts(self) -> list:
+        """List all artifact filenames in the associated workflow.
+
+        Returns:
+            List of artifact file names.
+        """
         return [i["file"] for i in self._workflow.get("taskArtifacts", [])]
 
     def list_container_items(
         self,
         pattern: str | None = None,
     ) -> list:
+        """Get all objects (files and artifacts) in the workflow or dataset.
 
         Args:
+            pattern: Optional regex pattern to filter object names.
 
         Returns:
+            List of object names matching the filter.
         """
         if pattern is not None:
             container_objects = [
@@ -223,8 +300,10 @@ class IOOmiq(UIOBase):
         return container_objects
 
     def remote_object_exists(self) -> bool:
+        """Check if the object exists in the OMIQ container.
 
         Returns:
+            True if the file or artifact exists, False otherwise.
         """
         return (
             or self._corresponding_fcs_filename in self._list_artifacts()

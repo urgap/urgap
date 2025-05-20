@@ -29,6 +29,7 @@ P = ParamSpec("P")
 class UNodeBase:
 
     def __init__(self) -> None:
+        """Initialize the UNodeBase instance."""
         self._exe_path = None
         self.status = None
         self.tmp_files = []
@@ -37,8 +38,10 @@ class UNodeBase:
 
     @property
     def exe_path(self) -> os.PathLike:
+        """Get the path to the executable resource for this node.
 
         Returns:
+            Path to the executable file.
         """
         if self._exe_path is None:
             self._exe_path = self.construct_exe_path()
@@ -46,18 +49,24 @@ class UNodeBase:
 
     @property
     def resource_is_available(self) -> bool:
+        """Check whether the resource is available.
 
         Note:
+            This property does not guarantee that all required 3rd party installations
+            are available. Use self.has_all_required_installations() for a complete check.
 
         Returns:
+            True if the resource is available.
         """
             self.META_INFO["unode_full_identifier"]
         ]["resource_available"]
 
     @property
     def requires_3rd_party_installation(self) -> bool:
+        """Check whether this node requires 3rd party installations.
 
         Returns:
+            True if 3rd party tools are required, otherwise False.
         """
             self.META_INFO["unode_full_identifier"]
         ]["has_3rd_party_requirements"]
@@ -92,6 +101,8 @@ class UNodeBase:
 
     def _run_remotely(
         self,
+
+
         urun_dict["is_remote_run"] = True
         try:
             response = requests.post(
@@ -148,10 +159,14 @@ class UNodeBase:
     def execute_rerun(
         self,
         starting_time: float,
+        """Execute a rerun of the node if required.
 
         Args:
+            utrace: Combination of urun_dict, ufile_list, and unode.meta.
+            starting_time: Time (as float) when execution started.
 
         Returns:
+            The modified UTrace object after rerun.
         """
         utrace.set_start_time()
         flight_sequence = ["preflight", "execute", "postflight"]
@@ -182,7 +197,11 @@ class UNodeBase:
         return utrace
 
     def _pre_checks(self) -> None:
+        """Run pre-checks for UNode dependencies.
 
+        - Check if all required 3rd party tools are installed.
+        - Check if UMETA["input_uftypes"] are set properly.
+        - Initialize self.tmp_files for later deletion.
         """
         if self.has_all_required_installations() is False:
             msg = (
@@ -201,6 +220,11 @@ class UNodeBase:
         self.tmp_files = []
 
     def _construct_exe_path_u2(self) -> Path | None:
+        """Construct the executable path for platform-independent and platform-specific engines.
+
+        Returns:
+            The constructed Path object to the executable, or None if not found.
+        """
         custom_exe_path = self.META_INFO.get("exe_path", None)
         if self.META_INFO["platform_independent"] is True:
             base_path = (
@@ -245,8 +269,10 @@ class UNodeBase:
         return None
 
     def construct_exe_path(self) -> os.PathLike | None:
+        """Construct the path to the engine executable based on META_INFO.
 
         Returns:
+            Path to the engine executable file, or None if not found.
         """
         if self.META_INFO["unode_version"] is None:
             return self._construct_exe_path_u2()
@@ -255,6 +281,13 @@ class UNodeBase:
         return self._construct_exe_path_u3()
 
     def _construct_latest_exe_path(self) -> Path:
+        """Construct the path for the latest version of the engine.
+
+        Returns:
+            Path object to the latest engine executable.
+
+        Raises:
+        """
         if self.latest_exe_paths is None:
             msg = (
                 "If latest is used, exp_path must be set in "
@@ -268,6 +301,14 @@ class UNodeBase:
         return Path(exe_path)
 
     def _construct_exe_path_u3(self) -> os.PathLike | None:
+        """Construct the path to the executable for a specific tagged version.
+
+        Returns:
+            Path to the executable for the specified version, or None if not found.
+
+        Raises:
+            RuntimeError: If version or exe_path information is missing.
+        """
         tagged_exe_path = None
         version_info = None
         for v in self.META_INFO["versions"]:
@@ -275,6 +316,7 @@ class UNodeBase:
                 version_info = v
                 break
         if version_info is None:
+            msg = f"{self.META_INFO['unode_version']} is not specified in UNode"
             raise RuntimeError(msg)
         if version_info.get("exe_path", None) is None:
             msg = (
@@ -295,8 +337,10 @@ class UNodeBase:
 
     @property
     def resource_subfolder(self) -> str:
+        """Get the resource subfolder for this node.
 
         Returns:
+            Resource subfolder as a string.
         """
         if self.META_INFO.get("platform_independent", True) is True:
             subfolder = "platform_independent/arc_independent"
@@ -305,11 +349,16 @@ class UNodeBase:
         return subfolder
 
     def get_comp_arch(self) -> str:
+        """Get the computer architecture string.
 
         Note:
             platform.machine() outcomes on different platforms:
+              - Darwin returns either arm64 or x86_64.
+              - Linux returns either aarch64 or x86_64.
+              - Windows should always be x86_64.
 
         Returns:
+            Computer architecture, either "arm64" or "x86_64".
         """
         comp_platform = sys.platform
         comp_arch = platform.machine()
@@ -323,10 +372,13 @@ class UNodeBase:
         self,
         engine_exe_list: list,
     ) -> bool | None:
+        """Install the given resource package and set correct permissions on executables.
 
         Args:
+            engine_exe_list: List of expected executable names.
 
         Returns:
+            True if successfully installed, otherwise None.
         """
         try:
             new_ufiles = remote_ufile.uncompress()
@@ -342,10 +394,13 @@ class UNodeBase:
         return True
 
     def check_if_all_exe_exist(self, engine_exe_list: list) -> bool:
+        """Check if all required executables exist for the current node.
 
         Args:
+            engine_exe_list: List of executable filenames.
 
         Returns:
+            True if all executables are available, otherwise False.
         """
         missing_exe = []
         if "exe_path" in self.META_INFO:
@@ -365,8 +420,10 @@ class UNodeBase:
         return True
 
     def delete_tmp_files(self) -> None:
+        """Delete temporary files created during node execution.
 
         Note:
+            Files with paths containing ".", "/", "./", or "../" will not be deleted for safety.
         """
         msg = f"Removing tmp_files ... {self.tmp_files}"
         self.tmp_files = [Path(p) for p in self.tmp_files]
@@ -385,20 +442,25 @@ class UNodeBase:
         self.tmp_files = []
 
     def has_all_required_installations(self) -> bool:
+        """Check if all required 3rd party installations are present for this node.
 
         Returns:
+            True if all required 3rd party installations are available, otherwise False.
         """
             self.META_INFO["unode_full_identifier"]
         ]["requirements_available"]
 
+        """Remove the output folder for the specified output_file.
 
         Args:
+            output_file: UFile for which the output folder should be removed.
         """
         output_file.remove_remote_object()
 
         """Remove umeta data for a given output_file.
 
         Args:
+            output_file: UFile for which umeta should be removed.
         """
         msg = f"Removing {output_file}"
 
@@ -406,16 +468,20 @@ class UNodeBase:
 
     @property
     def required_3rd_party_installation(self) -> dict | None:
+        """Get required 3rd party installations for this node.
 
         Returns:
+            Dictionary with 3rd party tool and version, or None if not required.
         """
         return self.META_INFO.get("requires", None)
 
     @classmethod
+        """Generate basic node-specific data visualization structure.
 
         Args:
 
         Returns:
+            List with visualization data (tables, figures, etc) describing the node.
         """
         data = [
             {
@@ -455,9 +521,13 @@ class UNodeBase:
 
 
         Args:
+            utrace: Combination of urun_dict, ufile_list, and unode.meta.
 
         Returns:
+            The updated UTrace after execution.
 
+        Raises:
+            KeyError: If no command_list is found in urun_dict.
         """
         if "command_list" not in utrace.urun_dict.unode_rinfo:
             msg = (
@@ -492,6 +562,18 @@ class UNodeBase:
         self,
         proc: subprocess.CompletedProcess,
         execute_answer: list,
+        """Check the outcome of the executed process and handle output.
+
+        Args:
+            execute_answer: List to store stdout lines.
+            utrace: The UTrace for this execution.
+
+        Returns:
+            Tuple of the updated UTrace and a summary message.
+
+        Raises:
+            RuntimeError: If process failed and crash_on_resource_crash is True.
+        """
         msg = ""
         if (proc is not None) and (proc.stdout is not None):
             for line in proc.stdout.split("\n"):

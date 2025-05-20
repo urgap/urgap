@@ -7,9 +7,15 @@ import logging
 
 
 
+    parses them, and provides helpers to access the elements as a dict.
+    It also extracts tags from queries and can handle different storage backends.
+    """
+
         self._user = None
         self._password = None
     def _get_credentials(self) -> None:
+
+        """
         if self.scheme not in ("file", "https"):
             try:
                 )

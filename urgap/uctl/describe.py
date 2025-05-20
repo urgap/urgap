@@ -10,9 +10,14 @@ import click
 def describe_wid_click(wid: str) -> None:
     """Retrieve UMeta information for a given WID (click wrapper).
 
+    Note: Only works with mongo; requires umeta.UMeta.find_wid_members() to be implemented.
     """
 
 
+    """Retrieve UMeta information for a given WID.
+
+    Returns a UReport or a not-found message.
+    """
     try:
     except ValueError:
         return f"No History found for given wid: {wid}"
@@ -21,9 +26,14 @@ def describe_wid_click(wid: str) -> None:
 @click.command()
 @click.argument("object_name")
 def describe_object_name_click(object_name: str) -> None:
+    """Retrieve UMeta information for a given object name (click wrapper)."""
 
 
 def describe_object_name(object_name: str) -> dict:
+    """Retrieve UMeta information for a given object name.
+
+    Returns a dictionary with producer and consumers.
+    """
     return {
     }
 
@@ -31,6 +41,9 @@ def describe_object_name(object_name: str) -> dict:
 @click.command()
 
 
+
+    Returns a UReport or a not-found message.
+    """
     try:
     except ValueError:
 
@@ -49,6 +62,10 @@ def describe_last_runs_click(unode: str, last: int = 10) -> None:
 
 
 def describe_last_runs(unode: str, last: int = 10) -> list[tuple]:
+    """Retrieve last n processed files for a given unode.
+
+    Returns a list of (file, ...) tuples.
+    """
     return um.find_last_processed_files(unode, last=last)
 
 
@@ -61,6 +78,7 @@ def describe_ucfs_click(
     object_name: str | None = None,
     ucfs: str | None = None,
 ) -> None:
+    """Retrieve UMeta information for a ucfs storage location with given options."""
     rows = describe_ucfs(
     )
     log_table(rows=rows)
@@ -76,6 +94,7 @@ def describe_ucfs(
 
 
 def log_table(rows: list[dict] | None = None) -> None:
+    """Format output as a table for UCFS storage location.
 
     Args:
         rows: List of UMeta entries.

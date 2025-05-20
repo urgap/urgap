@@ -12,6 +12,10 @@ P = ParamSpec("P")
 
 
 class IOGoogleCloudStorage(UIOBase):
+    """UIO class interface for Google Cloud Storage.
+
+    Provides interaction and file operations for Google Cloud Storage buckets and objects.
+    """
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing Google Cloud Storage.
@@ -33,6 +37,7 @@ class IOGoogleCloudStorage(UIOBase):
         """Get remote file tag path.
 
         Returns:
+            Always None for Google Cloud Storage, as tags are stored as blob metadata.
         """
         return None
 
@@ -40,6 +45,7 @@ class IOGoogleCloudStorage(UIOBase):
         """Get remote tags associated with referenced file.
 
         Returns:
+            Dictionary of metadata tags if the blob exists, otherwise None.
         """
         if blob is None:
             return None
@@ -49,6 +55,7 @@ class IOGoogleCloudStorage(UIOBase):
         """Upload scratch file to remote location with associated tags.
 
         Args:
+            tags: Optional dictionary of metadata to set for the blob.
         """
         if tags is None:
         else:
@@ -56,6 +63,10 @@ class IOGoogleCloudStorage(UIOBase):
         self.blob.upload_from_filename(filename=self.scratch_path)
 
     def download(self) -> None:
+        """Download file to scratch path from remote location.
+
+        Logs a message if remote does not exist.
+        """
         download_object = False
         if self.scratch_path.exists():
             )
@@ -74,15 +85,20 @@ class IOGoogleCloudStorage(UIOBase):
             else:
                 msg = f"{self.blob.name} does not exist remotely. Skipping download."
 
+        """Get objects in folder/'container', optionally filtered by a regex pattern.
 
         Args:
+            pattern: Optional regex pattern for filtering blob names.
 
         Returns:
+            List of blob names (strings) matching the pattern, or all if pattern is None.
         """
         return container_objects
 
     def remote_object_exists(self) -> bool:
+        """Check if object exists in the container.
 
         Returns:
+            True if the blob exists, otherwise False.
         """
         return self.blob.exists()

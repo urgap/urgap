@@ -4,10 +4,19 @@ import importlib
 
 
 class UFileIOManager:
+    """Manager for UFile IO backends.
 
+    The UFileIOManager is responsible for detecting and managing which IO classes
+    are available for UFile objects, mapping storage schemes to their respective implementations.
     """
 
     def __init__(self) -> None:
+        """Initialize the UFile IO Manager.
+
+        This will attempt to import all supported IO backend modules and store
+        available ones in self.available_io_classes, mapping storage schemes to
+        their implementation classes.
+        """
         super().__init__()
 
         self.available_io_classes = {}

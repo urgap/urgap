@@ -20,8 +20,11 @@ P = ParamSpec("P")
 def parse_inputs(
     argv: list,
     save_main_session: bool,
+    """Parse command line inputs and return pipeline options, URunDict, and input json.
 
     Args:
+        argv: Command line arguments.
+        save_main_session: Whether to save main session for Beam (required for some runners).
 
     Returns:
     """
@@ -82,10 +85,13 @@ def parse_inputs(
 
 
 def flatten_to_list(pcol_input: list) -> list:
+    """Flatten a list of keyed UFile groups into a single grouped list.
 
     Args:
+        pcol_input: List of tuples (key, list_of_ufiles).
 
     Returns:
+        List: [group_key, combined_ufiles]
     """
     ufiles = []
     for i in pcol_input:
@@ -103,6 +109,8 @@ def flatten_to_list(pcol_input: list) -> list:
     ) -> None:
 
         Args:
+            ucredentials: List of credentials to add before execution.
+            kwargs: Extra kwargs to be passed to unode.run.
         """
         self.kwargs = kwargs
         self.ready = False
@@ -125,10 +133,12 @@ def flatten_to_list(pcol_input: list) -> list:
         self,
         unode: str | None = None,
     ) -> bool:
+        """Check validity of unode and urd input.
 
         Args:
 
         Returns:
+            True if input is valid, else False.
         """
         input_is_ok = True
             input_is_ok = False
@@ -138,22 +148,29 @@ def flatten_to_list(pcol_input: list) -> list:
         return input_is_ok
 
     def setup(self) -> None:
+        """Set up DoFn (e.g., open DB connections)."""
 
     def start_bundle(self) -> None:
         """Execute before a bundle starts."""
 
+    def process(self, utuple: tuple) -> list[tuple]:
 
         Args:
+            utuple: (group_key, ufile_uris) as a tuple, where ufile_uris can be nested.
 
         Yields:
+            Tuple: (input_group_key, list of output UFile .as_uri() strings).
         """
         if len(utuple) != 2:
             msg = (
+                f"Cannot process {utuple} as input format must be a tuple "
+                "in the form of (groupByKey, list of ufile.as_uri strings)"
             )
         input_group_key, elements = utuple
 
         def _unpack_list(nested_list: list) -> Generator:
             for x in nested_list:
+                if isinstance(x, (tuple, list)):
                     yield from _unpack_list(x)
                 else:
                     yield x
@@ -168,17 +185,23 @@ def flatten_to_list(pcol_input: list) -> list:
             yield input_group_key, [u.as_uri() for u in output_ufiles]
 
     def finish_bundle(self) -> None:
+        """Execute after a bundle has finished."""
 
     def teardown(self) -> None:
+        """Teardown DoFn (e.g., close DB connection)."""
 
 
 def generate_pyvis_network(pipeline: beam) -> Network:
+    """Generate pyvis Network visualization from a Beam pipeline.
 
     Note:
+        Requires interactive environment (ipython/jupyter).
 
     Args:
+        pipeline: Apache Beam pipeline.
 
     Returns:
+        pyvis.network.Network object.
     """
     from apache_beam.runners.interactive.display import pipeline_graph
 
@@ -204,10 +227,15 @@ class Concat(beam.DoFn):
         side: list[tuple] | None = None,
         key_aware: bool = False,
     ) -> tuple:
+        """Concatenate side list to element list, optionally requiring keys to match.
 
         Args:
+            element: Tuple (element_key, element_list).
+            side: List of tuples (side_key, side_list) to concat to element_list.
+            key_aware: If True, only concat side_list if side_key matches element_key.
 
         Yields:
+            Tuple of (element_key, concatenated_list).
         """
         element_key, element_list = element
         copy_of_element_list = element_list[:]
@@ -219,6 +247,7 @@ class Concat(beam.DoFn):
 
 
 class FilterByUftype(beam.DoFn):
+    """Filter files from a PColl by the uftype flag."""
 
     def process(
         self,
@@ -226,10 +255,15 @@ class FilterByUftype(beam.DoFn):
         uftypes: list | None = None,
         mode: str = "remove",
     ) -> tuple:
+        """Filter files from PColl by uftype.
 
         Args:
+            element: Tuple (element_key, element_list).
+            uftypes: List of uftypes to filter.
+            mode: "remove" or "keep" those uftypes.
 
         Yields:
+            Tuple of (element_key, filtered list).
         """
         element_key, element_list = element
         if uftypes is not None:
@@ -254,10 +288,16 @@ class OutputRenamer(beam.DoFn):
 
         Files are renamed so that: <working_dir>/<prefix><source_file_stem><suffix>
         where source_file_stem is the file stem of the file in the source_pcol that is
+        also in the element's parents.
 
         Args:
+            element: Tuple (element_key, list_of_ufile_uris).
+            source_pcol: Tuple with source files for mapping names.
+            prefix: String to prepend to new names.
+            suffix: String to append to new names.
 
         Yields:
+            Tuple (element_key, list of renamed UFile .as_uri() strings).
         """
         element_key, element_list = element
         source_object_names = set()

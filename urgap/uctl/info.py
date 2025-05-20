@@ -11,11 +11,13 @@ def info_version_click() -> None:
 
 
 def get_status(condition: bool | None) -> click.style:
+    """Return colored status for 3rd party/executable availability.
 
     Args:
         condition: Availability of 3rd party/executable.
 
     Returns:
+        Colorized click.style based on availability.
     """
     if condition is True:
         return click.style("[ yes ]", fg="bright_green")
@@ -26,6 +28,7 @@ def get_status(condition: bool | None) -> click.style:
 
 @click.command()
 def info_unodes_click() -> None:
+    """Show availability and status of all unodes."""
     placeholder_str = "|      "
     click.secho("Available Unodes", fg="bright_green")
     click.secho("{: >45}".format("name"))
@@ -68,5 +71,6 @@ def info_unodes_click() -> None:
 
 @click.command()
 def info_umeta_click() -> None:
+    """Show UMeta interface statistics."""
     for k, v in interface_stats.items():
         click.echo(f"{k: >50}:{v: >12}")

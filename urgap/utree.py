@@ -24,8 +24,10 @@ class UTreeQuerier:
             parent_node: Parent node of the graph.
 
         Note:
+            Usage examples:
         """
         if namespace is None:
+        if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
         if graph is None:
             graph = nx.DiGraph()
@@ -42,6 +44,16 @@ class UTreeQuerier:
         graph: nx.DiGraph | None = None,
         parent_node: str | None = None,
     ) -> nx.DiGraph:
+        """Walk the namespace recursively to construct the graph.
+
+        Args:
+            namespace: Namespace as a dictionary.
+            graph: NetworkX directed graph.
+            parent_node: Parent node name.
+
+        Returns:
+            The constructed graph.
+        """
         for key, value in namespace.items():
             if (
                 not isinstance(key, types.SimpleNamespace | str)
@@ -69,6 +81,14 @@ class UTreeQuerier:
         return graph
 
     def _connect_general_types(self, graph: nx.DiGraph) -> nx.DiGraph:
+        """Connect general types within the graph.
+
+        Args:
+            graph: NetworkX directed graph.
+
+        Returns:
+            Modified graph with general types connected.
+        """
         general_types = self.get_leafs_from_node(node="any.ANY")
         for leaf, ext in general_types:
             leaf_ext = "." + ext.split(".")[-1]
@@ -79,32 +99,51 @@ class UTreeQuerier:
         return graph
 
     def _connect_tabular_types(self, graph: nx.DiGraph) -> nx.DiGraph:
+        """Connect tabular file types as children of any.TABULAR.
+
+        Args:
+            graph: NetworkX directed graph.
+
+        Returns:
+            Modified graph with tabular types connected.
+        """
         for leaf in ["any.CSV", "any.XLSX", "any.PARQUET"]:
             graph.add_edge("any.TABULAR", leaf)
         return graph
 
     def get_nodes_with_ext(self, ext: str) -> list:
+        """Find nodes with a provided extension.
 
         Args:
+            ext: Extension string to search for (e.g. ".csv").
 
         Returns:
+            List of nodes (uftypes) with the given extension.
         """
         return [x for x, y in self.G.nodes(data=True) if y.get("ext", "").endswith(ext)]
 
     def get_subgraph(self, node: str) -> networkx.classes.digraph.DiGraph:
+        """Get a subgraph containing nodes within 100 steps of a specified node.
 
         Args:
+            node: Node from which to build the subgraph.
 
         Returns:
+            Subgraph centered around the specified node.
         """
         return nx.ego_graph(self.G, node, radius=100)
 
     def get_leafs_from_node(self, node: str) -> list:
+        """Get all leaf nodes (with out-degree 0) connected to a node.
 
         Args:
             node: Name of the query node.
 
         Returns:
+            List of tuples (node_name, extension) for all leafs.
+
+        Raises:
+            KeyError: If the node is missing in the tree.
         """
         try:
             return [
@@ -117,11 +156,16 @@ class UTreeQuerier:
             raise KeyError(msg) from e
 
     def to_root(self, node: str) -> list:
+        """Get the node and all its parents up to the root of the tree.
 
         Args:
             node: Name of the query node.
 
         Returns:
+            List of tuples (node_name, extension) for the node and its parents.
+
+        Raises:
+            KeyError: If the node is missing in the tree.
         """
         try:
             return [

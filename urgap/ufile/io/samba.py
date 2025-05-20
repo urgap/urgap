@@ -16,11 +16,16 @@ P = ParamSpec("P")
 
 
 class IOSMB(UIOBase):
+    """UIO Class interface for SMB (Samba) file objects.
+
+    Handles interaction with remote SMB shares for reading, writing, and listing files and metadata.
+    """
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing smb scheme.
 
         Args:
+                Example uri: smb://10.0.20.165:445/<share, e.g. MyShare>#<path_on_share_to_file>
         """
         super().__init__(**kwargs)
         self.conn_object = SMBConnection(
@@ -33,9 +38,15 @@ class IOSMB(UIOBase):
         self._validate_share_name()
 
     def _validate_share_name(self) -> None:
+        """Check if share name contains forbidden character '/'.
+
+        Raises:
+            ValueError if '/' is present in the share name.
+        """
             raise ValueError(msg)
 
     def __del__(self) -> None:
+        """Close SMB connection on object deletion."""
         self.conn_object.close()
 
     @property
@@ -43,6 +54,7 @@ class IOSMB(UIOBase):
         """Get remote file path.
 
         Returns:
+            None (handled by SMB API).
         """
         return None
 
@@ -51,12 +63,14 @@ class IOSMB(UIOBase):
         """Get remote file tag path.
 
         Returns:
+            String representing the remote tag file path.
         """
 
     def get_remote_tags(self) -> dict | None:
         """Get remote tags associated with referenced file.
 
         Returns:
+            Dictionary of remote tags if found, otherwise None.
         """
         tags = None
         try:
@@ -78,6 +92,10 @@ class IOSMB(UIOBase):
     def download(self) -> None:
         """Download referenced remote object.
 
+        Writes the remote SMB file to the local scratch path.
+
+        Raises:
+            RuntimeError: If a SMBTimeout occurs during file retrieval.
         """
         try:
         except SMBTimeout as e:
@@ -85,6 +103,11 @@ class IOSMB(UIOBase):
             raise RuntimeError from e
 
     def upload(self, tags: dict | None = None) -> None:
+        """Upload files and tags to the SMB share.
+
+        Args:
+            tags: Dictionary of tags to upload as a .tag file with the same name.
+        """
         if not self._remote_path_exists():
             self._create_fragment_directory()
 
@@ -107,8 +130,10 @@ class IOSMB(UIOBase):
             with BytesIO(json_bytes) as bio:
 
     def remote_object_exists(self) -> bool:
+        """Verify if the referenced remote object exists.
 
         Returns:
+            True if remote object exists, False otherwise.
         """
         try:
             return any(f.filename == filename for f in files)
@@ -116,8 +141,10 @@ class IOSMB(UIOBase):
             return False
 
     def _remote_path_exists(self) -> bool:
+        """Verify if the referenced remote path (directory) exists.
 
         Returns:
+            True if remote path exists, False otherwise.
         """
         try:
         except OperationFailure:
@@ -126,6 +153,14 @@ class IOSMB(UIOBase):
             return True
 
     def _get_files_recursively(self, subpath: str | Path) -> list:
+        """Recursively get all files in a subdirectory of the SMB share.
+
+        Args:
+            subpath: Path to the folder on the share.
+
+        Returns:
+            List of file paths (as strings).
+        """
         smb_objects = []
         for obj in listed_objects:
             if obj.filename in (".", ".."):
@@ -141,9 +176,14 @@ class IOSMB(UIOBase):
     ) -> list:
         """Get objects in folder/'container'.
 
+        Can be filtered by a regex pattern.
 
         Args:
+            pattern: Regex pattern for filtering filenames.
+            subpath: Folder path on the SMB share to list objects in.
+
         Returns:
+            List of object names matching the filter.
         """
         if pattern is not None:
             container_objects = [
@@ -152,6 +192,10 @@ class IOSMB(UIOBase):
         return container_objects
 
     def _create_fragment_directory(self) -> None:
+        """Create local folder structure on remote SMB location as needed.
+
+        Iterates over all levels and creates directories if they do not exist.
+        """
 
         for level, _directory in enumerate(fragment_dirs):
             path_to_create = "/".join(fragment_dirs[: level + 1])

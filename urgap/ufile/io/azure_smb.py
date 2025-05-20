@@ -22,17 +22,25 @@ P = ParamSpec("P")
 
 
 class IOAzureSMB(UIOBase):
+    """UIO class interface for SMB file objects in Azure File Storage.
+
+    Handles connecting, reading, writing, and listing objects on Azure file shares using SMB.
+    """
 
     def __init__(self, **kwargs: P.kwargs) -> None:
+        """Create new UIO class for processing Azure file storage SMB scheme.
 
         Args:
 
+        Notes:
+                az-smb://<account>.file.core.windows.net/<share>/sub_dir_path#<object>
         """
         super().__init__(**kwargs)
         self.share_service_client = ShareServiceClient(
         )
         available_shares = [x["name"] for x in self.share_service_client.list_shares()]
             msg = (
+                f" Available shares are: {sorted(available_shares)}"
             )
             raise OSError(msg)
         self.directory_client = self.share_client.get_directory_client(
@@ -46,14 +54,18 @@ class IOAzureSMB(UIOBase):
 
     @property
     def remote_path(self) -> str | None:
+        """Return the remote path of the file if available.
 
         Returns:
+            None (Azure SMB does not provide a direct remote path).
         """
         return None
 
     def get_file_properties(self) -> dict | None:
+        """Get properties associated with the referenced file.
 
         Returns:
+            Dictionary with properties of the file, or None if not found.
         """
         return self.file_client.get_file_properties()
 
@@ -64,10 +76,13 @@ class IOAzureSMB(UIOBase):
 
 
         Returns:
+            Path of the file on the share.
         """
 
     def download(self) -> None:
+        """Download referenced remote object and write to local scratch path.
 
+        If the file cannot be found or there are connection errors, a RuntimeError is raised.
         """
         try:
             download = self.file_client.download_file()
@@ -83,6 +98,14 @@ class IOAzureSMB(UIOBase):
             raise RuntimeError from e
 
     def upload(self, tags: dict | None = None) -> None:
+        """Upload local object from scratch to the remote Azure SMB file share.
+
+        Args:
+            tags: Optional dictionary of metadata tags to attach to the file.
+
+        Raises:
+            RuntimeError if upload fails.
+        """
         file_dir_list = self.file_client.directory_path.split("/")
         for n in range(len(file_dir_list)):
             tmp_dir_client = self.share_client.get_directory_client(
@@ -105,14 +128,18 @@ class IOAzureSMB(UIOBase):
             self.file_client.set_file_metadata(tags)
 
     def remote_object_exists(self) -> bool:
+        """Verify the referenced remote object exists.
 
         Returns:
+            True if the remote file exists, otherwise False.
         """
         return self.file_client.exists()
 
     def _remote_path_exists(self) -> bool:
+        """Verify the referenced remote directory path exists.
 
         Returns:
+            True if the directory exists, otherwise False.
         """
         try:
             self.directory_client.get_directory_properties()
@@ -123,10 +150,14 @@ class IOAzureSMB(UIOBase):
 
     def list_container_items(
     ) -> list:
+        """Get all objects in a folder/'container', recursively, with optional regex filtering.
 
         Args:
+            pattern: Optional regex pattern for filtering returned file names.
+            limit: Optional limit for the number of objects returned.
 
         Returns:
+            List of object names matching the filter (or all if no filter/limit).
         """
         if pattern is not None:
             container_objects = [

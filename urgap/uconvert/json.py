@@ -21,8 +21,10 @@ class JSONEncoder(json.JSONEncoder):
     ) -> dict:
 
         Args:
+            obj: Object to serialize.
 
         Returns:
+            JSON-serializable dict or object.
         """
         if isinstance(obj, datetime.datetime):
             return {
@@ -66,8 +68,10 @@ class JSONDecoder(json.JSONDecoder):
     def object_hook(
 
         Args:
+            obj: Dict to decode.
 
         Returns:
+            Decoded object or original dict.
         """
         if "_type" not in obj:
             return obj

@@ -11,11 +11,15 @@ from packaging.version import Version
 
 
 def sense_compression_format(file: os.PathLike) -> str:
+    """Determine the format of a compressed file.
 
+    Supports tar.gz, zip, and bz2.
 
     Args:
+        file: Path to the file.
 
     Returns:
+        The detected compressed file format as a string (e.g. "gz", "zip", "tar", "bz2", or "UNKNOWN").
     """
     expected_hex_for_tar = "00" * 1024
     hex_eof_marker = None
@@ -47,10 +51,14 @@ def sense_compression_format(file: os.PathLike) -> str:
 
 
 def extract_from_string(any_string: str, regex_pattern: str) -> list:
+    """Extract all matches from a string using a regex pattern.
 
     Args:
+        any_string: String to search in.
+        regex_pattern: Regular expression pattern to use.
 
     Returns:
+        List of all matches found.
     """
     return re.findall(regex_pattern, any_string)
 
@@ -59,8 +67,18 @@ def execute_threaded_function(
     func: Callable,
     number_of_threads: int = 8,
 ) -> list:
+    """Execute a function in parallel using multiple threads.
 
     Args:
+        func: The function to be executed.
+        args_list: Iterable with arguments to use as input for the function.
+        number_of_threads: Number of parallel threads to use.
+
+    Returns:
+        List of results returned by the function for each input.
+
+    Raises:
+        ValueError: If nesting of args_list elements is inconsistent.
     """
 
     def _is_nested(arg: str | list | tuple) -> bool:
@@ -84,10 +102,13 @@ def execute_threaded_function(
 
 
 def sort_versions(item: str) -> tuple:
+    """Sort key for semantic versions with 'latest' appearing first if available.
 
     Args:
+        item: String representing a tool and version (e.g. "foo:1.2.3" or "foo:latest").
 
     Returns:
+        Tuple used for sorting: (tool name, -1 if latest else 0, parsed Version object or None).
     """
     if ":" not in item:
         return (item, 1, None)
@@ -99,10 +120,18 @@ def sort_versions(item: str) -> tuple:
 
 def get_next_port(
 ) -> int:
+    """Get the next assignable port, optionally rounding up to the next 10 for 'latest' tools.
 
     Args:
+        last_assigned_port: Last assigned port number.
+        last_port: Highest available port number.
+        is_lastest: If True, allocate a port ending with zero for 'latest' tools.
 
     Returns:
+        The next port number to be assigned.
+
+    Raises:
+        IndexError: If there are not enough ports available.
     """
     if is_lastest is True:
         if (last_assigned_port % 10) != 0:

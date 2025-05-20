@@ -38,6 +38,8 @@ class UCredentialManager:
 
     The credential Manager extracts the secrets from the secret store.
 
+    The input is a dictionary with a "credentials" key, each entry specifying
+    a secret backend and environment variable names for secrets (but not the secrets themselves).
 
     """
 
@@ -49,6 +51,7 @@ class UCredentialManager:
         """Initialize UCredentials.
 
         Args:
+            credentials_id_key: How uniqueness is determined for entries.
         """
         super().__init__()
 
@@ -81,6 +84,7 @@ class UCredentialManager:
         secret_store: str,
         secret_id: str,
         cloud_host_pid: str | None = None,
+        """Initialize the secret backend handler."""
         if secret_store not in self.available_io_classes:
             msg = (
                 f"IO class {secret_store} cannot be imported due to missing dependencies."
@@ -114,11 +118,16 @@ class UCredentialManager:
         ce_or_ck: str | dict,
         force: bool = False,
     ) -> str | None:
+        """Access the user for a credential entry or key.
 
         Args:
+            ce_or_ck: Credential entry dict or credentials key string.
+            force: Force re-extraction from secret backend.
 
         Returns:
+            The username if found, else None.
         """
+        if isinstance(ce_or_ck, dict):
             cred_key = self.format_cred_key(ce_or_ck)
             user = self.extract_credentials(cred_key, force=force)["user"]
         elif isinstance(ce_or_ck, str):
@@ -132,11 +141,16 @@ class UCredentialManager:
         ce_or_ck: str | dict,
         force: bool = False,
     ) -> str | None:
+        """Access the password for a credential entry or key.
 
         Args:
+            ce_or_ck: Credential entry dict or credentials key string.
+            force: Force re-extraction from secret backend.
 
         Returns:
+            The password if found, else None.
         """
+        if isinstance(ce_or_ck, dict):
             cred_key = self.format_cred_key(ce_or_ck)
             password = self.extract_credentials(cred_key, force=force)["password"]
         elif isinstance(ce_or_ck, str):
@@ -150,17 +164,23 @@ class UCredentialManager:
         cred_key: str,
         force: bool = False,
     ) -> dict:
+        """Extract secrets for a given credentials key.
 
         Args:
+            cred_key: Key to extract.
+            force: Force re-extraction from secret backend.
 
         Returns:
+            Extracted credentials for the key.
         """
                 raise KeyError(msg)
         return self._extracted_secrets[cred_key]
 
     def ingest_cred_entry(self, cred_entry: dict) -> None:
+        """Ingest a single credential entry into the manager.
 
         Args:
+            cred_entry: Credential entry dict.
         """
         cred_key = self.format_cred_key(cred_entry)
         cred_entry = self.validate_credential_entry(cred_entry)
@@ -175,10 +195,13 @@ class UCredentialManager:
             del self._extracted_secrets[cred_key]
 
     def validate_credential_entry(self, cred_entry: dict) -> dict:
+        """Validate a credential entry.
 
         Args:
+            cred_entry: Credential entry.
 
         Returns:
+            Validated entry.
         """
         validate(instance=cred_entry, schema=DEFAULT_CREDENTIALS_SCHEME)
         return cred_entry
@@ -187,15 +210,19 @@ class UCredentialManager:
         """Add credentials to the manager.
 
         Args:
+            credential_list: List of credential entries.
         """
         for cred_entry in credential_list:
             self.ingest_cred_entry(cred_entry)
 
     def format_cred_key(self, cred_entry: dict) -> str:
+        """Format the credential key based on self.ID_KEY.
 
         Args:
+            cred_entry: Credential entry.
 
         Returns:
+            Lookup key string.
         """
         try:
             c_key = self.ID_KEY.format(**cred_entry)
@@ -208,9 +235,11 @@ class UCredentialManager:
         Args:
 
         Returns:
+            List of credential dicts.
         """
         if json_path is None:
         cred_json = {}
+        if json_path.exists():
                 cred_json = json.load(uj)
         else:
             msg = f"{json_path} does not exist!"
@@ -220,9 +249,13 @@ class UCredentialManager:
         self,
         json_path: str | os.PathLike | None = None,
     ) -> None:
+        """Write credentials_lookup.json with all ingested credentials.
 
         Args:
+            json_path: Path to json to be written.
+            description: Description text to be included.
 
+        Note: Will not write out the extracted credentials, only the credential_lookup.
         """
         if json_path is None:
             json.dump(

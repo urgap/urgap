@@ -14,15 +14,22 @@ P = ParamSpec("P")
 
 
 class IOAzureBlobStorage(UIOBase):
+    """UIO class interface for Azure Blob Storage.
+
+    Provides methods for uploading, downloading, and listing blobs, as well as fetching blob metadata.
+    """
 
     def __init__(self, **kwargs: P.kwargs) -> None:
+        """Initialize the Azure Blob Storage IO class.
 
         Args:
+            kwargs: Passed to UIOBase. Requires "uri" for connection setup.
         """
         super().__init__(**kwargs)
 
     @property
     def remote_path(self) -> None:
+        """Azure blobs do not have a traditional remote path.
 
         Returns:
             None.
@@ -31,6 +38,7 @@ class IOAzureBlobStorage(UIOBase):
 
     @property
     def remote_tag_path(self) -> None:
+        """Azure blobs do not have a separate remote tag path.
 
         Returns:
             None.
@@ -38,6 +46,7 @@ class IOAzureBlobStorage(UIOBase):
         return None
 
     def get_remote_tags(self) -> dict | None:
+        """Get remote tags (metadata) for the referenced blob.
 
         Returns:
         """
@@ -45,8 +54,10 @@ class IOAzureBlobStorage(UIOBase):
         return None
 
     def upload(self, tags: dict | None = None) -> None:
+        """Upload the scratch file to the remote blob, attaching provided tags as metadata.
 
         Args:
+            tags: Dictionary of metadata tags to write to remote location. If too many, parent keys are removed.
         """
         if tags is None:
             tags = {}
@@ -58,6 +69,9 @@ class IOAzureBlobStorage(UIOBase):
             self.blob.upload_blob(data, metadata=tags, overwrite=True)
 
     def download(self) -> None:
+        """Download the blob to the scratch path from remote storage.
+
+        """
         download_object = False
         if self.scratch_path.exists():
             )
@@ -81,15 +95,20 @@ class IOAzureBlobStorage(UIOBase):
                     f"{self.blob.blob_name} does not exist remotely. Skipping download."
                 )
 
+        """List all objects in the Azure container, optionally filtering by regex pattern.
 
         Args:
+            pattern: Regular expression pattern to filter blob names.
 
         Returns:
+            A list of blob names that match the pattern, or all blob names if pattern is None.
         """
         return container_objects
 
     def remote_object_exists(self) -> bool:
+        """Check if the blob exists in the container.
 
         Returns:
+            True if the blob exists, otherwise False.
         """
         return self.blob.exists()

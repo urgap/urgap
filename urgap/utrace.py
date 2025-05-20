@@ -16,7 +16,9 @@ if TYPE_CHECKING:
 
 class UTrace:
 
+    Each unode.run creates a UTrace, which combines URun_dict, ufile_list, and unode.meta information.
 
+    The trace initializes the umeta interface.
     """
 
     def __init__(
@@ -34,6 +36,7 @@ class UTrace:
             unode_version: UNode tag / version, introduced in u3.
             umeta_io: UMeta interface to use.
             output_files: Output files as UFileList.
+            history: UTrace history information.
         """
         self._output_base_storage_uri = None
         self._output_files_stem = None
@@ -59,6 +62,7 @@ class UTrace:
             self.output_files = output_files
 
     @property
+        """Get umeta IO object.
 
         Returns:
         """
@@ -67,7 +71,10 @@ class UTrace:
 
     @property
     def remote_output_files(self) -> dict:
+        """Get remote output files by uftype.
 
+        Returns:
+            Dictionary in the form {<uftype1>: [UFiles], ...}.
         """
         if self._remote_output_files is None:
             self._remote_output_files = self._query_remote_by_uftype()
@@ -86,11 +93,16 @@ class UTrace:
             urun_dict.register_unode_meta_info(self.unode_meta)
         return urun_dict
 
+        """Filter a UFileList by required input uftypes.
 
         Args:
+            input_files: Input UFileList.
 
         Returns:
             Filtered UFileList.
+
+        Raises:
+            OSError: If input_uftypes requirements are not met or the list is empty.
         """
         input_files = input_files.filter(
             input_uftypes=self.unode_meta["input_uftypes"],
@@ -113,12 +125,14 @@ class UTrace:
 
     @classmethod
     def init_from_umeta_entries(cls, umeta_dict: dict) -> None:
+        """No-op method for compatibility.
 
         Args:
             umeta_dict: Dict containing umeta information.
         """
 
     def info(self) -> None:
+        """Print runtime information for this UTrace instance to logging."""
         time_str = datetime.datetime.now().astimezone().strftime("%H:%M:%S - %d.%m.%Y")
         log_message += "|   ]\n"
         log_message += "| - output_files: [\n"
@@ -128,53 +142,82 @@ class UTrace:
 
     @property
     def output_base_storage_uri(self) -> str:
+
+        Returns:
+        """
         if self._output_base_storage_uri is None:
             self._output_base_storage_uri = self._set_output_storage_uri()
         return self._output_base_storage_uri
 
     @property
     def output_files_stem(self) -> str:
+        """Get the output file stem.
+
+        Returns:
+            Output file stem as a string.
+        """
         if self._output_files_stem is None:
             self._output_files_stem = self.determine_output_files_stem()
         return self._output_files_stem
 
     @property
     def id(self) -> tuple:
+        """Get the UTrace node exe id and wid.
 
         Returns:
         """
 
     @property
     def wid(self) -> str:
+
+        Returns:
+            Workflow ID as a string.
+        """
         return self.urun_dict.wid
 
     @property
+        """Get the output files stem (node exe id).
+
+        Returns:
+            Output files stem as a string.
+        """
         return self.output_files_stem
 
     @property
     def was_skipped(self) -> bool:
+        """Determine if run execution was skipped.
 
         Returns:
+            True if the run was skipped, else False.
         """
         return self.umeta.io.get_execution_status(*self.id) == 0
 
     @property
     def was_run(self) -> bool:
+        """Determine if run execution was executed.
 
         Returns:
+            True if the run was executed, else False.
         """
         exeuction_result_time = self.umeta.io.get_execution_status(*self.id)
         return (exeuction_result_time is not None) and (exeuction_result_time > 0)
 
     @property
     def crashed(self) -> bool:
+        """Determine if a run execution crashed.
 
         Returns:
+            True if the run crashed, else False.
         """
         return self.umeta.io.get_execution_status(*self.id) is None
 
     @property
     def execution_time(self) -> float:
+        """Return full execution time in seconds.
+
+        Returns:
+            Number of seconds for full execution time.
+        """
         return self.umeta.io.get_execution_status(*self.id)
 
     def _set_output_storage_uri(self) -> str:
@@ -196,6 +239,7 @@ class UTrace:
         """Determine the root folder for output files.
 
         Returns:
+            Output file stem as a path-like object.
         """
         object_folder = self._generate_top_level_folder_name(
             run_folder_name=self.urun_dict.unode_parameters["run_folder_name"],
@@ -216,6 +260,15 @@ class UTrace:
         skip_data_versioning: bool = False,
         run_folder_name: str | None = None,
     ) -> os.PathLike:
+        """Generate the top-level folder name for output files.
+
+        Args:
+            skip_data_versioning: If True, skip data versioning.
+            run_folder_name: Custom run folder name.
+
+        Returns:
+            Top-level folder name as a path-like object.
+        """
         if run_folder_name is None:
             unode_id_win_compatible = self.unode_meta["unode_full_identifier"].replace(
             )
@@ -254,6 +307,7 @@ class UTrace:
                 msg = f"Changed output uftypes to {i_uftype}."
 
     def populate_minimal_output_file_list(self) -> None:
+        """Initialize the minimum number of UFiles for each uftype based on UNode meta info."""
         uris = []
         for ouftype, mdict in self.unode_meta["output_uftypes"].items():
             if mdict["min"] == 0:
@@ -324,12 +378,18 @@ class UTrace:
         n: int | None = None,
         max_n: str | int = "N",
     ) -> None:
+        """Extend the output UFileList with a new UFile for the specified uftype.
 
         Args:
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
         """
 
+        """Query remote files by uftype.
+
+        Returns:
+            Dictionary of uftype to UFile list.
+        """
         remote_ofiles = ddict(list)
         if len(self.output_files) != 0:
             _ufile = self.output_files[0]
@@ -343,6 +403,7 @@ class UTrace:
         return remote_ofiles
 
     def evaluate_if_rerun_is_required(self) -> list:
+        """Evaluate if rerun is required and return reasons.
 
         Returns:
             List of reasons for rerun. If empty, no rerun is triggered.
@@ -376,11 +437,15 @@ class UTrace:
         return reasons
 
     def set_start_time(self) -> None:
+        """Set the start time stamp."""
         self.start_time = datetime.datetime.now().astimezone()
 
     def set_stop_time(self, skipped: bool = False, crashed: bool = False) -> None:
+        """Set the stop time stamp.
 
         Args:
+            skipped: Whether the run was skipped.
+            crashed: Whether the run crashed during execution.
         """
         if skipped is True:
             self.duration_seconds = 0
@@ -431,20 +496,24 @@ class UTrace:
             files_to_upload.append(ofile)
 
     def save_umeta_information(self) -> None:
+        """Save UMeta information for this trace."""
         self.umeta.save_utrace(self)
 
     @classmethod
     def load_from_umeta(
         cls,
         umeta_io: str | None = None,
+        """Retrieve a UTrace from any given node and WID using the specified UMeta interface.
 
         Args:
             umeta_io: UMeta interface to be used.
 
         Returns:
+            UTrace object for the requested run.
         """
 
     def add_execution_record(self) -> None:
+        """Add an execution record for this trace."""
         self.umeta.io.add_execution_record(
             uwid=uwid,
             start_time=self.start_time,

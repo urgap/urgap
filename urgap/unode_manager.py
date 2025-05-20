@@ -21,6 +21,9 @@ from packaging.version import Version
 
 class UNodeManager(UserDict):
 
+    Responsible for initialization, requirement checking, and lookup of all UNodes and wrappers.
+    """
+
     _3rd_party_test_commands = {
         "java": {
             "command": ["java", "-version"],
@@ -54,8 +57,12 @@ class UNodeManager(UserDict):
 
     def __init__(self, external_resource_test_dict: dict | None = None) -> None:
 
+        Tracks availability of 3rd party installations, such as dotnet, java, mono, etc.
+        Also tracks python and R package dependencies.
 
         Args:
+            external_resource_test_dict: Dictionary mapping external tools to commands and regexes.
+                This can be used to override the default _3rd_party_test_commands mapping.
         """
         if external_resource_test_dict is not None:
             self._3rd_party_test_commands = external_resource_test_dict
@@ -79,6 +86,14 @@ class UNodeManager(UserDict):
         self._requirements_not_met = set()
 
     def _check_for_module(self, pypackage: str) -> str | None:
+        """Check if a Python package is installed and return its version.
+
+        Args:
+            pypackage: Name of the Python package.
+
+        Returns:
+            The installed version as a string, or None if not found.
+        """
         try:
             return importlib.metadata.version(pypackage)
         except importlib.metadata.PackageNotFoundError:
@@ -86,6 +101,15 @@ class UNodeManager(UserDict):
 
     def _test_command(
     ) -> bool:
+        """Test whether a system command runs successfully and matches a pattern.
+
+        Args:
+            command_list: List of command arguments to run.
+            regex_pattern: Optional regex to match in the command output.
+
+        Returns:
+            True if the command runs (and matches regex, if given); otherwise False.
+        """
         is_available = False
         try:
             proc = subprocess.run(
@@ -106,6 +130,10 @@ class UNodeManager(UserDict):
         return is_available
 
     def assign_unode_ports(self) -> None:
+        """Assign ports to UNodes for remote serving in a deterministic fashion.
+
+        Port assignments are stored in self.unode_port_mapping.
+        """
         self.unode_port_mapping = {}
         last_assigned_port = first_port - 1
         for node_name in sorted(self.wrapper_lookup.keys(), key=sort_versions):
@@ -118,9 +146,12 @@ class UNodeManager(UserDict):
             self.unode_port_mapping[node_name] = last_assigned_port
 
     def generate_wrapper_lookup(self) -> dict:
+        """Generate lookup for available wrappers and UNodes.
 
+        Discovers all wrappers and unodes from the package directory.
 
         Returns:
+            Dictionary mapping node_name or node_name:version to (module_path, class_name).
         """
         lookup = {}
         for _path in [wrapper_path, unode_path]:
@@ -138,6 +169,12 @@ class UNodeManager(UserDict):
         lookup: dict,
         wrapper: Path,
     ) -> None:
+        """Add a discovered wrapper or unode Python file to the lookup.
+
+        Args:
+            lookup: The lookup dictionary being constructed.
+            wrapper: Path to the .py file for the wrapper/unode.
+        """
         class_path_string = str(
         )
         spec = importlib.util.spec_from_file_location("node", wrapper)
@@ -174,10 +211,16 @@ class UNodeManager(UserDict):
             lookup[node_name] = class_path_string, class_name
 
     def init_unode(self, unode: str) -> None:
+        """Initialize a UNode and check its requirements.
 
+        Imports the UNode/wrapper and checks for 3rd party and resource requirements.
+        Import and requirement results are cached in self.data and self.node_availability_lookup.
 
+        Args:
+            unode: Name of the UNode or wrapper.
 
         Returns:
+            Instance of the initialized UNode/wrapper class, or None if not found or requirements are missing.
         """
         if unode in self.wrapper_lookup:
             unode_obj = self.import_class(unode)
@@ -196,9 +239,15 @@ class UNodeManager(UserDict):
         )
         return None
 
+        """Import and return the class for a given wrapper/unode.
 
+        Updates self.data and checks dependencies via self.check_unode_dependencies.
 
         Args:
+            unode: Name of the UNode or wrapper.
+
+        Returns:
+            The imported class for the UNode/wrapper.
         """
         class_path_string, class_name = self.wrapper_lookup[unode]
         module = importlib.import_module(module_path)
@@ -221,10 +270,24 @@ class UNodeManager(UserDict):
         self,
         unode: str,
     ) -> tuple:
+        """Check if all resource and dependency requirements are met for a UNode.
 
         Args:
+            unode: Name of the UNode/wrapper.
 
         Returns:
+            Tuple of (instance of the node class, requirements dict) in the form::
+
+                {
+                    <unode> : {
+                        "resource_available": True,
+                        "has_3rd_party_requirements": True,
+                        "requirements_available": True,
+                        "requirements_available_by_uftype": {
+                            <uftype>: True,
+                            <uftype2>: False,
+                            "other_uftypes": True,
+                        }
                     }
                 }
         """
@@ -276,10 +339,14 @@ class UNodeManager(UserDict):
         requirements: dict,
         unode: str | None = None,
     ) -> bool:
+        """Check if all requirements for the given wrapper are satisfied on the system.
 
         Args:
+            requirements: Dictionary with requirement keys, e.g., from META_INFO["requires"][<uftype>].
+            unode: UNode name (optional, used for debug logging).
 
         Returns:
+            True if all requirements are met, otherwise False.
         """
         availabilities = []
         availabilities = self._check_python_packages(
@@ -294,6 +361,15 @@ class UNodeManager(UserDict):
         return all(availabilities)
 
     def _check_python_packages(self, availabilities: list, requirements: dict) -> list:
+        """Check if all required Python packages are installed and of a compatible version.
+
+        Args:
+            availabilities: List of booleans (for cumulative status).
+            requirements: Requirements dict with 'python_packages' key.
+
+        Returns:
+            Updated list of booleans indicating status for each Python package.
+        """
         for pypackage in requirements.get("python_packages", []):
             self.availability["python_packages"][pypackage] = False
             with_operator = False
@@ -323,6 +399,16 @@ class UNodeManager(UserDict):
 
     def _check_other_dependencies(
     ) -> list:
+        """Check if all other (non-Python) dependencies are available.
+
+        Args:
+            availabilities: List of booleans (for cumulative status).
+            requirements: Requirements dict with 'other_dependencies' key.
+            unode: UNode name (for debug logging).
+
+        Returns:
+            Updated list of booleans indicating status for each dependency.
+        """
         for resource in requirements.get("other_dependencies", []):
             if resource not in self._3rd_party_test_commands:
                 msg = (

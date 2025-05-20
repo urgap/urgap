@@ -13,13 +13,21 @@ import requests
 
 
 
+def folder_has_uparam_signature(folder: Path) -> bool:
 
+        `<node_name>_<hash_of_parameters_triggering_rerun>`
 
     Args:
+        folder: Folder path or folder name to inspect.
 
     Returns:
+        True if the folder matches the uparam signature; False otherwise.
+
+    Raises:
+        NotImplementedError: If the configured hash algorithm is unsupported.
     """
     if hash_algorithm == "md5":
+        signature = re.search(r"_[0-9a-z]{32}$", folder.name)
     else:
         msg = (
             f"Do not know how to identify output folder signature for {hash_algorithm}"
@@ -29,20 +37,34 @@ import requests
 
 
 def calculate_file_hash(
+    input_file: Path,
     hash_algorithm: str,
 ) -> str:
 
     Args:
+        input_file: Path to the file to hash.
+        hash_algorithm: Hash algorithm supported by hashlib (e.g., 'md5', 'sha256').
 
     Returns:
+
+    References:
+        Adapted from Raymond Hettinger's solution:
+        https://stackoverflow.com/questions/7829499/using-hashlib-to-compute-md5-digest-of-a-file-in-python-3
     """
+    if input_file.exists():
+            digest = getattr(hashlib, hash_algorithm)()
+            for buffer in iter(partial(f.read, 1024), b""):
+                digest.update(buffer)
+        return digest.hexdigest()
 
 
 
 
 def clean_up_scratch_space() -> None:
 
+
     Raises:
+        OSError: Logs a warning if a scratch directory cannot be deleted.
     """
         if wid_folder.name != wid:
             wid_folder /= wid
@@ -55,8 +77,10 @@ def clean_up_scratch_space() -> None:
 
 
 def shutdown_local_upi_servers(force: bool = False) -> None:
+    """Shuts down all locally running UPI servers.
 
     Args:
+        force: If True, forces the shutdown of servers regardless of configuration.
     """
             run_payload = {"be humble": "sit down"}
             run_url = f"http://127.0.0.1:{port}/v1/terminate"

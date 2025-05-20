@@ -16,9 +16,14 @@ def copy_resources_if_needed(
     target_dir: str | os.PathLike,
     force: bool = False,
 ) -> None:
+    """Copy package resource files to a target directory if they do not already exist, or overwrite them if forced.
 
+    Resources are copied from the package's 'resources' directory to the specified target directory.
+    Files are only overwritten if 'force' is set to True.
 
     Args:
+        target_dir: Path to the target folder where resources will be copied.
+        force: If True, resources will always be copied and overwritten at the target directory.
     """
     target_resources_path = Path(target_dir) / "resources"
     target_resources_path.mkdir(exist_ok=True)
@@ -39,7 +44,11 @@ def copy_resources_if_needed(
 
 
 def configure_logger() -> None:
+    """Configure the root logger with a standard format and set the logging level.
 
+    This function resets all logger handlers and applies a new stream handler with a
+    consistent formatter. The log level is set to INFO if running under '/bin/uctl',
+    otherwise it is set to DEBUG.
     """
     execution_traceback = [line.strip() for line in traceback.format_stack()]
     sh = logging.StreamHandler(sys.stderr)
@@ -66,8 +75,10 @@ def create_home_folder(home_dir_parent: str | os.PathLike) -> None:
 
 
 def copy_config_if_needed(target_dir: str | os.PathLike) -> None:
+    """Copy configuration JSON files from the default config directory to the target directory if not present.
 
     Args:
+        target_dir: Path to the folder where the default configuration files should be copied.
     """
     for config_json in config_defaults_path.glob("**/*.json"):
         target_json_path = Path(
@@ -77,6 +88,9 @@ def copy_config_if_needed(target_dir: str | os.PathLike) -> None:
 
 
 def read_config(home_dir: str | os.PathLike | None = None) -> dict:
+
+    If the configuration file does not exist, it will be copied from the default config directory.
+    Only key-value pairs where the value is a dictionary are loaded.
 
     Args:
 
@@ -92,6 +106,7 @@ def read_config(home_dir: str | os.PathLike | None = None) -> dict:
 
 def load_certificates() -> None:
 
+    A warning is logged for each loaded certificate.
     """
     cert_path.mkdir(exist_ok=True)
     for certificate in cert_path.glob("*"):
@@ -104,10 +119,17 @@ def load_certificates() -> None:
 
 def set_scratch_disk_path(
 ) -> os.PathLike:
+    """Create and return a scratch disk path, creating the directory if necessary.
+
+    If no path is provided, a temporary directory is created. If a wid is provided,
+    it is used as a subfolder under the main path.
 
     Args:
+        path: Path to the scratch disk. If None, a temporary directory is used.
+        wid: Optional subfolder name to create under the scratch disk path.
 
     Returns:
+        The path to the created scratch disk directory.
     """
     if path is None:
     if wid is not None:
@@ -118,7 +140,9 @@ def set_scratch_disk_path(
 
 def show_banner() -> str:
 
+
     Returns:
+        A formatted banner string with a unique anagram.
     """
     banners = [
         r"""

@@ -14,11 +14,14 @@ from pathlib import Path
 
 class UFileList(UserList):
 
+    Acts as a list with additional functionality to access and filter UFiles based on tags.
     """
 
     def __init__(self, initlist: list | None = None) -> None:
+        """Initialize a UFileList.
 
         Args:
+            initlist: Optional. List of UFile objects to initialize the list.
         """
         super().__init__(initlist=initlist)
         for item in self.data:
@@ -28,8 +31,10 @@ class UFileList(UserList):
 
     @property
     def all_remote_files_exist(self) -> bool:
+        """Check if all files in the list exist at their remote locations.
 
         Returns:
+            True if all remote files exist, otherwise False.
         """
         r_value = True
         for uf in self:
@@ -42,38 +47,73 @@ class UFileList(UserList):
         self,
         i: int,
     ) -> None:
+        """Insert an item at a specified index in the UFileList.
 
         Args:
+            i: Index where the item should be set.
+            item: Item to insert. Must comply with UFileList requirements.
+
+        Raises:
+            TypeError: If the item does not follow UFileList conventions.
         """
         self._eval_if_item_is_of_correct_type(item)
         super().__setitem__(i, item)
 
     def __add__(
     ) -> UFileList:
+        """Concatenate another object to this UFileList.
 
         Args:
+            other: Object to add. Can be UFile, UFileList, list, or tuple.
+
+        Returns:
+            New UFileList containing items from both lists.
+
+        Raises:
+            TypeError: If the object does not follow UFileList conventions.
         """
         self._eval_if_item_is_of_correct_type(other)
         return super().__add__(other)
 
     def __radd__(
     ) -> UFileList:
+        """Concatenate this UFileList to another object.
 
         Args:
+            other: Object to add. Can be UFile, UFileList, list, or tuple.
+
+        Returns:
+            New UFileList containing items from both lists.
+
+        Raises:
+            TypeError: If the object does not follow UFileList conventions.
         """
         self._eval_if_item_is_of_correct_type(other)
         return super().__radd__(other)
 
     def __iadd__(
     ) -> UFileList:
+        """Extend this UFileList in-place with another object.
 
         Args:
+            other: Object to add. Can be UFile, UFileList, list, or tuple.
+
+        Returns:
+            The updated UFileList.
+
+        Raises:
+            TypeError: If the object does not follow UFileList conventions.
         """
         self._eval_if_item_is_of_correct_type(other)
         return super().__iadd__(other)
 
+        """Append an item to the UFileList if it follows conventions.
 
         Args:
+            item: Item to append.
+
+        Raises:
+            TypeError: If the item does not follow UFileList conventions.
         """
         self._eval_if_item_is_of_correct_type(item)
         super().append(item)
@@ -82,28 +122,45 @@ class UFileList(UserList):
         self,
         i: int,
     ) -> None:
+        """Insert an item at a specified position if it follows conventions.
 
         Args:
+            i: Index to insert the item at.
+            item: Item to insert.
+
+        Raises:
+            TypeError: If the item does not follow UFileList conventions.
         """
         self._eval_if_item_is_of_correct_type(item)
         super().insert(i, item)
 
     def calculate_ucfs(self) -> collections.abc.Hashable:
+        """Compute a combined hash for the UFiles in the list.
 
+        The hash is based on the sorted UFile.ucfs values.
 
         Returns:
+            A hash string representing the combined UFiles.
         """
 
     @property
     def id(self) -> collections.abc.Hashable:
+        """Return a hash ID representing the UFileList.
 
         Returns:
+            Hash string based on the UFiles in the list.
         """
         return self.calculate_ucfs()
 
     def _eval_if_item_is_of_correct_type(
     ) -> None:
+        """Check if an item is suitable for inclusion in UFileList.
 
+        Args:
+            item: The item to check.
+
+        Raises:
+            TypeError: If the item does not follow UFileList conventions.
         """
         kosha = False
             kosha = True
@@ -113,9 +170,13 @@ class UFileList(UserList):
             raise TypeError(msg)
 
     def create_flat_and_non_redundant_list(self) -> UFileList:
+        """Flatten the UFileList to a single-level list without duplicates.
 
+        Returns:
+            A flat UFileList containing only unique UFiles.
 
         Raises:
+            TypeError: If an item is not a UFile or if more than one level of nesting is found.
         """
         already_seen_objects = set()
         already_seen_objects, flat_list = self._get_flat_list(
@@ -126,6 +187,18 @@ class UFileList(UserList):
         return flat_list
 
     def _get_flat_list(
+
+        Args:
+            list_to_flatten: List to flatten.
+            already_seen_objects: Set of already seen ucfs values.
+            flat_list: List to append unique UFiles to.
+
+        Returns:
+            Tuple of already_seen_objects and the flat_list.
+
+        Raises:
+            TypeError: If non-UFile items or excessive nesting are encountered.
+        """
         for entry in list_to_flatten:
             if entry is None:
                 flat_list.append(None)
@@ -149,10 +222,17 @@ class UFileList(UserList):
         input_uftypes: dict | None = None,
         additional_filters: dict | None = None,
     ) -> UFileList:
+        """Filter UFiles by input_uftypes and additional tag-based filters.
 
         Args:
+            input_uftypes: Dictionary specifying required datatypes and file counts.
+            additional_filters: Dictionary of additional tag-based filters.
 
         Returns:
+            A UFileList if all criteria are met, otherwise None.
+
+        Raises:
+            ValueError: If number of filtered UFiles exceeds allowed maximum or is below minimum.
         """
         if input_uftypes is None:
             input_uftypes = {}
@@ -179,10 +259,14 @@ class UFileList(UserList):
         self,
         input_uftypes: dict,
     ) -> str | None:
+        """Check if a UFile has compatible uftype and the required tags.
 
         Args:
+            input_uftypes: Dictionary of input uftypes from the wrapper.
+            ufile: UFile object to check.
 
         Returns:
+            The compatible uftype if found, else None.
         """
         mappable_uftypes = list(
         )
@@ -206,10 +290,17 @@ class UFileList(UserList):
         self,
         ufile_classes: dict,
         input_uftypes: dict,
+        """Check that the count of UFiles for each uftype is within allowed range.
 
         Args:
+            ufile_classes: Dictionary of uftypes and their matched UFiles.
+            input_uftypes: Dictionary of input uftypes from the wrapper.
 
         Returns:
+            A filtered UFileList.
+
+        Raises:
+            ValueError: If there are too few or too many UFiles for a given uftype.
         """
         for file_data_type, ufile_sublist in ufile_classes.items():
             min_number_required = input_uftypes[file_data_type].get("min", 1)
@@ -232,10 +323,13 @@ class UFileList(UserList):
         return filtered_ufile_list
 
     def get_indices_by_uftype(self, uftype: str) -> list[int]:
+        """Get indices of UFiles with the specified uftype.
 
         Args:
+            uftype: Uftype to search for.
 
         Returns:
+            List of indices where uftype matches.
         """
         return self.get_indices_matching_tag(tag="uftype", search_value=uftype)
 
@@ -244,11 +338,14 @@ class UFileList(UserList):
         tag: str | None = None,
         search_value: str | None = None,
     ) -> list[int]:
+        """Get indices of UFiles where a tag matches the given value.
 
         Args:
+            tag: Tag key to check.
             search_value: Value to match.
 
         Returns:
+            List of matching indices.
         """
         indices = []
         if tag is None:
@@ -270,8 +367,10 @@ class UFileList(UserList):
         return indices
 
     def get_index_groups_by_uftypes(self) -> dict:
+        """Create a dictionary mapping uftypes to the indices of matching UFiles.
 
         Returns:
+            Dictionary mapping uftype to list of indices.
         """
         all_uftypes = {ufile.uftype for ufile in self if ufile is not None}
         if None in self:
@@ -279,8 +378,10 @@ class UFileList(UserList):
         return {uftype: self.get_indices_by_uftype(uftype) for uftype in all_uftypes}
 
     def get_path_object_groups_by_uftypes(self) -> dict:
+        """Create a dictionary mapping uftypes to Path objects of UFiles.
 
         Returns:
+            Dictionary mapping uftype to list of Path objects.
         """
         all_uftypes = {ufile.uftype for ufile in self}
         return {
@@ -288,19 +389,25 @@ class UFileList(UserList):
         }
 
     def get_path_objects_by_uftype(self, uftype: str) -> list:
+        """Return a list of Path objects for UFiles of the given uftype.
 
         Args:
+            uftype: Uftype to match.
 
         Returns:
+            List of Path objects.
         """
         idxs = self.get_indices_by_uftype(uftype)
         return [self[i].path for i in idxs]
 
     def get_index_groups_by_tag(self, tag: str) -> dict:
+        """Group indices by tag value for all UFiles in the list.
 
         Args:
+            tag: Tag name to group by.
 
         Returns:
+            Dictionary mapping tag values to index lists.
         """
         index_groups = defaultdict(list)
         for idx, ufile in enumerate(self):
@@ -309,8 +416,10 @@ class UFileList(UserList):
         return dict(index_groups)
 
     def complete_file_counts(self) -> dict:
+        """Update file names with quantifier for dynamically generated files.
 
         Returns:
+            Dictionary of uftypes to index lists for dynamic files.
         """
         dynamic_index_groups = {}
         old_files = []
@@ -332,8 +441,10 @@ class UFileList(UserList):
         return dynamic_index_groups
 
     def number_of_uftypes(self) -> dict:
+        """Count number of UFiles per uftype in the list.
 
         Returns:
+            Dictionary mapping uftype to the count of UFiles.
         """
         numbers_by_uftype = self.get_index_groups_by_uftypes()
         for k, v in numbers_by_uftype.items():
@@ -341,10 +452,13 @@ class UFileList(UserList):
         return numbers_by_uftype
 
     def extend_by_uftype(self, uftype: str) -> int:
+        """Extend the UFileList with a new UFile based on output definitions.
 
         Args:
+            uftype: The uftype for the new UFile.
 
         Returns:
+            The index of the newly created UFile.
         """
         needs_quantifier = False
         safe_to_create_new_file = False
@@ -372,6 +486,7 @@ class UFileList(UserList):
             )
         return len(self) - 1
 
+    def add_ufile(self, uri: str) -> None:
 
         Args:
         """
@@ -383,10 +498,13 @@ class UFileList(UserList):
         return [x.as_storage_base_uri() for x in self]
 
     def remove_uftypes(self, uftype_list: list) -> UFileList:
+        """Remove UFiles with the specified uftypes from the list.
 
         Args:
+            uftype_list: List of uftypes to remove.
 
         Returns:
+            New UFileList without the specified uftypes.
 
         Raises:
             TypeError: If uftype_list is not a list.
@@ -402,10 +520,13 @@ class UFileList(UserList):
 
 
     def keep_uftypes(self, uftype_list: list) -> UFileList:
+        """Keep only UFiles with specified uftypes in the list.
 
         Args:
+            uftype_list: List of uftypes to retain.
 
         Returns:
+            New UFileList containing only the specified uftypes.
 
         Raises:
             TypeError: If uftype_list is not a list.
@@ -448,8 +569,12 @@ class UFileList(UserList):
         folder: str | Path,
         uftype: str | None = None,
     ) -> UFileList:
+        """Create a UFileList from files in a folder.
 
         Args:
+            folder: Path to the folder.
+            number_of_threads: Number of threads for parallel download.
+            uftype: Uftype to assign to resulting UFiles.
 
         Returns:
             Initialized UFileList.
@@ -470,6 +595,9 @@ class UFileList(UserList):
         )
 
     def as_uri_list(self) -> list:
+
+        Returns:
+        """
         return [u.as_uri() for u in self]
 
     def simplify_names(
@@ -479,9 +607,12 @@ class UFileList(UserList):
         suffix: str | None = None,
         storage_base_uri: str | None = None,
     ) -> UFileList:
+        """Copy and rename UFiles using UFile.simplify_name.
 
         Args:
             source_object_names: Set of intended object name stems.
+            prefix: Prefix for new names.
+            suffix: Suffix for new names.
 
         Returns:
             UFileList with simplified names.
@@ -496,16 +627,20 @@ class UFileList(UserList):
             )
         return renamed_ufile_list
 
+        """Download all UFiles in the UFileList in parallel.
 
         Args:
+            number_of_threads: Number of parallel threads to use.
         """
         msg = f"Starting download of UFileList in parallel with {number_of_threads} threads."
             args_list=self,
             number_of_threads=number_of_threads,
         )
 
+        """Upload all UFiles in the UFileList in parallel.
 
         Args:
+            number_of_threads: Number of parallel threads to use.
         """
         msg = f"Starting upload of UFileList in parallel with {number_of_threads} threads."
             args_list=self,
@@ -513,8 +648,10 @@ class UFileList(UserList):
         )
 
     def uncompress(self, destination: Path) -> None:
+        """Uncompress all files in the UFileList to the specified destination.
 
         Args:
+            destination: Path to the destination directory.
         """
         workdir = Path.cwd()
         Path.mkdir(destination, parents=True, exist_ok=True)

@@ -18,6 +18,7 @@ from fastapi.responses import JSONResponse
 def run_unode_in_loop(payload: dict, name: str) -> list:
 
     Args:
+        payload: The JSON payload to configure the node execution.
 
     Returns:
     """
@@ -27,11 +28,19 @@ def run_unode_in_loop(payload: dict, name: str) -> list:
 
 
 def create_app(name: str) -> FastAPI:
+    """Create FastAPI app with /v1/run and /v1/terminate endpoints.
+
+    Args:
+
+    Returns:
+        FastAPI application instance.
+    """
     app = FastAPI(title=name)
     app.state.name = name
 
     @app.post("/v1/run")
     async def run_unode(request: Request) -> JSONResponse:
+        """Run UNode endpoint. Expects JSON payload with run parameters."""
         payload = await request.json()
         payload = json.loads(
             payload,
@@ -41,21 +50,28 @@ def create_app(name: str) -> FastAPI:
 
     @app.post("/v1/terminate")
     def terminate_server() -> dict:
+        """Trigger server shutdown after responding 200."""
         app.state.shutdown_event.set()
         return {"message": "Server shutdown initiated."}
 
     @app.get("/livez")
     async def livez() -> JSONResponse:
+        """Liveness probe endpoint."""
         return JSONResponse(status_code=200, content={"status": "livez"})
 
     @app.get("/readyz")
     async def readyz() -> JSONResponse:
+        """Readiness probe endpoint."""
         return JSONResponse(status_code=200, content={"status": "readyz"})
 
     return app
 
 
+    """Run uvicorn server in a background thread and listen for shutdown event.
 
+    Args:
+        port: Port number to serve on.
+        shutdown_event: multiprocessing.Event used to trigger shutdown.
     """
     app = create_app(name)
     app.state.shutdown_event = shutdown_event

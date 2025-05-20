@@ -110,12 +110,18 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
     """UMeta SQLAlchemy Base class."""
 
     def __init__(self) -> None:
+        """Create new UMeta object for use with sqlite3 interface."""
         self.name = "SQLAlchemyBaseUMeta"
         self._db = None
         super().__init__()
 
     @property
     def db(self) -> sqlalchemy.engine.Engine:
+        """Return internal database object. Initializes database if none is available.
+
+        Returns:
+            SQLAlchemy engine object for the SQLite database.
+        """
         if self._db is None:
             self._db = sqlalchemy.create_engine(self.generate_connection_string())
             Base.metadata.create_all(self._db)
@@ -123,6 +129,10 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
 
         Args:
+
+        Returns:
+            Dictionary with node execution configuration details, including parameters,
+            command, unode, input_ufiles, and output_ufiles.
         """
         with Session(self.db) as session:
             input_link_alias = aliased(ExecutionInputLink)
@@ -150,8 +160,17 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
         Args:
         """
+        msg = "Not yet implemented."
         raise NotImplementedError(msg)
 
+        """Get the duration in seconds for a given execution.
+
+        Args:
+            uwid: Workflow ID.
+
+        Returns:
+            Float with duration in seconds, or None if not found.
+        """
         with Session(self.db) as session:
             stmt = (
                 select(ExecutionHistory.duration_seconds)
@@ -162,6 +181,13 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             return session.execute(stmt).scalar_one_or_none()
 
+
+        Args:
+            ucfs: UCFS string.
+
+        Returns:
+            List of node execution IDs that produced the UCFS.
+        """
         with Session(self.db) as session:
             stmt = (
                 .join(
@@ -174,8 +200,10 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
 
         Args:
+            ucfs: UCFS string.
 
         Returns:
+            List of node execution IDs that consumed the UCFS.
         """
         with Session(self.db) as session:
             stmt = (
@@ -189,8 +217,10 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
 
         Args:
+            ucfs: UCFS string.
 
         Returns:
+            Dict with "consumers" and "producers" as lists of node execution IDs.
         """
         return {
         }
@@ -200,8 +230,14 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         wid: str | None = None,
         limit: int | None = None,
     ) -> dict:
+        """Load execution history from the database.
 
         Args:
+            wid: Workflow ID to load the history for.
+            limit: Optional maximum number of resulting history objects.
+
+        Returns:
+            Dictionary of execution history entries.
         """
         query = []
         if wid is not None:
@@ -223,6 +259,11 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             }
 
     def retrieve_interface_statistics(self) -> dict:
+        """Count the number of UMeta entries available in the interface.
+
+        Returns:
+            Dictionary with counts of unode_exe_details, history, input links, and output links.
+        """
         with Session(self.db) as session:
             n_unode_exe_docs = select(func.count()).select_from(ExecutionConfigurations)
             n_uh_docs = select(func.count()).select_from(ExecutionHistory)
@@ -238,10 +279,12 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 ).scalar(),
             }
 
+        """Save UTrace information to the database.
 
         Args:
         """
         with Session(self.db) as session:
+            if not self.umeta_exists(utrace=utrace):
                 input_objs, output_objs = self._save_input_and_output_files(
                 )
                 session.flush()
@@ -263,6 +306,15 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
 
     def _save_input_and_output_files(
     ) -> tuple[list, list]:
+        """Save input and output files to database and return lists of objects.
+
+        Args:
+            session: Active SQLAlchemy session.
+            utrace: UTrace object.
+
+        Returns:
+            Tuple of lists: input_objs, output_objs
+        """
         input_objs = []
         for ifile in utrace.input_files:
             obj = session.get(InputUFiles, ifile.ucfs)
@@ -281,6 +333,11 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             output_objs.append(obj)
         return input_objs, output_objs
 
+        """Save file information to UMeta.
+
+        Args:
+            ufile: UFile object.
+        """
         with Session(self.db) as session:
             obj2 = UcfsStorageLocation(
                 storage_base_uri=ufile.storage_base_uri,
@@ -293,15 +350,37 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             except IntegrityError:
                 session.rollback()
 
+        """Check if UMeta (Unode execution details) exist for a given UTrace.
+
+        Args:
+            utrace: UTrace object.
+
+        Returns:
+            Boolean indicating if the configuration already exists.
+        """
         with Session(self.db) as session:
             stmt = select(
             )
             return session.execute(stmt).scalar()
 
     def find_wid_members(self, wid: str, limit: int | None = None) -> dict:
+        """Find all UMeta entries associated with a given workflow ID.
+
+        Args:
+            wid: Workflow ID.
+            limit: Optional limit on number of entries.
+
+        Returns:
+            Dictionary of history entries.
+        """
         return self.load_history(wid=wid, limit=limit)
 
     def generate_connection_string(self) -> None:
+        """Generate a connection string for the database.
+
+        Raises:
+            NotImplementedError: If the method is not implemented in a subclass.
+        """
         msg = "Please implement this method in child classes."
         raise NotImplementedError(msg)
 
@@ -311,6 +390,15 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         object_name: str | None = None,
         ucfs: str | None = None,
     ) -> list[dict]:
+        """Retrieve UMeta information for UCFS storage location.
+
+        Args:
+            object_name: Optional object name prefix.
+            ucfs: Optional UCFS string.
+
+        Returns:
+            List of dictionaries with storage information.
+        """
         stmt = select(UcfsStorageLocation.storage_base_uri, UcfsStorageLocation.ucfs)
         if storage_base_uri is not None:
             stmt = stmt.where(UcfsStorageLocation.storage_base_uri == storage_base_uri)

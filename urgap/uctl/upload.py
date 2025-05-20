@@ -16,8 +16,13 @@ from tqdm import tqdm
 @click.argument("bucket_structure")
 def upload_folder_click(
 ) -> None:
+    """Upload the contents of a folder to a storage_base_uri with a given bucket structure.
 
+    Object stores do not have real folders, but the concept is preserved for object naming
+    and uniqueness within the bucket.
 
+    Example:
+        uctl upload folder ~/Download gcs://gcp-project-name/gcs-container-name subfolder/in/bucket
 
     """
     upload_folder(
@@ -28,8 +33,11 @@ def upload_folder_click(
 
 
 def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> None:
+    """Upload files from a folder into a new storage_base_uri.
 
     Args:
+        folder: Path to the folder with files to upload.
+        bucket_structure: Prefix for object name in the bucket.
     """
     base_folder = Path(folder)
     resulting_uris = []
@@ -47,3 +55,5 @@ def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> 
             file.upload()
             resulting_uris.append(file.as_uri())
             pbar.update(1)
+    for uri in resulting_uris:
+        msg = f"'{uri}'"

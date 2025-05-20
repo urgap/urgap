@@ -14,6 +14,7 @@ def _check_if_config_key_value_is_valid(
     config_value: str,
     verbose: bool = False,
 ) -> bool:
+    """Check if a config key/value pair is valid."""
     if verbose is True:
     is_valid = True
     if config_key not in config:
@@ -46,6 +47,9 @@ def set_config(
             config_value = [x.strip() for x in config_value.split(",")]
         config[config_key]["value"] = config_value
 
+        if kwargs.get("dry", False) is True and verbose is True:
+            msg = (
+            )
         else:
                 json.dump(config, config_json, indent=4, sort_keys=True)
             if verbose is True:

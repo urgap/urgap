@@ -34,6 +34,7 @@ class UTelemetry:
     is_shutdown = False
 
     def __init__(self) -> None:
+        """Create an instance of UTelemetry."""
         self.trace_tree = {}
         self.span_lookup = {}
         self.counters = {}
@@ -43,19 +44,32 @@ class UTelemetry:
     @property
     def otlp_url(self) -> str | None:
 
+        Returns:
+            The OpenTelemetry collector URL or None if not set.
+        """
+
     @property
     def otlp_type(self) -> str | None:
 
+        Returns:
+            The exporter type (e.g. 'OTLP', 'Console', 'AZ-Insights') or None.
+        """
+
     @property
     def tracing_enabled(self) -> bool:
+        """Check if tracing is enabled.
 
+        Returns:
+            True if tracing is enabled via config, else False.
         """
         return self.otlp_type is not None
 
     @property
     def meter(self) -> metrics.Meter | None:
+        """Get or initialize and return the meter instance for metrics.
 
         Returns:
+            Meter instance if tracing is enabled, else None.
         """
         if self._meter is None and self.tracing_enabled is True:
             self._meter = self.init_meter()
@@ -63,8 +77,10 @@ class UTelemetry:
 
     @property
     def tracer(self) -> trace.Tracer | None:
+        """Get or initialize and return the tracer instance for spans.
 
         Returns:
+            Tracer instance if tracing is enabled, else None.
         """
         if self._tracer is None and self.tracing_enabled is True:
             self._tracer = self.init_tracer()
@@ -72,7 +88,16 @@ class UTelemetry:
 
     @staticmethod
     def shutdown() -> None:
+        """Shutdown UTelemetry and close all OpenTelemetry connections."""
     def init_meter(self) -> metrics.Meter:
+        """Initialize and configure a Meter for collecting metrics.
+
+        Returns:
+            The initialized Meter instance.
+
+        Raises:
+            ValueError: If the exporter type is unknown.
+        """
         if UTelemetry.metric_was_initialized is False:
             if self.otlp_type == "OTLP":
                 exporter = OTLPMetricExporter(endpoint=self.otlp_url)
@@ -95,6 +120,14 @@ class UTelemetry:
             UTelemetry.metric_was_initialized = True
 
     def init_tracer(self) -> trace.Tracer:
+        """Initialize and configure a Tracer for distributed tracing.
+
+        Returns:
+            The initialized Tracer instance.
+
+        Raises:
+            ValueError: If the exporter type is unknown.
+        """
         if UTelemetry.trace_was_initialized is False:
             trace.set_tracer_provider(
                 TracerProvider(
@@ -122,8 +155,11 @@ class UTelemetry:
         """
 
     def increase_counters(self, counter_name_list: list, count: float = 1) -> None:
+        """Increase each counter in the list by a specified value.
 
         Args:
+            counter_name_list: List of counter names.
+            count: Value to increase each counter by. Defaults to 1.
         """
         for counter_name in counter_name_list:
             self.increase_counter(counter_name, count=count)
@@ -138,8 +174,13 @@ class UTelemetry:
         """Start and return a new OpenTelemetry span.
 
         Args:
+            span_context: List of span names to build the hierarchy.
+            attributes: Dictionary of attributes to add to span.
+            event: Optional event to add to the span.
+            spankind: Optional SpanKind for this span.
 
         Returns:
+            The initialized Span object.
         """
         current_tree = self.trace_tree
         parent_context = None
@@ -185,8 +226,11 @@ class UTelemetry:
         nested_span_list: list,
         event: str,
     ) -> None:
+        """Add an event to a span.
 
         Args:
+            nested_span_list: Span context as a list.
+            event: Event description or label to add.
         """
         span = self.find_span(nested_span_list)
         if span is None:
@@ -199,8 +243,11 @@ class UTelemetry:
         nested_span_list: list,
         events: list,
     ) -> None:
+        """Add multiple events to a span.
 
         Args:
+            nested_span_list: Span context as a list.
+            events: List of event descriptions or labels.
         """
         span = self.find_span(nested_span_list)
         for event in events:
@@ -215,8 +262,12 @@ class UTelemetry:
         key: str,
         value: str,
     ) -> None:
+        """Set a single attribute on a span.
 
         Args:
+            nested_span_list: Span context as a list.
+            key: Attribute key.
+            value: Attribute value.
         """
         span = self.find_span(nested_span_list)
         if span is None:
@@ -229,8 +280,11 @@ class UTelemetry:
         nested_span_list: list,
         attributes: dict,
     ) -> None:
+        """Set multiple attributes on a span.
 
         Args:
+            nested_span_list: Span context as a list.
+            attributes: Dictionary of key/value pairs to set.
         """
         span = self.find_span(nested_span_list)
         if span is None:
@@ -243,8 +297,11 @@ class UTelemetry:
         nested_span_list: list,
         status: StatusCode,
     ) -> None:
+        """Set the StatusCode of a span.
 
         Args:
+            nested_span_list: Span context as a list.
+            status: Status code to set (e.g., StatusCode.OK).
         """
         span = self.find_span(nested_span_list)
         if span is None:
@@ -253,10 +310,13 @@ class UTelemetry:
             span.set_status(status)
 
     def find_span(self, nested_span_list: list) -> trace.Span | None:
+        """Find a span using its nested context.
 
         Args:
+            nested_span_list: List describing the span context (hierarchy).
 
         Returns:
+            The found Span object or None if not found.
         """
         container = self._find_container(nested_span_list)
         if container is None:
@@ -265,6 +325,14 @@ class UTelemetry:
         return container["span"]
 
     def _find_container(self, nested_span_list: list) -> dict:
+        """Find a container node in the span tree.
+
+        Args:
+            nested_span_list: List describing the span context (hierarchy).
+
+        Returns:
+            The container dictionary for this span context, or None.
+        """
         lookup_key = "<|>".join(nested_span_list)
         container = None
         if lookup_key in self.span_lookup:
@@ -272,14 +340,21 @@ class UTelemetry:
         return container
 
     def close_span(self, nested_span_list: list) -> None:
+        """Close a span and all its children recursively.
 
         Args:
+            nested_span_list: Span context as a list.
         """
         container = self._find_container(nested_span_list)
         if container is not None:
             self._close_node_recursive(container)
 
     def _close_node_recursive(self, node: dict) -> None:
+        """Close all child spans recursively and remove from lookup.
+
+        Args:
+            node: Node dictionary representing the current span.
+        """
         for child in list(node["children"].values()):
             self._close_node_recursive(child)
         node["span"].end()
@@ -291,6 +366,7 @@ class UTelemetry:
             self.trace_tree.pop(node["name"])
 
     def end_all_spans(self) -> None:
+        """Close all currently running spans."""
         for span in UTelemetry.started_spans[::-1]:
             if span.is_recording() is True:
                 span.end()

@@ -26,6 +26,7 @@ class UReport:
     ) -> None:
 
         Args:
+            ufile: UFile associated with report.
             ucfs: Object associated with report.
             wid: Workflow ID.
         """
@@ -53,6 +54,7 @@ class UReport:
             )
 
     @property
+        """Get umeta interface.
 
         Returns:
         """
@@ -60,8 +62,13 @@ class UReport:
         return self._umeta
 
     def get_trace(
+        """Get UTrace object for a specific node execution and workflow.
+
+        Args:
+            wid: Workflow ID.
 
         Returns:
+            UTrace object.
         """
                 missing_history = self.umeta.load_history(
                 )
@@ -70,6 +77,12 @@ class UReport:
                 storage_base_uri=storage_base_uri,
             )
 
+    def __repr__(self) -> str:
+        """Return a user-friendly UReport overview string.
+
+        Returns:
+            String with summary of the UReport instance.
+        """
         return f"""
 UReport id {id(self)}
 
@@ -82,21 +95,26 @@ UMeta:
 
     @property
     def wids(self) -> set:
+        """Get all WIDs of currently loaded UTraces.
 
         Returns:
+            Set of WIDs.
         """
         return {w for n, w in self.execution_history}
 
     @property
 
         Returns:
+            Set of node execution IDs.
         """
         return {n for n, w in self.execution_history}
 
     @property
     def graph(self) -> nx.DiGraph:
+        """Get internal directed graph representing execution DAG.
 
         Returns:
+            NetworkX directed graph object.
         """
         graph = nx.DiGraph()
         for missing_node in self._os:
@@ -115,10 +133,14 @@ UMeta:
         graph: nx.DiGraph,
         storage_base_uri: str | None = None,
     ) -> nx.DiGraph:
+        """Build up the execution graph recursively for all input/output files.
 
         Args:
+            wid: Workflow ID.
+            graph: Existing graph object.
 
         Returns:
+            Updated graph object.
         """
 
 
@@ -148,6 +170,11 @@ UMeta:
         return graph
 
     def _merge_histories(self, other_history: dict) -> None:
+        """Merge execution histories with possible timestamp update.
+
+        Args:
+            other_history: Another execution history dictionary to merge.
+        """
         for other_key, other_value in other_history.items():
             if other_key not in self.execution_history:
                 self.execution_history[other_key] = other_value
@@ -164,8 +191,10 @@ UMeta:
         """Check if a run was skipped.
 
         Args:
+            wid: Workflow ID.
 
         Returns:
+            True if the trace was skipped, else False.
         """
 
     def was_run(
@@ -175,8 +204,10 @@ UMeta:
         """Check if a run was executed.
 
         Args:
+            wid: Workflow ID.
 
         Returns:
+            True if the trace was run, else False.
         """
 
     def crashed(
@@ -186,11 +217,14 @@ UMeta:
         """Check if a run crashed.
 
         Args:
+            wid: Workflow ID.
 
         Returns:
+            True if the trace crashed, else False.
         """
 
     def data_exists(self) -> bool:
+        """Check if file object exists in storage.
 
         Returns:
             True if data exists, else False.
@@ -208,9 +242,15 @@ UMeta:
         return self.umeta.umeta_exists(reference_ufile)
 
     def generate_node_vis(self) -> list:
+        """Generate node-specific data visualization.
+
+        Returns:
+            List of visualizations.
+        """
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
 
     def draw_execution_dag(self) -> None:
+        """Generate and display a DAG of execution described by UReport, with node aliases."""
         init_notebook_mode(connected=True)
         nodes, links = self._get_history_nodes_and_links()
         custom_hover_data = []
@@ -275,6 +315,11 @@ UMeta:
         iplot(fig)
 
     def _get_history_nodes_and_links(self) -> tuple:
+        """Get nodes and their links from execution history.
+
+        Returns:
+            Tuple containing list of nodes and dictionary of links.
+        """
         non_root_ufiles = set()
             ut = self.get_trace(
             )
@@ -298,9 +343,12 @@ UMeta:
         """Append object source name to nodes.
 
         Args:
+            ufile: UFile to get object name from.
             non_root_ufiles: Output ufiles.
+            nodes: List of node exe IDs and object names.
 
         Returns:
+            Tuple of updated nodes list and the source name of the ufile.
         """
         if ufile.ucfs in non_root_ufiles:
             source = ufile.ucfs
@@ -312,9 +360,11 @@ UMeta:
 
 
         Args:
+            nodes: Dictionary with node alias (int) as key and list of requested output uftypes as value.
                 Leave list empty to request all output uftypes.
 
         Returns:
+            UFileList of requested output files.
         """
         translated_aliases = {
             self.node_aliases[alias]: value for alias, value in nodes.items()
@@ -332,8 +382,10 @@ UMeta:
         return query_results
 
     def summary(self) -> dict:
+        """Create a basic text summary of execution.
 
         Returns:
+            Dictionary with summary details for each node execution.
         """
         summary = {}
 
@@ -343,9 +395,13 @@ UMeta:
         return summary
 
     def find_root_files(self, target_node: str) -> list | None:
+        """Find the root files for a given node.
 
+        Args:
+            target_node: Node to search for root files.
 
         Returns:
+            List of graph node names representing root files, or None.
         """
         reverse_graph = self.graph.reverse()
         root_nodes = set()
@@ -367,8 +423,10 @@ UMeta:
         return get_root_nodes(target_node, reverse_graph, visited_nodes, root_nodes)
 
     def generate_report(self) -> list:
+        """Create a JSON-compatible report for this pipeline execution.
 
         Returns:
+            List with report structure as JSON-serializable data.
         """
         wid = ",".join(self.wids)
         data = [
@@ -453,8 +511,11 @@ UMeta:
 
     def render_report(
     ) -> None:
+        """Render the pipeline report as an HTML file using Jinja2 templates.
 
         Args:
+            output_path: Path to the output file.
+            template_name: Name of the template (only "basic.html" currently supported).
         """
         data = self.generate_report()
         from jinja2 import Environment, FileSystemLoader

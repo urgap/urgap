@@ -26,6 +26,7 @@ class UFile:
     def __init__(
         self,
     ) -> None:
+        """Create a new UFile instance.
 
         Args:
         """
@@ -41,6 +42,7 @@ class UFile:
 
     @property
     def tags(self) -> dict:
+        """Get tags associated with this UFile.
 
         Returns:
         """
@@ -52,17 +54,30 @@ class UFile:
 
     @property
     def is_borg(self) -> bool:
+        """Whether this file is part of a multifile (borg) collection.
+
+        Returns:
+            True if part of a collection, False otherwise.
+        """
         return "_1_of_1" not in self.object_name and "_of_" in self.object_name
 
     @property
     def is_part_of_collection(self) -> bool:
+        """Whether this file is part of a multifile collection.
+
+        Returns:
+            True if part of a collection, False otherwise.
+        """
         return "_1_of_1" not in self.object_name and "_of_" in self.object_name
 
     @property
     def path(self) -> Path:
+        """Path to the local scratch copy of this UFile.
 
+        If not present locally or if hashes differ, downloads the remote file.
 
         Returns:
+            Local file path.
         """
         download_file = True
         if self.io.local_object_exists() is True:
@@ -95,18 +110,24 @@ class UFile:
         return self.as_uri()
 
     def __eq__(self, other: object) -> bool:
+        """Test equality to another UFile by ucfs.
 
         Args:
+            other: Object to compare.
 
         Returns:
+            True if both are UFiles with the same ucfs, otherwise False.
         """
             return self.ucfs == other.ucfs
         return False
 
+        """Lexical comparison by ucfs for sorting.
 
         Args:
+            other: UFile to compare.
 
         Returns:
+            True if this ucfs is less than other's.
         """
             return self.ucfs < other.ucfs
         return False
@@ -115,18 +136,22 @@ class UFile:
     def object_name(self) -> str:
 
         Returns:
+            The object name.
         """
 
     @property
     def simple_name(self) -> str:
+        """Returns a simplified file name (stem, no extension).
 
         Returns:
+            Simple name string.
         """
         object_name = self.object_name
         return object_name.split("/")[-1].rsplit(".", maxsplit=1)[0].replace(".", "-")
 
     @property
     def ucfs(self) -> str:
+        """Unique content file string for this UFile.
 
         Returns:
         """
@@ -134,10 +159,13 @@ class UFile:
         return self._ucfs
 
     def __deepcopy__(self, memo: dict) -> UFile:
+        """Create a deep copy of this UFile.
 
         Args:
+            memo: The copy memo dict.
 
         Returns:
+            A deep copy of the UFile, with private attributes set to None.
         """
         cls = self.__class__
         result = cls.__new__(cls)
@@ -160,6 +188,7 @@ class UFile:
     def uftype(self) -> str:
 
         Returns:
+            The uftype string, or 'UNKNOWN' if not defined.
         """
         uftype = self.tags.get("uftype", None)
         if uftype is None:
@@ -176,6 +205,7 @@ class UFile:
     @property
 
         Returns:
+            The initialized IO instance.
         """
         if self._io is None:
             self._io = self.init_io_class()
@@ -188,10 +218,14 @@ class UFile:
         number_of_parents: int = 1,
         query: str | None = None,
     ) -> UFile:
+        """Construct a UFile from a filesystem Path.
 
         Args:
+            path_object: Path object for the file.
+            query: Optional query string for tags.
 
         Returns:
+            A new UFile instance.
         """
         basefolder = path_object.parent.resolve()
         container_content = path_object.name
@@ -208,6 +242,11 @@ class UFile:
     ) -> str:
 
         Args:
+            scheme: Override the scheme.
+            netloc: Override the network location.
+            path: Override the path.
+            fragment: Override the fragment (object name).
+            query: Override the query string.
 
         Returns:
         """
@@ -235,6 +274,9 @@ class UFile:
 
     @property
     def storage_base_uri(self) -> str:
+
+        Returns:
+        """
         return self.as_storage_base_uri()
 
     def as_storage_base_uri(self) -> str:
@@ -244,8 +286,10 @@ class UFile:
 
 
         Returns:
+            The IO class instance for this file.
 
         Raises:
+            ImportError: If the IO backend is not installed.
         """
         if scheme not in available_io_classes:
             msg = (
@@ -253,17 +297,25 @@ class UFile:
             raise ImportError(msg)
 
     def get_object(self) -> Path | None:
+        """Get a local object from remote storage if it exists.
 
         Returns:
+            The path to the local object, or None if it does not exist remotely.
         """
         return self.io.get_object()
 
     def remote_object_exists(self) -> bool:
+        """Check if the remote object exists.
+
+        Returns:
+            True if the remote object exists, False otherwise.
+        """
         return self.io.remote_object_exists()
 
     def recalculate_hashes(self, force_local: bool = False) -> None:
 
         Args:
+            force_local: If True, always use the local file.
         """
             else:
 
@@ -271,6 +323,8 @@ class UFile:
     ) -> None:
 
         Args:
+            upload: If True, upload the file after rebasing.
+            **kwargs: Passed to upload().
         """
         parsed_uri = urlparse(uri)
 
@@ -285,10 +339,16 @@ class UFile:
 
             self.upload(**kwargs)
 
+        """Compress this UFile into a new compressed file.
 
         Args:
+            compression_format: The format to use: 'zip', 'gz', or 'tar'.
 
         Returns:
+            A new compressed UFile.
+
+        Raises:
+            NotImplementedError: If the format is unsupported.
         """
         if compression_format == "zip":
             suffix = ".zip"
@@ -316,6 +376,11 @@ class UFile:
         return compressed_ufile
 
     def _unpack_gz(self, gz_output: str | Path, encoding: str = "utf-8") -> None:
+
+        Args:
+            gz_output: Where to write the decompressed data.
+            encoding: Encoding to use for output.
+        """
         with (
         ):
             decom_str = gzip.decompress(gz_file.read()).decode(encoding=encoding)
@@ -325,10 +390,17 @@ class UFile:
         self,
         compression_format: str | None = None,
         recursive: bool = True,
+        """Uncompress this UFile (auto-detecting format if needed).
 
         Args:
+            compression_format: The format to uncompress. If None, will be auto-detected.
+            recursive: If True, recursively uncompress nested archives.
 
         Returns:
+            UFileList containing all uncompressed files.
+
+        Raises:
+            NotImplementedError: If the format is unsupported.
         """
         if compression_format is None:
         match compression_format:
@@ -359,6 +431,14 @@ class UFile:
         )
 
     def _uncompress_recursive(
+
+        Args:
+            ufl: UFileList to uncompress.
+            recursive: Whether to recursively uncompress nested archives.
+
+        Returns:
+            The uncompressed UFileList.
+        """
         if recursive is True:
             for uf in ufl:
                     )
@@ -380,28 +460,41 @@ class UFile:
         return ufl
 
     def create_container(self) -> None:
+        """Create the remote container (e.g., bucket or folder) for this file."""
         self.io.create_container()
 
     def remove_remote_object(self) -> None:
+        """Remove this object from remote storage."""
         self.io.remove_remote_object()
 
     def purge_local(self) -> None:
+        """Remove the local file and its tags from the scratch disk."""
         self.purge_local_file()
         self.purge_local_tags()
 
     def purge_local_file(self) -> None:
+        """Remove only the local file from the scratch disk."""
         with contextlib.suppress(FileNotFoundError):
             self.io.scratch_path.unlink()
 
     def purge_local_tags(self) -> None:
+        """Remove only the cached local tags for this UFile."""
         self._tags = None
 
-
-    def identify_lineage_root_files(self, use_umeta: bool = True) -> list:
-
-        Args:
+        """List all objects in the remote container.
 
         Returns:
+            List of object names.
+        """
+
+    def identify_lineage_root_files(self, use_umeta: bool = True) -> list:
+        """List root files in the lineage graph, optionally using UMeta.
+
+        Args:
+            use_umeta: If True, use UMeta interface, else reconstruct from tags.
+
+        Returns:
+            List of root object names.
         """
         if self._lineage_root_files is None:
             graph = self.create_lineage_graph(use_umeta=use_umeta)
@@ -411,10 +504,13 @@ class UFile:
         return self._lineage_root_files
 
     def create_lineage_graph(self, use_umeta: bool = True) -> nx.DiGraph:
+        """Create a directed graph representing the lineage for this UFile.
 
         Args:
+            use_umeta: Use UMeta to reconstruct lineage if True.
 
         Returns:
+            The directed graph of UFile lineage.
         """
         if self._lineage_graph is None:
             if use_umeta is True:
@@ -429,6 +525,14 @@ class UFile:
             self._lineage_graph = graph
         return self._lineage_graph
 
+
+        Args:
+            graph: Graph to update.
+            ufile: The current UFile node.
+
+        Returns:
+            The updated graph.
+        """
         graph.add_node(ufile.object_name)
         for parent in ufile.parents:
             graph.add_edge(
@@ -447,8 +551,10 @@ class UFile:
 
     @property
     def parents(self) -> list:
+        """List the object names of direct parent files for this UFile.
 
         Returns:
+            List of parent object names.
         """
 
     def simplify_name(
@@ -457,10 +563,16 @@ class UFile:
         prefix: str | None = None,
         suffix: str | None = None,
         storage_base_uri: str | None = None,
+        """Rename and optionally rebase this file for user-friendly output.
 
         Args:
+            source_object_names: Set of valid source object names to match in parents.
+            prefix: Optional prefix for the new name.
+            suffix: Optional suffix for the new name.
+            storage_base_uri: If given, rebase the output file here.
 
         Returns:
+            The renamed UFile, or None if no matching parent found.
         """
         matching_source = source_object_names.intersection(self.parents)
         if len(matching_source) != 1:
