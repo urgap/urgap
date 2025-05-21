@@ -29,6 +29,8 @@ class IOSMB(UIOBase):
         """
         super().__init__(**kwargs)
         self.conn_object = SMBConnection(
+            self.uuri.query,
+            self.uuri.password,
             "Target",
             use_ntlm_v2=True,
             is_direct_tcp=True,
@@ -65,6 +67,7 @@ class IOSMB(UIOBase):
         Returns:
             String representing the remote tag file path.
         """
+        return self.uuri.fragment + ".tag"
 
     def get_remote_tags(self) -> dict | None:
         """Get remote tags associated with referenced file.
@@ -138,6 +141,8 @@ class IOSMB(UIOBase):
             True if remote object exists, False otherwise.
         """
         try:
+            fragment_directory = "/".join(self.uuri.fragment.split("/")[:-1])
+            filename = self.uuri.fragment.split("/")[-1]
             return any(f.filename == filename for f in files)
         except OperationFailure:
             return False
@@ -149,6 +154,7 @@ class IOSMB(UIOBase):
             True if remote path exists, False otherwise.
         """
         try:
+            fragment_directory = "/".join(self.uuri.fragment.split("/")[:-1])
         except OperationFailure:
             return False
         else:

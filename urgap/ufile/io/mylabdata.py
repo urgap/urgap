@@ -71,6 +71,8 @@ class IOMyLabData(UIOBase):
             ConnectionError: If the login attempt fails.
         """
         files_cred = {
+            "userId": self.uuri.user,
+            "password": self.uuri.password,
         }
         response = requests.post(
             json=files_cred,
@@ -184,6 +186,7 @@ class IOMyLabData(UIOBase):
         Returns:
             List of object names matching the filter.
         """
+        equip_task_id_fragment = self.uuri.path.split("/")[1:]
         equip_task_id_fragment.append(limit)
         query = urlencode(
             dict(
@@ -218,3 +221,4 @@ class IOMyLabData(UIOBase):
         Returns:
             True if the object exists, False otherwise.
         """
+        return self.uuri.fragment in self.list_container_items()

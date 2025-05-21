@@ -14,9 +14,12 @@ class UIOBase:
     reported_tmp_files = set()
 
     def __init__(self, **kwargs: P.kwargs) -> None:
+        """Create a new UIOBase instance and set the uuri attribute from kwargs.
 
         Args:
+            kwargs: Must include "uuri", which is the parsed UUri object.
         """
+        self.uuri = kwargs["uuri"]
 
     @property
     def scratch_path(self) -> Path:

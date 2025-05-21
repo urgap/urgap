@@ -30,6 +30,7 @@ class IOOmiq(UIOBase):
         self._file_id = None
         self._tags = None
 
+        cred_key = f"{self.uuri.scheme}://{self.uuri.netloc}"
         password = um.get_password(cred_key)
         user = um.get_user(cred_key)
         with tempfile.NamedTemporaryFile() as fp:
@@ -40,12 +41,14 @@ class IOOmiq(UIOBase):
                     },
                     tmp_file,
                 )
+            self._api = omiq_api.API(self.uuri.netloc, secret_filepath=fp.name)
             self._omiq_user_info = self._api.get_user()
             if self._omiq_user_info is not None:
                 msg = "Authenticated to OMIQ API as {name} [last login:{lastLoginTime}]".format(
                 )
         self._workflow = self._api.get_workflow(self._workflow_id)
         self._dataset_id = int(self._workflow["datasetId"])
+        self._query_params = self.uuri.query
         if self._query_params.get("derived_from_fcs", False) is True:
             self._corresponding_fcs_filename = str(
             )
@@ -96,6 +99,7 @@ class IOOmiq(UIOBase):
         self._tags = {"omiq_tags": True}
         for file_dict in self._list_files_in_dataset():
             if (
+                file_dict["displayName"] == self.uuri.fragment
                 or file_dict["displayName"] == self._corresponding_fcs_filename
             ):
                 for key in keys_to_grab:
@@ -116,9 +120,11 @@ class IOOmiq(UIOBase):
             self._query_params.get("uftype", None)
         ):
             self._download_file_from_workflow()
+        elif self.uuri.fragment in [
             i["displayName"] for i in self._list_files_in_dataset()
         ]:
             self._download_file_from_dataset()
+        elif self.uuri.fragment in self._list_artifacts():
             self._download_file_from_artifacts()
         else:
             self._handle_file_not_found()
@@ -210,6 +216,7 @@ class IOOmiq(UIOBase):
         task_id = self._get_task_id_for_artifact(self.uuri.fragment)
         self._api.download_artifact(
             task_id=task_id,
+            artifact_name=self.uuri.fragment,
             filepath=self._scratch_path,
         )
 
@@ -240,6 +247,7 @@ class IOOmiq(UIOBase):
             FileNotFoundError: If the file or artifact is not found.
         """
         if self._corresponding_fcs_filename is None:
+            f = self.uuri.fragment
         else:
             f = self._corresponding_fcs_filename
         raise FileNotFoundError(msg)
@@ -307,5 +315,6 @@ class IOOmiq(UIOBase):
             True if the file or artifact exists, False otherwise.
         """
         return (
+            self.uuri.fragment in self.list_container_items()
             or self._corresponding_fcs_filename in self._list_artifacts()
         )

@@ -52,6 +52,8 @@ class UFile:
             self._tags = self.io.get_remote_tags()
             if self._tags is None:
                 self._tags = {}
+            if len(self.uuri.query.keys()) > 0:
+                self._tags.update(self.uuri.query)
 
         return self._tags
 
@@ -260,22 +262,28 @@ class UFile:
         """
         unparse_args = []
         if scheme is None:
+            parsed_schema = self.uuri.scheme
             if parsed_schema is None:
+                return self.uuri.fragment
             unparse_args.append(parsed_schema)
         else:
             unparse_args.append(scheme)
         if netloc is None:
+            unparse_args.append(self.uuri.netloc)
         else:
             unparse_args.append(netloc)
         if path is None:
+            unparse_args.append(self.uuri.path)
         else:
             unparse_args.append(path)
+        unparse_args.append(self.uuri.params)
         if query is None:
             unparse_args.append(
             )
         else:
             unparse_args.append(query)
         if fragment is None:
+            unparse_args.append(self.uuri.fragment)
         else:
             unparse_args.append(fragment)
 
@@ -294,6 +302,7 @@ class UFile:
         Returns:
             The storage base UUri as a string.
         """
+        return f"{self.uuri.scheme}://{self.uuri.netloc}{self.uuri.path}"
 
         """Initialize the IO backend for this file, based on the UUri scheme.
 
@@ -303,6 +312,7 @@ class UFile:
         Raises:
             ImportError: If the IO backend is not installed.
         """
+        scheme = self.uuri.scheme
         if scheme not in available_io_classes:
             msg = (
             )

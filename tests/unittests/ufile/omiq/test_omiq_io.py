@@ -29,29 +29,38 @@ def mock_omiq_api():
 
 
 @pytest.fixture
+def uuri():
 
 
 @pytest.fixture
+def uuri2():
 
 
 @pytest.fixture
+def uuri3():
     )
 
 
 @pytest.fixture
+        return IOOmiq(uuri=uuri, scratch_path=Path(tempfile.gettempdir()))
 
 
 @pytest.fixture
+        return IOOmiq(uuri=uuri2, scratch_path=Path(tempfile.gettempdir()))
 
 
 @pytest.fixture
+        return IOOmiq(uuri=uuri3, scratch_path=Path(tempfile.gettempdir()))
 
 
 @pytest.fixture
     )
+        return IOOmiq(uuri=uuri, scratch_path=Path(tempfile.gettempdir()))
 
 
+def test_init(io_omiq_instance, mock_omiq_api, uuri):
     assert io_omiq_instance._api is not None
+    mock_omiq_api.assert_called_once_with(uuri.netloc, secret_filepath=ANY)
     assert io_omiq_instance._omiq_user_info == {
         "name": "Test User",
         "lastLoginTime": "2023-01-01",
@@ -64,6 +73,7 @@ def mock_omiq_api():
         "tasks": [],
         "taskArtifacts": [{"taskId": 456, "file": "file.csv"}],
     }
+    assert io_omiq_instance.uuri.fragment == "file.txt"
 
 
 def test_remote_path(io_omiq_instance):
@@ -186,6 +196,7 @@ def test_remote_object_exists(io_omiq_instance):
 
     assert io_omiq_instance.remote_object_exists() is True
 
+    io_omiq_instance.uuri.fragment = "non_existent_file.txt"
     assert io_omiq_instance.remote_object_exists() is False
 
 if __name__ == "__main__":

@@ -45,6 +45,7 @@ def test_tags_are_set_via_uri(provide_clean_scratch_and_remote):
 )
     ufile = provide_clean_scratch_and_remote
     ufile_uri_without_query = ufile.as_uri(query="")
+    print(ufile.uuri)
     print("uri without query", ufile_uri_without_query)
     print(ufile.path)
 

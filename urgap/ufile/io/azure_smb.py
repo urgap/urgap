@@ -39,6 +39,8 @@ class IOAzureSMB(UIOBase):
         """
         super().__init__(**kwargs)
         self.share_service_client = ShareServiceClient(
+            account_url=self.uuri.netloc,
+            credential=self.uuri.password,
         )
         available_shares = [x["name"] for x in self.share_service_client.list_shares()]
             msg = (
