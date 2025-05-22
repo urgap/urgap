@@ -74,6 +74,7 @@ def test_simplify_output_names(tmp_dir):
         sources=uris,
         prefix="pre",
         suffix="suff",
+        storage_base_uri=f"file://{tmp_dir}",
     )
     assert len(list(tmp_dir.iterdir())) == 0
 
@@ -84,6 +85,7 @@ def test_simplify_output_names(tmp_dir):
         sources=uris,
         prefix="pre_",
         suffix="suff.txt",
+        storage_base_uri=f"file://{tmp_dir}",
     )
     copied_files = list(tmp_dir.iterdir())
     assert len(copied_files) == 2
