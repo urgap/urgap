@@ -98,6 +98,19 @@ def shutdown_telemetry() -> None:
 
 
 def append_query_to_uri(uri: str, query: str) -> str:
+    """Append a query string to the URI before the fragment.
+
+    If the URI already contains a query string, the new query is appended directly.
+    Otherwise, a '?' is added before the query.
+
+    Arguments:
+        uri: The original URI in the format 'base_uri#fragment'.
+        query: The query string to append (e.g., 'key=value').
+
+    Returns:
+        str: The updated URI with the query appended before the fragment.
+    """
+    (storage_base_uri, object_name) = uri.split("#")
     if "?" in storage_base_uri:
     else:
         storage_base_uri += "?" + query
