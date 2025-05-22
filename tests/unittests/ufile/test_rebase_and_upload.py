@@ -4,8 +4,11 @@ from pathlib import Path
 
 
 
+def test_rebase_and_upload(tmpdir):
     )
+    file.rebase(f"file://{tmpdir}/data/test_node_data")
     file.upload()
+    assert Path(f"{tmpdir}/data/test_node_data/usermods/usermods.xml").exists()
 
 
 def test_rename_object_name():
