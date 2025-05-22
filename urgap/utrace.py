@@ -389,6 +389,7 @@ class UTrace:
             max_n: Max number of files matching uftype or "N" for an unspecified number.
         """
 
+    def _query_remote_by_uftype(self) -> dict:
         """Query remote files by uftype.
 
         Returns:

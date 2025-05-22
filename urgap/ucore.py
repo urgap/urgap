@@ -95,3 +95,10 @@ def shutdown_local_upi_servers(force: bool = False) -> None:
 
 def shutdown_telemetry() -> None:
     """Shut down Utelemetry servers."""
+
+
+def append_query_to_uri(uri: str, query: str) -> str:
+    if "?" in storage_base_uri:
+    else:
+        storage_base_uri += "?" + query
+    return f"{storage_base_uri}#{object_name}"

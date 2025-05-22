@@ -108,6 +108,7 @@ class IOPython(UIOBase):
         """Get all objects in a container (directory), optionally filtered by pattern.
 
         Args:
+            container_name: Name of the container or bucket. If None, uses self.container_name.
             pattern: Optional regex pattern for filtering file names.
 
         Returns:

@@ -19,6 +19,7 @@ def test_azure_datalake_native_io():
     object_name = uf.object_name
     uf.purge_local()
 
+        uri=f"az-dl://code-orange.gsk.com/clds/data/raw/dvmt/source/clds/flowcytometry?tenant-id=63982aff-fb6c-4c22-973b-70e4acfb63e6&client-id=f531f934-437c-4a5a-aac2-cd4099125380#{object_name}",
     )
 
     assert new_uf.remote_object_exists() is True
