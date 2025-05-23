@@ -435,6 +435,7 @@ UMeta:
         Returns:
             List with report structure as JSON-serializable data.
         """
+        node_id_header = "Node ID"
         wid = ",".join(self.wids)
         data = [
             {
@@ -446,12 +447,14 @@ UMeta:
         history = {
             "title": "Execution times",
             "caption": f"History of execution times for {wid}",
+            "headers": ["Node", node_id_header, "processing time [s]"],
             "rows": [],
         }
         urd_overview = {
             "title": "Run Parameters HL overview",
             "caption": f"URun dict information for workflow ID {wid}",
             "headers": [
+                node_id_header,
                 "input_files",
                 "output_files",
                 "version",
