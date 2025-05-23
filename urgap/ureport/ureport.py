@@ -162,6 +162,8 @@ UMeta:
                 )
 
                 )
+                    hi2 = self.umeta.load_history(
+                    )
                     self._merge_histories(other_history=hi2)
                     exe_id, wid = next(iter(hi2))
                     graph = self.walk(
@@ -373,6 +375,8 @@ UMeta:
             self.node_aliases[alias]: value for alias, value in nodes.items()
         }
             ut = self.get_trace(
+                wid=wid,
+                storage_base_uri=self.storage_base_uri,
             )
                 if len(requested_uftypes) == 0:
                     query_results += ut.output_files

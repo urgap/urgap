@@ -39,6 +39,7 @@ class Base(DeclarativeBase):
 class ExecutionConfigurations(Base):
     __tablename__ = "umeta_execution_configurations"
 
+    uunode_exe_id: Mapped[str] = mapped_column(primary_key=True)
     run_parameters: Mapped[dict[str, Any]] = mapped_column(JSON)
     command: Mapped[str] = mapped_column()
     unode: Mapped[str] = mapped_column()
@@ -72,6 +73,7 @@ class OutputUFiles(Base):
 class ExecutionInputLink(Base):
     __tablename__ = "execution_input_link"
 
+    uunode_exe_id: Mapped[str] = mapped_column(
     )
     input_ucfs: Mapped[str] = mapped_column(
     )
@@ -80,6 +82,7 @@ class ExecutionInputLink(Base):
 class ExecutionOutputLink(Base):
     __tablename__ = "execution_output_link"
 
+    uunode_exe_id: Mapped[str] = mapped_column(
     )
     output_ucfs: Mapped[str] = mapped_column(
     )
@@ -90,6 +93,7 @@ class ExecutionHistory(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
+    uunode_exe_id: Mapped[str] = mapped_column(index=True)
     uwid: Mapped[str] = mapped_column(index=True)
     started_time: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     duration_seconds: Mapped[int | None] = mapped_column(nullable=True)
@@ -141,6 +145,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                     select(1)
                     .select_from(input_link_alias)
                     .where(
+                        input_link_alias.uunode_exe_id
                 ),
             )
             results = session.execute(stmt).one_or_none()
@@ -190,6 +195,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         """
         with Session(self.db) as session:
             stmt = (
+                select(ExecutionOutputLink.uunode_exe_id)
                 .join(
                     OutputUFiles,
                     ExecutionOutputLink.output_ucfs == OutputUFiles.output_ucfs,
@@ -207,6 +213,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         """
         with Session(self.db) as session:
             stmt = (
+                select(ExecutionOutputLink.uunode_exe_id)
                 .join(
                     InputUFiles,
                     ExecutionInputLink.input_ucfs == InputUFiles.input_ucfs,
@@ -251,6 +258,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 msg = "No ExecutionHistory entries found with given criteria"
                 raise ValueError(msg)
             return {
+                (result.uunode_exe_id, result.uwid): {
                     "user_dict": result.user_dict.data if result.user_dict else None,
                     "started_time": result.started_time,
                     "duration_seconds": result.duration_seconds,

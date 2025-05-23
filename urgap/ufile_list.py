@@ -224,6 +224,24 @@ class UFileList(UserList):
     ) -> UFileList:
         """Filter UFiles by input_uftypes and additional tag-based filters.
 
+        Note:
+            Input_uftypes in META_INFO dict of each wrapper has the following structure::
+
+            META_INFO = {
+                "input_uftypes": {
+                        "min": 2,                # < minimum number of UFiles
+                        "max": 4,                # < maximum number of UFiles
+                    },
+                }
+            }
+            Additional Filters can be passed during node.run() execution, enables more
+            granular filtering on UFile tag bases, e.g. QC=bad, which has to be set on UFile
+            level beforehand, e.g. manually::
+                {
+                            "tags": {"QC": "good"}, # < dict with tags the UFiles are checked against
+                        }
+                }
+
         Args:
             input_uftypes: Dictionary specifying required datatypes and file counts.
             additional_filters: Dictionary of additional tag-based filters.
