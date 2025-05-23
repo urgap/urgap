@@ -3,6 +3,7 @@ import ast
 import getpass
 import logging
 
+from pathlib import Path
 
 
 
@@ -15,6 +16,7 @@ class UUri:
 
         self._user = None
         self._password = None
+
     def _get_credentials(self) -> None:
         """Attempt to load credentials for this UUri's scheme and netloc, unless it's a local or https UUri.
 
