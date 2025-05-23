@@ -14,8 +14,11 @@ import zlib
 
 from base64 import b64decode
 from pathlib import Path
+from typing import ParamSpec
 from urllib.parse import urlparse, urlunparse
 from zipfile import ZipFile
+
+import networkx as nx
 
 
 P = ParamSpec("P")
@@ -187,9 +190,15 @@ class UFile:
     @property
 
         Returns:
+            The hash string using the algorithm specified in the configuration. Will be calculated if missing.
         """
+        if hash_algorithm not in self.tags:
             self.tags.update(
+                {
+                        input_file=self.path,
+                        hash_algorithm=hash_algorithm,
             )
+        return self.tags[hash_algorithm]
 
     @property
     def uftype(self) -> str:
@@ -287,6 +296,7 @@ class UFile:
         else:
             unparse_args.append(fragment)
 
+        return str(urlunparse(unparse_args))
 
     @property
     def storage_base_uri(self) -> str:
@@ -335,11 +345,20 @@ class UFile:
         return self.io.remote_object_exists()
 
     def recalculate_hashes(self, force_local: bool = False) -> None:
+        """Recalculate configured file hash for this file.
 
         Args:
             force_local: If True, always use the local file.
         """
+        if force_local is True:
+            if self.io.scratch_path.exists():
+                    self.io.scratch_path,
+                )
             else:
+                raise FileNotFoundError(msg)
+        else:
+                self.path,
+            )
 
     def rebase(
     ) -> None:
@@ -454,6 +473,7 @@ class UFile:
         return self._uncompress_recursive(
         )
 
+    @staticmethod
     def _uncompress_recursive(
 
         Args:

@@ -344,6 +344,7 @@ class URunDict(UserDict):
         )
         sorted_json = json.dumps(
         )
+        )
 
     def _generate_container_folder_name(
         self,

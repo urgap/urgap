@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 
+from collections.abc import Iterable
 from functools import partial
 from pathlib import Path
 
@@ -58,6 +59,13 @@ def calculate_file_hash(
         return digest.hexdigest()
 
 
+
+    Args:
+        hash_algorithm: Hash algorithm supported by hashlib (e.g., 'md5', 'sha256').
+    """
+    digest = getattr(hashlib, hash_algorithm)()
+        digest.update(i)
+    return digest.hexdigest()
 
 
 def clean_up_scratch_space() -> None:

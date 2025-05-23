@@ -142,6 +142,8 @@ class UFileList(UserList):
         Returns:
             A hash string representing the combined UFiles.
         """
+        ]
+        )
 
     @property
     def id(self) -> collections.abc.Hashable:

@@ -474,6 +474,7 @@ class UTrace:
 
 
         Returns:
+            List of hashes.
         """
         ilist = self.urun_dict.input_files
         if ilist is None:
