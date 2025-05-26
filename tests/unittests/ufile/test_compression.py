@@ -7,6 +7,7 @@ def test_uncompress_zip(tmp_scratch_disk):
     )
     new_ufl = uf.uncompress()
     assert new_ufl[0].path.read_text() == "twas_uncompressed"
+    assert new_ufl[0].object_name == "test.txt"
 
 
 def test_uncompress_tar_gz(tmp_scratch_disk):

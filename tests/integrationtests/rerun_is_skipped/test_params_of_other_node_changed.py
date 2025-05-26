@@ -44,6 +44,8 @@ def test_node_workflow_rerun_is_skipped_if_parameter_of_other_node_change(
     pprint.pprint(return_file)
 
     return_file_node3_first_run = test_node3.run(ufiles=ufiles, urun_dict=urun_dict)
+    with open(return_file_node3_first_run[0].path) as f:
+        assert f.readline().strip() == "TestNode3"
     print("Output node3 - first run:")
     pprint.pprint(return_file_node3_first_run)
 

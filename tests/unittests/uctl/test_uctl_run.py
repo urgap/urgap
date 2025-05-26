@@ -1,5 +1,6 @@
 
 
+
 def test_get_all_relevant_nodes():
     to_spawn = get_all_relevant_nodes("BasicFunctionTestNode:latest")
     assert len(to_spawn) == 2

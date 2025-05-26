@@ -5,6 +5,7 @@ import pytest
 
 
 def test_unode_delete_tmp_file():
+    with open(tmp_file, "w") as fin:
         fin.write("This is gonna be deleted")
     assert tmp_file.exists() is True
     test_node.tmp_files.append(str(tmp_file))
@@ -48,6 +49,7 @@ def test_unode_delete_tmp_file_pior_run(provide_clean_test_node_dirs):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
     test_node1 = test_nodes["TestNode1:1.0.0"]
 
+    with open(tmp_file, "w") as fin:
         fin.write("This is gonna be deleted")
     assert tmp_file.exists() is True
     test_node1.tmp_files.append(tmp_file)

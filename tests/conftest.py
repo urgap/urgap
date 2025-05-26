@@ -2,9 +2,11 @@ import logging
 import os
 import platform
 import shutil
+import socket
 import subprocess
 import tempfile
 import time
+
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -15,6 +17,7 @@ import urllib3
 
 
 def ping(host):
+    """Returns True if host (str) responds to a ping request.
     Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
 
     https://stackoverflow.com/questions/2953462/pinging-servers-in-python
@@ -41,6 +44,7 @@ def check_if_meta_interface_backend_is_available(request):
         host, port = parsed_url.netloc.split(":")
         try:
             urllib3.util.connection.create_connection((host, port), timeout=1)
+        except (TimeoutError, ConnectionRefusedError):
             pytest.skip(f"{umeta_interface} at {host}:{port} not reachable ...")
     return request.param
 
@@ -98,6 +102,7 @@ def provide_clean_node_dirs(request):
     )
 
 
+@pytest.fixture
 def tmp_dir():
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp_test_dir_path = Path(tmp_dir) / "tmp_test_dir"
@@ -105,15 +110,18 @@ def tmp_dir():
         yield tmp_test_dir_path
 
 
+@pytest.fixture
 def tmp_file():
     with tempfile.NamedTemporaryFile() as tmp_file:
         yield Path(tmp_file.name)
 
 
+@pytest.fixture
 def tmp_scratch_disk(tmp_dir):
     yield tmp_dir
 
 
+@pytest.fixture
 def change_hash_algorithm():
     yield None
 
@@ -159,6 +167,7 @@ def provide_standard_TestNode1_setup_and_set_umeta_interface(request):
         um.ufile.io.remote_path.unlink()
 
 
+@pytest.fixture
 def provide_changeable_config():
     shutil.copy(default, backup)
     yield None
@@ -166,6 +175,7 @@ def provide_changeable_config():
     os.remove(backup)
 
 
+@pytest.fixture
 def provide_changeable_credentials():
     shutil.copy(default, backup)
     yield None

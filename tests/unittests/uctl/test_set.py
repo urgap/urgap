@@ -8,6 +8,9 @@ def load_credentials(scheme=None):
         fp.close()
     if scheme is None:
         return credentials
+    for creds in credentials:
+        if scheme == creds.get("scheme", None):
+            return creds
 
 
 def test_set_credentials(provide_changeable_credentials):

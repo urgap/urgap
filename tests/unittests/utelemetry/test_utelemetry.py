@@ -1,4 +1,5 @@
 import subprocess
+
 import pytest
 
 
@@ -42,6 +43,7 @@ def test_utelemetry_generates_output():
         ["pytest", "-s", f"{__file__}::test_utelemetry_run"],
         capture_output=True,
         text=True,
+        check=False,
     )
     assert '"name": "ufiles-uploaded"' in result.stdout
     assert (
