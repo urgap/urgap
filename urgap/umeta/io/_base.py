@@ -18,6 +18,7 @@ class UMetaIOBase:
         """Initialize UMetaIOBase."""
         self.name = "UMetaBase"
 
+    def __deepcopy__(self, memo: dict) -> UMetaIOBase:
         """Create a deep copy of the UMeta information.
 
         Args:
@@ -43,6 +44,7 @@ class UMetaIOBase:
         """Define how UMeta files are loaded in concrete subclasses."""
         raise NotImplementedError
 
+    def save(self, umeta: UMetaIOBase | None = None) -> None:
         """Define how UMeta files are saved in concrete IO subclasses.
 
         Args:
@@ -66,6 +68,8 @@ class UMetaIOBase:
         """
         raise NotImplementedError
 
+        self,
+        object_name: str,
     ) -> list:
         """Find all producer node execution IDs given an object name.
 
@@ -77,6 +81,8 @@ class UMetaIOBase:
         """
         raise NotImplementedError
 
+        self,
+        object_name: str,
     ) -> list:
         """Find all consumer node execution IDs given an object name.
 
