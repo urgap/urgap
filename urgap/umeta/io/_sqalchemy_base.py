@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import datetime
 import logging
 
 from typing import TYPE_CHECKING, Any
@@ -111,11 +112,14 @@ class ExecutionHistory(Base):
 
     user_dict: Mapped[UserDicts] = relationship(
     )
+    __table_args__ = (Index("ix_exec_hist_ucfs_uwid", "uunode_exe_id", "uwid"),)
 
 
 class UserDicts(Base):
     __tablename__ = "user_dicts"
 
+    id: Mapped[int] = mapped_column(
+    )
 
     data: Mapped[dict[str, str]] = mapped_column(JSON)
     execution_history: Mapped[ExecutionHistory] = relationship(
@@ -321,6 +325,9 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 started_time=utrace.start_time,
                 duration_seconds=utrace.duration_seconds,
             )
+            user_dict_data = utrace.urun_dict.get("user_dict")
+            if user_dict_data:
+                new_entry.user_dict = UserDicts(data=user_dict_data)
             session.add(new_entry)
             session.commit()
 
