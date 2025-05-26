@@ -48,6 +48,14 @@ class UNodeBase:
         return self._exe_path
 
     @property
+    def is_available(self) -> bool:
+        """Check whether the resource path exists and is a file.
+        Returns:
+            True if the resource path exists and is a file, otherwise False.
+        """
+        return self.resource_is_available
+
+    @property
     def resource_is_available(self) -> bool:
         """Check whether the resource is available.
 
