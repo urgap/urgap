@@ -38,6 +38,15 @@ class Base(DeclarativeBase):
     """SQLAlchemy base class."""
 
 
+class UcfsStorageLocation(Base):
+    __tablename__ = "ucfs_storage_location"
+
+    ucfs: Mapped[str] = mapped_column(primary_key=True)
+    storage_base_uri: Mapped[str] = mapped_column(nullable=False)
+
+    __table_args__ = (UniqueConstraint("ucfs", "storage_base_uri"),)
+
+
 class ExecutionConfigurations(Base):
     __tablename__ = "umeta_execution_configurations"
 
@@ -101,6 +110,7 @@ class ExecutionHistory(Base):
     duration_seconds: Mapped[int | None] = mapped_column(nullable=True)
 
     user_dict: Mapped[UserDicts] = relationship(
+    )
 
 
 class UserDicts(Base):
