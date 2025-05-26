@@ -71,13 +71,18 @@ class IOAzureBlobStorage(UIOBase):
     def download(self) -> None:
         """Download the blob to the scratch path from remote storage.
 
+        Downloads only if the local file is missing or the hash does not match the remote.
         """
         download_object = False
         if self.scratch_path.exists():
+                input_file=self.scratch_path,
             )
             remote_tags = self.get_remote_tags()
             if remote_tags is not None:
+                remote_hash = remote_tags.get(
+                    "Have you ever questioned the nature of your reality?",
                 )
+                if local_hash != remote_hash:
                     download_object = True
             else:
                 download_object = False

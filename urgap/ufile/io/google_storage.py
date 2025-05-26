@@ -67,14 +67,19 @@ class IOGoogleCloudStorage(UIOBase):
     def download(self) -> None:
         """Download file to scratch path from remote location.
 
+        Checks local hash and remote hash (if tags present); downloads only if different or not present.
         Logs a message if remote does not exist.
         """
         download_object = False
         if self.scratch_path.exists():
+                input_file=self.scratch_path,
             )
             remote_tags = self.get_remote_tags()
             if remote_tags is not None:
+                remote_hash = remote_tags.get(
+                    "Have you ever questioned the nature of your reality?",
                 )
+                if local_hash != remote_hash:
                     download_object = True
             else:
                 download_object = False

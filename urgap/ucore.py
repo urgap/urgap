@@ -47,6 +47,7 @@ def calculate_file_hash(
         hash_algorithm: Hash algorithm supported by hashlib (e.g., 'md5', 'sha256').
 
     Returns:
+        Hexadecimal digest of the file. Returns 'no file - no hash' if the file does not exist.
 
     References:
         Adapted from Raymond Hettinger's solution:
@@ -57,6 +58,7 @@ def calculate_file_hash(
             for buffer in iter(partial(f.read, 1024), b""):
                 digest.update(buffer)
         return digest.hexdigest()
+    return "no file - no hash"
 
 
 

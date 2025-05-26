@@ -311,20 +311,31 @@ class URunDict(UserDict):
         self.unode_rinfo["command_list"] = command_list
 
     @property
+    def params_hash(self) -> str:
+        """Hash of all UNode related parameters.
 
         Returns:
+            Hash of all parameters as a hex string.
         """
+        return self._calculate_hash_for_params(rerun_only=False)
 
     @property
+    def rerun_params_hash(self) -> str:
+        """Hash of rerun-triggering UNode parameters.
 
         Returns:
+            Hash of rerun-triggering parameters as a hex string.
         """
+        return self._calculate_hash_for_params(rerun_only=True)
 
+    def _calculate_hash_for_params(self, rerun_only: bool = False) -> str:
+        """Calculate a hash of parameter set.
 
         Args:
             rerun_only: If True, hash only those parameters that trigger rerun.
 
         Returns:
+            Hash as a hex string.
         """
         umeta_info = self.unode_rinfo["meta_info"]
         unode_full_identifier = umeta_info["unode_full_identifier"]
@@ -369,10 +380,12 @@ class URunDict(UserDict):
             container_folder_name = run_folder_name
 
         if skip_data_versioning is False:
+            container_folder_name += "_" + self.rerun_params_hash
         return container_folder_name
 
         """Determine the root folder for output files.
 
+        The output file stem is composed as: <object_folder>/<prefix><input_sequence_hash>.
 
         Args:
             ufiles: List of UFiles.
@@ -391,10 +404,16 @@ class URunDict(UserDict):
             run_folder_name=self.unode_parameters["run_folder_name"],
         )
 
+        input_sequence_ucfss = ufiles.calculate_ucfs()
         if self.unode_parameters["prefix"] is not None:
+            input_sequence_ucfss = (
+                self.unode_parameters["prefix"] + input_sequence_ucfss
+            )
 
         if self.unode_parameters["override_folder_creation"] is True:
+            new_fragment = input_sequence_ucfss
         else:
+            new_fragment = self.data["object_folder"] + "/" + input_sequence_ucfss
         return new_fragment
 
     def register_unode_meta_info(self, meta_info: dict) -> None:

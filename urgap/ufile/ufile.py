@@ -5,6 +5,7 @@ import bz2
 import contextlib
 import copy
 import gzip
+import hashlib
 import logging
 import re
 import shutil
@@ -92,17 +93,24 @@ class UFile:
             download_file = False
             remote_tags = self.io.get_remote_tags()
             if remote_tags is None:
+                non_standard_tags = (
+                    set(self.tags.keys()) - hashlib.__dict__["algorithms_available"]
+                )
                 if len(non_standard_tags) > 0:
                         "Remote has no tags, thus the file is not downloaded again."
                     )
                 download_file = False
+                    "Remote has tag capability but hash was not set."
                     " Will not download file anymore."
                 )
                 download_file = False
             else:
                     self.tags.update(
                         {
+                                "hash_algorithm"
+                                self.io.scratch_path,
                     )
+                if self.tags.get(
                     )
                     download_file = True
 

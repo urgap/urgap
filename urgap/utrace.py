@@ -250,11 +250,16 @@ class UTrace:
             ],
         )
 
+        input_sequence_ucfs = self.input_files.id
         if self.urun_dict.unode_parameters["prefix"] is not None:
+            input_sequence_ucfs = (
+                self.urun_dict.unode_parameters["prefix"] + input_sequence_ucfs
             )
 
         if self.urun_dict.unode_parameters["override_folder_creation"] is True:
+            new_fragment = input_sequence_ucfs
         else:
+            new_fragment = object_folder + "/" + input_sequence_ucfs
         return new_fragment
 
     def _generate_top_level_folder_name(
@@ -278,6 +283,7 @@ class UTrace:
         else:
             top_level_folder = run_folder_name
         if skip_data_versioning is False:
+            top_level_folder += "_" + self.urun_dict.rerun_params_hash
         return top_level_folder
 
     def evaluate_retain_uftype(self) -> None:
