@@ -512,6 +512,8 @@ class UTrace:
 
     def save_umeta_information(self) -> None:
         """Save UMeta information for this trace."""
+        for ufile in self.output_files:
+            self.umeta.save_rebased_file_to_ucfs_storage_location(ufile=ufile)
         self.umeta.save_utrace(self)
 
     @classmethod
