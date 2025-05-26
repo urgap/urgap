@@ -478,6 +478,8 @@ class UTrace:
             ilist = []
         return ilist
 
+    def get_parent_hashes(self) -> list:
+        """Get hashes of input files in URunDict.
 
         Returns:
             List of hashes.
@@ -485,6 +487,7 @@ class UTrace:
         ilist = self.urun_dict.input_files
         if ilist is None:
             ilist = []
+        return [ufile.hash for ufile in ilist]
 
     def fix_dynamic_output_file_names(self) -> None:
         """Fill in completed integer counts for all output UFiles.

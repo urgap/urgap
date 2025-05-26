@@ -172,8 +172,10 @@ class UFile:
         """Unique content file string for this UFile.
 
         Returns:
+            String in the format object_name@hash.
         """
         if self._ucfs is None:
+            return f"{self.object_name}@{self.hash}"
         return self._ucfs
 
     def __deepcopy__(self, memo: dict) -> UFile:
@@ -196,6 +198,8 @@ class UFile:
         return result
 
     @property
+    def hash(self) -> str:
+        """The hash checksum for this file.
 
         Returns:
             The hash string using the algorithm specified in the configuration. Will be calculated if missing.

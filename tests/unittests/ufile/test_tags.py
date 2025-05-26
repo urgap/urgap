@@ -66,6 +66,7 @@ def test_setting_tags_merges_with_remote(tmp_scratch_disk):
     uf.rebase(f"file://{tmp_scratch_disk}")
     new_uri = uf.as_uri()
     assert "md5" not in new_uri
+    uf.hash
     assert "md5" in uf.as_uri()
     uf.tags.update({"lo": "12"})
     uf.upload()

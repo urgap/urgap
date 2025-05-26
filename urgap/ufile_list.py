@@ -142,9 +142,11 @@ class UFileList(UserList):
         Returns:
             A hash string representing the combined UFiles.
         """
+        hashable_iterable = [
             uf.ucfs.encode("utf-8")
             for uf in sorted(self.create_flat_and_non_redundant_list())
         ]
+            hashable_iterable=hashable_iterable,
         )
 
     @property

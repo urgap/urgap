@@ -355,6 +355,7 @@ class URunDict(UserDict):
         )
         sorted_json = json.dumps(
         )
+            hashable_iterable=[sorted_json.encode("UTF-8")],
         )
 
     def _generate_container_folder_name(

@@ -61,11 +61,14 @@ def calculate_file_hash(
     return "no file - no hash"
 
 
+def calculate_string_hash(hashable_iterable: Iterable, hash_algorithm: str) -> str:
 
     Args:
+        hashable_iterable: Iterable to compute checksum for.
         hash_algorithm: Hash algorithm supported by hashlib (e.g., 'md5', 'sha256').
     """
     digest = getattr(hashlib, hash_algorithm)()
+    for i in hashable_iterable:
         digest.update(i)
     return digest.hexdigest()
 

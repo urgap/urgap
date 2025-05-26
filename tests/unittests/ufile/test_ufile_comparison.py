@@ -20,4 +20,5 @@ def test_same_file_different_location(tmp_file):
         with open(path, "w") as file:
             file.write(content)
 
+    assert ufile1.hash == ufile2.hash
     assert ufile1 != ufile2
