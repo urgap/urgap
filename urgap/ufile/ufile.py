@@ -50,6 +50,7 @@ class UFile:
         self._ucfs = None
 
     def format_uri(self) -> None:
+        """Format the URI if storage_base_uri and ucfs combination was used to construct uri."""
         if "@" in self.uri:
             uri, ucfs_hash = self.uri.split("@")
 

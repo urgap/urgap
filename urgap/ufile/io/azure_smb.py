@@ -48,6 +48,7 @@ class IOAzureSMB(UIOBase):
             )
             raise OSError(msg)
         self.directory_client = self.share_client.get_directory_client(
+            directory_path="/".join(
         )
         self.object_directory_client = self.share_client.get_directory_client(
         )

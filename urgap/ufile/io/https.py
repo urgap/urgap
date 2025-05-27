@@ -56,6 +56,8 @@ class IOHTTPS(UIOBase):
         If download fails, removes the partially downloaded file.
         """
         try:
+                urllib.request.urlretrieve(
+                )
 
         except urllib.error.URLError:
             msg = (
@@ -83,6 +85,8 @@ class IOHTTPS(UIOBase):
             True if the remote object exists, otherwise False.
         """
         try:
+            urllib.request.urlretrieve(
+            )
             exists = True
         except urllib.error.HTTPError:
             exists = False

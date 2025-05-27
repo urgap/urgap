@@ -61,6 +61,7 @@ class IOAzureDL(UIOBase):
         self.file_system_client = self.datalake_service_client.get_file_system_client(
         )
         self.directory_client = self.file_system_client.get_directory_client(
+            directory="/".join(
         )
         self.object_directory_client = self.file_system_client.get_directory_client(
         )

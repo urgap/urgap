@@ -10,6 +10,8 @@ def test_node_fail_produces_none():
     )
     assert None in result_8
     storage_base_uri = ufiles[0].storage_base_uri
+    crashed_trace = report.get_trace(
+    )
     assert crashed_trace.crashed is True
 
 

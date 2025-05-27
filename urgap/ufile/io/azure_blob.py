@@ -26,6 +26,8 @@ class IOAzureBlobStorage(UIOBase):
             kwargs: Passed to UIOBase. Requires "uri" for connection setup.
         """
         super().__init__(**kwargs)
+        self.container = self.client.get_container_client(
+        )
 
     @property
     def remote_path(self) -> None:

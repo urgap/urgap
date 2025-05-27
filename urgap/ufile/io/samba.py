@@ -78,6 +78,8 @@ class IOSMB(UIOBase):
         tags = None
         try:
             with BytesIO() as bio:
+                self.conn_object.retrieveFile(
+                )
                 bio.seek(0)
                 file_content = bio.read()
                 json_data = file_content.decode("utf-8")

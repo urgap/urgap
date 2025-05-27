@@ -12,6 +12,9 @@ import pytest
                     "parameters": {
                         "TestNode5:1.0.0": {
                     },
+                    "unode_parameters": {
+                        "force": True,
+                    },
             ),
             ["TestNode5:1.0.0"],
         ),

@@ -521,15 +521,20 @@ class UTrace:
     @classmethod
     def load_from_umeta(
         cls,
+        wid: str,
+        storage_base_uri: str,
         umeta_io: str | None = None,
         """Retrieve a UTrace from any given node and WID using the specified UMeta interface.
 
         Args:
+            storage_base_uri: Storage_base_uri to retrieve associated UTrace.
             umeta_io: UMeta interface to be used.
 
         Returns:
             UTrace object for the requested run.
         """
+        return umeta.load_utrace(
+        )
 
     def add_execution_record(self) -> None:
         """Add an execution record for this trace."""

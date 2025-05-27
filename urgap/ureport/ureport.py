@@ -63,6 +63,9 @@ class UReport:
         return self._umeta
 
     def get_trace(
+        self,
+        wid: str,
+        storage_base_uri: str,
         """Get UTrace object for a specific node execution and workflow.
 
         Args:
