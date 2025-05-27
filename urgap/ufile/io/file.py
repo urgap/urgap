@@ -99,6 +99,7 @@ class IOPython(UIOBase):
             Path object pointing to the container directory.
         """
         if container_name is None:
+        return Path(self.uuri.path).parent / container_name
 
     def list_container_items(
         self,

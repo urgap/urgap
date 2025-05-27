@@ -30,6 +30,7 @@ class UMeta:
     def load_utrace(
         self,
         wid: str,
+        storage_base_uri: str,
         history: dict | None = None,
         """Load a UTrace object using the IO backend.
 

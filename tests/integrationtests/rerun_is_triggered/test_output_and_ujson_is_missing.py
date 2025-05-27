@@ -15,6 +15,7 @@ import pytest
 def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested):
     ufiles = check_if_ufilelist_can_be_tested
     with tempfile.TemporaryDirectory() as tmpdirname:
+        storage_base_uri = f"file://{tmpdirname}"
             {
                 "parameters": {
                     "TestNode1:1.0.0": {
@@ -24,6 +25,7 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
                 },
                 "unode_parameters": {
                     "record_skipped_runs": True,
+                    "storage_base_uri": storage_base_uri,
                 },
         )
         print("Input:")

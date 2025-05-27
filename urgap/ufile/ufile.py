@@ -35,6 +35,8 @@ class UFile:
         Args:
             uri: Full UUri to the file.
         """
+        self.uri = uri
+        self.format_uri()
         self._local_copy = None
         self._io = None
         self._lineage_root_files = None
@@ -42,8 +44,14 @@ class UFile:
         self.was_downloaded_to_scratch = False
         self._tags = None
 
+            uri=self.uri,
         )
         self._io = None
+        self._ucfs = None
+
+    def format_uri(self) -> None:
+        if "@" in self.uri:
+            uri, ucfs_hash = self.uri.split("@")
 
     @property
     def tags(self) -> dict:

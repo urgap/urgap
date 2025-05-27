@@ -26,6 +26,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
     provide_clean_test_node_dirs,
 ):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
+    storage_base_uri = ufiles[0].storage_base_uri
     test_node1 = test_nodes["TestNode1:1.0.0"]
 
     print("Input:")

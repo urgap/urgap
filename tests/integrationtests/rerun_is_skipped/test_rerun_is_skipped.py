@@ -69,6 +69,8 @@ import pytest
 def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
     with tempfile.TemporaryDirectory() as tmpdirname:
+        storage_base_uri = f"file://{tmpdirname}"
+        urun_dict["unode_parameters"]["storage_base_uri"] = storage_base_uri
         test_node9 = test_nodes["TestNode5:1.0.0"]
         return_file = test_node9.run(ufiles=ufiles, urun_dict=urun_dict)
 

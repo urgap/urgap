@@ -19,6 +19,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
     ufiles = check_if_ufilelist_can_be_tested
     for unode_version in ["1.3.0", "latest"]:
         with tempfile.TemporaryDirectory() as tmpdirname:
+            storage_base_uri = f"file://{tmpdirname}"
                 {
                     "parameters": {
                         f"BasicFunctionTestNode:{unode_version}": {
@@ -29,6 +30,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
                     "unode_parameters": {
                         "record_skipped_runs": True,
                         # "remote_url": "http://localhost",
+                        "storage_base_uri": storage_base_uri,
                     },
             )
             if unode_version == "latest":

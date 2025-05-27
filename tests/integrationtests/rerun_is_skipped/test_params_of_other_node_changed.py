@@ -33,6 +33,7 @@ def test_node_workflow_rerun_is_skipped_if_parameter_of_other_node_change(
     provide_clean_test_node_dirs,
 ):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
+    storage_base_uri = ufiles[0].storage_base_uri
     test_node1 = test_nodes["TestNode1:1.0.0"]
     test_node3 = test_nodes["TestNode3:1.0.0"]
     print("Input:")

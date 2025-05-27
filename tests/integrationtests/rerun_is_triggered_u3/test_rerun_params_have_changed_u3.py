@@ -18,6 +18,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun_u3(
 ):
     ufiles = check_if_ufilelist_can_be_tested
     with tempfile.TemporaryDirectory() as tmpdirname:
+        storage_base_uri = f"file://{tmpdirname}"
             {
                 "parameters": {
                     "BasicFunctionTestNode:1.3.0": {
@@ -27,6 +28,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun_u3(
                 },
                 "unode_parameters": {
                     "record_skipped_runs": True,
+                    "storage_base_uri": storage_base_uri,
                 },
         )
 

@@ -8,6 +8,8 @@ def test_same_file_same_location(tmp_file):
     content = "Why so serious?"
     with open(tmp_file, "w") as file:
         file.write(content)
+    base = tmp_file.parent
+    filename = tmp_file.name
 
     assert ufile1 == ufile2
 
