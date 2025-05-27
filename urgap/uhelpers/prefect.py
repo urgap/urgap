@@ -243,6 +243,7 @@ def import_flow(flow_str: str, flow_name: str, input_json: dict) -> None:
         tmpfile.flush()
         pipeline = load_flow_from_entrypoint(f"{tmpfile.name}:{flow_name}")
     if pipeline is None:
+        msg = f"flow '{flow_name}' not found in flow scripts."
         raise ValueError(msg)
     urd, input_json = parse_inputs(input_json=input_json)
     pipeline(urd, input_json)
