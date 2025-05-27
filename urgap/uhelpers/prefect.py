@@ -206,6 +206,7 @@ def group_by_tag(
 
 @task(name="Rebase", retries=3, retry_delay_seconds=20)
 def rebase(
+) -> bool:
     """Rebase UFiles to a new storage base UUri.
 
     Args:
@@ -214,11 +215,14 @@ def rebase(
         ucredentials: List of credentials.
 
     Returns:
+        bool: True on success otherwise False.
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
+        return False
     for uf in ufile_list:
         uf.rebase(uri=storage_base_uri, upload=True)
+    return True
 
 
 @flow(name="Import Flow")
