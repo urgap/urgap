@@ -94,6 +94,8 @@ class IOMyLabData(UIOBase):
             A dictionary of tags, or None if tags could not be retrieved.
         """
         tags = None
+        url = (
+        )
         response = requests.get(
             url=url,
             verify=self._api_cert,

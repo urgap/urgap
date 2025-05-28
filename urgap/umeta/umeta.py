@@ -27,6 +27,55 @@ class UMeta:
         if io is None:
         self._io_id = io
 
+    @property
+        """IO Property, enabling on-demand initialization of the IO class.
+
+        Notes:
+            - The IO backend cannot be serialized.
+            - This property allows deleting `_io` safely, as it will be re-initialized when accessed.
+
+        Returns:
+        """
+        if self._io is None:
+            self._io = self.init_io_class()
+        return self._io
+
+        """Initialize the appropriate IO class for UMeta.
+
+        Raises:
+            ModuleNotFoundError: If the selected `io` backend is not supported.
+
+        Returns:
+            Initialized IO class for UMeta operations.
+        """
+        available_ios = {
+        }
+
+        if self._io_id in available_ios:
+            io = available_ios[self._io_id]()
+        else:
+            msg = (
+                f"Cannot initialize driver for unknown IO type '{self._io_id}'. "
+                f"Currently supported: {list(available_ios.keys())}"
+            )
+            raise ModuleNotFoundError(msg)
+        return io
+
+    def umeta_exists(self) -> bool:
+        """Check if UMeta metadata exists for a given reference file.
+
+        Returns:
+            True if UMeta metadata exists.
+        """
+        return self.io.umeta_exists(self)
+
+        """Save a UTrace object using the IO backend.
+
+        Args:
+            utrace: UTrace object to save.
+        """
+        self.io.save(utrace)
+
     def load_utrace(
         self,
         wid: str,

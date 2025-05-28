@@ -29,6 +29,7 @@ class UFile:
 
     def __init__(
         self,
+        uri: str,
     ) -> None:
         """Create a new UFile instance.
 
@@ -53,6 +54,7 @@ class UFile:
         """Format the URI if storage_base_uri and ucfs combination was used to construct uri."""
         if "@" in self.uri:
             uri, ucfs_hash = self.uri.split("@")
+            )
 
     @property
     def tags(self) -> dict:
