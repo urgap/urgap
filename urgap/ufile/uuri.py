@@ -19,6 +19,7 @@ class UUri:
 
         if len(self.path) > 1 and self.path.endswith("/"):
             self.path = self.path.rstrip("/")
+        self.check_fragment_integrity()
 
     @property
         """Return the username for this UUri. If not already set, attempts to load it.
@@ -51,3 +52,42 @@ class UUri:
             self._user = credentials["user"]
             self._password = credentials["password"]
 
+
+
+    def get_samba_share(self) -> str:
+        return self.path.lstrip("/")
+
+
+
+
+        return []
+
+    def get_file_remote_path(self) -> Path:
+        return (
+        ).resolve()
+
+    def get_file_remote_tag_path(self) -> Path:
+        return (
+        ).resolve()
+
+    def get_https_remote_path(self) -> str:
+
+
+    def get_https_remote_tag_path(self) -> str:
+
+    def get_host(self) -> str | None:
+        if ":" in self.netloc:
+            return self.netloc.split(":")[0]
+        return None
+
+    def get_port(self) -> str | None:
+        if ":" in self.netloc:
+            return self.netloc.split(":")[1]
+        return None
+
+
+    def get_container_name(self) -> str:
+        return Path(self.path).name or self.netloc
+
+    def get_object_name(self) -> str:
+        return self.fragment
