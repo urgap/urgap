@@ -20,6 +20,24 @@ class UUri:
         if len(self.path) > 1 and self.path.endswith("/"):
             self.path = self.path.rstrip("/")
 
+    @property
+        """Return the username for this UUri. If not already set, attempts to load it.
+
+        Returns:
+        """
+        if self._user is None:
+            self._get_credentials()
+        return self._user
+
+    @property
+        """Return the password for this UUri. If not already set, attempts to load it.
+
+        Returns:
+        """
+        if self._password is None:
+            self._get_credentials()
+        return self._password
+
     def _get_credentials(self) -> None:
         """Attempt to load credentials for this UUri's scheme and netloc, unless it's a local or https UUri.
 

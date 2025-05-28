@@ -17,3 +17,19 @@ def test_folder_has_uparam_signature_not_md5(change_hash_algorithm):
 
 
 def test_clean_up_scratch_space(tmp_dir):
+
+
+def test_append_query_to_uri():
+    uri = "file:///some/test/uri#without/query.file"
+    query = "hash=9243749103984&uftype=some_csv&othertag=lookatme"
+    assert (
+        new_uri
+        == "file:///some/test/uri?hash=9243749103984&uftype=some_csv&othertag=lookatme#without/query.file"
+    )
+
+    uri = "file:///some/test/uri?hash=9243749103984#without/query.file"
+    query = "uftype=some_csv&othertag=lookatme"
+    assert (
+        new_uri
+        == "file:///some/test/uri?hash=9243749103984&uftype=some_csv&othertag=lookatme#without/query.file"
+    )

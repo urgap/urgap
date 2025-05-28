@@ -125,6 +125,7 @@ def append_query_to_uri(uri: str, query: str) -> str:
     """
     (storage_base_uri, object_name) = uri.split("#")
     if "?" in storage_base_uri:
+        storage_base_uri += "&" + query
     else:
         storage_base_uri += "?" + query
     return f"{storage_base_uri}#{object_name}"
