@@ -57,9 +57,18 @@ class UUri:
     def get_samba_share(self) -> str:
         return self.path.lstrip("/")
 
+        split_path = self.path.lstrip("/").split("/")
+        return split_path[0]
 
+        split_path = self.path.lstrip("/").split("/")
+        return split_path[1:]
 
+        split_object = self.fragment.split("/")
+        return split_object[-1]
 
+        split_object = self.fragment.split("/")
+        if len(split_object) > 1:
+            return split_object[:-1]
         return []
 
     def get_file_remote_path(self) -> Path:
@@ -68,12 +77,15 @@ class UUri:
 
     def get_file_remote_tag_path(self) -> Path:
         return (
+            self.get_file_remote_path().parent
+            / (self.get_file_remote_path().name + ".tag")
         ).resolve()
 
     def get_https_remote_path(self) -> str:
 
 
     def get_https_remote_tag_path(self) -> str:
+        return self.get_https_remote_path() + ".tag"
 
     def get_host(self) -> str | None:
         if ":" in self.netloc:

@@ -28,6 +28,7 @@ class IOAzureBlobStorage(UIOBase):
         super().__init__(**kwargs)
         self.container = self.client.get_container_client(
         )
+        self.blob = self.container.get_blob_client(self.uuri.get_object_name())
 
     @property
     def remote_path(self) -> None:

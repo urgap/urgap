@@ -46,6 +46,7 @@ class IOOmiq(UIOBase):
             if self._omiq_user_info is not None:
                 msg = "Authenticated to OMIQ API as {name} [last login:{lastLoginTime}]".format(
                 )
+        self._workflow_id = self.uuri.get_container_name()
         self._workflow = self._api.get_workflow(self._workflow_id)
         self._dataset_id = int(self._workflow["datasetId"])
         self._query_params = self.uuri.query
@@ -149,6 +150,7 @@ class IOOmiq(UIOBase):
         """
         file_id = self.file_id
         if file_id is None:
+            msg = f"file: ({self._corresponding_fcs_filename}) does not exist in workflow: {self.uuri.get_container_name()}"
             raise FileNotFoundError(msg)
         self._set_query_params(file_id)
         relevant_keys = (
@@ -215,6 +217,7 @@ class IOOmiq(UIOBase):
         """Download file from workflow artifacts to the local scratch path."""
         task_id = self._get_task_id_for_artifact(self.uuri.fragment)
         self._api.download_artifact(
+            workflow_id=self.uuri.get_container_name(),
             task_id=task_id,
             artifact_name=self.uuri.fragment,
             filepath=self._scratch_path,
@@ -250,6 +253,9 @@ class IOOmiq(UIOBase):
             f = self.uuri.fragment
         else:
             f = self._corresponding_fcs_filename
+        msg = (
+            f"file: ({f}) does not exist in workflow: {self.uuri.get_container_name()}"
+        )
         raise FileNotFoundError(msg)
 
     @property

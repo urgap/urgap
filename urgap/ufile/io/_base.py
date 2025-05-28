@@ -31,6 +31,8 @@ class UIOBase:
             The Path object pointing to the file on the local scratch disk.
         """
         _scratch_path = (
+            / self.uuri.get_container_name()
+            / self.uuri.get_object_name()
         ).resolve()
         _scratch_path.parent.mkdir(exist_ok=True, parents=True)
 

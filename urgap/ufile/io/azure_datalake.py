@@ -66,6 +66,8 @@ class IOAzureDL(UIOBase):
         )
         self.object_directory_client = self.file_system_client.get_directory_client(
         )
+        self.file_client = self.directory_client.get_file_client(
+        )
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
         )
 

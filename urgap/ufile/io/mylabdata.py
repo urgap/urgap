@@ -95,6 +95,10 @@ class IOMyLabData(UIOBase):
         """
         tags = None
         url = (
+            + self.uuri.path
+            + "/"
+            + self.uuri.fragment
+            + ".tag"
         )
         response = requests.get(
             url=url,

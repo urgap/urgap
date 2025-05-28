@@ -48,10 +48,14 @@ class IOAzureSMB(UIOBase):
                 f" Available shares are: {sorted(available_shares)}"
             )
             raise OSError(msg)
+        self.share_client = self.share_service_client.get_share_client(
+        )
         self.directory_client = self.share_client.get_directory_client(
             directory_path="/".join(
         )
         self.object_directory_client = self.share_client.get_directory_client(
+        )
+        self.file_client = self.directory_client.get_file_client(
         )
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
         )

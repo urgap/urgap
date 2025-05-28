@@ -46,6 +46,7 @@ class IOPython(UIOBase):
         Returns:
             Path object of the file.
         """
+        return self.uuri.get_file_remote_path()
 
     def download(self) -> None:
         """Download referenced remote object (copy from remote_path to scratch_path).
@@ -53,7 +54,9 @@ class IOPython(UIOBase):
         If the file does not exist, a debug message is logged.
         """
         try:
+            shutil.copyfile(self.uuri.get_file_remote_path(), self.scratch_path)
         except FileNotFoundError:
+            msg = f"File {self.uuri.get_file_remote_path()} does not exist"
 
     def upload(self, tags: dict | None = None) -> None:
         """Upload local scratch file and associated tag to remote location.
@@ -64,7 +67,9 @@ class IOPython(UIOBase):
         Raises:
             OSError: If the file cannot be copied.
         """
+        self.uuri.get_file_remote_path().parent.mkdir(parents=True, exist_ok=True)
         try:
+            shutil.copyfile(self.scratch_path, self.uuri.get_file_remote_path())
             if tags is not None:
                     json.dump(tags, remote_tag_file)
         except OSError as e:
@@ -77,6 +82,7 @@ class IOPython(UIOBase):
         Returns:
             True if the file exists on disk, otherwise False.
         """
+        return self.uuri.get_file_remote_path().exists()
 
     def create_container(
         self,
@@ -87,6 +93,7 @@ class IOPython(UIOBase):
         Args:
             exist_ok: Whether it is okay if the directory already exists.
         """
+        container_folder = self.uuri.get_file_remote_path().parent
         msg = f"Creating {container_folder} if needed"
         container_folder.mkdir(exist_ok=exist_ok, parents=True)
 
@@ -100,6 +107,7 @@ class IOPython(UIOBase):
             Path object pointing to the container directory.
         """
         if container_name is None:
+            container_name = self.uuri.get_container_name()
         return Path(self.uuri.path).parent / container_name
 
     def list_container_items(
@@ -129,3 +137,5 @@ class IOPython(UIOBase):
 
     def remove_remote_object(self) -> None:
         """Delete referenced remote location file and associated .tag file, if present."""
+        self.uuri.get_file_remote_path().unlink(missing_ok=True)
+        self.uuri.get_file_remote_tag_path().unlink(missing_ok=True)

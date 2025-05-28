@@ -34,6 +34,7 @@ class IOHTTPS(UIOBase):
         """
         tags = None
         response = requests.get(
+            self.uuri.get_https_remote_tag_path(),
             timeout=(
             ),
         )
@@ -41,6 +42,7 @@ class IOHTTPS(UIOBase):
             try:
                 tags = response.json()
             except json.decoder.JSONDecodeError:
+                msg = f"Connection to {self.uuri.get_https_remote_tag_path()} seems to be OK, but cannot receive tags!"
         return tags
 
     def get_object(self) -> str:
@@ -49,6 +51,7 @@ class IOHTTPS(UIOBase):
         Returns:
             The remote URL as a string.
         """
+        return self.uuri.get_https_remote_path()
 
     def download(self) -> None:
         """Download referenced remote object.
@@ -62,6 +65,7 @@ class IOHTTPS(UIOBase):
 
         except urllib.error.URLError:
             msg = (
+                f"[ - HTTP - ] WARNING! Could not download {self.uuri.get_https_remote_path()} Check your internet connection!",
                 "[ - HTTP - ] For OSX, make sure that certificates are installed (/Applications/Python 3.x/Install Certificates.command)",
             )
             self.scratch_path.unlink()

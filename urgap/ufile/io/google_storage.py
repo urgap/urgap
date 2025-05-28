@@ -24,6 +24,8 @@ class IOGoogleCloudStorage(UIOBase):
             **kwargs: Passed to UIOBase. Must contain UUri and relevant parsed attributes.
         """
         super().__init__(**kwargs)
+        self.bucket = self.client.bucket(bucket_name=self.uuri.get_container_name())
+        self.blob = self.bucket.blob(self.uuri.get_object_name())
 
     @property
     def remote_path(self) -> str | None:
@@ -49,6 +51,7 @@ class IOGoogleCloudStorage(UIOBase):
         Returns:
             Dictionary of metadata tags if the blob exists, otherwise None.
         """
+        blob = self.bucket.get_blob(self.uuri.get_object_name())
         if blob is None:
             return None
         return blob.metadata

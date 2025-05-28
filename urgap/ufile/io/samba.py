@@ -37,6 +37,8 @@ class IOSMB(UIOBase):
             is_direct_tcp=True,
         )
         self.conn_object.connect(
+            self.uuri.get_host(),
+            self.uuri.get_port(),
         )
         self._validate_share_name()
 
@@ -46,6 +48,8 @@ class IOSMB(UIOBase):
         Raises:
             ValueError if '/' is present in the share name.
         """
+        if "/" in self.uuri.get_samba_share():
+            msg = f"Share name '{self.uuri.get_samba_share()}' contains invalid character '/'."
             raise ValueError(msg)
 
     def __del__(self) -> None:
@@ -106,6 +110,8 @@ class IOSMB(UIOBase):
             RuntimeError: If a SMBTimeout occurs during file retrieval.
         """
         try:
+                self.conn_object.retrieveFile(
+                )
         except SMBTimeout as e:
             self.scratch_path.unlink(missing_ok=True)
             raise RuntimeError from e
@@ -120,6 +126,8 @@ class IOSMB(UIOBase):
             self._create_fragment_directory()
 
         try:
+                self.conn_object.storeFile(
+                )
         except (
             FileNotFoundError,
             IsADirectoryError,
@@ -136,6 +144,8 @@ class IOSMB(UIOBase):
             json_data = json.dumps(tags)
             json_bytes = json_data.encode("utf-8")
             with BytesIO(json_bytes) as bio:
+                self.conn_object.storeFile(
+                )
 
     def remote_object_exists(self) -> bool:
         """Verify if the referenced remote object exists.
@@ -146,6 +156,8 @@ class IOSMB(UIOBase):
         try:
             fragment_directory = "/".join(self.uuri.fragment.split("/")[:-1])
             filename = self.uuri.fragment.split("/")[-1]
+            files = self.conn_object.listPath(
+            )
             return any(f.filename == filename for f in files)
         except OperationFailure:
             return False
@@ -158,6 +170,7 @@ class IOSMB(UIOBase):
         """
         try:
             fragment_directory = "/".join(self.uuri.fragment.split("/")[:-1])
+            self.conn_object.listPath(self.uuri.get_samba_share(), fragment_directory)
         except OperationFailure:
             return False
         else:
@@ -172,6 +185,7 @@ class IOSMB(UIOBase):
         Returns:
             List of file paths (as strings).
         """
+        listed_objects = self.conn_object.listPath(self.uuri.get_samba_share(), subpath)
         smb_objects = []
         for obj in listed_objects:
             if obj.filename in (".", ".."):
@@ -212,5 +226,7 @@ class IOSMB(UIOBase):
         for level, _directory in enumerate(fragment_dirs):
             path_to_create = "/".join(fragment_dirs[: level + 1])
             try:
+                self.conn_object.createDirectory(
+                )
             except OperationFailure as e:
                 msg = f"Could not create folder {path_to_create} with {e}"

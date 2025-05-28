@@ -167,6 +167,7 @@ class UFile:
         Returns:
             The object name.
         """
+        return self.uuri.get_object_name()
 
     @property
     def simple_name(self) -> str:
