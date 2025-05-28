@@ -25,6 +25,13 @@ def run_unode_in_loop(payload: dict, name: str) -> list:
     """
     uf = payload["ufiles"]
     ur["unode_parameters"]["remote_url"] = None
+    try:
+            urun_dict=ur,
+            ufiles=uf,
+        )
+    except Exception as e:
+        msg = f"During remote run execution the following error occurred: {e}"
+        raise
     return [o.as_uri() for o in output_files]
 
 
