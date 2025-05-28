@@ -22,6 +22,7 @@ class IOPython(UIOBase):
         """Create new UIO class for processing file scheme.
 
         Args:
+            **kwargs: Requires 'uuri' to set up the object and path information.
         """
         super().__init__(**kwargs)
         self.driver = "Local Python Power :)"

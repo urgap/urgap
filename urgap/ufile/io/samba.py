@@ -25,6 +25,7 @@ class IOSMB(UIOBase):
         """Create new UIO class for processing smb scheme.
 
         Args:
+            **kwargs: Requires 'uuri' key to set respective attributes.
                 Example uri: smb://10.0.20.165:445/<share, e.g. MyShare>#<path_on_share_to_file>
         """
         super().__init__(**kwargs)

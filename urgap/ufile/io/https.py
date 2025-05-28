@@ -22,6 +22,7 @@ class IOHTTPS(UIOBase):
         """Create new UIO class for processing https scheme.
 
         Args:
+            **kwargs: Requires 'uuri' key to set respective attribute.
         """
         super().__init__(**kwargs)
 

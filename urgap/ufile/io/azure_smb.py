@@ -31,6 +31,7 @@ class IOAzureSMB(UIOBase):
         """Create new UIO class for processing Azure file storage SMB scheme.
 
         Args:
+            kwargs: Requires 'uuri' to set up the object and establish connection.
 
         Notes:
             Uses SAS token to access. Expiration can be set by &sas_expiration_in_h in the UUri query.

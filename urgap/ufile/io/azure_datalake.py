@@ -30,6 +30,7 @@ class IOAzureDL(UIOBase):
         """Initialize UIO class for Azure DataLake file storage.
 
         Args:
+            kwargs: Requires 'uuri' to set connection and file attributes.
 
         Example:
             az-dl://<account>.dfs.core.windows.net/<filesystem>/sub_dir_path#<object>
