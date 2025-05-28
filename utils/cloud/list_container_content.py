@@ -5,6 +5,7 @@ import sys
 
 
 def main(url: str, container_name: str) -> None:
+    """List object in cloud storage container.
 
     content of google cloud storage container
 
