@@ -1,0 +1,162 @@
+
+import logging
+import re
+import uuid
+from typing import ParamSpec
+
+from github import Auth, Github, GithubException
+
+P = ParamSpec("P")
+
+
+class IOGithub(UIOBase):
+    """UIO Class interface for Github file objects."""
+
+    def __init__(self, **kwargs: P.kwargs) -> None:
+        """Create new UIO class for processing Github scheme.
+
+        Args:
+            **kwargs: Requires parsed_uri key to set respective attributes.
+
+        """
+        super().__init__(**kwargs)
+        self.query_params = self.uuri.query
+
+        available_branches = [x.name for x in self.repo.get_branches()]
+            msg = (
+                f". Available branches are: {sorted(available_branches)}"
+            )
+            raise OSError(msg)
+
+
+        )
+
+    def __del__(self) -> None:
+        """Close Github IO connection on object deletion."""
+
+    @property
+    def remote_path(self) -> str | None:
+        """Get remote file path.
+
+        Returns:
+            URL of remote file.
+        """
+        if self.remote_object_exists() is True:
+            return self.repo.get_contents(
+            ).url
+        return None
+
+    def get_file_properties(self) -> dict | None:
+        """Get properties associated with referenced file.
+
+        Returns:
+            Properties of file.
+        """
+        if self.remote_object_exists() is True:
+            return self.repo.get_contents(
+            ).path
+        return None
+
+    def get_remote_tags(self) -> dict | None:
+        """Get remote tags associated with referenced file.
+
+        Returns:
+            Remotely stored tags.
+        """
+        if self.remote_object_exists() is True:
+            tags = self.repo.get_contents(
+            ).raw_data
+            tags.pop("content")
+            return tags
+        return None
+
+    def get_object(self) -> str | None:
+        """Get Github file for referenced URI.
+
+        Returns:
+            File path on github repo.
+        """
+        if self.remote_object_exists() is True:
+            return self.repo.get_contents(
+            ).path
+        return None
+
+    def download(self) -> None:
+        """Download referenced remote object.
+
+        Object is written to local scratch path.
+        """
+        try:
+            download = self.repo.get_contents(
+            )
+            text = download.decoded_content.decode("utf-8")
+
+                f.write(text)
+            self.scratch_path.unlink(missing_ok=True)
+            raise RuntimeError from e
+
+    def upload(self, tags: dict | None = None) -> None:
+        """Upload local object from scratch to the github remote branch and create a PR."""
+        self.repo.create_git_ref(ref=target_ref, sha=self.source_branch.commit.sha)
+        commit_message = "New ufile is available"
+        if self.remote_object_exists():
+            original_file_sha = self.repo.get_contents(
+            ).sha
+            try:
+                self.repo.update_file(
+                    message=commit_message,
+                    content=upload_content,
+                    sha=original_file_sha,
+                )
+            except GithubException as e:
+                msg = f"Failed to update the ufile: {e}!"
+        else:
+            try:
+                self.repo.create_file(
+                    message=commit_message,
+                    content=upload_content,
+                )
+            except GithubException as e:
+                msg = f"Failed to add the ufile: {e}!"
+        try:
+            pr = self.repo.create_pull(
+                title=commit_message,
+                body="This pull request adds a new ufile.",
+                base=self.source_branch.name,
+            )
+            msg = f"PR #{pr.number} is created"
+        except GithubException as e:
+            msg = f"Unable to create pull request. {e}!"
+
+    def remote_object_exists(self) -> bool:
+        """Verify referenced remote object exists.
+
+        Returns:
+            True if remote object exists.
+        """
+        try:
+        except GithubException as e:
+            return False
+
+    def _remote_path_exists(self) -> bool:
+        """Verify referenced remote path exists.
+
+        Returns:
+            True if remote path exists.
+        """
+        return self.remote_object_exists()
+
+        """Get objects in folder/'container'.
+
+        Can be filtered by regex pattern.
+
+        Args:
+            pattern: Regex pattern for filtering.
+
+        Returns:
+            List of object names after filtering.
+        """
+        if pattern is not None:
+            container_objects = [
+                f for f in container_objects if re.search(pattern, f) is not None
+            ]
