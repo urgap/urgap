@@ -14,6 +14,7 @@ P = ParamSpec("P")
 
 
 def make_expiration_safe_request(func: Callable) -> requests.Response:
+    """Perform a REST API request twice in case the token expired.
 
     If a request returns status code 403 (forbidden), the function will
     automatically re-authenticate and try again once.

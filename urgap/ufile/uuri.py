@@ -52,54 +52,69 @@ class UUri:
             self._user = credentials["user"]
             self._password = credentials["password"]
 
+        """Get the api_url."""
 
+        """Get the api_url_files."""
 
     def get_samba_share(self) -> str:
+        """Get the samba_share."""
         return self.path.lstrip("/")
 
+        """Get the share."""
         split_path = self.path.lstrip("/").split("/")
         return split_path[0]
 
+        """Get the directory_list."""
         split_path = self.path.lstrip("/").split("/")
         return split_path[1:]
 
+        """Get the object_file."""
         split_object = self.fragment.split("/")
         return split_object[-1]
 
+        """Get the object_directory_list."""
         split_object = self.fragment.split("/")
         if len(split_object) > 1:
             return split_object[:-1]
         return []
 
     def get_file_remote_path(self) -> Path:
+        """Get the file_remote_path."""
         return (
         ).resolve()
 
     def get_file_remote_tag_path(self) -> Path:
+        """Get the file_remote_tag_path."""
         return (
             self.get_file_remote_path().parent
             / (self.get_file_remote_path().name + ".tag")
         ).resolve()
 
     def get_https_remote_path(self) -> str:
+        """Get the https_remote_path."""
 
 
     def get_https_remote_tag_path(self) -> str:
+        """Get the https_remote_tag_path."""
         return self.get_https_remote_path() + ".tag"
 
     def get_host(self) -> str | None:
+        """Get the host."""
         if ":" in self.netloc:
             return self.netloc.split(":")[0]
         return None
 
     def get_port(self) -> str | None:
+        """Get the port."""
         if ":" in self.netloc:
             return self.netloc.split(":")[1]
         return None
 
 
     def get_container_name(self) -> str:
+        """Get the container_name."""
         return Path(self.path).name or self.netloc
 
     def get_object_name(self) -> str:
+        """Get the object_name."""
         return self.fragment

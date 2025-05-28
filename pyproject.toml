@@ -111,6 +111,8 @@ ignore = [
     "PYI034", # Wait until we drop 3.10 so Self is in typing
     "PLR0913", # Too many arguments -> TODO
     "TC003", # Causes false positives
+    "D203", # Incompatible with D211
+    "D213", # Incompatible with D212
 ]
 
 

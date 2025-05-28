@@ -131,6 +131,7 @@ class UFile:
         return self.io.scratch_path
 
     def __repr__(self) -> str:
+        """Get string representation of the UFile.
 
         Returns:
             UUri as a string.
@@ -332,6 +333,7 @@ class UFile:
         return self.as_storage_base_uri()
 
     def as_storage_base_uri(self) -> str:
+        """Get the storage base UUri, omitting query and fragment.
 
         Returns:
             The storage base UUri as a string.
@@ -443,6 +445,7 @@ class UFile:
         return compressed_ufile
 
     def _unpack_gz(self, gz_output: str | Path, encoding: str = "utf-8") -> None:
+        """Decompress a .gz file to an output file.
 
         Args:
             gz_output: Where to write the decompressed data.
@@ -499,6 +502,7 @@ class UFile:
 
     @staticmethod
     def _uncompress_recursive(
+        """Recursively uncompress UFileLists.
 
         Args:
             ufl: UFileList to uncompress.
@@ -593,6 +597,7 @@ class UFile:
             self._lineage_graph = graph
         return self._lineage_graph
 
+        """Recursively walk parent relationships and build a lineage graph.
 
         Args:
             graph: Graph to update.

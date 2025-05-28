@@ -193,6 +193,7 @@ class UFileList(UserList):
         return flat_list
 
     def _get_flat_list(
+        """Flatten nested lists and remove duplicates.
 
         Args:
             list_to_flatten: List to flatten.

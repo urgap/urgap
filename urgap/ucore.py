@@ -15,6 +15,7 @@ import requests
 
 
 def folder_has_uparam_signature(folder: Path) -> bool:
+    """Check if a folder has the uparam-generated signature.
 
         `<node_name>_<hash_of_parameters_triggering_rerun>`
 
@@ -41,6 +42,7 @@ def calculate_file_hash(
     input_file: Path,
     hash_algorithm: str,
 ) -> str:
+    """Calculate the file hash using the specified algorithm.
 
     Args:
         input_file: Path to the file to hash.
@@ -62,6 +64,7 @@ def calculate_file_hash(
 
 
 def calculate_string_hash(hashable_iterable: Iterable, hash_algorithm: str) -> str:
+    """Calculate the string hash using the specified algorithm.
 
     Args:
         hashable_iterable: Iterable to compute checksum for.
@@ -74,6 +77,7 @@ def calculate_string_hash(hashable_iterable: Iterable, hash_algorithm: str) -> s
 
 
 def clean_up_scratch_space() -> None:
+    """Delete all temporary scratch folders created during the current session.
 
 
     Raises:

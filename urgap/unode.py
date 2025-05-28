@@ -559,6 +559,7 @@ class UNodeBase:
             data += cls.generate_wrapper_vis(ufile)
         return data
 
+        """Execute method for a node using subprocess.run.
 
         Args:
             utrace: Combination of urun_dict, ufile_list, and unode.meta.
