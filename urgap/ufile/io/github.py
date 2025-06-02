@@ -154,6 +154,7 @@ class IOGithub(UIOBase):
             msg = f"PR #{pr.number} is created"
         except GithubException as e:
             msg = f"Unable to create pull request. {e}!"
+            raise RuntimeError(msg) from e
 
     def remote_object_exists(self) -> bool:
         """Verify referenced remote object exists.
