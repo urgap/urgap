@@ -2,9 +2,11 @@
 import logging
 import re
 import uuid
+
 from typing import ParamSpec
 
 from github import Auth, Github, GithubException
+
 
 P = ParamSpec("P")
 
@@ -92,13 +94,17 @@ class IOGithub(UIOBase):
             text = download.decoded_content.decode("utf-8")
 
                 f.write(text)
+        except GithubException as e:
             self.scratch_path.unlink(missing_ok=True)
             raise RuntimeError from e
 
     def upload(self, tags: dict | None = None) -> None:
         """Upload local object from scratch to the github remote branch and create a PR."""
+        msg = f"tags will be skipped. {tags}!"
         self.repo.create_git_ref(ref=target_ref, sha=self.source_branch.commit.sha)
         commit_message = "New ufile is available"
+        upload_content = None
+            upload_content = f.read()
         if self.remote_object_exists():
             original_file_sha = self.repo.get_contents(
             ).sha
@@ -137,6 +143,7 @@ class IOGithub(UIOBase):
         try:
         except GithubException as e:
             return False
+        return True
 
     def _remote_path_exists(self) -> bool:
         """Verify referenced remote path exists.
