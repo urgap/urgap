@@ -25,7 +25,16 @@ class IOGithub(UIOBase):
         self.query_params = self.uuri.query
 
         try:
+            password = self.uuri.password
+            if password is None:
+                # Can access only public repos
+                self.github_io = Github()
+            else:
+                # Can access private repos too
+                self.github_io = Github(auth=Auth.Token(password))
         except GithubException as e:
+            msg = f"Incorrect/no credentials found for {cred_key} - if needed, please supply!"
+            raise KeyError(msg) from e
 
         available_branches = [x.name for x in self.repo.get_branches()]
             msg = (
@@ -34,6 +43,7 @@ class IOGithub(UIOBase):
             raise OSError(msg)
 
 
+        self.target_branch_name = self.query_params.get(
         )
 
     def __del__(self) -> None:
@@ -104,6 +114,7 @@ class IOGithub(UIOBase):
     def upload(self, tags: dict | None = None) -> None:
         """Upload local object from scratch to the github remote branch and create a PR."""
         msg = f"tags will be skipped. {tags}!"
+        target_ref = f"refs/heads/{self.target_branch_name}"
         self.repo.create_git_ref(ref=target_ref, sha=self.source_branch.commit.sha)
         commit_message = "New ufile is available"
         upload_content = None
@@ -117,6 +128,7 @@ class IOGithub(UIOBase):
                     message=commit_message,
                     content=upload_content,
                     sha=original_file_sha,
+                    branch=self.target_branch_name,
                 )
             except GithubException as e:
                 msg = f"Failed to update the ufile: {e}!"
@@ -127,6 +139,7 @@ class IOGithub(UIOBase):
                     path=self.object_filepath,
                     message=commit_message,
                     content=upload_content,
+                    branch=self.target_branch_name,
                 )
             except GithubException as e:
                 msg = f"Failed to add the ufile: {e}!"
@@ -135,6 +148,7 @@ class IOGithub(UIOBase):
             pr = self.repo.create_pull(
                 title=commit_message,
                 body="This pull request adds a new ufile.",
+                head=self.target_branch_name,
                 base=self.source_branch.name,
             )
             msg = f"PR #{pr.number} is created"

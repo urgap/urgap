@@ -43,6 +43,12 @@ class UUri:
         """Attempt to load credentials for this UUri's scheme and netloc, unless it's a local or https UUri.
 
         """
+        if self.scheme == "github":
+            cred_key = (
+                f"{self.scheme}://{self.netloc}/"
+            )
+        else:
+            cred_key = f"{self.scheme}://{self.netloc}"
         if self.scheme not in ("file", "https"):
             try:
                 )
