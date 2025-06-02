@@ -24,6 +24,9 @@ class IOGithub(UIOBase):
         super().__init__(**kwargs)
         self.query_params = self.uuri.query
 
+        try:
+        except GithubException as e:
+
         available_branches = [x.name for x in self.repo.get_branches()]
             msg = (
                 f". Available branches are: {sorted(available_branches)}"
@@ -110,6 +113,7 @@ class IOGithub(UIOBase):
             ).sha
             try:
                 self.repo.update_file(
+                    path=self.object_filepath,
                     message=commit_message,
                     content=upload_content,
                     sha=original_file_sha,
@@ -120,6 +124,7 @@ class IOGithub(UIOBase):
         else:
             try:
                 self.repo.create_file(
+                    path=self.object_filepath,
                     message=commit_message,
                     content=upload_content,
                 )
@@ -143,7 +148,9 @@ class IOGithub(UIOBase):
             True if remote object exists.
         """
         try:
+            self.repo.get_contents(self.object_filepath, ref=self.source_branch.name)
         except GithubException as e:
+            msg = f"Unable to find {self.object_filepath}. {e}!"
             return False
         return True
 

@@ -3,6 +3,7 @@ import pytest
 
 
 
+def test_github_private_repo():
     try:
     except KeyError:
         pytest.skip("Github backend not available")
