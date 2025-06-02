@@ -116,6 +116,7 @@ class IOGithub(UIOBase):
                 )
             except GithubException as e:
                 msg = f"Failed to update the ufile: {e}!"
+                raise RuntimeError(msg) from e
         else:
             try:
                 self.repo.create_file(
@@ -124,6 +125,7 @@ class IOGithub(UIOBase):
                 )
             except GithubException as e:
                 msg = f"Failed to add the ufile: {e}!"
+                raise RuntimeError(msg) from e
         try:
             pr = self.repo.create_pull(
                 title=commit_message,
