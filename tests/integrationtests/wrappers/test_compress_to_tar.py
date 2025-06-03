@@ -24,6 +24,7 @@ def test_wrapper_compress_to_tar_max_size(tmp_dir):
             },
     )
     result_tar = CompressToTar_node.run(urun_dict=urun_dict, ufiles=ufiles)
+    assert len(result_tar) == 2
     assert result_tar[0].path.exists()
     assert result_tar[0].path.suffix == ".tar"
     result_ufl = result_tar[0].uncompress()
