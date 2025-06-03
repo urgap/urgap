@@ -43,7 +43,9 @@ def test_tags_are_set_via_uri(provide_clean_scratch_and_remote):
     ],
     indirect=["provide_clean_scratch_and_remote"],
 )
+def test_tags_are_read_remotely(provide_clean_scratch_and_remote, tmpdir):
     ufile = provide_clean_scratch_and_remote
+    ufile.rebase(f"file://{tmpdir}")
     ufile_uri_without_query = ufile.as_uri(query="")
     print(ufile.uuri)
     print("uri without query", ufile_uri_without_query)

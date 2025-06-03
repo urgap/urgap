@@ -2,6 +2,7 @@ import networkx
 
 
 
+def test_ureport_graph(tmp_dir):
         f"unified_csvs/demo.csv",
     )
 
@@ -12,6 +13,7 @@ import networkx
 
         {
             "parameters": {"FilterTabularToCSV:1.0.0": {"-q": "`spectrum_id` < 3000"}},
+            "unode_parameters": {"storage_base_uri": f"file://{tmp_dir}"},
     )
     filtered_1 = filter_node.run(
         ufiles=[input_file],

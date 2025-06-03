@@ -79,7 +79,9 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     ],
     indirect=["provide_clean_node_dirs"],
 )
+def test_can_discriminate_aliases(provide_clean_node_dirs, tmp_dir):
     test_nodes, ufiles, urun_dict = provide_clean_node_dirs
+    urun_dict["unode_parameters"].update({"storage_base_uri": f"file://{tmp_dir}"})
     test_node = test_nodes["FilterTabularToCSV:1.0.0"]
     results = test_node.run(ufiles=ufiles, urun_dict=urun_dict)
     urun_dict.parameters["FilterTabularToCSV:1.0.0"]["-q"] = "`spectrum_id` < 3100"
