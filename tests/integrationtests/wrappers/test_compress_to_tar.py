@@ -19,6 +19,7 @@ def test_wrapper_compress_to_tar(tmp_dir):
 def test_wrapper_compress_to_tar_max_size(tmp_dir):
     )
         {
+            "parameters": {"CompressToTar:1.0.0": {"-s": "25K"}},
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
             },
