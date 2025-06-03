@@ -1,5 +1,6 @@
 
 import json
+import shutil
 
 from pathlib import Path
 
@@ -28,6 +29,8 @@ from pathlib import Path
         self,
         """Preflight routine for CompressToTar wrapper.
 
+        Maximum output tar file size can be defined using -s in parameters.
+
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.
 
@@ -42,6 +45,10 @@ from pathlib import Path
         utrace.urun_dict.command_list = ["python", str(self.exe_path)]
         for file in input_files:
             utrace.urun_dict.command_list.extend(["-i", str(file)])
+        for k, v in utrace.urun_dict["parameters"][
+            self.META_INFO["unode_full_identifier"]
+        ].items():
+            utrace.urun_dict.command_list.extend([k, v])
         utrace.urun_dict.command_list.extend(
             [
                 "-o",
@@ -62,6 +69,11 @@ from pathlib import Path
         Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
+        if (
+            utrace.urun_dict["parameters"][self.META_INFO["unode_full_identifier"]].get(
+            )
+            is not None
+        ):
             output_file = utrace.output_files.get_path_objects_by_uftype(
             )[0]
             split_tars = [
@@ -69,4 +81,24 @@ from pathlib import Path
                 for file in Path.iterdir(output_file.parent)
                 if file.name.startswith("part.")
             ]
+            self._rename_and_extend_safely(
+            )
+        return utrace
+
+    def _rename_and_extend_safely(
+        self,
+        split_tars: list,
+        uftype: str,
+        """Extend output file list if any file exists and rename it appropriately.
+
+        Args:
+            utrace: Combination of urun_dict, ufile_list and unode.meta.
+            split_tars: List of paths to split tars.
+        """
+        dst = utrace.output_files.get_path_objects_by_uftype(uftype)[0]
+        shutil.move(src=split_tars[0], dst=dst)
+        for source_file in split_tars[1:]:
+            if source_file.exists():
+                utrace.extend_output_files_by_uftype(uftype)
+                shutil.move(src=source_file, dst=utrace.output_files[-1].path)
         return utrace

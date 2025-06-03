@@ -24,6 +24,7 @@ def main(
     Args:
         compression_format: Currently supported are tar, zip and split_tar.
         file_list (list): list of tuples of file Path objects and tag Path objects (or None).
+        max_tar_size: Maximum size of the split tar.
         output_file_path (Path): path object for output.
     """
     if max_tar_size is not None:
@@ -31,12 +32,14 @@ def main(
         common_base = Path(os.path.commonpath(files_to_archive)).parent
         relative_files = [Path(f).relative_to(common_base) for f in files_to_archive]
         tar_process = subprocess.Popen(
+            ["tar", "-cf", "-", "-C", str(common_base), *map(str, relative_files)],
             stdout=subprocess.PIPE,
         )
         split_process = subprocess.Popen(
             [
                 "split",
                 "-b",
+                f"{max_tar_size}",
                 "-",
                 f"{Path(output_file_path).parent / 'part.'}",
             ],
@@ -89,6 +92,7 @@ if __name__ == "__main__":
         "-s",
         "--size",
         dest="max_tar_size",
+        help="maximum tar size",
     )
     args = parser.parse_args()
 

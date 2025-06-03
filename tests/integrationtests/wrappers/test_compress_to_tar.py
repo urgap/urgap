@@ -13,6 +13,22 @@ def test_wrapper_compress_to_tar(tmp_dir):
     assert result_tar[0].path.suffix == ".tar"
     result_ufl = result_tar[0].uncompress()
     assert result_ufl.all_remote_files_exist
+    assert len(ufiles) == len(result_ufl) - 1  # due to recursive untar
+
+
+def test_wrapper_compress_to_tar_max_size(tmp_dir):
+    )
+        {
+            "unode_parameters": {
+                "storage_base_uri": f"file://{tmp_dir}",
+            },
+    )
+    result_tar = CompressToTar_node.run(urun_dict=urun_dict, ufiles=ufiles)
+    assert result_tar[0].path.exists()
+    assert result_tar[0].path.suffix == ".tar"
+    result_ufl = result_tar[0].uncompress()
+    assert result_ufl.all_remote_files_exist
+    assert len(ufiles) == len(result_ufl) - 1  # due to recursive untar
 
 
 def test_wrapper_compress_to_tar_latest(tmp_dir):
@@ -33,3 +49,4 @@ def test_wrapper_compress_to_tar_latest(tmp_dir):
     assert result_tar[0].path.suffix == ".tar"
     result_ufl = result_tar[0].uncompress()
     assert result_ufl.all_remote_files_exist
+    assert len(ufiles) == len(result_ufl) - 1  # due to recursive untar

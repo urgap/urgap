@@ -692,6 +692,7 @@ class UFileList(UserList):
         try:
             with subprocess.Popen(
             ) as tar_process:
+                for uf in sorted(self):
                         tar_process.stdin.write(split_file.read())
             tar_process.stdin.close()
             tar_process.wait()
