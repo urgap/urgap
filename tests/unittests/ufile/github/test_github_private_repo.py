@@ -35,6 +35,14 @@ def test_github_private_repo():
     uf.download()
     assert "tables" in uf.path.read_text()
 
+    assert (
+        uf.io.remote_path
+        == "https://api.github.com/repos/gsk-tech/dso-dval-r2d2/contents/configuration/parameters.json?ref=main"
+    )
+
+    assert uf.io.get_file_properties() == "configuration/parameters.json"
+    assert uf.io.get_object() == "configuration/parameters.json"
+
     # Test the file that doesn't exist
     )
     assert uf.remote_object_exists() is False
