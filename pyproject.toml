@@ -31,6 +31,7 @@ dependencies = [
     'nbformat>=4.2.0',
     'openpyxl',
     'packaging==25.0',
+    'pandas>=1.4.2,<2.4.0',
     'plotly',
     'requests>=2.26,<2.33',
     'tqdm==4.67.1',
