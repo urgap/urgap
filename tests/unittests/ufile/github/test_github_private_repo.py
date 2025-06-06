@@ -46,3 +46,7 @@ def test_github_private_repo():
     # Test the file that doesn't exist
     )
     assert uf.remote_object_exists() is False
+
+    # Test existince of file
+    )
+    )
