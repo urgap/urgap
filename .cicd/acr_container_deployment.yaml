@@ -1,7 +1,16 @@
+resources:
+  repositories:
+    - repository: templates
+      type: github
+      name: gsk-tech/dso_azure_pipeline_templates
+      endpoint: DSO-R1-Github
 pool:
   vmImage: ubuntu-latest
 stages:
   - stage: Build
+    displayName: Build and Push
     jobs:
         steps:
               azureSubscription: 'ARM-RD-dso-AppResources-prod'
+              acrName: 'dsoazcr'
+              dockerfilePath: 'Dockerfile-Prefect'
