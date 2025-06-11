@@ -14,3 +14,4 @@ stages:
               azureSubscription: 'ARM-RD-dso-AppResources-prod'
               acrName: 'dsoazcr'
               dockerfilePath: 'Dockerfile-Prefect'
+              buildContext: '.'
