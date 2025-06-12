@@ -1,4 +1,5 @@
 import pytest
+from github import GithubException
 
     )
 
@@ -40,3 +41,34 @@ import pytest
         branch="fake_target_branch",
     )
     uf_io_object.repo.create_pull.assert_called_once()
+
+
+    uf_io_object.remote_object_exists = MagicMock(return_value=True)
+    uf_io_object.repo.get_contents.return_value.sha = "sha"
+    uf_io_object.repo.update_file.side_effect = GithubException(
+    )
+
+    with (
+        pytest.raises(RuntimeError, match="Failed to update the ufile"),
+    ):
+        uf_io_object.upload()
+
+
+    uf_io_object.remote_object_exists = MagicMock(return_value=False)
+    uf_io_object.repo.create_file.side_effect = GithubException(
+    )
+
+    with (
+        pytest.raises(RuntimeError, match="Failed to add the ufile"),
+    ):
+        uf_io_object.upload()
+
+
+    uf_io_object.remote_object_exists = MagicMock(return_value=False)
+    uf_io_object.repo.create_file.return_value = None
+    uf_io_object.repo.create_pull.side_effect = GithubException(400, "PR failed", None)
+
+    with (
+        pytest.raises(RuntimeError, match="Unable to create pull request"),
+    ):
+        uf_io_object.upload()
