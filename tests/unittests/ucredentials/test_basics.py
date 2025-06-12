@@ -17,3 +17,4 @@ def test_env_init_works():
     us.init_io_class(secret_store="env", secret_id="MITSURUGI")
     assert us.io.get_secret() == "rōnin"
     del os.environ["MITSURUGI"]
+
