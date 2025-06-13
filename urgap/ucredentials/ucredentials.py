@@ -174,7 +174,42 @@ class UCredentialManager:
         Returns:
             Extracted credentials for the key.
         """
+        if cred_key in self._extracted_secrets and not force:
+            return self._extracted_secrets[cred_key]
+
+        tmp = {}
+        _cred_entry = self.ingested_credentials.get(cred_key)
+        if _cred_entry is None:
+            msg = f"{cred_key} could not be extracted - is missing!"
+            raise KeyError(msg)
+
+        if (_cred_entry["secret_store"] in ("gcp", "akv")) and (
+            _cred_entry["cloud_host_pid"] is not None
+        ):
+            cloud_host_pid = _cred_entry["cloud_host_pid"]
+        else:
+            cloud_host_pid = _cred_entry.get("host", "localhost")
+
+        for keyname in ["user", "password"]:
+            secret_id = _cred_entry[keyname]
+
+            self.init_io_class(
+                secret_store=_cred_entry.get("secret_store", "env"),
+                secret_id=secret_id,
+                cloud_host_pid=cloud_host_pid,
+            )
+
+            if keyname == "user" and secret_id is None:
+                tmp[keyname] = None
+                continue
+
+            secret = self.io.get_secret()
+            if secret is None:
+                msg = f"{secret_id} for {cred_key} is missing!"
                 raise KeyError(msg)
+
+            tmp[keyname] = secret
+        self._extracted_secrets[cred_key] = tmp
         return self._extracted_secrets[cred_key]
 
     def ingest_cred_entry(self, cred_entry: dict) -> None:
