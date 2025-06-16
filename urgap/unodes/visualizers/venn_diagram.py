@@ -28,6 +28,7 @@
         "engine_type": ("plotter",),
         "parameter_examples": """
             {
+                "--id-column": "<id-name>" #  Column used to group data
                 # both kwargs can also be a list if multiple columns should be concatenated.
                 "--header": "My Venn Diagram"
             }
