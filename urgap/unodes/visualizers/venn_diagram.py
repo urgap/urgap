@@ -20,6 +20,8 @@
                 "min": 1,
                 "max": 1,
             },
+            #     "min": 1,  # noqa: ERA001
+            #     "max": 1,  # noqa: ERA001
             # }, # Not implemented yet. Will be as soon someone needs it
         },
         "engine": None,
@@ -33,6 +35,7 @@
     }
 
         """Initialize VennDiagram."""
+        super().__init__(*args, **kwargs)
 
     def preflight(
         self,
