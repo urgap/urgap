@@ -389,7 +389,13 @@ def main(  # noqa: C901, PLR0912, PLR0915
         print(
             f"""
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
+width="{kwargs["width"]}" height="{kwargs["height"]}"
 style="position:relative; top:0; left:0; z-index:-1;">
+<title>{kwargs["header"]}</title>
+<g font-family="{kwargs["font"]}" >
+<text transform="translate({kwargs["cx"]} 40)" font-size="{kwargs["label font-size header"]}" text-anchor="middle">{kwargs["header"]}</text>
+<text transform="translate({kwargs["cx"]} {kwargs["total-pos-cy"]})"  font-size="{kwargs["label font-size major"]}" text-anchor="middle">Total</text>
+<text transform="translate({kwargs["cx"]} {y2_val_header})"  font-size="{kwargs["label font-size minor"]}" text-anchor="middle" font-style="italic">n = {kwargs["total_n"]}</text>
 </g>""".strip(),
             file=io,
         )
@@ -405,9 +411,11 @@ style="position:relative; top:0; left:0; z-index:-1;">
             set_config = kwargs[set_key_char_loop]
             print(
                 f"""
+        <ellipse rx="{set_config["rx"]}" ry="{set_config["ry"]}" transform="translate({set_config["cx"]} {set_config["cy"]}) rotate({set_config["rot"]})" style="fill:{set_config["color"]};fill-opacity:{set_config["opacity"]};stroke:{set_config["color"]};stroke-width:{set_config["stroke-width"]}" />""",
                 file=io,
             )
 
+        print(f"""\n<g font-family="{kwargs["font"]}" >""", file=io)
 
         for set_key_char_loop in sorted(
             key for key in kwargs if key in "ABCDE" and isinstance(kwargs[key], dict)
@@ -418,6 +426,8 @@ style="position:relative; top:0; left:0; z-index:-1;">
             minor_font_size = set_config["label font-size minor"]
             print(
                 f"""
+        <text transform="translate({set_config["text-pos-x"]} {set_config["text-pos-y"]})"  font-size="{major_font_size}" text-anchor="{set_config["text-anchor"]}">{set_config["label"]}</text>
+        <text transform="translate({set_config["text-pos-x"]} {y2_text_val})"  font-size="{minor_font_size}" text-anchor="{set_config["text-anchor"]}" font-style="italic">n = {set_config["setSize"]}</text>""",
                 file=io,
             )
         print("</g>", file=io)
@@ -787,12 +797,14 @@ style="position:relative; top:0; left:0; z-index:-1;">
 
     # Append intersection labels and close SVG file
         print(
+            f"""\n<g font-family="{kwargs["font"]}" font-size="{kwargs["label font-size venn"]}" >""",
             file=io,
         )
         for label_config_dict in return_dict.values():
             # Ensure coordinates exist before trying to print the text element
             if "x" in label_config_dict and "y" in label_config_dict:
                 print(
+                    f"""<text transform="translate({label_config_dict["x"]} {label_config_dict["y"]})" text-anchor="middle" stroke="#777777" stroke-width="0.5" >{label_config_dict["value"]}</text>""",
                     file=io,
                 )
         print("</g>", file=io)

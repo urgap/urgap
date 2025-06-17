@@ -28,4 +28,6 @@ import re
         svg_content = svg_file.read()
     # all_true =
     assert all(
+        bool(re.search(pattern, svg_content, re.DOTALL))
+        for pattern in expected_patterns_svg
     )
