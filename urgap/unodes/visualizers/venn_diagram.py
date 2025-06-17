@@ -29,12 +29,14 @@
         "parameter_examples": """
             {
                 "--id-column": "<id-name>" #  Column used to group data
+                "--value-column": "<calue-name>" # Column for data value
                 # both kwargs can also be a list if multiple columns should be concatenated.
                 "--header": "My Venn Diagram"
             }
         """,
     }
 
+    def __init__(self, *args, **kwargs) -> None:  # noqa: ANN002, ANN003
         """Initialize VennDiagram."""
         super().__init__(*args, **kwargs)
 
@@ -57,7 +59,13 @@
                 "--output-file",
                 str(utrace.output_files[0].path),
         )
+        for parameter_key, parameter_value in utrace.urun_dict.parameters[
+            f"{self.META_INFO['unode_full_identifier']}"
+        ].items():
             if isinstance(parameter_value, list):
+                for _ in parameter_value:
+                    utrace.urun_dict.command_list.extend([parameter_key, _])
             else:
+                utrace.urun_dict.command_list.extend([parameter_key, parameter_value])
 
         return utrace
