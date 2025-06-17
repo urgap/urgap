@@ -34,6 +34,7 @@ class IOOmiq(UIOBase):
         password = um.get_password(cred_key)
         user = um.get_user(cred_key)
         with tempfile.NamedTemporaryFile() as fp:
+            with Path(fp.name).open("w") as tmp_file:
                 json.dump(
                     {
                         "token": password,
