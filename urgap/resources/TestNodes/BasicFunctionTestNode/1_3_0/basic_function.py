@@ -4,6 +4,8 @@ import argparse
 import logging
 import pprint
 
+from pathlib import Path
+
 
 def main(
     input_files: str | None = None,
@@ -22,6 +24,7 @@ def main(
     """
     if output_files is not None:
         for output_file in output_files:
+            with Path(output_file).open("w") as oo:
                 print(params, file=oo)
                 print(input_files, file=oo)
                 print(main.__doc__, file=oo)
