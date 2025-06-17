@@ -24,6 +24,8 @@ class IOGithub(UIOBase):
         super().__init__(**kwargs)
         self.query_params = self.uuri.query
 
+        org_name = self.uuri.get_github_resource_name("org")
+        repo_name = self.uuri.get_github_resource_name("repo")
         try:
             password = self.uuri.password
             if password is None:

@@ -2,6 +2,7 @@
 import ast
 import getpass
 import logging
+import re
 
 from pathlib import Path
 
@@ -46,6 +47,7 @@ class UUri:
         if self.scheme == "github":
             cred_key = (
                 f"{self.scheme}://{self.netloc}/"
+                f"{self.get_github_resource_name('org')}/{self.get_github_resource_name('repo')}"
             )
         else:
             cred_key = f"{self.scheme}://{self.netloc}"
@@ -124,3 +126,17 @@ class UUri:
     def get_object_name(self) -> str:
         """Get the object_name."""
         return self.fragment
+
+    def get_github_resource_name(self, resource: str = "repo") -> str:
+        """Get the github resource name."""
+        path = self.path.lstrip("/").rstrip("/")
+        segments = re.findall(r"[^/]+", path)
+        match resource:
+            case "org":
+                return segments[0]
+            case "repo":
+                return segments[1]
+            case "branch":
+            case _:
+                msg = "Unknown param for github resource"
+                raise KeyError(msg)
