@@ -46,6 +46,8 @@ class IOGithub(UIOBase):
 
 
         self.target_branch_name = self.query_params.get(
+            "target-branch",
+            f"feature/new_ufile_{str(uuid.uuid4())[:8]}",
         )
 
     def __del__(self) -> None:
@@ -60,6 +62,8 @@ class IOGithub(UIOBase):
         """
         if self.remote_object_exists() is True:
             return self.repo.get_contents(
+                self.object_filepath,
+                ref=self.source_branch.name,
             ).url
         return None
 
@@ -71,6 +75,8 @@ class IOGithub(UIOBase):
         """
         if self.remote_object_exists() is True:
             return self.repo.get_contents(
+                self.object_filepath,
+                ref=self.source_branch.name,
             ).path
         return None
 
@@ -82,6 +88,8 @@ class IOGithub(UIOBase):
         """
         if self.remote_object_exists() is True:
             tags = self.repo.get_contents(
+                self.object_filepath,
+                ref=self.source_branch.name,
             ).raw_data
             tags.pop("content")
             return tags
@@ -95,6 +103,8 @@ class IOGithub(UIOBase):
         """
         if self.remote_object_exists() is True:
             return self.repo.get_contents(
+                self.object_filepath,
+                ref=self.source_branch.name,
             ).path
         return None
 
@@ -105,6 +115,8 @@ class IOGithub(UIOBase):
         """
         try:
             download = self.repo.get_contents(
+                self.object_filepath,
+                ref=self.source_branch.name,
             )
             text = download.decoded_content.decode("utf-8")
 
@@ -125,6 +137,8 @@ class IOGithub(UIOBase):
             upload_content = f.read()
         if self.remote_object_exists():
             original_file_sha = self.repo.get_contents(
+                self.object_filepath,
+                self.source_branch,
             ).sha
             try:
                 self.repo.update_file(

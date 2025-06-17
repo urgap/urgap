@@ -56,6 +56,9 @@ def main(source_uftype: str, target_uftype: str) -> None:
 
     nodes_in_subgraph = set()
     for one_possible_path in nx.all_simple_paths(
+        graph,
+        source=source_uftype,
+        target=target_uftype,
     ):
         nodes_in_subgraph |= set(one_possible_path)
     msg = (
