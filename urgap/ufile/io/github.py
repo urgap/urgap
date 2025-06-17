@@ -108,6 +108,7 @@ class IOGithub(UIOBase):
             )
             text = download.decoded_content.decode("utf-8")
 
+            with self.scratch_path.open("w", encoding="utf-8") as f:
                 f.write(text)
         except GithubException as e:
             self.scratch_path.unlink(missing_ok=True)
@@ -120,6 +121,7 @@ class IOGithub(UIOBase):
         self.repo.create_git_ref(ref=target_ref, sha=self.source_branch.commit.sha)
         commit_message = "New ufile is available"
         upload_content = None
+        with self.scratch_path.open("rb") as f:
             upload_content = f.read()
         if self.remote_object_exists():
             original_file_sha = self.repo.get_contents(

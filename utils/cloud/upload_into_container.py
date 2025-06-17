@@ -31,6 +31,7 @@ def main(scheme: str, container_name: str, object_folder: str, input_file: str) 
         logging.info(msg)
     else:
         container = driver.get_container(container_name=container_name)
+    with input_file.open("rb") as iterator:
         driver.upload_object_via_stream(
             iterator=iterator,
             container=container,
