@@ -114,6 +114,8 @@ ignore = [
     "TC003", # Causes false positives
     "D203", # Incompatible with D211
     "D213", # Incompatible with D212
+    "D413", # For looks a bit more like google/numpy/pep257 style,
+    "PLC0415", # Avoid unnecessary imports,
 ]
 
 

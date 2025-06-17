@@ -190,6 +190,7 @@ UMeta:
             if other_key not in self.execution_history:
                 self.execution_history[other_key] = other_value
             elif (
+                other_value["started_time"]
                 > self.execution_history[other_key]["started_time"]
             ):
                 msg = f"Overwriting entry for {other_key} with newer timestamp"
