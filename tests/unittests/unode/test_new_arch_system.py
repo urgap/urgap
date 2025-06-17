@@ -3,6 +3,7 @@ import pytest
 
 
 @pytest.mark.parametrize(
+    "node_name",
 )
 def test_new_arch_hierarchy(node_name):
     # TODO: Add new Unode tests
@@ -16,6 +17,7 @@ def test_new_arch_hierarchy(node_name):
 
 
 @pytest.mark.parametrize(
+    "node_name",
 )
 def test_new_arc_info(node_name):
     # TODO: Add new Unode tests

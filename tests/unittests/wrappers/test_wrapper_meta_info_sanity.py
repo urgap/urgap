@@ -23,6 +23,8 @@ type_checker = validators.Draft7Validator.TYPE_CHECKER.redefine_many(
     {"tuple": is_tuple, "uftype_spec": is_uftype_specification},
 )
 TupleValidator = validators.extend(
+    validator=validators.Draft7Validator,
+    type_checker=type_checker,
 )
 reference_schema = {
     "type": "object",
@@ -55,6 +57,7 @@ tuple_validator = TupleValidator(schema=reference_schema)
 
 
 @pytest.mark.parametrize(
+    "node_name",
 )
 def test_meta_info_is_sane(node_name):
     if node.META_INFO["unode_version"] is None:

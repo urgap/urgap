@@ -51,6 +51,8 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
         pprint.pprint(return_file)
 
         return_file_node3_first_run = basic_test_node.run(
+            ufiles=ufiles,
+            urun_dict=urun_dict,
         )
         print("Output node3 - first run:")
         pprint.pprint(return_file_node3_first_run)

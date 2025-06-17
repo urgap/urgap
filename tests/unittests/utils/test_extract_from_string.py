@@ -1,6 +1,8 @@
 
 
 def test_extract_from_string_one_match():
+        any_string="One Ring to rule them all.",
+        regex_pattern=r"One Ring",
     )
     assert len(match) == 1
     assert match == ["One Ring"]
@@ -15,6 +17,8 @@ def test_extract_from_string_dates():
 
 
 def test_extract_from_string_no_match():
+        any_string="One Ring to find them.",
+        regex_pattern=r"to rule them all",
     )
     assert len(match) == 0
     assert isinstance(match, list)

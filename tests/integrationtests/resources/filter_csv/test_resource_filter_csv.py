@@ -12,6 +12,9 @@ print(sys.path)
 
 
 def import_engine_as_python_function(
+    name: str,
+    path: Path,
+    function_name: str = "main",
 ) -> callable:
     """Allow to import any function from a given engine on which it is executed.
 
@@ -33,6 +36,8 @@ def import_engine_as_python_function(
 
 def test_filter_int():
     main = import_engine_as_python_function(
+        name=filter_csv.META_INFO["name"],
+        path=filter_csv.construct_exe_path(),
     )
 
     main(
@@ -48,6 +53,8 @@ def test_filter_int():
 
 def test_filter_int_input_twice():
     main = import_engine_as_python_function(
+        name=filter_csv.META_INFO["name"],
+        path=filter_csv.construct_exe_path(),
     )
 
     main(
@@ -62,6 +69,8 @@ def test_filter_int_input_twice():
 
 def test_filter_float():
     main = import_engine_as_python_function(
+        name=filter_csv.META_INFO["name"],
+        path=filter_csv.construct_exe_path(),
     )
 
     main(
@@ -76,6 +85,8 @@ def test_filter_float():
 
 def test_filter_str():
     main = import_engine_as_python_function(
+        name=filter_csv.META_INFO["name"],
+        path=filter_csv.construct_exe_path(),
     )
 
     main(
@@ -90,6 +101,8 @@ def test_filter_str():
 
 def test_filter_combined_str_and_float():
     main = import_engine_as_python_function(
+        name=filter_csv.META_INFO["name"],
+        path=filter_csv.construct_exe_path(),
     )
 
     main(
@@ -104,6 +117,8 @@ def test_filter_combined_str_and_float():
 
 def test_query_string_wrong_format():
     main = import_engine_as_python_function(
+        name=filter_csv.META_INFO["name"],
+        path=filter_csv.construct_exe_path(),
     )
 
     with pytest.raises(RuntimeError):
@@ -116,6 +131,8 @@ def test_query_string_wrong_format():
 
 def test_query_string_missing_column():
     main = import_engine_as_python_function(
+        name=filter_csv.META_INFO["name"],
+        path=filter_csv.construct_exe_path(),
     )
 
     with pytest.raises(RuntimeError):

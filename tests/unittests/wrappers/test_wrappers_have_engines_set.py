@@ -3,6 +3,7 @@ import pytest
 
 
 @pytest.mark.parametrize(
+    "node_name",
 )
 def test_all_engines_present(node_name):
     if node.META_INFO["unode_version"] is None:

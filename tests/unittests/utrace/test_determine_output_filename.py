@@ -107,6 +107,8 @@ def test_single_input_with_data_versioning():
         bool(
             re.search(
                 r"TestNode4_1.0.0_wx_"
+                f"{ut.urun_dict.rerun_params_hash}"
+                "/b8dd6ef5f15f638b208bc7c28df13a19",
                 str(_output),
             ),
         )
@@ -182,6 +184,8 @@ def test_multi_input_with_data_versioning():
         bool(
             re.search(
                 r"TestNode4_1.0.0_wx_"
+                f"{ut.urun_dict.rerun_params_hash}"
+                r"/[0-9a-z]{32}",
                 str(_output),
             ),
         )

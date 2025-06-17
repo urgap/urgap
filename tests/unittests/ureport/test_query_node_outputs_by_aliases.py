@@ -95,6 +95,8 @@ def test_can_discriminate_aliases(provide_clean_node_dirs, tmp_dir):
     urun_dict.parameters["FilterTabularToCSV:1.0.0"]["-q"] = "`spectrum_id` < 3100"
     results_with_less = test_node.run(ufiles=results, urun_dict=urun_dict, force=True)
 
+        wid=wid,
+        storage_base_uri=results_with_less[0].as_storage_base_uri(),
     )
     report.draw_execution_dag()
     queried_results = report.query_node_outputs_by_aliases(nodes={0: []})

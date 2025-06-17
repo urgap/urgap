@@ -21,6 +21,8 @@ from pathlib import Path
 def test_uio_calculate_md5_standard():
     with tempfile.NamedTemporaryFile(mode="w", delete=False, newline="\n") as output:
 
+        Path(output.name),
+        hash_algorithm="md5",
     )
     os.remove(output.name)
     assert output_md5 == "8d6c9484a6b6f329a9ae57a1f8837e7e"

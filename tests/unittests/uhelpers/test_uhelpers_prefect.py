@@ -60,6 +60,11 @@ def test_run_unode(tmp_dir):
     unode = "TestNode1:1.0.0"
 
     results = run_unode.fn(
+        uris=uri,
+        urd=urd,
+        unode=unode,
+        ucredentials=CREDS,
+        config=CONFIG,
     )
     assert len(results) == 3
     for file in results:

@@ -28,6 +28,8 @@ def test_rename_object_name():
         new_subfolder_structure = "level_3"
         new_object_name = "obj3ct.txt"
         source_ufile.rebase(
+            f"#{new_subfolder_structure}/{new_object_name}",
+            upload=True,
         )
         _theoretical_path = (
             Path(_temp_directory) / Path(new_subfolder_structure) / new_object_name

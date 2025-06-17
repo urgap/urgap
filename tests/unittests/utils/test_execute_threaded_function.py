@@ -8,6 +8,7 @@ def test_execute_threaded_function_nested_args():
         ("The War of the Ring lasted from TA 3018 to TA 3019.", r"TA \d{4}"),
         ("One Ring to find them.", r"to rule them all"),
     ]
+        arg_list,
     )
     assert len(result) == 3
     assert ["One Ring"] and ["TA 3018", "TA 3019"] and [] in result

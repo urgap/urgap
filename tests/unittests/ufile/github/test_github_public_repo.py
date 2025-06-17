@@ -19,6 +19,8 @@ from github import GithubException
 
     # Assert
     uf_io_object.repo.create_git_ref.assert_called_once_with(
+        ref="refs/heads/fake_target_branch",
+        sha="fake_sha",
     )
     uf_io_object.repo.update_file.assert_called_once_with(
         path="some/path/to/file.txt",
@@ -50,6 +52,9 @@ from github import GithubException
     uf_io_object.remote_object_exists = MagicMock(return_value=True)
     uf_io_object.repo.get_contents.return_value.sha = "sha"
     uf_io_object.repo.update_file.side_effect = GithubException(
+        400,
+        "Update failed",
+        None,
     )
 
     with (
@@ -60,6 +65,9 @@ from github import GithubException
 
     uf_io_object.remote_object_exists = MagicMock(return_value=False)
     uf_io_object.repo.create_file.side_effect = GithubException(
+        400,
+        "Create failed",
+        None,
     )
 
     with (
