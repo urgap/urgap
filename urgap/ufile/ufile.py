@@ -158,6 +158,18 @@ class UFile:
             return self.ucfs == other.ucfs
         return False
 
+    def __hash__(self) -> int:
+        """Compute a hash value for the UFile based on its ucfs.
+
+        This ensures that two UFile instances with the same ucfs will
+        have the same hash value, making them behave correctly in
+        hash-based collections like sets and dictionaries.
+
+        Returns:
+            An integer hash value derived from the ucfs attribute.
+        """
+        return hash(self.ucfs)
+
         """Lexical comparison by ucfs for sorting.
 
         Args:
