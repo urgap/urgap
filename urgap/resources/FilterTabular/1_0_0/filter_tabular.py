@@ -114,6 +114,8 @@ def merge_parquet_files(grouped_input_files: dict, output_file_path: str) -> Non
 
     parquet_files = grouped_input_files["parquet"]
     with pq.ParquetWriter(
+        output_file_path,
+        schema=pq.read_table(parquet_files[0]).schema,
     ) as writer:
         for parquet in parquet_files:
             if Path(parquet).exists() is False:
@@ -196,8 +198,16 @@ if __name__ == "__main__":
         help="pandas query string",
     )
     parser.add_argument(
+        "-m",
+        "--mode",
+        dest="mode",
+        help="filter mode like csv or parquet",
     )
     parser.add_argument(
+        "-s",
+        "--sep",
+        dest="sep",
+        help="Seperator or delimiter. Defaults to ','",
     )
     args = parser.parse_args()
     main(

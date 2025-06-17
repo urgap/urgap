@@ -53,6 +53,7 @@ class UUri:
             cred_key = f"{self.scheme}://{self.netloc}"
         if self.scheme not in ("file", "https"):
             try:
+                    cred_key,
                 )
                 msg = f"Set credentials for {credentials['user']}"
             except KeyError:

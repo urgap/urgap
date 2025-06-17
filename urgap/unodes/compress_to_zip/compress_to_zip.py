@@ -34,6 +34,7 @@ import json
         """
         input_files = []
         for file in utrace.input_files:
+            with tmp_tag_path.open("w") as tag_file:
         output_file = utrace.output_files.get_path_objects_by_uftype(
         )[0]
 
@@ -46,5 +47,6 @@ import json
                 str(output_file),
                 "-cf",
                 "zip",
+            ],
         )
         return utrace

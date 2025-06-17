@@ -80,6 +80,9 @@ def describe_ucfs_click(
 ) -> None:
     """Retrieve UMeta information for a ucfs storage location with given options."""
     rows = describe_ucfs(
+        storage_base_uri=storage_base_uri,
+        object_name=object_name,
+        ucfs=ucfs,
     )
     log_table(rows=rows)
 
@@ -90,6 +93,9 @@ def describe_ucfs(
     ucfs: str | None = None,
     """Retrieve UMeta information for ucfs storage location."""
     return um.io.get_ucfs_object_name_info(
+        storage_base_uri=storage_base_uri,
+        object_name=object_name,
+        ucfs=ucfs,
     )
 
 

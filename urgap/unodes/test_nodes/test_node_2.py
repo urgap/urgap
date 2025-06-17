@@ -8,6 +8,7 @@
             {
                 "version": "1.0.0",
                 "exe_path": "TestNodes/TestNode2/1_0_0/test_resource_2.py",
+            },
         ],
         "parameters_not_triggering_rerun": ["no_rerun_node_trigger"],
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},

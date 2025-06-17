@@ -66,6 +66,8 @@ class JSONDecoder(json.JSONDecoder):
         )
 
     def object_hook(
+        self,
+        obj: dict,
 
         Args:
             obj: Dict to decode.

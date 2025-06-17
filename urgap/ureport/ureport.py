@@ -52,6 +52,7 @@ class UReport:
                     self.execution_history[key] = history
         else:
             self.execution_history = self.umeta.load_history(
+                wid=wid,
             )
 
     @property
@@ -76,6 +77,7 @@ class UReport:
             UTrace object.
         """
                 missing_history = self.umeta.load_history(
+                    wid=wid,
                 )
                 self._merge_histories(other_history=missing_history)
                 wid=wid,
@@ -164,6 +166,7 @@ UMeta:
                     arrow=True,
                 )
 
+                    ifile.ucfs,
                 )
                     hi2 = self.umeta.load_history(
                     )
@@ -298,6 +301,7 @@ UMeta:
                         "target": targets,
                         "value": list(links.values()),
                     },
+                ),
             ],
             layout=go.Layout(
                 title="Simplified DAG with aliases",
@@ -330,6 +334,8 @@ UMeta:
         """
         non_root_ufiles = set()
             ut = self.get_trace(
+                wid,
+                storage_base_uri=self.storage_base_uri,
             )
             for ufile in ut.output_files:
                 non_root_ufiles.add(ufile.ucfs)
@@ -337,16 +343,24 @@ UMeta:
         exact_sources_to_nodes = defaultdict(set)
         links = defaultdict(int)
             ut = self.get_trace(
+                wid,
+                storage_base_uri=self.storage_base_uri,
             )
             for ufile in ut.input_files:
                 new_connection = 1
                     new_connection = 0
                 else:
                 nodes, source = self._append_ufile_source(
+                    ufile=ufile,
+                    non_root_ufiles=non_root_ufiles,
+                    nodes=nodes,
                 )
         return nodes, links
 
     def _append_ufile_source(
+        self,
+        non_root_ufiles: set,
+        nodes: list,
     ) -> tuple:
         """Append object source name to nodes.
 
@@ -400,6 +414,7 @@ UMeta:
         summary = {}
 
                 "execution_time": self.execution_history.execution_time(
+                    wid,
                 ),
             }
         return summary
@@ -418,6 +433,10 @@ UMeta:
         visited_nodes = set()
 
         def get_root_nodes(
+            node: str,
+            reverse_graph: nx.DiGraph,
+            visited_nodes: set,
+            root_nodes: set,
         ) -> list | None:
             if node in visited_nodes:
                 return None
@@ -427,6 +446,10 @@ UMeta:
 
             for neighbor in reverse_graph.neighbors(node):
                 root_nodes = get_root_nodes(
+                    neighbor,
+                    reverse_graph,
+                    visited_nodes,
+                    root_nodes,
                 )
             return root_nodes
 
@@ -446,6 +469,7 @@ UMeta:
                 "networks": [],
                 "figures": [],
                 "tables": [],
+            },
         ]
         history = {
             "title": "Execution times",
@@ -474,24 +498,30 @@ UMeta:
         }
         already_seen_nodes = set()
             ut = self.get_trace(
+                wid,
+                storage_base_uri=self.storage_base_uri,
             )
             processing_time = ut.history.execution_time(
+                wid,
             ).total_seconds()
             execution_graph["nodes"].append(
                 {
                     "id": "process",
                     "processing_time": processing_time,
+                },
             )
             history["rows"].append(
                 {
                     "Node": ut.unode_meta["name"],
                     "processing time [s]": processing_time,
+                },
             )
             urd_overview["rows"].append(
                 {
                     "version": ut.urun_dict["version"],
                     "input_files": [x.ucfs for x in ut.input_files],
                     "output_files": [x.ucfs for x in ut.output_files],
+                },
             )
             for ufile in ut.input_files:
                 source = ufile.ucfs
@@ -500,6 +530,7 @@ UMeta:
                         "source": source,
                         "value": 1,
                         "type": "incoming",
+                    },
                 )
                 if source not in already_seen_nodes:
                     execution_graph["nodes"].append({"name": source, "id": "data"})
@@ -511,6 +542,7 @@ UMeta:
                         "target": target,
                         "value": 1,
                         "type": "outgoing",
+                    },
                 )
                 if target not in already_seen_nodes:
                     execution_graph["nodes"].append({"name": target, "id": "data"})
@@ -523,6 +555,9 @@ UMeta:
         return data
 
     def render_report(
+        self,
+        output_path: str | Path,
+        template_name: str | None = "basic.html",
     ) -> None:
         """Render the pipeline report as an HTML file using Jinja2 templates.
 
@@ -535,11 +570,14 @@ UMeta:
 
         template_folder = Path(__file__).parent / "templates"
         env = Environment(
+            loader=FileSystemLoader(template_folder.resolve()),
+            autoescape=True,
         )
         template = env.get_template(template_name)
         html_out = template.render(
             version="0.7.0",
             data=data,
         )
+        with output_path.open("w") as oo:
             print(html_out, file=oo)
         msg = f"Writing report to {output_path}"

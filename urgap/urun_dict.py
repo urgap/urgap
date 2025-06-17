@@ -108,6 +108,7 @@ class URunDict(UserDict):
             The merged dictionary.
         """
         default_storage_parameters = copy.deepcopy(
+            self._storage_requirements[storage_key],
         )
         default_storage_parameters.update(user_dict)
         return default_storage_parameters
@@ -200,6 +201,8 @@ class URunDict(UserDict):
             raise TypeError(msg)
 
         self["unode_parameters"] = self._update_default_storage(
+            "unode_parameters",
+            unode_parameters,
         )
 
     @property
@@ -349,11 +352,14 @@ class URunDict(UserDict):
             msg = f"KeyError for {e}: Parameters have to be supplied under unode_full_identifier"
             parameters = self.parameters
         param_set = sorted(
+            [(k, v) for k, v in parameters.items() if k not in no_rerun_params],
         )
         tmp_json = json.dumps(
             param_set,
         )
         sorted_json = json.dumps(
+            tmp_json,
+            sort_keys=True,
         )
             hashable_iterable=[sorted_json.encode("UTF-8")],
         )

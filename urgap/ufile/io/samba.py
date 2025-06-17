@@ -84,6 +84,9 @@ class IOSMB(UIOBase):
         try:
             with BytesIO() as bio:
                 self.conn_object.retrieveFile(
+                    self.uuri.get_samba_share(),
+                    self.remote_tag_path,
+                    bio,
                 )
                 bio.seek(0)
                 file_content = bio.read()
@@ -110,7 +113,11 @@ class IOSMB(UIOBase):
             RuntimeError: If a SMBTimeout occurs during file retrieval.
         """
         try:
+            with self.scratch_path.open("wb") as ooo:
                 self.conn_object.retrieveFile(
+                    self.uuri.get_samba_share(),
+                    self.uuri.fragment,
+                    ooo,
                 )
         except SMBTimeout as e:
             self.scratch_path.unlink(missing_ok=True)
@@ -126,7 +133,11 @@ class IOSMB(UIOBase):
             self._create_fragment_directory()
 
         try:
+            with self.scratch_path.open("rb") as ooo:
                 self.conn_object.storeFile(
+                    self.uuri.get_samba_share(),
+                    self.uuri.fragment,
+                    ooo,
                 )
         except (
             FileNotFoundError,
@@ -145,6 +156,9 @@ class IOSMB(UIOBase):
             json_bytes = json_data.encode("utf-8")
             with BytesIO(json_bytes) as bio:
                 self.conn_object.storeFile(
+                    self.uuri.get_samba_share(),
+                    self.remote_tag_path,
+                    bio,
                 )
 
     def remote_object_exists(self) -> bool:
@@ -157,6 +171,8 @@ class IOSMB(UIOBase):
             fragment_directory = "/".join(self.uuri.fragment.split("/")[:-1])
             filename = self.uuri.fragment.split("/")[-1]
             files = self.conn_object.listPath(
+                self.uuri.get_samba_share(),
+                fragment_directory,
             )
             return any(f.filename == filename for f in files)
         except OperationFailure:
@@ -192,12 +208,16 @@ class IOSMB(UIOBase):
                 continue
             if obj.isDirectory is True:
                 smb_objects.extend(
+                    self._get_files_recursively(subpath=subpath + "/" + obj.filename),
                 )
             else:
                 smb_objects.append(subpath + "/" + obj.filename)
         return smb_objects
 
     def list_container_items(
+        self,
+        pattern: str | None = None,
+        subpath: str = "/",
     ) -> list:
         """Get objects in folder/'container'.
 
@@ -227,6 +247,8 @@ class IOSMB(UIOBase):
             path_to_create = "/".join(fragment_dirs[: level + 1])
             try:
                 self.conn_object.createDirectory(
+                    self.uuri.get_samba_share(),
+                    path_to_create,
                 )
             except OperationFailure as e:
                 msg = f"Could not create folder {path_to_create} with {e}"

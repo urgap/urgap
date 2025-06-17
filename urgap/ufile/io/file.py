@@ -35,6 +35,7 @@ class IOPython(UIOBase):
         """
         tags = None
         try:
+            with self.uuri.get_file_remote_tag_path().open() as f:
                 tags = json.load(f)
         except FileNotFoundError:
             pass
@@ -71,6 +72,9 @@ class IOPython(UIOBase):
         try:
             shutil.copyfile(self.scratch_path, self.uuri.get_file_remote_path())
             if tags is not None:
+                with (
+                    self.uuri.get_file_remote_tag_path().open("w") as remote_tag_file,
+                ):
                     json.dump(tags, remote_tag_file)
         except OSError as e:
             msg = f"Could not copy file {self.scratch_path} due to {e}"

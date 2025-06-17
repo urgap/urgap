@@ -95,7 +95,9 @@ class UMeta:
                     "parameters": node_exe_details["parameters"],
                     "user_dict": {
                         "!NOTE!": "User dicts can be modified from run to run and"
+                        " from node to node.",
                     },
+                },
             )
             _, unode_version = node_exe_details["unode"].split(":")
         else:
@@ -103,7 +105,9 @@ class UMeta:
                     "parameters": node_exe_details["parameters"],
                     "user_dict": {
                         "!NOTE!": "User dicts can be modified from run to run and"
+                        " from node to node.",
                     },
+                },
             )
             unode_version = None
         urd.command_list = node_exe_details["command"].split(" ")
@@ -111,10 +115,12 @@ class UMeta:
             urun_dict=urd,
                 [
                     for ucfs in node_exe_details["input_ufiles"]
+                ],
             ),
             unode_version=unode_version,
                 [
                     for ucfs in node_exe_details["output_ufiles"]
+                ],
             ),
             history=history,
         )
@@ -128,6 +134,8 @@ class UMeta:
         """
 
     def load_history(
+        self,
+        wid: str | None = None,
     ) -> dict:
         """Load execution history using the IO backend.
 
@@ -230,4 +238,7 @@ class UMeta:
             List of dictionaries with UMeta information for the specified query.
         """
         self.io.get_ucfs_object_name_info(
+            storage_base_uri=storage_base_uri,
+            object_name=object_name,
+            ucfs=ucfs,
         )

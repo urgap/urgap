@@ -15,6 +15,9 @@ from tqdm import tqdm
 @click.argument("storage_base_uri")
 @click.argument("bucket_structure")
 def upload_folder_click(
+    folder: str,
+    storage_base_uri: str,
+    bucket_structure: str,
 ) -> None:
     """Upload the contents of a folder to a storage_base_uri with a given bucket structure.
 

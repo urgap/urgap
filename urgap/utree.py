@@ -77,6 +77,9 @@ class UTreeQuerier:
             graph.add_edge(parent_node, new_node_name)
             if isinstance(value, types.SimpleNamespace):
                 graph = self._walk_tree(
+                    value.__dict__,
+                    graph,
+                    parent_node=new_node_name,
                 )
         return graph
 
@@ -93,6 +96,7 @@ class UTreeQuerier:
         for leaf, ext in general_types:
             leaf_ext = "." + ext.split(".")[-1]
             leafs_with_ext = set(self.get_nodes_with_ext(ext=leaf_ext)).difference(
+                {leaf},
             )
             for node in leafs_with_ext:
                 graph.add_edge(leaf, node)
@@ -171,6 +175,8 @@ class UTreeQuerier:
             return [
                 (node, self.G.nodes[node]["ext"])
                 for node in nx.dfs_tree(
+                    self.G.reverse(),
+                    source=self.get_nodes_with_ext(ext=node)[0],
                 ).nodes
             ]
         except KeyError as e:

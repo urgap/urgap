@@ -44,6 +44,7 @@ class UWIDGenerator:
             List of words (str) from the file.
         """
         word_file = Path(__file__).parent / f"{word_type}"
+        with word_file.open() as wf:
             return [line.strip() for line in wf]
 
     @property

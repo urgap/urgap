@@ -60,7 +60,10 @@ class IOHTTPS(UIOBase):
         If download fails, removes the partially downloaded file.
         """
         try:
+            with self.scratch_path.open("wb"):
                 urllib.request.urlretrieve(
+                    self.uuri.get_https_remote_path(),
+                    filename=self.scratch_path,
                 )
 
         except urllib.error.URLError:
@@ -91,6 +94,8 @@ class IOHTTPS(UIOBase):
         """
         try:
             urllib.request.urlretrieve(
+                self.uuri.get_https_remote_path(),
+                filename=self.scratch_path,
             )
             exists = True
         except urllib.error.HTTPError:

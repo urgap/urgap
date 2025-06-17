@@ -35,12 +35,26 @@ def info_unodes_click() -> None:
     click.secho("{: >45} {}".format("    ", "Executable available"))
     click.secho(
         "{: >45} {} {}".format(
+            "    ",
+            placeholder_str,
+            "3rd party installations required / available",
+        ),
     )
     click.secho(
         "{: >45} {} {} {}".format(
+            "    ",
+            placeholder_str,
+            "Wrapper version",
+            "Engine type",
+        ),
     )
     click.secho(
         "{: >45} {} {} {}".format(
+            "    ",
+            placeholder_str,
+            placeholder_str,
+            placeholder_str,
+        ),
     )
     counter = collections.defaultdict(int)
     tags = set()
@@ -54,14 +68,19 @@ def info_unodes_click() -> None:
             status_3rd_party = get_status(None)
         exe_available = get_status(v.is_available)
         w = v.META_INFO.get(
+            "wrapper_version",
+            {"major": "x", "minor": "x", "patch": "x"},
         )
         wrapper_version = "{major}.{minor}.{patch}".format(**w)
         is_of_engine_type = ", ".join(v.META_INFO["engine_type"])
         tags |= set(v.META_INFO["engine_type"])
         click.echo(
+            f"{k: >45} {exe_available} {status_3rd_party} {wrapper_version: >7s} : {is_of_engine_type}",
         )
     click.echo(
         "\nIn summary a total {unodes} wrappers are available. Not showing {test_nodes} test_nodes".format(
+            **counter,
+        ),
     )
     click.echo(f"Total number of tags {len(tags)}")
     sorted_tags = sorted(tags)

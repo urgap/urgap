@@ -23,6 +23,7 @@ def sense_compression_format(file: os.PathLike) -> str:
     """
     expected_hex_for_tar = "00" * 1024
     hex_eof_marker = None
+    with file.open("rb") as f:
         signature = str(binascii.hexlify(f.read(300)))[2:-1]
         try:
             f.seek(-1024, 2)
@@ -93,6 +94,7 @@ def execute_threaded_function(
             msg = "Inconsistent nesting: All elements must be either nested or not nested."
             raise ValueError(msg)
         with concurrent.futures.ThreadPoolExecutor(
+            max_workers=number_of_threads,
         ) as executor:
             if first_is_nested:
                 results = list(executor.map(lambda args: func(*args), args_list))
@@ -119,6 +121,9 @@ def sort_versions(item: str) -> tuple:
 
 
 def get_next_port(
+    last_assigned_port: int,
+    last_port: int,
+    is_lastest: bool = False,
 ) -> int:
     """Get the next assignable port, optionally rounding up to the next 10 for 'latest' tools.
 

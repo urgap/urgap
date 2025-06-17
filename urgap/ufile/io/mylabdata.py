@@ -21,6 +21,8 @@ def make_expiration_safe_request(func: Callable) -> requests.Response:
     """
 
     def request_func_wrapper(
+        *args: str,
+        **kwargs: P.kwargs,
     ) -> requests.Response:
         response = func(self, *args, **kwargs)
         if (response is not None) and (response.status_code == 403):
@@ -127,6 +129,7 @@ class IOMyLabData(UIOBase):
         Raises:
             ValueError: If upload fails (not HTTP 200 or 409).
         """
+        with self.scratch_path.open("rb") as file:
             response = requests.post(
                 url=url,
                 verify=self._api_cert,
@@ -175,6 +178,7 @@ class IOMyLabData(UIOBase):
             ),
         )
         if response.status_code == 200:
+            with self.scratch_path.open("wb") as file:
             url += ".tag"
             self.get_remote_tags()
         return response
@@ -205,6 +209,8 @@ class IOMyLabData(UIOBase):
                     ),
                     equip_task_id_fragment,
                     strict=False,
+                ),
+            ),
         )
         response = requests.get(
             url=url,

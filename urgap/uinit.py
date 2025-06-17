@@ -33,6 +33,9 @@ def copy_resources_if_needed(
                 continue
             target_rfile = Path(
                 str(rfile).replace(
+                    str(source_resources_path),
+                    str(target_resources_path),
+                ),
             )
             if target_rfile.exists() is False or force is True:
                 target_rfile.parent.mkdir(exist_ok=True, parents=True)
@@ -53,6 +56,7 @@ def configure_logger() -> None:
     execution_traceback = [line.strip() for line in traceback.format_stack()]
     sh = logging.StreamHandler(sys.stderr)
     formatter = logging.Formatter(
+        "%(asctime)s - %(filename)s - %(lineno)d - %(levelname)s - %(message)s",
     )
     sh.setFormatter(formatter)
     logger = logging.getLogger()
@@ -82,6 +86,7 @@ def copy_config_if_needed(target_dir: str | os.PathLike) -> None:
     """
     for config_json in config_defaults_path.glob("**/*.json"):
         target_json_path = Path(
+            str(config_json).replace(str(config_defaults_path), str(target_dir)),
         )
         if target_json_path.exists() is False:
             shutil.copy(config_json, target_json_path)
@@ -97,9 +102,11 @@ def read_config(home_dir: str | os.PathLike | None = None) -> dict:
     Returns:
     """
     try:
+        with config_path.open() as uj:
             config = json.load(uj)
     except FileNotFoundError:
         copy_config_if_needed(target_dir=config_root)
+        with config_path.open() as uj:
             config = json.load(uj)
     return {k: v["value"] for k, v in config.items() if isinstance(v, dict)}
 
@@ -118,6 +125,7 @@ def load_certificates() -> None:
 
 
 def set_scratch_disk_path(
+    wid: str | None = None,
 ) -> os.PathLike:
     """Create and return a scratch disk path, creating the directory if necessary.
 

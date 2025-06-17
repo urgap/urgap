@@ -19,10 +19,15 @@ class UMeta(SQLAlchemyBaseUMeta):
         Returns:
             Connection string for SQLAlchemy to connect to the GCP Cloud SQL instance.
         """
+            "umeta-gcpsql-url",
+            "postgresql+pg8000://10.0.0.0:5432",
         )
+            gcpsql_connection_string,
         )
         connection_string = (
             gcpsql_connection_string.replace(
+                "postgresql+pg8000://",
+                "postgresql+pg8000://{user}:{password}@",
             )
         )
         return connection_string.format(**credentials)

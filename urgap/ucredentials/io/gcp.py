@@ -41,6 +41,7 @@ class IOGCPCreds(IOBaseCreds):
             response = client.access_secret_version(
                 request={
                     "name": f"projects/{self.project_id}/secrets/{self.secret_id}/versions/{self.version_id}",
+                },
             )
         except (
             auth.exceptions.DefaultCredentialsError,

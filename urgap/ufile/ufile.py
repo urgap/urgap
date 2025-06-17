@@ -54,6 +54,8 @@ class UFile:
         """Format the URI if storage_base_uri and ucfs combination was used to construct uri."""
         if "@" in self.uri:
             uri, ucfs_hash = self.uri.split("@")
+                uri=uri,
+                query=f"{hash_algorithm}={ucfs_hash}",
             )
 
     @property
@@ -109,10 +111,12 @@ class UFile:
                 )
                 if len(non_standard_tags) > 0:
                         "Remote has no tags, thus the file is not downloaded again."
+                        " Delete local explicitly UFile.purge_local_files() if needed.",
                     )
                 download_file = False
                     "Remote has tag capability but hash was not set."
                     " Will not download file anymore."
+                    " Delete local explicitly UFile.purge_local_files() if needed.",
                 )
                 download_file = False
             else:
@@ -120,8 +124,12 @@ class UFile:
                         {
                                 "hash_algorithm"
                                 self.io.scratch_path,
+                            ),
+                        },
                     )
                 if self.tags.get(
+                    None,
+                        "Remote and local have different hash. Overwriting local",
                     )
                     download_file = True
 
@@ -222,6 +230,8 @@ class UFile:
                 {
                         input_file=self.path,
                         hash_algorithm=hash_algorithm,
+                    ),
+                },
             )
         return self.tags[hash_algorithm]
 
@@ -272,6 +282,7 @@ class UFile:
         basefolder = path_object.parent.resolve()
         container_content = path_object.name
         for _ in range(number_of_parents):
+            container_content = Path(basefolder.name) / container_content
             basefolder = basefolder.parent.resolve()
 
     def as_uri(
@@ -313,6 +324,7 @@ class UFile:
         unparse_args.append(self.uuri.params)
         if query is None:
             unparse_args.append(
+                "&".join([f"{k}={v}" for k, v in sorted(self.tags.items())]),
             )
         else:
             unparse_args.append(query)
@@ -387,6 +399,10 @@ class UFile:
             )
 
     def rebase(
+        self,
+        uri: str | None = None,
+        upload: bool = False,
+        **kwargs: P.kwargs,
     ) -> None:
         """Change this UFile's UUri and (optionally) upload it to new storage.
 
@@ -428,6 +444,7 @@ class UFile:
         elif compression_format == "gz":
             suffix = ".gz"
             new_path = self.path.with_suffix(self.path.suffix + suffix)
+            with self.path.open("rb") as file, gzip.open(new_path, "w") as out_file:
                 out_file.writelines(file)
 
         elif compression_format == "tar":
@@ -437,6 +454,7 @@ class UFile:
                 file.add(self.path, arcname=self.path.name)
 
         else:
+                "Unsupported compression format. Valid options are zip, gz, and tar",
             )
             msg = "Unsupported compression format."
             raise NotImplementedError(msg)
@@ -452,6 +470,8 @@ class UFile:
             encoding: Encoding to use for output.
         """
         with (
+            self.path.open("rb") as gz_file,
+            gz_output.open("w", encoding=encoding) as out_file,
         ):
             decom_str = gzip.decompress(gz_file.read()).decode(encoding=encoding)
             out_file.write(decom_str)
@@ -487,21 +507,27 @@ class UFile:
             case "tar":
                 with tarfile.open(self.path, mode="r:") as tfile:
             case "split_tar":
+                    self.uuri.path,
                 ).uncompress(temp_folder)
             case "bz2":
                 temp_folder.mkdir(parents=True, exist_ok=True)
                 with bz2.BZ2File(self.path) as bz_file:
                     file_names = [str(self.path.with_suffix("").name)]
+                    with temp_folder / file_names[0].open("wb") as f:
                         shutil.copyfileobj(bz_file, f)
             case _:
+                    "Unsupported compression format. Valid options are zip, bz2, tar, split_tar and gz",
                 )
                 msg = "Unsupported compression format."
                 raise NotImplementedError(msg)
         return self._uncompress_recursive(
+            ufl=uncompressed_ufilelist,
+            recursive=recursive,
         )
 
     @staticmethod
     def _uncompress_recursive(
+        recursive: bool = False,
         """Recursively uncompress UFileLists.
 
         Args:
@@ -513,12 +539,14 @@ class UFile:
         """
         if recursive is True:
             for uf in ufl:
+                        "Uncompressed UFile is a tar archive which will be unpacked.",
                     )
                     try:
                         ufl += uf.uncompress()
                         ufl.remove(uf)
                         Path.unlink(uf.path)
                     except (FileExistsError, IsADirectoryError, NotADirectoryError):
+                            "Tarball contains folder with identical name renaming tarfile.",
                         )
                         to_be_removed = uf.path
                         ufl.remove(uf)
@@ -586,6 +614,8 @@ class UFile:
         """
         if self._lineage_graph is None:
             if use_umeta is True:
+                    ucfs=self.ucfs,
+                    storage_base_uri=self.as_storage_base_uri(),
                 )
                 graph = ur.graph
             else:
@@ -661,5 +691,8 @@ class UFile:
             self.rebase(uri=f"#{simple_name}", upload=True, overwrite=False)
         else:
             self.rebase(
+                uri=f"{storage_base_uri}#{simple_name}",
+                upload=True,
+                overwrite=False,
             )
         return self

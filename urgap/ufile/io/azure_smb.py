@@ -52,12 +52,14 @@ class IOAzureSMB(UIOBase):
         )
         self.directory_client = self.share_client.get_directory_client(
             directory_path="/".join(
+            ),
         )
         self.object_directory_client = self.share_client.get_directory_client(
         )
         self.file_client = self.directory_client.get_file_client(
         )
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
+            logging.ERROR,
         )
 
     def __del__(self) -> None:
@@ -97,6 +99,7 @@ class IOAzureSMB(UIOBase):
         """
         try:
             download = self.file_client.download_file()
+            with self.scratch_path.open("wb") as ooo:
                 download.readinto(ooo)
         except (
             AzureError,
@@ -120,10 +123,12 @@ class IOAzureSMB(UIOBase):
         file_dir_list = self.file_client.directory_path.split("/")
         for n in range(len(file_dir_list)):
             tmp_dir_client = self.share_client.get_directory_client(
+                directory_path="/".join(file_dir_list[: n + 1]),
             )
             with contextlib.suppress(ResourceExistsError):
                 tmp_dir_client.create_directory()
         try:
+            with self.scratch_path.open("rb") as data:
                 self.file_client.upload_file(data)
         except (
             AzureError,
@@ -160,6 +165,9 @@ class IOAzureSMB(UIOBase):
             return True
 
     def list_container_items(
+        self,
+        pattern: str | None = None,
+        limit: int | None = None,
     ) -> list:
         """Get all objects in a folder/'container', recursively, with optional regex filtering.
 

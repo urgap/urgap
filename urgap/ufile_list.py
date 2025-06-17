@@ -60,6 +60,7 @@ class UFileList(UserList):
         super().__setitem__(i, item)
 
     def __add__(
+        self,
     ) -> UFileList:
         """Concatenate another object to this UFileList.
 
@@ -76,6 +77,7 @@ class UFileList(UserList):
         return super().__add__(other)
 
     def __radd__(
+        self,
     ) -> UFileList:
         """Concatenate this UFileList to another object.
 
@@ -92,6 +94,7 @@ class UFileList(UserList):
         return super().__radd__(other)
 
     def __iadd__(
+        self,
     ) -> UFileList:
         """Extend this UFileList in-place with another object.
 
@@ -159,6 +162,7 @@ class UFileList(UserList):
         return self.calculate_ucfs()
 
     def _eval_if_item_is_of_correct_type(
+        self,
     ) -> None:
         """Check if an item is suitable for inclusion in UFileList.
 
@@ -193,6 +197,9 @@ class UFileList(UserList):
         return flat_list
 
     def _get_flat_list(
+        self,
+        list_to_flatten: Iterable,
+        already_seen_objects: set,
         """Flatten nested lists and remove duplicates.
 
         Args:
@@ -294,6 +301,7 @@ class UFileList(UserList):
             The compatible uftype if found, else None.
         """
         mappable_uftypes = list(
+            & set(input_uftypes.keys()),
         )
         if len(mappable_uftypes) == 0:
             msg = f"Filtered {ufile.uftype} UFile {ufile} - uftype is not compatible with wrapper uftype requirement"
@@ -491,6 +499,8 @@ class UFileList(UserList):
         if uftype in self.output_definitions["uftypes"]:
             current_count = current_counts[uftype]
             if self.output_definitions["uftypes"][uftype].get(
+                "min",
+                0,
             ) != self.output_definitions["uftypes"][uftype].get("max", -1):
                 needs_quantifier = True
                 safe_to_create_new_file = True
@@ -508,6 +518,7 @@ class UFileList(UserList):
             self.append(
                     uri=f"{self.output_definitions['storage_base_uri']}?uftype={self.output_definitions['uftype']}"
                     f"#{self.output_definitions['output_file_stem']}_{counter}{uftype}",
+                ),
             )
         return len(self) - 1
 
@@ -539,6 +550,7 @@ class UFileList(UserList):
             TypeError: If uftype_list is not a list.
         """
         if isinstance(uftype_list, list) is False:
+                "Only list type is supported! If you want to keep one uftype, provide a one element list!",
             )
             raise TypeError
 
@@ -561,6 +573,7 @@ class UFileList(UserList):
             TypeError: If uftype_list is not a list.
         """
         if isinstance(uftype_list, list) is False:
+                "Only list type is supported! If you want to keep one uftype, provide a one element list!",
             )
             raise TypeError
 
@@ -587,6 +600,7 @@ class UFileList(UserList):
             return uf
 
         with concurrent.futures.ThreadPoolExecutor(
+            max_workers=number_of_threads,
         ) as executor:
             ufile_list = executor.map(_init_ufile, uri_list)
         ufl = UFileList(ufile_list)
@@ -657,6 +671,7 @@ class UFileList(UserList):
                     prefix=prefix,
                     suffix=suffix,
                     storage_base_uri=storage_base_uri,
+                ),
             )
         return renamed_ufile_list
 
@@ -691,8 +706,11 @@ class UFileList(UserList):
         os.chdir(destination)
         try:
             with subprocess.Popen(
+                ["tar", "xvf", "-"],
+                stdin=subprocess.PIPE,
             ) as tar_process:
                 for uf in sorted(self):
+                    with uf.path.open("rb") as split_file:
                         tar_process.stdin.write(split_file.read())
             tar_process.stdin.close()
             tar_process.wait()

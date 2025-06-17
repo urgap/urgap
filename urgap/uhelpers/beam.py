@@ -37,6 +37,7 @@ def parse_inputs(
     )
     known_args, pipeline_args = parser.parse_known_args(argv)
 
+    with known_args.input_json.open() as jf:
         input_json = json.load(jf)
 
     default_config_json = input_json.get("default_pipeline_config_json", None)
@@ -44,6 +45,7 @@ def parse_inputs(
         default_config_json = (
             Path(known_args.input_json) / Path(default_config_json)
         ).resolve()
+        with default_config_json.open() as jf:
             default_pipeline_args = json.load(jf)
     else:
         default_pipeline_args = {}
@@ -305,6 +307,9 @@ class OutputRenamer(beam.DoFn):
             for source_file in source_files:
                 source_object_names.add(source_file.split("#")[-1])
         renamed_uf_list = uf_list.simplify_names(
+            source_object_names=source_object_names,
+            prefix=prefix,
+            suffix=suffix,
         )
         for uf in renamed_uf_list:
             yield (element_key, [uf.as_uri()])

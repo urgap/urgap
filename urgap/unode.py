@@ -92,6 +92,8 @@ class UNodeBase:
             and self.META_INFO["unode_version"] == "latest"
         ):
             self.latest_exe_paths = urun_dict.unode_parameters["latest_exe_paths"].get(
+                f"{self.META_INFO['unode_full_identifier']}",
+                None,
             )
 
         if urun_dict.unode_parameters["skip_pre_checks"] is False:
@@ -201,6 +203,7 @@ class UNodeBase:
                 f" longer than the timeout value {utrace.urun_dict['file_io_timeout']}."
                 "Therefore re-initializing IO classes for all UFiles."
             )
+                utrace.output_files.as_uri_list(),
             )
         utrace.upload_output_files()
         return utrace
@@ -225,6 +228,7 @@ class UNodeBase:
             self.META_INFO.get("output_uftypes").values(),
         ):
             if set(uftype_spec.keys()) != {"min", "max"}:
+                    "uftype specifications should be set explicitly ('min' & 'max')! Please set to -1",
                 )
         self.tmp_files = []
 
@@ -399,6 +403,7 @@ class UNodeBase:
         pure_engine_exe_list = [Path(x).name for x in engine_exe_list]
         for uf in new_ufiles:
             if uf.path.name in pure_engine_exe_list:
+                Path(uf.io.remote_path).chmod(stat.S_IRWXU)
             uf.purge_local()
         return True
 
@@ -536,11 +541,14 @@ class UNodeBase:
                             },
                         ],
                         "caption": "URun Dict information associated with the file",
+                    },
                 ],
+            },
         ]
         for k in ["input_files", "output_files"]:
             for entry in um.urun_dict.get(k, []):
                 data[0]["tables"][0]["rows"].append(
+                    {"key": k, "value": entry.object_name},
                 )
 
         for wid, _object_name in um.history:
@@ -554,6 +562,7 @@ class UNodeBase:
                     {"key": k, "value": v}
                     for k, v in um.urun_dict["parameters"].items()
                 ],
+            },
         )
         if hasattr(cls, "generate_wrapper_vis") and callable(cls.generate_wrapper_vis):
             data += cls.generate_wrapper_vis(ufile)
@@ -621,6 +630,7 @@ class UNodeBase:
                 try:
                     execute_answer.append(line)
                 except ValueError:
+                        "stdout Line skipped as it cannot be reformatted with logger",
                     )
         if proc.returncode != 0:
             msg = (

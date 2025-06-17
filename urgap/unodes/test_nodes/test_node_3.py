@@ -8,6 +8,7 @@
             {
                 "version": "1.0.0",
                 "exe_path": "TestNodes/TestNode1/1_0_0/test_resource_1.py",
+            },
         ],
         "parameters_not_triggering_rerun": ["no_rerun_node_trigger"],
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
@@ -33,5 +34,6 @@
         Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
+        with utrace.output_files[0].path.open("w") as of:
             print(self.META_INFO["name"], file=of)
         return utrace

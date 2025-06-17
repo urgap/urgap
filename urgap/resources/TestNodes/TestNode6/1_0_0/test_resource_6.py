@@ -13,6 +13,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     hal = "Dave, this conversation can serve no purpose anymore. Goodbye."
     for file in known_args.output_files:
+        with file.open("w") as oo:
             print(hal, file=oo)
 
 

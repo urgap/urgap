@@ -65,6 +65,7 @@ class UCredentialManager:
         for io_module in io_modules:
             with contextlib.suppress(ImportError):
                 self.available_io_classes[io_module] = importlib.import_module(
+                    f".{io_module}",
                 )
 
         self.ID_KEY = credentials_id_key
@@ -93,6 +94,7 @@ class UCredentialManager:
             raise ImportError(msg)
         if secret_store == "env":
             self._io = self.available_io_classes[secret_store].IOEnvCreds(
+                secret_id=secret_id,
             )
         elif secret_store == "gcp":
             self._io = self.available_io_classes[secret_store].IOGCPCreds(
@@ -107,6 +109,7 @@ class UCredentialManager:
             )
         elif secret_store == "echo":
             self._io = self.available_io_classes[secret_store].IOEchoCreds(
+                secret_id=secret_id,
             )
         else:
             msg = (
@@ -276,6 +279,7 @@ class UCredentialManager:
         if json_path is None:
         cred_json = {}
         if json_path.exists():
+            with json_path.open() as uj:
                 cred_json = json.load(uj)
         else:
             msg = f"{json_path} does not exist!"
@@ -294,6 +298,7 @@ class UCredentialManager:
         Note: Will not write out the extracted credentials, only the credential_lookup.
         """
         if json_path is None:
+        with json_path.open("w") as uj:
             json.dump(
                 {
                     "description": description,

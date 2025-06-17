@@ -280,6 +280,8 @@ class UTrace:
         """
         if run_folder_name is None:
             unode_id_win_compatible = self.unode_meta["unode_full_identifier"].replace(
+                ":",
+                "_",
             )
             top_level_folder = f"{unode_id_win_compatible}_w{self.unode_meta['wrapper_version']['major']}"
         else:
@@ -301,6 +303,7 @@ class UTrace:
                 len(output_files_uftype_counts.keys()) != 1
                 or len(input_files_uftype_counts.keys()) != 1
             ):
+                    "Input/output uftypes are not unique. Cannot retain uftype.",
                 )
             else:
                 i_uftype = next(iter(input_files_uftype_counts.keys()))
@@ -311,6 +314,8 @@ class UTrace:
                 new_output_file_list = []
                 for ofile in self.output_files:
                         uri=ofile.as_uri(
+                            fragment=ofile.object_name.replace(o_uftype, i_uftype),
+                        ),
                     )
                     uf.tags.update({"uftype": i_uftype})
                     new_output_file_list.append(uf)
@@ -444,11 +449,13 @@ class UTrace:
                     if min_n > number_of_remote_objects:
                         reasons.append(
                             f"Not all dynamic files were written. Minimum {min_n}"
+                            f" yet found only {number_of_remote_objects}",
                         )
                 else:
                     for idx in idx_list:
                         if self.output_files[idx].io.remote_object_exists() is False:
                             reasons.append(
+                                f"Not all expected output file of type {uftype} exist.",
                             )
                             break
                 if len(reasons) > 0:
@@ -544,6 +551,8 @@ class UTrace:
             UTrace object for the requested run.
         """
         return umeta.load_utrace(
+            wid=wid,
+            storage_base_uri=storage_base_uri,
         )
 
     def add_execution_record(self) -> None:

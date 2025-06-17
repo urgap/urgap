@@ -22,6 +22,7 @@ from opentelemetry.trace import SpanKind
 
 logging.getLogger("azure.monitor").setLevel(logging.WARNING)
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
+    logging.WARNING,
 )
 logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
 
@@ -104,8 +105,10 @@ class UTelemetry:
             elif self.otlp_type == "Console":
                 exporter = ConsoleMetricExporter()
             elif self.otlp_type == "AZ-Insights":
+                    self.otlp_url,
                 )
                 exporter = AzureMonitorMetricExporter.from_connection_string(
+                    connection_string,
                 )
             else:
                 msg = f"Do not know how to handle {self.otlp_type} as opentelemetry_exporter_type"
@@ -116,6 +119,9 @@ class UTelemetry:
                         PeriodicExportingMetricReader(
                             exporter,
                             export_interval_millis=5000,
+                        ),
+                    ],
+                ),
             )
             UTelemetry.metric_was_initialized = True
 
@@ -133,7 +139,9 @@ class UTelemetry:
                 TracerProvider(
                     resource=Resource.create(
                         {
+                        },
                     ),
+                ),
             )
             if self.otlp_type == "OTLP":
                 exporter = OTLPSpanExporter(
@@ -141,8 +149,10 @@ class UTelemetry:
             elif self.otlp_type == "Console":
                 exporter = ConsoleSpanExporter()
             elif self.otlp_type == "AZ-Insights":
+                    self.otlp_url,
                 )
                 exporter = AzureMonitorTraceExporter.from_connection_string(
+                    connection_string,
                 )
             else:
                 msg = f"Do not know how to handle {self.otlp_type} as opentelemetry_exporter_type"
@@ -194,6 +204,9 @@ class UTelemetry:
                 kind = spankind
             if name not in current_tree:
                 new_span = self.tracer.start_span(
+                    name,
+                    context=parent_context,
+                    kind=kind,
                 )
                 if self.otlp_type == "AZ-Insights":
                     new_span.set_attribute("db.system", "Microsoft.ServiceBus")

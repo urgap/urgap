@@ -45,6 +45,7 @@ class IOOmiq(UIOBase):
             self._omiq_user_info = self._api.get_user()
             if self._omiq_user_info is not None:
                 msg = "Authenticated to OMIQ API as {name} [last login:{lastLoginTime}]".format(
+                    **self._omiq_user_info,
                 )
         self._workflow_id = self.uuri.get_container_name()
         self._workflow = self._api.get_workflow(self._workflow_id)
@@ -52,6 +53,7 @@ class IOOmiq(UIOBase):
         self._query_params = self.uuri.query
         if self._query_params.get("derived_from_fcs", False) is True:
             self._corresponding_fcs_filename = str(
+                Path(self.uuri.fragment).with_suffix(".fcs"),
             )
         else:
             self._corresponding_fcs_filename = None
@@ -169,6 +171,7 @@ class IOOmiq(UIOBase):
             "verbose",
         )
         self._api.export_data(
+            **{k: v for k, v in self._query_params.items() if k in relevant_keys},
         )
 
     def _set_query_params(self, file_id: str) -> None:
@@ -178,13 +181,19 @@ class IOOmiq(UIOBase):
             file_id: ID of the file to export.
         """
         self._query_params["filter_usage_mode"] = self._query_params.get(
+            "filter_usage_mode",
+            "NAMECOL",
         )
         self._query_params["dataset_id"] = self._dataset_id
         self._query_params["file_id"] = file_id
         self._query_params["filepath"] = Path(str(self.scratch_path).split("?")[0])
         self._query_params["add_row_nums"] = self._query_params.get(
+            "add_row_nums",
+            True,
         )
         self._query_params["reverse_scaling"] = self._query_params.get(
+            "reverse_scaling",
+            False,
         )
         self._query_params["workflow"] = self._workflow
         self._query_params["feature_names"] = [ftr["name"] for ftr in self.features]
@@ -196,6 +205,8 @@ class IOOmiq(UIOBase):
             self._set_from_task_id()
         if "filter_ids" not in self._query_params:
             self._query_params["filter_ids"] = omiq_api.get_available_filters(
+                self._workflow,
+                self._query_params["from_task_id"],
             )
 
     def _set_from_task_id(self) -> None:
@@ -226,6 +237,9 @@ class IOOmiq(UIOBase):
     def _download_file_from_workflow(self) -> None:
         """Download a JSON file containing the OMIQ workflow."""
         dict_workflow = {"dataset": self._dataset_id, "workflow": self._workflow}
+        with self._scratch_path / (
+            "workflow_" + self._workflow_id + ".omiq_gfile"
+        ).open("w") as gfile:
             json.dump(dict_workflow, gfile, indent=4)
 
     def _get_task_id_for_artifact(self, filename: str) -> str:

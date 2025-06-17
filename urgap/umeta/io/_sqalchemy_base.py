@@ -57,9 +57,13 @@ class ExecutionConfigurations(Base):
     unode: Mapped[str] = mapped_column()
 
     input_ufiles: Mapped[list[InputUFiles]] = relationship(
+        secondary="execution_input_link",
+        back_populates="executions_as_input",
     )
 
     output_ufiles: Mapped[list[OutputUFiles]] = relationship(
+        secondary="execution_output_link",
+        back_populates="executions_as_output",
     )
 
 
@@ -69,6 +73,8 @@ class InputUFiles(Base):
     input_ucfs: Mapped[str] = mapped_column(primary_key=True)
 
     executions_as_input: Mapped[list[ExecutionConfigurations]] = relationship(
+        secondary="execution_input_link",
+        back_populates="input_ufiles",
     )
 
 
@@ -76,9 +82,13 @@ class OutputUFiles(Base):
     __tablename__ = "umeta_output_ufiles"
 
     output_ucfs: Mapped[str] = mapped_column(
+        ForeignKey("ucfs_storage_location.ucfs"),
+        primary_key=True,
     )
 
     executions_as_output: Mapped[list[ExecutionConfigurations]] = relationship(
+        secondary="execution_output_link",
+        back_populates="output_ufiles",
     )
 
 
@@ -86,8 +96,12 @@ class ExecutionInputLink(Base):
     __tablename__ = "execution_input_link"
 
     uunode_exe_id: Mapped[str] = mapped_column(
+        ForeignKey("umeta_execution_configurations.uunode_exe_id"),
+        primary_key=True,
     )
     input_ucfs: Mapped[str] = mapped_column(
+        ForeignKey("umeta_input_ufiles.input_ucfs"),
+        primary_key=True,
     )
 
 
@@ -95,8 +109,12 @@ class ExecutionOutputLink(Base):
     __tablename__ = "execution_output_link"
 
     uunode_exe_id: Mapped[str] = mapped_column(
+        ForeignKey("umeta_execution_configurations.uunode_exe_id"),
+        primary_key=True,
     )
     output_ucfs: Mapped[str] = mapped_column(
+        ForeignKey("umeta_output_ufiles.output_ucfs"),
+        primary_key=True,
     )
 
 
@@ -111,6 +129,9 @@ class ExecutionHistory(Base):
     duration_seconds: Mapped[int | None] = mapped_column(nullable=True)
 
     user_dict: Mapped[UserDicts] = relationship(
+        back_populates="execution_history",
+        uselist=False,
+        cascade="all, delete-orphan",
     )
     __table_args__ = (Index("ix_exec_hist_ucfs_uwid", "uunode_exe_id", "uwid"),)
 
@@ -119,10 +140,14 @@ class UserDicts(Base):
     __tablename__ = "user_dicts"
 
     id: Mapped[int] = mapped_column(
+        ForeignKey("umeta_execution_history.id", ondelete="CASCADE"),
+        primary_key=True,
     )
 
     data: Mapped[dict[str, str]] = mapped_column(JSON)
     execution_history: Mapped[ExecutionHistory] = relationship(
+        back_populates="user_dict",
+        uselist=False,
     )
 
 
@@ -162,6 +187,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                     .select_from(input_link_alias)
                     .where(
                         input_link_alias.uunode_exe_id
+                        == ExecutionConfigurations.uunode_exe_id,
+                    ),
                 ),
             )
             results = session.execute(stmt).one_or_none()
@@ -196,6 +223,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             stmt = (
                 select(ExecutionHistory.duration_seconds)
                 .where(
+                    & (ExecutionHistory.uwid == uwid),
                 )
                 .order_by(desc(ExecutionHistory.started_time))
                 .limit(1)
@@ -295,11 +323,14 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             n_output_links_docs = select(func.count()).select_from(ExecutionOutputLink)
             return {
                 "Number of unode_exe_details Documents": session.execute(
+                    n_unode_exe_docs,
                 ).scalar(),
                 "Number of history Documents": session.execute(n_uh_docs).scalar(),
                 "Number of input links Documents": session.execute(
+                    n_input_links_docs,
                 ).scalar(),
                 "Number of output links Documents": session.execute(
+                    n_output_links_docs,
                 ).scalar(),
             }
 
@@ -310,6 +341,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         with Session(self.db) as session:
             if not self.umeta_exists(utrace=utrace):
                 input_objs, output_objs = self._save_input_and_output_files(
+                    session=session,
+                    utrace=utrace,
                 )
                 session.flush()
                 new_config = ExecutionConfigurations(
@@ -332,6 +365,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             session.commit()
 
     def _save_input_and_output_files(
+        self,
+        session: Session,
     ) -> tuple[list, list]:
         """Save input and output files to database and return lists of objects.
 

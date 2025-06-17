@@ -27,6 +27,7 @@ class IOAzureBlobStorage(UIOBase):
         """
         super().__init__(**kwargs)
         self.container = self.client.get_container_client(
+            container=self.uuri.get_container_name(),
         )
         self.blob = self.container.get_blob_client(self.uuri.get_object_name())
 
@@ -69,6 +70,7 @@ class IOAzureBlobStorage(UIOBase):
             )
             tags["ParentsRemoved"] = "Yes"
 
+        with self.scratch_path.open("rb") as data:
             self.blob.upload_blob(data, metadata=tags, overwrite=True)
 
     def download(self) -> None:
@@ -93,6 +95,7 @@ class IOAzureBlobStorage(UIOBase):
             download_object = True
         if download_object is True:
             if self.remote_object_exists():
+                with self.scratch_path.open("wb") as local_blob:
                     blob_data = self.blob.download_blob()
                     blob_data.readinto(local_blob)
                 msg = (

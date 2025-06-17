@@ -19,8 +19,13 @@ class UMeta(SQLAlchemyBaseUMeta):
         Returns:
             Connection string.
         """
+            "umeta-postgresql-url",
+            "postgresql://localhost:5432",
         )
+            postgresql_uri,
         )
         connection_string = postgresql_uri.replace(
+            "postgresql://",
+            "postgresql://{user}:{password}@",
         )
         return connection_string.format(**credentials)

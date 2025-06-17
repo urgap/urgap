@@ -124,6 +124,9 @@ class UNodeManager(UserDict):
             return None
 
     def _test_command(
+        self,
+        command_list: list,
+        regex_pattern: str | None = None,
     ) -> bool:
         """Test whether a system command runs successfully and matches a pattern.
 
@@ -166,6 +169,9 @@ class UNodeManager(UserDict):
             if node_name.startswith("TestNode"):
                 continue
             last_assigned_port = get_next_port(
+                last_assigned_port,
+                last_port,
+                is_lastest=node_name.endswith(":latest"),
             )
             self.unode_port_mapping[node_name] = last_assigned_port
 
@@ -223,6 +229,8 @@ class UNodeManager(UserDict):
                 break
         if versions is not None:
             version_objects = sorted(
+                [Version(v["version"]) for v in versions],
+                reverse=True,
             )
             for n, v in enumerate(version_objects):
                 lookup[f"{node_name}:{v}"] = class_path_string, class_name
@@ -260,6 +268,7 @@ class UNodeManager(UserDict):
         for available_unode in self.data["all"]:
             if unode.upper() in available_unode.upper():
                 msg = f"Did you mean {available_unode}?"
+            "You can try to shorten the name to get a list of possible matches",
         )
         return None
 
@@ -321,6 +330,7 @@ class UNodeManager(UserDict):
                 "requirements_available": False,
                 "has_3rd_party_requirements": False,
                 "requirements_available_by_uftype": {},
+            },
         }
         unode_obj = self.data["all"][unode]()
         unode_obj.META_INFO = copy.deepcopy(self.data["all"][unode].META_INFO)
@@ -336,6 +346,7 @@ class UNodeManager(UserDict):
 
         if unode_obj.META_INFO["unode_version"] == "latest":
                 "to be supplied by "
+                "urun_dict['unode_parameters']['latest_exe_paths']",
             )
             # exe_path supplied by urun_dict['unode_parameters']['latest_exe_paths']
             tmp[unode]["resource_available"] = None
@@ -409,9 +420,11 @@ class UNodeManager(UserDict):
                 if operator in pypackage:
                     with_operator = True
                     pypackage_clean, required_pypackage_version = pypackage.split(
+                        operator,
                     )
                     package_version = self._check_for_module(pypackage_clean)
                     self.availability["python_packages"][pypackage] = version_function(
+                        package_version,
                     )(required_pypackage_version)
                     break
             if with_operator is False:
@@ -422,6 +435,10 @@ class UNodeManager(UserDict):
         return availabilities
 
     def _check_other_dependencies(
+        self,
+        availabilities: list,
+        requirements: dict,
+        unode: str,
     ) -> list:
         """Check if all other (non-Python) dependencies are available.
 
@@ -445,8 +462,12 @@ class UNodeManager(UserDict):
                 if resource not in self.availability["other_dependencies"]:
                     command_list = self._3rd_party_test_commands[resource]["command"]
                     regex_pattern = self._3rd_party_test_commands[resource].get(
+                        "regex_pattern",
+                        None,
                     )
                     is_available = self._test_command(
+                        command_list,
+                        regex_pattern=regex_pattern,
                     )
                     self.availability["other_dependencies"][resource] = is_available
                 availabilities.append(self.availability["other_dependencies"][resource])

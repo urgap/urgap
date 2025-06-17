@@ -26,6 +26,7 @@ INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
     default_config_json = input_json.get("default_pipeline_config_json")
     if default_config_json is not None:
         default_config_json = Path(default_config_json).resolve()
+        with default_config_json.open() as jf:
             default_pipeline_args = json.load(jf)
     else:
         default_pipeline_args = {}
@@ -206,6 +207,10 @@ def group_by_tag(
 
 @task(name="Rebase", retries=3, retry_delay_seconds=20)
 def rebase(
+    uris: list,
+    storage_base_uri: str,
+    ucredentials: list[dict],
+    config: dict,
 ) -> bool:
     """Rebase UFiles to a new storage base UUri.
 

@@ -17,6 +17,7 @@ import pandas as pd
         "input_uftypes": {
                 "min": 1,
                 "max": -1,
+            },
         },
         "output_uftypes": {
                 "min": 1,
@@ -49,6 +50,7 @@ import pandas as pd
             [
                 "-o",
                 str(utrace.output_files[0].path),
+            ],
         )
         for parameter_key, parameter_value in utrace.urun_dict.parameters[
             f"{self.META_INFO['unode_full_identifier']}"
@@ -104,6 +106,7 @@ import pandas as pd
         describe_df = input_csv_df.describe().reset_index()
         data = []
         wrapper_version = "{major}.{minor}.{patch}".format(
+            **cls.META_INFO["wrapper_version"],
         )
         n = min(10, input_csv_df.shape[0])
 
@@ -115,6 +118,7 @@ import pandas as pd
                     name=col,
                     box_visible=True,
                     meanline_visible=True,
+                ),
             )
         first_wrapper_section = {
             "section_title": f"CSV stats for node {cls.META_INFO['name']}",
@@ -136,9 +140,13 @@ import pandas as pd
                 {
                     "title": "Useless Violin Plot :)",
                     "data": offline.plot(
+                        fig,
+                        include_plotlyjs=False,
+                        output_type="div",
                     ),
                     "_type": "html",
                     "caption": "Just a demo ...",
+                },
             ],
         }
 

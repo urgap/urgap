@@ -56,6 +56,7 @@ def calculate_file_hash(
         https://stackoverflow.com/questions/7829499/using-hashlib-to-compute-md5-digest-of-a-file-in-python-3
     """
     if input_file.exists():
+        with input_file.open(mode="rb") as f:
             digest = getattr(hashlib, hash_algorithm)()
             for buffer in iter(partial(f.read, 1024), b""):
                 digest.update(buffer)

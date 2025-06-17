@@ -39,6 +39,11 @@ from pathlib import Path
         """
         input_files = []
         for file in utrace.input_files:
+            file_path = Path(file.path)
+            tmp_tag_path = file_path.with_suffix(file_path.suffix + ".tag")
+            with tmp_tag_path.open("w") as tag_file:
+                json.dump(file.tags, tag_file)
+            input_files.append((str(file_path), str(tmp_tag_path)))
         output_file = utrace.output_files.get_path_objects_by_uftype(
         )[0]
 
@@ -55,6 +60,7 @@ from pathlib import Path
                 str(output_file),
                 "-cf",
                 "tar",
+            ],
         )
 
         return utrace
@@ -71,6 +77,8 @@ from pathlib import Path
         """
         if (
             utrace.urun_dict["parameters"][self.META_INFO["unode_full_identifier"]].get(
+                "-s",
+                None,
             )
             is not None
         ):
@@ -82,6 +90,8 @@ from pathlib import Path
                 if file.name.startswith("part.")
             ]
             self._rename_and_extend_safely(
+                utrace,
+                sorted(split_tars),
             )
         return utrace
 
