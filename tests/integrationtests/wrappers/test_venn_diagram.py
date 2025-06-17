@@ -26,5 +26,6 @@ import re
     assert venn_svg[0].path.exists()
     with open(venn_svg[0].path) as svg_file:
         svg_content = svg_file.read()
+    # all_true =
     assert all(
     )
