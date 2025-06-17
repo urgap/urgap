@@ -4,10 +4,12 @@ from __future__ import annotations
 import copy
 import datetime
 import logging
+import shutil
 import zlib
 
 from base64 import b64encode
 from collections import defaultdict as ddict
+from pathlib import Path
 
 
 if TYPE_CHECKING:
@@ -393,6 +395,14 @@ class UTrace:
         Args:
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
+        """
+
+        self,
+        file: str | Path,
+    ) -> None:
+
+        Args:
+            file: Path to source file.
         """
 
     def _query_remote_by_uftype(self) -> dict:
