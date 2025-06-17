@@ -2,7 +2,9 @@
 
 def test_fix_dynamic_output_file_names():
         [
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
 
         urun_dict=urd,

@@ -10,6 +10,7 @@ def test_create_home_folder(tmp_dir):
 def test_copy_resources_if_needed(tmp_dir):
     assert (
         Path(
+            f"{tmp_dir}/resources/TestNodes/TestNode1/1_0_0/test_resource_1.py",
         ).exists()
         is True
     )

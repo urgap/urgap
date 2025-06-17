@@ -40,6 +40,7 @@ def uuri2():
 
 @pytest.fixture
 def uuri3():
+        uri="omiq://example.com/123456789?filter_usage_mode=BOOLCOLS&reverse_scaling=True&derived_from_fcs=True&from_task_id=123&filter_ids=['filter1','filter3']#file.csv",
     )
 
 
@@ -56,6 +57,7 @@ def uuri3():
 
 
 @pytest.fixture
+        uri="omiq://example.com/123456789?derived_from_fcs=True#file.txt",
     )
         return IOOmiq(uuri=uuri, scratch_path=Path(tempfile.gettempdir()))
 
@@ -97,6 +99,7 @@ def test_get_remote_tags(io_omiq_instance):
             "jobName": "Job 1",
             "status": "completed",
             "size": 1024,
+        },
     ]
     io_omiq_instance._list_files_in_dataset = MagicMock(return_value=mock_file_list)
 
@@ -110,13 +113,16 @@ def test_get_remote_tags(io_omiq_instance):
 
 def test_download_derived_from_fcs(io_omiq_instance3):
     io_omiq_instance3._list_files_in_dataset = MagicMock(
+        return_value=[{"fileName": "file.fcs", "id": 456, "displayName": "file.fcs"}],
     )
     io_omiq_instance3.get_remote_tags = MagicMock(
         return_value={
             "id": 456,
             "features": [{"name": "feature1"}, {"name": "feature2"}],
+        },
     )
     io_omiq_instance3._api.get_available_filters = MagicMock(
+        return_value=["filter1", "filter2"],
     )
 
     io_omiq_instance3.download()
@@ -143,6 +149,8 @@ def test_download(io_omiq_instance):
                 "displayName": "file.txt",
                 "id": 123,
                 "features": ["feature1"],
+            },
+        ],
     )
 
     io_omiq_instance.get_remote_tags = MagicMock(return_value={"id": 123})
@@ -158,6 +166,7 @@ def test_download(io_omiq_instance):
 
 def test_download_artifact(io_omiq_instance2):
     io_omiq_instance2._list_artifacts = MagicMock(
+        return_value=["file.csv", "file2.txt"],
     )
 
     io_omiq_instance2.get_remote_tags = MagicMock(return_value={"id": 123})
@@ -193,6 +202,7 @@ def test_list_container_items(io_omiq_instance):
 
 def test_remote_object_exists(io_omiq_instance):
     io_omiq_instance.list_container_items = MagicMock(
+        return_value=["file.txt", "other_file.txt"],
     )
     io_omiq_instance._list_artifacts = MagicMock(return_value=["artifact.txt"])
 

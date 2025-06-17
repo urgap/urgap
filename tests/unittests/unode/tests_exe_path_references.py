@@ -6,6 +6,7 @@ def test_exe_path_points_to_same_location():
 
     exe_path = unode.construct_exe_path()
     assert exe_path == Path(
+        f"/TestNode6:1.0.0.py",
     )
 
     exe_path_2 = unode_2.construct_exe_path()
@@ -14,6 +15,8 @@ def test_exe_path_points_to_same_location():
 
 def test_exe_works_in_both_cases():
         [
+            ),
+        ],
     )
     result_6 = test_node6.run(ufiles=ufiles, urun_dict=urun_dict, force=True)
     result_7 = test_node7.run(ufiles=ufiles, urun_dict=urun_dict, force=True)

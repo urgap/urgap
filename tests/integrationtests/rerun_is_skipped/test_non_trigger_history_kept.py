@@ -15,6 +15,7 @@ import pytest
                             "triggers_nuttin": 100,
                             "triggers_rerun": 100,
                             "triggers_rerun_-3": 100,
+                        },
                     },
                     },
             ),

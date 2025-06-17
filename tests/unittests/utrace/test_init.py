@@ -2,7 +2,9 @@
 
 def test_init_right_number_of_output_files():
         [
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
 
         urun_dict=urd,

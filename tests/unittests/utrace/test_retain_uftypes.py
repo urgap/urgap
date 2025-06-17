@@ -7,13 +7,17 @@ pd.set_option("display.max_columns", 100)
 
 def test_retain_uftype_all_same_not_set():
         [
+                f"/sequence_abcdefg.csv",
             ),
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
         {
             "parameters": {
                 "pandas_query_string": "`Sequence` == `Sequence`",
             },
+        },
     )
         urun_dict=urd,
         input_files=input_files,
@@ -23,14 +27,18 @@ def test_retain_uftype_all_same_not_set():
 
 def test_retain_uftype_all_same():
         [
+                f"/sequence_abcdefg.csv",
             ),
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
         {
             "parameters": {
                 "pandas_query_string": "`Sequence` == `Sequence`",
             },
             "unode_parameters": {"retain_uftype": True},
+        },
     )
         urun_dict=urd,
         input_files=input_files,
@@ -44,14 +52,18 @@ def test_retain_uftype_all_same():
 
 def test_retain_uftype_different():
         [
+                f"/sequence_abcdefg.csv",
             ),
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
         {
             "parameters": {
                 "pandas_query_string": "`Sequence` == `Sequence`",
             },
             "unode_parameters": {"retain_uftype": True},
+        },
     )
         urun_dict=urd,
         input_files=input_files,

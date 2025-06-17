@@ -14,7 +14,9 @@ import pytest
 def test_read_write_user_dict(check_if_meta_interface_backend_is_available):
     io, url = check_if_meta_interface_backend_is_available
             [
+                    f"/sequence_defghij.csv",
                 ),
+            ],
         ),
         umeta_io=io,
     )
@@ -29,4 +31,5 @@ def test_read_write_user_dict(check_if_meta_interface_backend_is_available):
         storage_base_uri=storage_base_uri,
     )
 
+        "test": "u_fresh_cookies_stuff_young_bears",
     }

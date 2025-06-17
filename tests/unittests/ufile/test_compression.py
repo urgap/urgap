@@ -4,6 +4,7 @@ from pathlib import Path
 
 def test_uncompress_zip(tmp_scratch_disk):
     content = Path("compressions/test.txt.zip")
+        uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()
     assert new_ufl[0].path.read_text() == "twas_uncompressed"
@@ -12,6 +13,7 @@ def test_uncompress_zip(tmp_scratch_disk):
 
 def test_uncompress_tar_gz(tmp_scratch_disk):
     content = Path("compressions/test.txt.tar.gz")
+        uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()
     assert new_ufl[0].path.read_text() == "twas_uncompressed"
@@ -19,6 +21,7 @@ def test_uncompress_tar_gz(tmp_scratch_disk):
 
 def test_compress_zip(tmp_scratch_disk):
     content = Path("compressions/test.txt")
+        uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_uf = uf.compress(compression_format="zip")
     assert new_uf.path.exists() is True
@@ -28,6 +31,7 @@ def test_compress_zip(tmp_scratch_disk):
 
 def test_compress_tar_gz(tmp_scratch_disk):
     content = Path("compressions/test.txt")
+        uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_uf = uf.compress(compression_format="tar")
     new_uf = new_uf.compress(compression_format="gz")
@@ -38,6 +42,7 @@ def test_compress_tar_gz(tmp_scratch_disk):
 
 def test_multiple_files(tmp_scratch_disk):
     content = Path("compressions/asdf.zip")
+        uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()
     # Directory and two test files
@@ -48,6 +53,7 @@ def test_multiple_files(tmp_scratch_disk):
 
 def test_uncompress_split_tar(tmp_scratch_disk):
     content = Path("test_part_aa")
+        uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()
     assert len(new_ufl) == 2

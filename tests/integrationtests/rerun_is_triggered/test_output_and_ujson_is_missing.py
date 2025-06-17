@@ -9,6 +9,8 @@ import pytest
     "check_if_ufilelist_can_be_tested",
     [
             [
+                ),
+            ],
     ],
     indirect=["check_if_ufilelist_can_be_tested"],
 )
@@ -22,11 +24,13 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
                         "triggers_nuttin": 100,
                         "triggers_rerun": 100,
                         "triggers_rerun_-3": 100,
+                    },
                 },
                 "unode_parameters": {
                     "record_skipped_runs": True,
                     "storage_base_uri": storage_base_uri,
                 },
+            },
         )
         print("Input:")
         pprint.pprint(urun_dict)

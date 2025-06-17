@@ -14,7 +14,9 @@ def test_init_right_number_of_output_files(
 ):
     io, url = check_if_meta_interface_backend_is_available
             [
+                    f"/sequence_defghij.csv",
                 ),
+            ],
         ),
         umeta_io=io,
     )

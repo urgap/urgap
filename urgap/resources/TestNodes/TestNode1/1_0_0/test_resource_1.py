@@ -1,6 +1,7 @@
 """Test Node Code."""
 
 import argparse
+from pathlib import Path
 
 
 def main(
@@ -11,6 +12,7 @@ def main(
     """Test node function."""
     if output_files is not None:
         for output_file in output_files:
+            with Path(output_file).open("w") as oo:
                 print(params, file=oo)
                 print(input_files, file=oo)
     return "I am a yummy test dummy!"

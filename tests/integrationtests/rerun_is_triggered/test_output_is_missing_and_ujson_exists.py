@@ -9,6 +9,8 @@ import pytest
     "check_if_ufilelist_can_be_tested",
     [
             [
+                ),
+            ],
     ],
     indirect=["check_if_ufilelist_can_be_tested"],
 )
@@ -22,16 +24,19 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
                         "triggers_nuttin": 100,
                         "triggers_rerun": 100,
                         "triggers_rerun_-3": 100,
+                    },
                 },
                 "unode_parameters": {
                     "record_skipped_runs": True,
                     "storage_base_uri": storage_base_uri,
                 },
+            },
         )
 
         print(
             """
         ------- First run -------
+        """,
         )
         print("Input:")
         print("------")
@@ -45,6 +50,7 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
         print(
             """
             Removing output file but not json - should trigger second run!
+            """,
         )
         for output_file in return_file:
             test_node1.remove_output_folder(output_file)
@@ -52,6 +58,7 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
         print(
             """
         ------- Second run -------
+        """,
         )
         urun_dict.assign_wid()
 

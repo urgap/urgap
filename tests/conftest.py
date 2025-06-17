@@ -150,6 +150,7 @@ def provide_standard_TestNode1_setup_and_set_umeta_interface(request):
             print("test", file=oo)
 
     ufile_path_list = [
+        ),
     ]
     run_dict = {
         "parameters": {
@@ -196,6 +197,7 @@ def provide_uctl_server(request):
     for _ in range(30):
         if all(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex(
+                ("127.0.0.1", port),
             )
             == 0
             for port in required_ports

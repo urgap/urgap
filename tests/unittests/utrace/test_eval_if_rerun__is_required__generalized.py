@@ -6,8 +6,11 @@ from pathlib import Path
 
 def test_rerun_reason_by_force():
         [
+                f"/sequence_abcdefg.csv",
             ),
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
         urun_dict=urd,
         input_files=input_files,
@@ -19,8 +22,11 @@ def test_rerun_reason_by_force():
 
 def test_rerun_reason_output_files_are_missing():
         [
+                f"/sequence_abcdefg.csv",
             ),
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
         urun_dict=urd,
         input_files=input_files,
@@ -30,10 +36,14 @@ def test_rerun_reason_output_files_are_missing():
 
 def test_rerun_reason_dynamic_output_files_are_less_than_min():
         [
+                f"/sequence_abcdefg.csv",
             ),
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
     with tempfile.TemporaryDirectory() as tmpdirname:
+            {"unode_parameters": {"storage_base_uri": f"file://{tmpdirname}"}},
         )
         print("created temporary directory", tmpdirname)
 

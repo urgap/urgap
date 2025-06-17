@@ -2,8 +2,11 @@
 
 def test_extend_output_file_list():
         [
+                f"/sequence_abcdefg.csv",
             ),
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
 
         urun_dict=urd,
@@ -14,7 +17,9 @@ def test_extend_output_file_list():
 
 def test_extend_output_file_list_increase_one():
         [
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
 
         urun_dict=urd,
@@ -27,7 +32,9 @@ def test_extend_output_file_list_increase_one():
 
 def test_extend_output_file_list_does_not_increase_over_max():
         [
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
 
         urun_dict=urd,

@@ -52,10 +52,12 @@ def test_raw_to_pwstats_pipeline():
             },
             "unode_parameters": {
             },
+        },
     )
 
 
     # curdir = Path(__file__).resolve()
+        uri=f"file:///Users/av568207/data/PXD005590/B?uftype={raw_uftype}#B02_08_161103_B2_HCD_OT_4ul.raw",
     )
     assert raw.path.exists()
         "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Eukaryota#UP000005640/UP000005640_9606.fasta.gz",

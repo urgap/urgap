@@ -23,6 +23,7 @@ def test_rename_object_name():
         with open(source_object, "w") as oo:
             print("___--->>>", file=oo)
 
+            uri=f"file://{_temp_directory}#{source_subfolder_structure}/{source_object_name}",
         )
         new_subfolder_structure = "level_3"
         new_object_name = "obj3ct.txt"

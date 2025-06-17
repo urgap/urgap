@@ -14,6 +14,7 @@ def test_ureport_graph(tmp_dir):
         {
             "parameters": {"FilterTabularToCSV:1.0.0": {"-q": "`spectrum_id` < 3000"}},
             "unode_parameters": {"storage_base_uri": f"file://{tmp_dir}"},
+        },
     )
     filtered_1 = filter_node.run(
         ufiles=[input_file],
@@ -23,6 +24,7 @@ def test_ureport_graph(tmp_dir):
     urun_dict["parameters"] = {
         "FilterTabularToCSV:1.0.0": {
             "-q": "450 < `Exp m/z` < 600",
+        },
     }
     filtered_1b = filter_node.run(
         ufiles=[input_file],
@@ -32,6 +34,7 @@ def test_ureport_graph(tmp_dir):
     urun_dict["parameters"] = {
         "FilterTabularToCSV:1.0.0": {
             "-q": "`spectrum_id` > 2500",
+        },
     }
     filtered_1c = filter_node.run(
         ufiles=filtered_1b,
@@ -41,6 +44,7 @@ def test_ureport_graph(tmp_dir):
     urun_dict["parameters"] = {
         "FilterTabularToCSV:1.0.0": {
             "-q": "`spectrum_id` > 3000",
+        },
     }
     filtered_2 = filter_node.run(
         ufiles=[filtered_1, filtered_1c, input_file],

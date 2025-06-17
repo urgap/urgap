@@ -23,6 +23,7 @@ import pytest
                         },
                     },
                     },
+                },
             ),
             ["TestNode1:1.0.0", "TestNode3:1.0.0"],
         ),

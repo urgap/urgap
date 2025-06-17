@@ -20,6 +20,7 @@ def is_uftype_specification(checker, instance):
 
 
 type_checker = validators.Draft7Validator.TYPE_CHECKER.redefine_many(
+    {"tuple": is_tuple, "uftype_spec": is_uftype_specification},
 )
 TupleValidator = validators.extend(
 )

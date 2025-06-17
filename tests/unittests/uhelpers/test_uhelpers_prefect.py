@@ -17,6 +17,7 @@ CREDS = [
         "password": "very_safe",
         "description": "what a cred",
         "secret_store": "env",
+    },
 ]
 CONFIG = {"i_hope": "this_gets_added"}
 
@@ -54,6 +55,7 @@ def test_run_unode(tmp_dir):
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
             },
+        },
     )
     unode = "TestNode1:1.0.0"
 

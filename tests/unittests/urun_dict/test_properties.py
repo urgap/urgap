@@ -10,6 +10,7 @@ def test_init_creates_wid():
                 re.search(
                     r"u_[0-9a-zA-Z\-]*_[0-9a-zA-Z\-]*_[0-9a-zA-Z\-]*_[0-9a-zA-Z\-]*_[0-9a-zA-Z\-]*",
                     urd.wid,
+                ),
             )
             is True
         )

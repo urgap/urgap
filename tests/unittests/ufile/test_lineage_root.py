@@ -6,17 +6,21 @@ import pytest
     "provide_clean_node_dirs",
     [
         (
+                f"#unified_csvs/demo.csv",
             ),
                 {
                     "parameters": {
                         "FilterTabularToCSV:1.0.0": {
                             "-q": "`spectrum_id` > 3000",
+                        },
                     },
                     "unode_parameters": {
                         "force": True,
                     },
+                },
             ),
             ["FilterTabularToCSV:1.0.0"],
+        ),
     ],
     indirect=["provide_clean_node_dirs"],
 )

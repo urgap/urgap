@@ -11,6 +11,7 @@ def test_leaf_suffix_nomenclature():
     )
     test_leafs = set(
         ext
+            node="test.ANY",
         )
     )
     leafs = leafs.difference(test_leafs).difference({".unknown"})

@@ -10,11 +10,15 @@ import pytest
 )
 def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
         [
+                f"#unified_csvs/BSA1_xtandem_alanine_unified.csv",
+            ),
+        ],
     )
         {
             "parameters": {
                 "FilterTabularToCSV:latest": {
                     "-q": "500 < `exp_mz` < 1000",
+                },
             },
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
@@ -23,8 +27,10 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
                     / "resources"
                     / "FilterTabular"
                     / "1_0_0"
+                    / "filter_tabular.py",
                 },
             },
+        },
     )
         {
             "parameters": {"CompressToTar:latest": {}},
@@ -35,9 +41,11 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
                     / "resources"
                     / "Compressor"
                     / "1_0_0"
+                    / "compressor.py",
                 },
             },
             "wid": urun_dict_filter["wid"],
+        },
     )
 
     filter_1 = filter_tab_to_csv_node.run(urun_dict=urun_dict_filter, ufiles=ufiles)
@@ -50,6 +58,7 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
     untar_1 = tar_1[0].uncompress()
 
     urun_dict_filter.parameters["FilterTabularToCSV:latest"].update(
+        {"-q": "710 < `exp_mz` < 730"},
     )
     filtered_1a = filter_tab_to_csv_node.run(urun_dict=urun_dict_filter, ufiles=untar_1)
     df = pd.read_csv(filtered_1a[0].path)

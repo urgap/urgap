@@ -9,6 +9,7 @@ import pytest
     "check_if_ufilelist_can_be_tested",
     [
             [
+            ],
     ],
     indirect=["check_if_ufilelist_can_be_tested"],
 )
@@ -35,11 +36,13 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
                     "record_skipped_runs": True,
                     "storage_base_uri": storage_base_uri,
                 },
+            },
         )
 
         print(
             """
         ------- First run -------
+        """,
         )
         print("Input:")
         pprint.pprint(urun_dict)
@@ -56,6 +59,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
 
             executing second time should be trigger on Node 3 since re-run param has changed
 
+        """,
         )
 
         urun_dict["parameters"]["BasicFunctionTestNode:1.3.0"][
@@ -65,6 +69,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
         print(
             """
         ------- Second run -------
+        """,
         )
         urun_dict.assign_wid()
         print("Input:", urun_dict)

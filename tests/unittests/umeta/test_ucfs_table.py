@@ -32,6 +32,7 @@ def test_read_write_user_dict(check_if_meta_interface_backend_is_available, tmp_
     assert len(all_ucfs) == 1
 
     filter_storage_base_uri = um.io.get_ucfs_object_name_info(
+        storage_base_uri=f"file://{tmp_dir}/1/test",
     )
     all_storage_base_uri = [row.storage_base_uri for row in filter_storage_base_uri]
     assert len(all_storage_base_uri) == 3

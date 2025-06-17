@@ -40,8 +40,10 @@ def test_unode_delete_tmp_dir():
                     "unode_parameters": {
                         "remove_temporary_files": False,
                     },
+                },
             ),
             ["TestNode1:1.0.0"],
+        ),
     ],
     indirect=["provide_clean_test_node_dirs"],
 )

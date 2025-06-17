@@ -71,6 +71,7 @@ def test_wrapper_definitions_are_met(tmp_scratch_disk):
 
     filtered_list = ufl.filter(
         input_uftypes={
+        },
     )
 
     assert len(filtered_list) == 3
@@ -87,6 +88,7 @@ def test_wrapper_definitions_are_met_max(tmp_scratch_disk):
 
     filtered_list = ufl.filter(
         input_uftypes={
+        },
     )
 
     assert len(filtered_list) == 5
@@ -154,7 +156,9 @@ def test_filter_ufile_list_too_many_files(tmp_dir):
             [
                     f"test_node_data/test.txt",
                 ),
+                    f"#unified_csvs/demo.csv",
                 ),
+            ],
         ),
     )
         {
@@ -163,11 +167,13 @@ def test_filter_ufile_list_too_many_files(tmp_dir):
                     "triggers_nuttin": 100,
                     "triggers_rerun": 100,
                     "triggers_rerun_-3": 100,
+                },
             },
             "unode_parameters": {
                 "record_skipped_runs": True,
                 "storage_base_uri": f"file://{tmp_dir}",
             },
+        },
     )
 
     with pytest.raises(ValueError):

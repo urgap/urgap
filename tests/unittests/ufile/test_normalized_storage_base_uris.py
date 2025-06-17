@@ -13,6 +13,7 @@ def test_trailing_separator_in_storage_base_uri_normalization(tmp_dir):
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
             },
+        },
     )
 
     # should not raise TypeError (see unode.py line 131)

@@ -9,6 +9,7 @@ def test_complete_file_counts_single():
 def test_complete_file_counts_multiple():
     for i in range(1, 4):
         ufl.append(
+            ),
         )
     ufl.complete_file_counts()
     assert set(uf.simple_name for uf in ufl) == {
@@ -21,10 +22,13 @@ def test_complete_file_counts_multiple():
 def test_only_correct_are_set():
     for i in range(1, 4):
         ufl.append(
+            ),
         )
     ufl.append(
+        ),
     )
     ufl.append(
+        ),
     )
     ufl.complete_file_counts()
     assert set(uf.simple_name for uf in ufl) == {

@@ -8,6 +8,7 @@ def test_setting_tags(tmp_scratch_disk):
     content = Path("test_node_data/test.txt")
 
     uf.tags.update(
+        {"lo": "12"},
     assert uf.tags.get("lo", None) == "12"
 
 
@@ -15,6 +16,7 @@ def test_updating_tags(tmp_scratch_disk):
     content = Path("test_node_data/test.txt")
 
     uf.tags.update(
+        {"lo": "12"},
     assert uf.tags.get("lo", None) == "12"
     uf.tags.update({"asdf": "123"})
     assert uf.tags.get("lo", None) == "12"

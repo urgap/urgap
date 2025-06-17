@@ -3,13 +3,18 @@ import pandas as pd
 
 
         [
+                f"#xlsx/demo.xlsx",
+            ),
+        ],
     )
         {
             "parameters": {
+                },
             },
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
             },
+        },
     )
     filtered_xlsx = FilterTabularToXlsx_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_xlsx[0].path.exists()
@@ -17,14 +22,18 @@ import pandas as pd
 
 
         [
+            ),
+        ],
     )
         {
             "parameters": {
                     "-q": "`spectrum_id` > 3000",
+                },
             },
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
             },
+        },
     )
     filtered_xlsx = FilterTabularToXlsx_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_xlsx[0].path.exists()
@@ -34,14 +43,19 @@ import pandas as pd
 
 
         [
+                f"#unified_csvs/demo.csv",
+            ),
+        ],
     )
         {
             "parameters": {
                     "-q": "`spectrum_id` > 3000",
+                },
             },
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
             },
+        },
     )
     filtered_xlsx = FilterTabularToXlsx_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_xlsx[0].path.exists()

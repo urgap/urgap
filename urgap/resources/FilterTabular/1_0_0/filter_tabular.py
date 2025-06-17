@@ -19,6 +19,7 @@ def sense_file_format(file: str) -> str:
     Returns:
         File format as string.
     """
+    with Path(file).open("rb") as f:
         match f.read(4):
             case b"PAR1":
                 f.seek(-4, 2)

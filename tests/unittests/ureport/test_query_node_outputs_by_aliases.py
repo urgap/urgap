@@ -11,10 +11,12 @@ import pytest
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                        },
                     },
                     "unode_parameters": {
                         "force": True,
                     },
+                },
             ),
             ["TestNode5:1.0.0"],
         ),
@@ -40,7 +42,9 @@ def test_can_query_node_outputs_by_aliases(provide_clean_test_node_dirs):
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                        },
                     },
+                },
             ),
             ["TestNode5:1.0.0"],
         ),
@@ -65,17 +69,21 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     "provide_clean_node_dirs",
     [
         (
+                f"#unified_csvs/demo.csv",
             ),
                 {
                     "parameters": {
                         "FilterTabularToCSV:1.0.0": {
                             "-q": "`spectrum_id` > 3000",
+                        },
                     },
                     "unode_parameters": {
                         "force": True,
                     },
+                },
             ),
             ["FilterTabularToCSV:1.0.0"],
+        ),
     ],
     indirect=["provide_clean_node_dirs"],
 )
@@ -92,6 +100,7 @@ def test_can_discriminate_aliases(provide_clean_node_dirs, tmp_dir):
     queried_results = report.query_node_outputs_by_aliases(nodes={0: []})
     queried_results_with_less = report.query_node_outputs_by_aliases(nodes={2: []})
     queried_results_combined = report.query_node_outputs_by_aliases(
+        nodes={0: [], 2: []},
     )
     assert results == queried_results
     assert results_with_less == queried_results_with_less

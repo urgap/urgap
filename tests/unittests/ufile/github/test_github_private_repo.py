@@ -1,15 +1,18 @@
 from pathlib import Path
+
 import pytest
 
 
 
 def test_github_private_repo():
     try:
+            "github://dso.github.com/gsk-tech/dso-dval-r2d2",
         )
     except KeyError:
         pytest.skip("Github backend not available")
     content = Path("test_node_data/test.txt")
 
+        uri=f"file://{base_folder.resolve()}?target-branch={git_target_branch}#{content}",
     )
     # Test uploading the file from "main" to "new_ufile"
     uf.rebase(
@@ -51,5 +54,6 @@ def test_github_private_repo():
     )
     assert uf.remote_object_exists() is True
 
+        uri="github://dso.github.com/gsk-tech/dso-dval-r2d2/main#configuration/parameters.json",
     )
     assert uf.remote_object_exists() is True

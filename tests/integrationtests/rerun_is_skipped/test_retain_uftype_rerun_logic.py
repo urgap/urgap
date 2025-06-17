@@ -11,10 +11,13 @@ import pytest
                 {
                     "parameters": {
                         "FilterTabularToCSV:1.0.0": {
+                            "-q": "569.750 < `exp_mz` < 569.760",
+                        },
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
+                },
             ),
             ["FilterTabularToCSV:1.0.0"],
         ),

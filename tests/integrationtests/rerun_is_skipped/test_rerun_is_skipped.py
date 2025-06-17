@@ -13,10 +13,12 @@ import pytest
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                        },
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
+                },
             ),
             ["TestNode5:1.0.0"],
         ),
@@ -26,10 +28,12 @@ import pytest
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                        },
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
+                },
             ),
             ["TestNode5:1.0.0"],
         ),
@@ -43,10 +47,12 @@ import pytest
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                        },
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
+                },
             ),
             ["TestNode5:1.0.0"],
         ),
@@ -56,10 +62,12 @@ import pytest
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                        },
                     },
                     "unode_parameters": {
                         "record_skipped_runs": True,
                     },
+                },
             ),
             ["TestNode5:1.0.0"],
         ),
