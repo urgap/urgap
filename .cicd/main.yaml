@@ -3,6 +3,8 @@ trigger:
     include:
       - main
       - dev
+      - feature/*
+      - fix/*
 pr:
   drafts: false
   branches:

@@ -5,6 +5,8 @@ resources:
       name: gsk-tech/dso_azure_pipeline_templates
       endpoint: DSO-R1-Github
   pipelines:
+      trigger:
+          include:
 trigger: none
 pr:
   branches:
