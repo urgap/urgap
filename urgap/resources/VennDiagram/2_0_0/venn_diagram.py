@@ -389,6 +389,7 @@ def main(  # noqa: C901, PLR0912, PLR0915
         )
 
     y2_val_header = kwargs["total-pos-cy"] + 30
+    with Path(kwargs["output_file"]).open("w", encoding="utf-8") as io:
         print(
             f"""
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1"
@@ -800,6 +801,7 @@ style="position:relative; top:0; left:0; z-index:-1;">
         return_dict[k_intersect_key]["results"] = r_set_result
 
     # Append intersection labels and close SVG file
+    with Path(kwargs["output_file"]).open("a", encoding="utf-8") as io:
         print(
             f"""\n<g font-family="{kwargs["font"]}" font-size="{kwargs["label font-size venn"]}" >""",
             file=io,
