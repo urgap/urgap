@@ -14,7 +14,9 @@ from github import GithubException
     mock_file_sha = "existing_sha"
     uf_io_object.repo.get_contents.return_value.sha = mock_file_sha
     uf_io_object.repo.create_pull.return_value.number = 42
+    mock_content = b"test content"
 
+    with patch("pathlib.Path.open", mock_open(read_data=mock_content)):
         uf_io_object.upload()
 
     # Assert
@@ -34,7 +36,9 @@ from github import GithubException
 
     uf_io_object.remote_object_exists = MagicMock(return_value=False)
     uf_io_object.repo.create_pull.return_value.number = 42
+    mock_content = b"new file content"
 
+    with patch("pathlib.Path.open", mock_open(read_data=mock_content)):
         # Act
         uf_io_object.upload()
 

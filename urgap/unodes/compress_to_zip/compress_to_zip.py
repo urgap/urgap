@@ -1,6 +1,8 @@
 
 import json
 
+from pathlib import Path
+
 
 
 
@@ -34,7 +36,10 @@ import json
         """
         input_files = []
         for file in utrace.input_files:
+            file_path = Path(file.path)
+            tmp_tag_path = file_path.with_suffix(file_path.suffix + ".tag")
             with tmp_tag_path.open("w") as tag_file:
+                json.dump(file.tags, tag_file)
         output_file = utrace.output_files.get_path_objects_by_uftype(
         )[0]
 
