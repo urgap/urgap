@@ -15,6 +15,7 @@
         "input_uftypes": {
                 "min": 1,
                 "max": -1,
+            },
         },
         "output_uftypes": {
                 "min": 1,
@@ -58,6 +59,7 @@
             [
                 "--output-file",
                 str(utrace.output_files[0].path),
+            ],
         )
         for parameter_key, parameter_value in utrace.urun_dict.parameters[
             f"{self.META_INFO['unode_full_identifier']}"

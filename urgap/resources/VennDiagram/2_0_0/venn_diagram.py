@@ -79,6 +79,7 @@ def process_csv_to_sets(
 
     for label, gdf in daten_rahmen_df_ruff.groupby("_venn_identifier_key_"):
         venn_data_list.append(
+            {"data": gdf["_venn_value_key_"].to_list(), "label": str(label)},
         )
 
     return venn_data_list
@@ -166,6 +167,7 @@ def main(  # noqa: C901, PLR0912, PLR0915
 
         current_set_label = d_dict.get("label", set_identifier)
         current_set_color = d_dict.get(
+            "color",
         )  # For future use if colors are passed in data
 
         processed_set_info[set_identifier] = {"label": current_set_label}
@@ -177,6 +179,7 @@ def main(  # noqa: C901, PLR0912, PLR0915
         else:
             # Should be caught by process_csv_to_sets validation
             print(  # noqa: T201
+                f"Warning: More data dicts than set placeholders. Pos: {pos}",
             )
     if len(data) == 2:
         kwargs["total-pos-cy"] = kwargs["cy"] + 220
@@ -784,6 +787,7 @@ style="position:relative; top:0; left:0; z-index:-1;">
         print(  # noqa: T201
             """
             NOT SURE WHAT YOU WANT TO DO WITH MORE THAN 5 SETS ...
+        """,
         )
         return_dict = {}  # Initialize to prevent NameError in the loop below
 
@@ -827,6 +831,7 @@ style="position:relative; top:0; left:0; z-index:-1;">
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
+        description="Generate a Venn diagram from CSV files by concatenating columns.",
     )
     parser.add_argument(
         "--csv-file",
