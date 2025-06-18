@@ -62,6 +62,7 @@ from github import GithubException
     )
 
     with (
+        patch("pathlib.Path.open", mock_open(read_data=b"data")),
         pytest.raises(RuntimeError, match="Failed to update the ufile"),
     ):
         uf_io_object.upload()
@@ -75,6 +76,7 @@ from github import GithubException
     )
 
     with (
+        patch("pathlib.Path.open", mock_open(read_data=b"data")),
         pytest.raises(RuntimeError, match="Failed to add the ufile"),
     ):
         uf_io_object.upload()
@@ -85,6 +87,7 @@ from github import GithubException
     uf_io_object.repo.create_pull.side_effect = GithubException(400, "PR failed", None)
 
     with (
+        patch("pathlib.Path.open", mock_open(read_data=b"data")),
         pytest.raises(RuntimeError, match="Unable to create pull request"),
     ):
         uf_io_object.upload()
