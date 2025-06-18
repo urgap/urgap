@@ -26,3 +26,26 @@ stages:
     jobs:
       - job: Ruff
         steps:
+  - stage: Tests
+    dependsOn: CodeQuality
+    jobs:
+      - job: Tests
+        strategy:
+          matrix:
+            Python3.11:
+            Python3.12:
+        steps:
+          - template: tests/setup_tests.yaml@templates
+          - template: tests/tests.yaml@templates
+            parameters:
+              testFolder: tests/unittests
+              testCategory: Unittests
+          - template: tests/tests.yaml@templates
+            parameters:
+              testFolder: tests/integrationtests
+              testCategory: Integrationtests
+          - template: tests/coverage_report.yaml@templates
+            parameters:
+              coverageType: 'xml'
+          - template: code_quality/sonarqube.yaml@templates
+            parameters:
