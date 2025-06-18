@@ -40,6 +40,7 @@ from pathlib import Path
             tmp_tag_path = file_path.with_suffix(file_path.suffix + ".tag")
             with tmp_tag_path.open("w") as tag_file:
                 json.dump(file.tags, tag_file)
+            input_files.append((str(file_path), str(tmp_tag_path)))
         output_file = utrace.output_files.get_path_objects_by_uftype(
         )[0]
 
