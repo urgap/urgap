@@ -401,6 +401,11 @@ class UTrace:
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
         """
+            uri = self.get_output_file_uri(uftype=uftype, n=n, max_n=max_n)
+            if uri is not None:
+                self.output_files.add_ufile(
+                    uri=uri,
+                )
 
         self,
         file: str | Path,
