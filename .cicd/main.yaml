@@ -10,6 +10,7 @@ pr:
   branches:
     include:
       - main
+      - dev
       - feature/*
       - fix/*
 resources:
@@ -19,17 +20,43 @@ resources:
       name: gsk-tech/dso_azure_pipeline_templates
       ref: main
       endpoint: DSO-R1-Github
+variables:
+  DEFAULT_PYTHON: '3.12'
 pool:
   vmImage: ubuntu-latest
 stages:
   - stage: CodeQuality
+    displayName: 'Code Quality Checks'
     jobs:
       - job: Ruff
+        displayName: 'Run Ruff'
         steps:
+          - template: code_quality/ruff.yaml@templates
+            parameters:
+              SOURCE_FOLDER: "."
+              PYTHON_VERSION: ${{ variables.DEFAULT_PYTHON }}
+      - job: Yamllint
+        displayName: 'YAML Formatter Check'
+        steps:
+          - template: code_quality/yamlfmt.yaml@templates
+            parameters:
+              SOURCE_FOLDER: "."
+      - job: PrettierCheck
+        displayName: Prettier JSON Check
+        steps:
+          - template: code_quality/prettier.yaml@templates
+            parameters:
+              FILE_PATTERN: "**/*.json"
+      - job: YmlORYaml
+        displayName: Disallow .yml Files
+        steps:
+          - template: code_quality/yml_check.yaml@templates
   - stage: Tests
+    displayName: 'Run Unit and Integration Tests'
     dependsOn: CodeQuality
     jobs:
       - job: Tests
+        displayName: 'Tests across Python versions'
         strategy:
           matrix:
             Python3.11:

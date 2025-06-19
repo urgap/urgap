@@ -75,6 +75,7 @@ stages:
             clean: true
             fetchDepth: 0
             persistCredentials: true
+          - script: |-
               cd $(Pipeline.Workspace)/containerhub
               git config --global user.email "bot@dso.com"
               git config --global user.name "DSO Bot"
