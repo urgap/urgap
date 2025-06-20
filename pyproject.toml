@@ -39,6 +39,7 @@ dependencies = [
 
 [project.optional-dependencies]
 cloud = [
+    'azure-keyvault-secrets==4.10.0',
     'cloud-sql-python-connector~=1.0',
     'pg8000~=1.29',
 ]
@@ -58,6 +59,7 @@ legacy = [
 ]
 
 all = [
+    'azure-keyvault-secrets==4.10.0',
     'cloud-sql-python-connector~=1.0',
     'pg8000~=1.29',
     'psycopg2-binary',
