@@ -6,6 +6,7 @@ resources:
       endpoint: DSO-R1-Github
   pipelines:
       trigger:
+        branches:
           include:
 trigger: none
 pr:
