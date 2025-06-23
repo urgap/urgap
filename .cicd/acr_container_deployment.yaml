@@ -16,6 +16,7 @@ pool:
   vmImage: ubuntu-latest
 stages:
   - stage: Build
+    condition: succeeded()
     displayName: Build and Push
     jobs:
         steps:

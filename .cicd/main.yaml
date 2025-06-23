@@ -5,6 +5,9 @@ trigger:
       - dev
       - feature/*
       - fix/*
+  tags:
+    include:
+      - v*
 pr:
   drafts: false
   branches:
