@@ -8,6 +8,9 @@ resources:
       trigger:
         branches:
           include:
+            - main
+            - dev
+            - refs/tags/*
 trigger: none
 pr:
   branches:
