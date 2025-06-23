@@ -3,6 +3,7 @@ resources:
     - repository: templates
       type: github
       name: gsk-tech/dso_azure_pipeline_templates
+      ref: main
       endpoint: DSO-R1-Github
   pipelines:
       trigger:
