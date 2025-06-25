@@ -409,11 +409,20 @@ class UTrace:
 
         self,
         file: str | Path,
+        output_file_index: int,
+        keep_original_name: bool = False,
     ) -> None:
+        """Move the output file to the expected position.
 
         Args:
             file: Path to source file.
+            output_file_index: Index position of the UFile in the output UFileList.
+            keep_original_name: Whether to set the original_name tag for the UFile.
         """
+        uf = self.output_files[output_file_index]
+        shutil.move(src=file, dst=uf.path)
+        if keep_original_name is True:
+            uf.tags.update({"original_name": str(file)})
 
     def _query_remote_by_uftype(self) -> dict:
         """Query remote files by uftype.

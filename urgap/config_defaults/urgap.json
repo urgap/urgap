@@ -17,6 +17,10 @@
     "hash_algorithm": {
         "value": "md5",
     },
+    "max_parallel_cores": {
+        "value": null,
+        "description": "Number of CPU cores to use for parallel processing."
+    },
     "umeta-mongodb-url": {
         "value": "mongodb://localhost:27017",
         "description": "url for mongo instance, used if umeta is set to mongopdb. Login and password are extracted via ENV or alternative secret store defined in credentials_lookup.json"
