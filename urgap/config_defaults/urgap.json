@@ -46,6 +46,7 @@
         "options": ["dev", "prod"]
     },
     "clean_scratch_at_exit": {
+        "value": true,
     },
     "requests_timeout_connect": {
         "value": null,
