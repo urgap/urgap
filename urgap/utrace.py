@@ -530,6 +530,8 @@ class UTrace:
             self.output_files.complete_file_counts()
         self.output_files = self.output_files.create_flat_and_non_redundant_list()
 
+    def upload_output_files(self) -> None:
+        """Upload all output UFiles in UTrace."""
         unique_parents = set()
         for ifile in self.input_files:
             unique_parents.update(ifile.parents)
@@ -540,6 +542,7 @@ class UTrace:
                 continue
             ofile.tags.update(parent_tag_dict)
             files_to_upload.append(ofile)
+        files_to_upload.upload_ufiles()
 
     def save_umeta_information(self) -> None:
         """Save UMeta information for this trace."""

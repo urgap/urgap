@@ -66,6 +66,7 @@ def extract_from_string(any_string: str, regex_pattern: str) -> list:
 
 def execute_threaded_function(
     func: Callable,
+    args_list: list,
     number_of_threads: int = 8,
 ) -> list:
     """Execute a function in parallel using multiple threads.

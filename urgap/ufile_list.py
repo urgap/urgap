@@ -587,12 +587,14 @@ class UFileList(UserList):
     def from_uri_list(
         cls,
         uri_list: list[str],
+        number_of_threads: int = 1,
         uftype: str | None = None,
     ) -> UFileList:
         """Create a UFileList from a list of UUris.
 
 
         """
+
         import concurrent.futures
 
             if uftype is not None:
@@ -611,6 +613,7 @@ class UFileList(UserList):
     def from_folder(
         cls,
         folder: str | Path,
+        number_of_threads: int = 1,
         uftype: str | None = None,
     ) -> UFileList:
         """Create a UFileList from files in a folder.
@@ -675,6 +678,7 @@ class UFileList(UserList):
             )
         return renamed_ufile_list
 
+    def download_ufiles(self, number_of_threads: int = 1) -> None:
         """Download all UFiles in the UFileList in parallel.
 
         Args:
@@ -685,6 +689,7 @@ class UFileList(UserList):
             number_of_threads=number_of_threads,
         )
 
+    def upload_ufiles(self, number_of_threads: int = 1) -> None:
         """Upload all UFiles in the UFileList in parallel.
 
         Args:
