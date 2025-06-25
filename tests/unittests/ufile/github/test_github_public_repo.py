@@ -5,6 +5,19 @@ import pytest
 from github import GithubException
 
 
+# Mock IO
+)
+uf.io.target_branch_name = "fake_target_branch"
+uf.io.source_branch = MagicMock()
+uf.io.source_branch.commit.sha = "fake_sha"
+uf.io.source_branch.name = "fake_source_branch"
+uf.io.object_filepath = "some/path/to/file.txt"
+# uf.io.scratch_path = "local/path/to/file.txt"
+uf.io.repo = MagicMock()
+uf_io_object = uf.io
+
+
+def test_github_public_repo():
     # Test the absence of file
     uf_io_object.repo.get_contents = MagicMock(
         side_effect=GithubException("Something went wrong"),
@@ -28,6 +41,10 @@ from github import GithubException
     handle.write.assert_called_once_with("hello from github")
 
 
+def test_upload_updates_existing_file():
+    uf_io_object.repo.create_git_ref.reset_mock()
+    uf_io_object.repo.update_file.reset_mock()
+    uf_io_object.repo.create_pull.reset_mock()
     uf_io_object.remote_object_exists = MagicMock(return_value=True)
     mock_file_sha = "existing_sha"
     uf_io_object.repo.get_contents.return_value.sha = mock_file_sha
@@ -52,6 +69,10 @@ from github import GithubException
     uf_io_object.repo.create_pull.assert_called_once()
 
 
+def test_upload_creates_new_file():
+    uf_io_object.repo.create_git_ref.reset_mock()
+    uf_io_object.repo.update_file.reset_mock()
+    uf_io_object.repo.create_pull.reset_mock()
     uf_io_object.remote_object_exists = MagicMock(return_value=False)
     uf_io_object.repo.create_pull.return_value.number = 42
     mock_content = b"new file content"
@@ -71,6 +92,10 @@ from github import GithubException
     uf_io_object.repo.create_pull.assert_called_once()
 
 
+def test_upload_update_file_failure():
+    uf_io_object.repo.create_git_ref.reset_mock()
+    uf_io_object.repo.update_file.reset_mock()
+    uf_io_object.repo.create_pull.reset_mock()
     uf_io_object.remote_object_exists = MagicMock(return_value=True)
     uf_io_object.repo.get_contents.return_value.sha = "sha"
     uf_io_object.repo.update_file.side_effect = GithubException(
@@ -86,6 +111,10 @@ from github import GithubException
         uf_io_object.upload()
 
 
+def test_upload_create_file_failure():
+    uf_io_object.repo.create_git_ref.reset_mock()
+    uf_io_object.repo.update_file.reset_mock()
+    uf_io_object.repo.create_pull.reset_mock()
     uf_io_object.remote_object_exists = MagicMock(return_value=False)
     uf_io_object.repo.create_file.side_effect = GithubException(
         400,
@@ -99,6 +128,11 @@ from github import GithubException
     ):
         uf_io_object.upload()
 
+
+def test_upload_create_pr_failure():
+    uf_io_object.repo.create_file.reset_mock()
+    uf_io_object.repo.create_file.side_effect = None
+    uf_io_object.repo.create_file.return_value = None
 
     uf_io_object.remote_object_exists = MagicMock(return_value=False)
     uf_io_object.repo.create_file.return_value = None
