@@ -67,6 +67,7 @@ class IOAzureBlobStorage(UIOBase):
             tags = {}
         if (len(tags.keys()) > 100) or (sys.getsizeof(json.dumps(tags)) > 7000):
             msg = (
+                f"Too many keys for azure blob storage in {self.uuri.fragment}. "
             )
             tags["ParentsRemoved"] = "Yes"
 
