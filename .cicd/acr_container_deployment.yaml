@@ -25,6 +25,8 @@ stages:
     displayName: Build and Push
     jobs:
         steps:
+          - template: build/acr_build_and_push.yaml@templates
+            parameters:
               azureSubscription: 'ARM-RD-dso-AppResources-prod'
               acrName: 'dsoazcr'
               dockerfilePath: 'Dockerfile-Prefect'
