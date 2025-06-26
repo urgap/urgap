@@ -24,6 +24,8 @@ stages:
     condition: succeeded()
     displayName: Build and Push
     jobs:
+      - job: BuildAndPushJob
+        displayName: Build And Push
         steps:
           - template: build/acr_build_and_push.yaml@templates
             parameters:
