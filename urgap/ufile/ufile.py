@@ -405,6 +405,7 @@ class UFile:
                     self.io.scratch_path,
                 )
             else:
+                msg = f"Cannot force calculation from local file as {self.io.scratch_path} does not exist."
                 raise FileNotFoundError(msg)
         else:
                 self.path,

@@ -192,6 +192,12 @@ class UNodeBase:
 
             utrace = stage_function(utrace)
                 raise TypeError
+        for output_ufile in utrace.output_files:
+            if output_ufile is None:
+                continue
+            if not output_ufile.io.scratch_path.exists():
+                msg = f"Expected output file not found in scratch path {output_ufile.io.scratch_path}."
+                raise FileNotFoundError(msg)
         utrace.fix_dynamic_output_file_names()
         execution_time = time.time() - starting_time
         if (
