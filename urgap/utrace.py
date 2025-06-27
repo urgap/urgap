@@ -407,6 +407,38 @@ class UTrace:
                     uri=uri,
                 )
 
+    def move_output_files(
+        self,
+        files: list,
+        uftype: str,
+        extend_len: int = 0,
+        keep_original_name: bool = False,
+    ) -> None:
+        """Move the output file to the expected position.
+
+        Args:
+            files: Path to source files which have to be moved.
+            uftype: Uftype to extend output files by.
+            extend_len: Number of files to extend.
+            keep_original_name: Whether to set the original_name tag for the UFile.
+        """
+        if extend_len != 0:
+            self.extend_output_files_by_uftype(
+                uftype=uftype,
+                max_n=extend_len,
+            )
+        args_list = [
+            (src, dest, keep_original_name)
+            for src, dest in zip(
+                files,
+                self.output_files.get_indices_by_uftype(uftype=uftype),
+                strict=True,
+            )
+        ]
+        else:
+            number_of_threads = 8
+
+    def _move_output_file(
         self,
         file: str | Path,
         output_file_index: int,
