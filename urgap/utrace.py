@@ -394,13 +394,16 @@ class UTrace:
         uftype: str,
         n: int | None = None,
         max_n: str | int = "N",
+        exact_n_to_extend_by: int = 1,
     ) -> None:
         """Extend the output UFileList with a new UFile for the specified uftype.
 
         Args:
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
+            exact_n_to_extend_by: Exact number of files matching uftype.
         """
+        for _ in range(exact_n_to_extend_by):
             uri = self.get_output_file_uri(uftype=uftype, n=n, max_n=max_n)
             if uri is not None:
                 self.output_files.add_ufile(
@@ -426,6 +429,7 @@ class UTrace:
             self.extend_output_files_by_uftype(
                 uftype=uftype,
                 max_n=extend_len,
+                exact_n_to_extend_by=extend_len,
             )
         args_list = [
             (src, dest, keep_original_name)
