@@ -441,6 +441,10 @@ class UTrace:
         ]
         else:
             number_of_threads = 8
+            func=self._move_output_file,
+            args_list=args_list,
+            number_of_threads=number_of_threads,
+        )
 
     def _move_output_file(
         self,
