@@ -18,6 +18,7 @@ pool:
 stages:
   - stage: SetVariables
     jobs:
+      - job: Get_Urgap_Version
         steps:
           - script: |
               PACKAGE_VERSION=$(python -m setuptools_scm | sed "s/\.dev0//")
@@ -41,6 +42,7 @@ stages:
               git switch $(basename $(Build.SourceBranch))
               git log | head -n 5
           - script: |
+              pip install urgap["all"]
               pip install build twine wheel
               python -m build
           - task: PublishBuildArtifacts@1
@@ -79,3 +81,6 @@ stages:
               cd $(Pipeline.Workspace)/containerhub
               git config --global user.email "bot@dso.com"
               git config --global user.name "DSO Bot"
+              git checkout -b feature/new_urgap_version_$(Build.SourceBranchName)
+              git commit --allow-empty -m "new urgap version $(Build.SourceBranchName)"
+              git push --set-upstream origin feature/new_urgap_version_$(Build.SourceBranchName)

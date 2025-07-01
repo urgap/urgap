@@ -1,4 +1,6 @@
+"""Uctl module of urgap2.
 
+This is the main CLI entrypoint and command group dispatcher for urgap2.
 """
 
 import click
@@ -7,6 +9,7 @@ import click
 
 @click.group()
 def cli() -> None:
+    """Start the urgap command-line interface (CLI)."""
 
 # Register subcommands and command groups
 cli.add_command(describe)

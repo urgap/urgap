@@ -1,3 +1,4 @@
+"""Info submodule of urgap.uctl."""
 
 import collections
 import logging
@@ -8,6 +9,7 @@ import click
 
 @click.command()
 def info_version_click() -> None:
+    """Show the version number of the installed Urgap package."""
 
 
 def get_status(condition: bool | None) -> click.style:
@@ -58,10 +60,12 @@ def info_unodes_click() -> None:
     )
     counter = collections.defaultdict(int)
     tags = set()
+    for k in sorted(urgap.instances.unode_manager.wrapper_lookup.keys()):
         if "TestNode" in k:
             counter["test_nodes"] += 1
             continue
         counter["unodes"] += 1
+        v = urgap.init_node(k)
         if v.requires_3rd_party_installation is True:
             status_3rd_party = get_status(v.has_all_required_installations())
         else:
@@ -91,5 +95,7 @@ def info_unodes_click() -> None:
 @click.command()
 def info_umeta_click() -> None:
     """Show UMeta interface statistics."""
+    interface_stats = urgap.UMeta().retrieve_interface_statistics()
+    click.secho(f"UMeta {urgap.config['umeta']}", fg="bright_green")
     for k, v in interface_stats.items():
         click.echo(f"{k: >50}:{v: >12}")

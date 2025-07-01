@@ -3,4 +3,5 @@
 Util
 ####
 
+.. automodule:: urgap.util
    :members:

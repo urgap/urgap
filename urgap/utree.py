@@ -1,13 +1,17 @@
+"""UTreeQuerier module of urgap2."""
 
 import types
 
 import networkx as nx
 import networkx.classes.digraph
 
+import urgap
 
 
 class UTreeQuerier:
+    """Urgap UTreeQuerier class.
 
+    Queries an urgap type networkx tree.
     """
 
     def __init__(
@@ -25,8 +29,11 @@ class UTreeQuerier:
 
         Note:
             Usage examples:
+                - python -c "import urgap; print(urgap.instances.utree_querier.get_nodes_with_ext('.csv'))"
+                - python -c "import urgap; print(urgap.instances.utree_querier.get_subgraph('dbsearch.ANY').nodes(data=True))"
         """
         if namespace is None:
+            namespace = urgap.uftypes
         if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
         if graph is None:

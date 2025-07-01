@@ -19,6 +19,7 @@ function drawGraph(nid) {
     const nodeDefs = getNodeDefinitions();
 
     const toolTip = d3.select("body").append("div")
+        .attr("class", "tooltip-urgap-node")
         .style("opacity", 0);
 
     const svg = d3.select(`#${nid}`).append("svg")

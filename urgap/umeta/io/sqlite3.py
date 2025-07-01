@@ -1,6 +1,8 @@
 """UMeta subclass for using the sqlite interface."""
 
+import urgap
 
+from urgap.umeta.io._sqalchemy_base import SQLAlchemyBaseUMeta
 
 
 class UMeta(SQLAlchemyBaseUMeta):
@@ -22,5 +24,7 @@ class UMeta(SQLAlchemyBaseUMeta):
         Returns:
             Connection string.
         """
+        sqlite3_url = urgap.config.get("umeta-sqlite3-url", None)
         if sqlite3_url is None:
+            sqlite3_url = f"sqlite:///{urgap.home}/umeta_sqlite.db"
         return sqlite3_url

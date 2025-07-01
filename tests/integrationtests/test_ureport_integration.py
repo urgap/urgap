@@ -1,16 +1,22 @@
 import networkx
 
+import urgap
 
 
 def test_ureport_graph(tmp_dir):
+    input_file = urgap.UFile(
+        uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.validator.PEPTIDEFOREST_CSV}#"
         f"unified_csvs/demo.csv",
     )
 
+    ur = urgap.UReport(
         ucfs=input_file.ucfs,
         storage_base_uri=input_file.as_storage_base_uri(),
     )
     assert isinstance(ur.graph, networkx.classes.digraph.DiGraph) is True
 
+    filter_node = urgap.init_node("FilterTabularToCSV:1.0.0")
+    urun_dict = urgap.URunDict(
         {
             "parameters": {"FilterTabularToCSV:1.0.0": {"-q": "`spectrum_id` < 3000"}},
             "unode_parameters": {"storage_base_uri": f"file://{tmp_dir}"},
@@ -51,6 +57,7 @@ def test_ureport_graph(tmp_dir):
         urun_dict=urun_dict,
     )
 
+    ur = urgap.UReport(
         ucfs=filtered_2[0].ucfs,
         storage_base_uri=filtered_2[0].as_storage_base_uri(),
     )

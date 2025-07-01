@@ -3,4 +3,5 @@
 UInit
 #####
 
+.. automodule:: urgap.uinit
    :members:

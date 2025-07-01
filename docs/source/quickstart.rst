@@ -24,7 +24,9 @@ Using UFiles, the data abstraction layer
 
 .. code-block:: python
 
+    import urgap
     uri = "https://www.tagesschau.de/multimedia/bilder#ukraine436~_v-gross20x9.jpg"
+    ufile = urgap.UFile(uri=uri)
     # initalizes UFile with remote location
     print(ufile.path)
     # Accessing the path attribute automatically downloads the file
@@ -52,5 +54,6 @@ Using UFiles, the data abstraction layer
 Executing example scripts
 -------------------------
 
+Urgap comes with a set of example scripts covering single node execution to fully-fledged pipelines.
 Have a look in the example_scripts folder to get started with more advanced workflows.
 Most example scripts come with a click interface, for help simply run python scriptXXX.py --help

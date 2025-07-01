@@ -38,6 +38,7 @@ stages:
             parameters:
               SOURCE_FOLDER: "."
               PYTHON_VERSION: ${{ variables.DEFAULT_PYTHON }}
+              RUFF_ARGS: "--exclude urgap/wrappers,urgap/ext,urgap/uftypes.py,tests,docs"
       - job: Yamllint
         displayName: 'YAML Formatter Check'
         steps:
@@ -65,17 +66,24 @@ stages:
             Python3.11:
             Python3.12:
         steps:
+          - template: setup_urgap_test_suite.yaml
           - template: tests/setup_tests.yaml@templates
           - template: tests/tests.yaml@templates
             parameters:
+              package: urgap
               testFolder: tests/unittests
               testCategory: Unittests
           - template: tests/tests.yaml@templates
             parameters:
+              package: urgap
               testFolder: tests/integrationtests
               testCategory: Integrationtests
           - template: tests/coverage_report.yaml@templates
             parameters:
               coverageType: 'xml'
+              flags: -o ../urgap/coverage.xml
           - template: code_quality/sonarqube.yaml@templates
             parameters:
+              projectBaseDir: ../urgap
+              sonarSources: ../urgap
+              sonarExclusions: '**/tests/**,**/build/**,**/docs/**,**/utils/**,**/examples/**,**/ext/**,**/wrappers/**,**/urgap/resources/**,**/unodes/**'

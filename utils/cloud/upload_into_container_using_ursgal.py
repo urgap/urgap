@@ -4,6 +4,7 @@ import sys
 
 from pathlib import Path
 
+import urgap
 
 
 def main(scheme: str, container_name: str, input_file: str) -> None:
@@ -23,6 +24,7 @@ def main(scheme: str, container_name: str, input_file: str) -> None:
     fragment = "/".join(input_file.as_posix().split("/")[-2:])
 
     rest = "/".join(input_file.as_posix().split("/")[:-2])
+    ufile = urgap.UFile(uri=f"file://{rest}#{fragment}")
     ufile.rebase(f"{scheme}://{container_name}")
     ufile.upload()
 

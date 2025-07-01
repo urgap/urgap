@@ -1,8 +1,10 @@
 import json
 
+import urgap
 
 
 def load_credentials(scheme=None):
+    config_path = urgap.home / "credentials_lookup.json"
     with open(config_path) as fp:
         credentials = json.load(fp).get("credentials")
         fp.close()

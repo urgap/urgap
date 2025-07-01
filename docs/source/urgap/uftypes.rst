@@ -3,4 +3,5 @@
 UFtypes
 #######
 
+.. automodule:: urgap.uftypes
    :members:

@@ -1,10 +1,14 @@
+"""Urgap CompressToZip wrapper."""
 
 import json
 
 from pathlib import Path
 
+import urgap
 
 
+class CompressToZip(urgap.unode.UNodeBase):
+    """Urgap wrapper for the CompressToZip resource.
 
     This class allows to tar compress a UFileList of UFiles and Tags.
     """
@@ -16,8 +20,11 @@ from pathlib import Path
             {"version": "1.0.0", "exe_path": "Compressor/1_0_0/compressor.py"},
         ],
         "parameters_not_triggering_rerun": [],
+        "input_uftypes": {urgap.uftypes.any.ANY: {"min": 1, "max": -1}},
+        "output_uftypes": {urgap.uftypes.compression.ZIP: {"min": 1, "max": -1}},
         "engine": None,
         "engine_type": ("io",),
+        "citation": "Urgap team (2022)",
     }
 
     def __init__(self) -> None:
@@ -26,6 +33,8 @@ from pathlib import Path
 
     def preflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Preflight routine for CompressToZip wrapper.
 
         Args:
@@ -42,6 +51,7 @@ from pathlib import Path
                 json.dump(file.tags, tag_file)
             input_files.append((str(file_path), str(tmp_tag_path)))
         output_file = utrace.output_files.get_path_objects_by_uftype(
+            urgap.uftypes.compression.ZIP,
         )[0]
 
         utrace.urun_dict.command_list = ["python", str(self.exe_path)]

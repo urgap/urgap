@@ -1,3 +1,4 @@
+"""UWIDGenerator class of urgap2."""
 
 import secrets
 
@@ -9,7 +10,9 @@ from pathlib import Path
 
 
 class UWIDGenerator:
+    """Urgap workflow ID (WID) generator.
 
+    Workflow IDs or WIDs are a central theme in urgap to register
     nodes that were executed as part of one pipeline.
 
     Scratch folders for UFiles are based on WIDs.

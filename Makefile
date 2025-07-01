@@ -1,3 +1,5 @@
+ifeq ($(URGAP_HOME),)
+	URGAP_HOME := $(HOME)
 endif
 
 RED=\033[0;31m
@@ -6,6 +8,7 @@ YELLOW=\033[0;33m
 OFF=\033[0m
 
 help:
+	@echo "Urgap MakeFile Options"
 	@echo " - ${GREEN}new-unode${OFF}:   create a new unode"
 	@echo " - ${GREEN}tests${OFF}:       run full testsuit"
 	@echo " - ${GREEN}black${OFF}:       run black on src code with the right parameters and exclude certain files"
@@ -14,6 +17,8 @@ help:
 new-unode:
 	@echo ""
 	@echo "Please fill out the Questions"
+	@echo "Will create urgap/wrapper/<your_tool_name>"
+	@echo "Urgap Home is set to be ${URGAP_HOME}"
 	@echo ""
 	@echo ".------------------- ------ -- ---         -"
 	@echo "| How to :"
@@ -39,6 +44,7 @@ new-unode:
 	@echo "|   The translation style is in the format of {tool}_style_{X}"
 	@echo "|"
 	@echo "| exe_<platform>:"
+	@echo "|   The executables are stored in ${URGAP_HOME}/<platform>/<architecture>"
 	@echo "|   and the executable name should be defined here"
 	@echo "|"
 	@echo "| platform_independent: [True, False]"
@@ -54,6 +60,7 @@ new-unode:
 	@echo "|"
 	@echo "+------------------ ---- --    -"
 	@echo ""
+	cookiecutter -f urgap/wrapper_template -o urgap/wrappers
 
 tests:
 	@echo "Running Unittests using pytest"
@@ -64,6 +71,7 @@ zip-exes:
 	@echo "----[to be implemented ]----"
 
 black:
+	black --line-length 88 --exclude '(urgap/wrapper_template/|.tox)' .
 
 
 AUTO_GEN1 = /usr/bin/env python3 parse_example_scripts.py

@@ -1,6 +1,8 @@
 """UMeta subclass for using the sqlite interface."""
 
+import urgap
 
+from urgap.umeta.io._sqalchemy_base import SQLAlchemyBaseUMeta
 
 
 class UMeta(SQLAlchemyBaseUMeta):
@@ -19,9 +21,11 @@ class UMeta(SQLAlchemyBaseUMeta):
         Returns:
             Connection string.
         """
+        postgresql_uri = urgap.config.get(
             "umeta-postgresql-url",
             "postgresql://localhost:5432",
         )
+        credentials = urgap.instances.ucredential_manager.extract_credentials(
             postgresql_uri,
         )
         connection_string = postgresql_uri.replace(

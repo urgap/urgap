@@ -1,3 +1,4 @@
+"""Omiq scheme subclass of urgap2's UIO submodule."""
 
 import json
 import logging
@@ -7,7 +8,10 @@ import tempfile
 from pathlib import Path
 from typing import ParamSpec
 
+import urgap
 
+from urgap.ext import omiq_api
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 omiq_api_available = True
@@ -31,6 +35,7 @@ class IOOmiq(UIOBase):
         self._tags = None
 
         cred_key = f"{self.uuri.scheme}://{self.uuri.netloc}"
+        um = urgap.instances.ucredential_manager
         password = um.get_password(cred_key)
         user = um.get_user(cred_key)
         with tempfile.NamedTemporaryFile() as fp:
@@ -122,6 +127,7 @@ class IOOmiq(UIOBase):
             self._handle_derived_fcs()
         elif (
             self._query_params.get("uftype", None)
+            == urgap.uftypes.flow_cytometry.gating_strategy.OMIQ_GFILE
         ):
             self._download_file_from_workflow()
         elif self.uuri.fragment in [

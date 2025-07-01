@@ -1,3 +1,4 @@
+"""GCP credentials subclass of urgap2's IOCreds submodule."""
 
 import logging
 
@@ -9,6 +10,7 @@ import google_crc32c
 from google import auth
 from google.cloud import secretmanager
 
+from urgap.ucredentials.io._base import IOBaseCreds
 
 P = ParamSpec("P")
 

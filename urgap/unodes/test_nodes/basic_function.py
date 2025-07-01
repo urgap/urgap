@@ -1,7 +1,10 @@
 """TestNode for basic function."""
 
+import urgap
 
 
+class BasicFunctionTestNode(urgap.unode.UNodeBase):
+    """Urgap Node for basic function calling the date command."""
 
     META_INFO = {
         "name": "BasicFunctionTestNode",
@@ -23,21 +26,25 @@
         "engine": None,
         "engine_type": ("test_engine",),
         "input_uftypes": {
+            urgap.uftypes.test.TEST_FILE1: {
                 "min": 1,
                 "max": 1,
             },
         },
         "output_uftypes": {
+            urgap.uftypes.test.TEST_FILE2: {
                 "min": 1,
                 "max": 1,
             },
         },
+        "citation": "Urgap team (2025)",
     }
 
     def __init__(self) -> None:
         """Initialize BasicFunctionTestNode class."""
         super().__init__()
 
+    def execute(self, utrace: urgap.UTrace) -> urgap.UTrace:
         """Execute routine for BasicFunctionTestNode.
 
         Args:
@@ -49,6 +56,7 @@
         super().execute(utrace)
         return utrace
 
+    def preflight(self, utrace: urgap.UTrace) -> urgap.UTrace:
         """Preflight routine for BasicFunctionTestNode.
 
         Args:

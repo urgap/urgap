@@ -1,3 +1,4 @@
+"""Uinit module of urgap2."""
 
 import json
 import logging
@@ -10,6 +11,7 @@ import traceback
 
 from pathlib import Path
 
+import urgap
 
 
 def copy_resources_if_needed(
@@ -25,6 +27,7 @@ def copy_resources_if_needed(
         target_dir: Path to the target folder where resources will be copied.
         force: If True, resources will always be copied and overwritten at the target directory.
     """
+    source_resources_path = urgap.package_dir / "resources"
     target_resources_path = Path(target_dir) / "resources"
     target_resources_path.mkdir(exist_ok=True)
     for rfile in source_resources_path.glob("**/*"):
@@ -72,9 +75,13 @@ def configure_logger() -> None:
 
 
 def create_home_folder(home_dir_parent: str | os.PathLike) -> None:
+    """Create the '.urgap' home directory at the specified parent path if it does not already exist.
 
     Args:
+        home_dir_parent: Path to the parent folder where the '.urgap' home directory will be created.
     """
+    home_dir = Path(home_dir_parent) / ".urgap"
+    msg = f"Creating urgap home directory at {home_dir}"
     Path(home_dir).mkdir(exist_ok=True, parents=True)
 
 
@@ -84,23 +91,30 @@ def copy_config_if_needed(target_dir: str | os.PathLike) -> None:
     Args:
         target_dir: Path to the folder where the default configuration files should be copied.
     """
+    config_defaults_path = urgap.package_dir / "config_defaults"
     for config_json in config_defaults_path.glob("**/*.json"):
         target_json_path = Path(
             str(config_json).replace(str(config_defaults_path), str(target_dir)),
         )
         if target_json_path.exists() is False:
             shutil.copy(config_json, target_json_path)
+            msg = f"{target_json_path} has been copied from default to urgap home"
 
 
 def read_config(home_dir: str | os.PathLike | None = None) -> dict:
+    """Read and load the 'urgap.json' configuration file from the specified home directory.
 
     If the configuration file does not exist, it will be copied from the default config directory.
     Only key-value pairs where the value is a dictionary are loaded.
 
     Args:
+        home_dir: Path to the home folder where 'urgap.json' is located. If None, uses the default urgap home directory.
 
     Returns:
+        A dictionary of configuration values imported from 'urgap.json'.
     """
+    config_root = Path(home_dir) if home_dir is not None else urgap.home
+    config_path = Path(config_root) / "urgap.json"
     try:
         with config_path.open() as uj:
             config = json.load(uj)
@@ -112,9 +126,13 @@ def read_config(home_dir: str | os.PathLike | None = None) -> dict:
 
 
 def load_certificates() -> None:
+    """Load SSL certificate files from the 'certificates' directory in the urgap home directory.
 
+    Loaded certificates are stored in 'urgap.config["certificates"]' with their stem as the key.
     A warning is logged for each loaded certificate.
     """
+    urgap.config["certificates"] = {}
+    cert_path = Path(urgap.home) / "certificates"
     cert_path.mkdir(exist_ok=True)
     for certificate in cert_path.glob("*"):
         cert_url = certificate.stem
@@ -122,6 +140,7 @@ def load_certificates() -> None:
             f"Using custom SSL certificate for {cert_url}."
             "Consider using a non-self-signed certificate."
         )
+        urgap.config["certificates"][cert_url] = certificate
 
 
 def set_scratch_disk_path(
@@ -147,7 +166,10 @@ def set_scratch_disk_path(
 
 
 def show_banner() -> str:
+    """Generate and return a random urgap banner with a unique anagram based on 'urgap'.
 
+    The banner includes a randomly constructed anagram using lists from the urgap uwid_obj.
+    Each banner is formatted to include words that start with each letter of 'urgap'.
 
     Returns:
         A formatted banner string with a unique anagram.
@@ -160,8 +182,16 @@ def show_banner() -> str:
     ]
     constellations = [
         [
+            urgap.uwid_obj.adjectives,
+            urgap.uwid_obj.nouns,
+            urgap.uwid_obj.verbs,
+            urgap.uwid_obj.adjectives,
+            urgap.uwid_obj.nouns,
         ],
     ]
+    urgap_anagram = []
+    for i, letter in enumerate("urgap"):
+        urgap_anagram.append(random_word)
 
     banner = secrets.choice(banners)
     return f"""{banner}

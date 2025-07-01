@@ -3,12 +3,15 @@ import tempfile
 
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "check_if_ufilelist_can_be_tested",
     [
+        urgap.UFileList(
             [
+                urgap.UFile(
                 ),
             ],
     ],
@@ -18,6 +21,7 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
     ufiles = check_if_ufilelist_can_be_tested
     with tempfile.TemporaryDirectory() as tmpdirname:
         storage_base_uri = f"file://{tmpdirname}"
+        urun_dict = urgap.URunDict(
             {
                 "parameters": {
                     "TestNode1:1.0.0": {
@@ -32,6 +36,7 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
                 },
             },
         )
+        test_node1 = urgap.init_node("TestNode1:1.0.0")
         print("Input:")
         pprint.pprint(urun_dict)
         print(ufiles)
@@ -44,3 +49,5 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
             assert output_file.remote_object_exists() is False
 
         urun_dict.assign_wid()
+
+        report = urgap.UReport(wid=wid)

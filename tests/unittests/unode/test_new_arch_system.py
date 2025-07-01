@@ -1,11 +1,14 @@
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "node_name",
+    urgap.instances.unode_manager.wrapper_lookup.keys(),
 )
 def test_new_arch_hierarchy(node_name):
+    node = urgap.init_node(node_name)
     # TODO: Add new Unode tests
     if node.META_INFO["unode_version"] is None:
         for platform, arcs in node.META_INFO["engine"].items():
@@ -18,8 +21,10 @@ def test_new_arch_hierarchy(node_name):
 
 @pytest.mark.parametrize(
     "node_name",
+    urgap.instances.unode_manager.wrapper_lookup.keys(),
 )
 def test_new_arc_info(node_name):
+    node = urgap.init_node(node_name)
     # TODO: Add new Unode tests
     if node.META_INFO["unode_version"] is None:
         for platform, arcs in node.META_INFO["engine"].items():

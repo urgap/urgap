@@ -2,10 +2,13 @@ from pathlib import Path
 
 import pytest
 
+import urgap
 
 
 def test_setting_tags(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("test_node_data/test.txt")
+    uf = urgap.UFile(uri=f"file://{base_folder.resolve()}#{content}")
 
     uf.tags.update(
         {"lo": "12"},
@@ -13,7 +16,9 @@ def test_setting_tags(tmp_scratch_disk):
 
 
 def test_updating_tags(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("test_node_data/test.txt")
+    uf = urgap.UFile(uri=f"file://{base_folder.resolve()}#{content}")
 
     uf.tags.update(
         {"lo": "12"},
@@ -26,6 +31,7 @@ def test_updating_tags(tmp_scratch_disk):
 @pytest.mark.parametrize(
     "provide_clean_scratch_and_remote",
     [
+        urgap.UFile(
         ),
     ],
     indirect=["provide_clean_scratch_and_remote"],
@@ -35,12 +41,14 @@ def test_tags_are_set_via_uri(provide_clean_scratch_and_remote):
     uftype_tag = ufile.tags.get("uftype", None)
     qc_tag = ufile.tags.get("qc", None)
     ufile.purge_local()
+    assert uftype_tag == urgap.uftypes.test.TEST_FILE1
     assert qc_tag == "good"
 
 
 @pytest.mark.parametrize(
     "provide_clean_scratch_and_remote",
     [
+        urgap.UFile(
             f"test_node_data/test_FILE.txt",
     ],
     indirect=["provide_clean_scratch_and_remote"],
@@ -60,13 +68,16 @@ def test_tags_are_read_remotely(provide_clean_scratch_and_remote, tmpdir):
     ufile.upload()
     ufile.purge_local()
     del ufile
+    ufile_2 = urgap.UFile(uri=ufile_uri_without_query)
     qc_tag = ufile_2.tags.get("qc", None)
     ufile_2.remove_remote_object()
     assert qc_tag == "bad"
 
 
 def test_setting_tags_merges_with_remote(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("test_node_data/test.txt")
+    uf = urgap.UFile(uri=f"file://{base_folder.resolve()}#{content}")
     uf.rebase(f"file://{tmp_scratch_disk}")
     new_uri = uf.as_uri()
     assert "md5" not in new_uri
@@ -75,9 +86,11 @@ def test_setting_tags_merges_with_remote(tmp_scratch_disk):
     uf.tags.update({"lo": "12"})
     uf.upload()
     uf.purge_local()
+    new_uri_with_queries = urgap.ucore.append_query_to_uri(
         uri=new_uri,
         query='k=12&rings=["one", "to", "rule", "them", "all"]',
     )
+    uf2 = urgap.UFile(uri=new_uri_with_queries)
     assert uf2.tags.get("lo", None) == "12"
     assert uf2.tags.get("k", None) == 12
     assert uf2.tags.get("rings", None) == ["one", "to", "rule", "them", "all"]

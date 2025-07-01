@@ -16,15 +16,19 @@ from pathlib import Path
 
 from packaging.version import Version
 
+import urgap
 
+from urgap.util import get_next_port, sort_versions
 
 
 class UNodeManager(UserDict):
+    """Manager for urgap UNodes and wrappers.
 
     Responsible for initialization, requirement checking, and lookup of all UNodes and wrappers.
     """
 
     _3rd_party_test_commands = {
+        # might be better in the urgap.json config?
         "java": {
             "command": ["java", "-version"],
             "regex_pattern": None,
@@ -162,6 +166,7 @@ class UNodeManager(UserDict):
         Port assignments are stored in self.unode_port_mapping.
         """
         self.unode_port_mapping = {}
+        first_port, last_port = urgap.config.get("URGAP_PORT_RANGE", [42000, 50000])
         last_assigned_port = first_port - 1
         for node_name in sorted(self.wrapper_lookup.keys(), key=sort_versions):
             if ":" not in node_name:
@@ -184,6 +189,8 @@ class UNodeManager(UserDict):
             Dictionary mapping node_name or node_name:version to (module_path, class_name).
         """
         lookup = {}
+        wrapper_path = urgap.package_dir / "wrappers"
+        unode_path = urgap.package_dir / "unodes"
         for _path in [wrapper_path, unode_path]:
             for wrapper in _path.glob("**/*.py"):
                 if wrapper.stem.startswith("_"):
@@ -206,6 +213,7 @@ class UNodeManager(UserDict):
             wrapper: Path to the .py file for the wrapper/unode.
         """
         class_path_string = str(
+            wrapper.relative_to(urgap.package_dir.parent).with_suffix(""),
         )
         spec = importlib.util.spec_from_file_location("node", wrapper)
         mod = importlib.util.module_from_spec(spec)
@@ -272,6 +280,7 @@ class UNodeManager(UserDict):
         )
         return None
 
+    def import_class(self, unode: str) -> urgap.unode:
         """Import and return the class for a given wrapper/unode.
 
         Updates self.data and checks dependencies via self.check_unode_dependencies.
@@ -345,6 +354,7 @@ class UNodeManager(UserDict):
             unode_obj.META_INFO["unode_full_identifier"] = unode
 
         if unode_obj.META_INFO["unode_version"] == "latest":
+                "running latest Urgap expects exe_path "
                 "to be supplied by "
                 "urun_dict['unode_parameters']['latest_exe_paths']",
             )
@@ -455,6 +465,7 @@ class UNodeManager(UserDict):
                 msg = (
                     f"Wrapper {unode} contains requirements {resource} and we don't"
                     " know how to validate this. Please reach out to the dev team "
+                    "or adjust urgap.UNodeManger._3rd_party_test_commands."
                     f" Currently, availabililty can be tested for {self._3rd_party_test_commands.keys()}"
                 )
                 is_available = None

@@ -1,7 +1,10 @@
 """TestNode for Rerun logic."""
 
+import urgap
 
 
+class TestNode1(urgap.unode.UNodeBase):
+    """Urgap wrapper for TestNode1:1.0.0 resource."""
 
     META_INFO = {
         "name": "TestNode1",
@@ -16,9 +19,12 @@
         "engine": None,
         "engine_type": ("test_engine",),
         "input_uftypes": {
+            urgap.uftypes.test.TEST_FILE1: {"min": 1, "max": -1},
         },
         "output_uftypes": {
+            urgap.uftypes.test.TEST_FILE2: {"min": 1, "max": -1},
         },
+        "citation": "Urgap team (2021)",
     }
 
     def __init__(self) -> None:
@@ -27,6 +33,8 @@
 
     def preflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Preflight routine for TestNode1:1.0.0 wrapper.
 
         Args:
@@ -35,6 +43,7 @@
         Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
+        utrace.extend_output_files_by_uftype(urgap.uftypes.test.TEST_FILE2)
         utrace.urun_dict.command_list = [
             "python",
             str(self.exe_path),
@@ -51,6 +60,8 @@
 
     def execute(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Execute routine for TestNode1:1.0.0 wrapper.
 
         Args:
@@ -65,6 +76,8 @@
 
     def postflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Preflight routine for TestNode1:1.0.0 wrapper.
 
         Args:
@@ -73,5 +86,6 @@
         Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
+        utrace.extend_output_files_by_uftype(urgap.uftypes.test.TEST_FILE2)
         utrace.output_files[-1].path.write_text("Writing into 3_of_N")
         return utrace

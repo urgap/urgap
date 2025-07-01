@@ -1,3 +1,4 @@
+"""Collection of uftypes (i.e. filetypes) to be used with urgap workflow."""
 
 import types
 
@@ -285,6 +286,7 @@ exp_design.input.TEST_METADATA_JSON = ".test_metadata.json"
 exp_design.input.FLOWCYTO_METADATA_XLSX = ".flowcyto_metadata.xlsx"
 
 exp_design.output = types.SimpleNamespace()
+# urgap experimental design type output formats
 exp_design.output.ANY = "exp_design.output.ANY"
 exp_design.output.UTMX_METADATA_CSV = ".utmx_metadata.csv"
 exp_design.output.PX_METADATA_CSV = ".px_metadata.csv"
@@ -292,6 +294,7 @@ exp_design.output.NGS_METADATA_CSV = ".ngs_metadata.csv"
 exp_design.output.TEST_METADATA_JSON = ".test_metadata.json"
 
 
+# Urgap internal===============================================================
 test = types.SimpleNamespace()
 test.ANY = "test.ANY"
 test.TEST_FILE1 = ".test.test_file1"

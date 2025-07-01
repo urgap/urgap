@@ -8,12 +8,15 @@ import networkx as nx
 
 from pyvis.network import Network
 
+import urgap
 
 
 def main(source_uftype: str, target_uftype: str) -> None:
     """Propose execution graphs for given source_uftype and target_uftype.
 
     Args:
+        source_uftype (str Urgap uftype): From which data type
+        target_uftype (str Urgap uftype): To which data type
 
     E.g.
 
@@ -21,6 +24,8 @@ def main(source_uftype: str, target_uftype: str) -> None:
     """
     graph = nx.DiGraph()
 
+    for unode_name in urgap.instances.unode_manager.wrapper_lookup:
+        unode_class = urgap.init_node(unode_name)
         graph.add_node(unode_name, color="red", size=7)
         for sft in unode_class.META_INFO.get("input_uftypes", {}):
             graph.add_node(sft, color="blue", size=12)
@@ -33,6 +38,7 @@ def main(source_uftype: str, target_uftype: str) -> None:
             )
             leafs = []
             with contextlib.suppress(KeyError):
+                leafs = urgap.instances.utree_querier.get_leafs_from_node(sft)
             if len(leafs) > 1:
                 for the_any_child in leafs:
                     graph.add_edge(

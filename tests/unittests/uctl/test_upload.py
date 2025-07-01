@@ -1,6 +1,8 @@
 from click.testing import CliRunner
 
+import urgap
 
+from urgap.uctl.upload import upload_folder_click
 
 runner = CliRunner()
 
@@ -9,6 +11,7 @@ def test_upload_folder_click(tmp_dir, caplog):
     result = runner.invoke(
         upload_folder_click,
         [
+            f"{urgap._test_folder}/data/unified_csvs",
             f"file://{tmp_dir}",
             "test",
         ],

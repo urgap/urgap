@@ -1,7 +1,11 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm
 
+# Add Urgap repo
+WORKDIR /home/urgap
+COPY dist/urgap-*.whl /tmp/
 
 # Install dependencies using uv
 
 # Run checks
+RUN python -c "import urgap; print(urgap.config)"
 RUN uctl info version

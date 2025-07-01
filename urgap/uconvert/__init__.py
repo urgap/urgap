@@ -1,3 +1,4 @@
+"""UConvert module of urgap2."""
 
 from .json import JSONDecoder, JSONEncoder
 

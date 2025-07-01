@@ -2,9 +2,12 @@ import os
 
 import pytest
 
+import urgap
 
 
 def test_unode_delete_tmp_file():
+    test_node = urgap.init_node("TestNode1:1.0.0")
+    tmp_file = urgap._test_folder / "data" / "tmp.file"
     with open(tmp_file, "w") as fin:
         fin.write("This is gonna be deleted")
     assert tmp_file.exists() is True
@@ -15,6 +18,9 @@ def test_unode_delete_tmp_file():
 
 
 def test_unode_delete_tmp_dir():
+    test_node = urgap.init_node("TestNode1:1.0.0")
+    tmp_dir = urgap._test_folder / "data" / "tmp_dir"
+    tmp_dir2 = urgap._test_folder / "data" / "tmp_dir2"
     tmp_dir.mkdir(parents=True, exist_ok=True)
     os.symlink(tmp_dir, tmp_dir2)
     assert tmp_dir.exists() is True
@@ -29,8 +35,11 @@ def test_unode_delete_tmp_dir():
     "provide_clean_test_node_dirs",
     [
         (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
                 f"test_node_data/test.txt",
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "triggers_nuttin": 100,
@@ -51,6 +60,7 @@ def test_unode_delete_tmp_file_pior_run(provide_clean_test_node_dirs):
     test_nodes, ufiles, urun_dict = provide_clean_test_node_dirs
     test_node1 = test_nodes["TestNode1:1.0.0"]
 
+    tmp_file = urgap._test_folder / "data" / "tmp.file"
     with open(tmp_file, "w") as fin:
         fin.write("This is gonna be deleted")
     assert tmp_file.exists() is True

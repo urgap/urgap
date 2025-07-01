@@ -3,6 +3,7 @@
 UFileList Class
 ###############
 
+.. autoclass:: urgap.ufile_list.UFileList
    :members:
 
    .. automethod:: __init__

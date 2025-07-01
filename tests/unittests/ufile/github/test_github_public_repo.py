@@ -4,8 +4,10 @@ import pytest
 
 from github import GithubException
 
+import urgap
 
 # Mock IO
+uf = urgap.UFile(
 )
 uf.io.target_branch_name = "fake_target_branch"
 uf.io.source_branch = MagicMock()

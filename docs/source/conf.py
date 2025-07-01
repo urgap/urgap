@@ -20,13 +20,19 @@ for example_file in Path("../../example_scripts").glob("**/*.py"):
 
 # -- Project information -----------------------------------------------------
 
+project = "Urgap2"
+copyright = "2021, Urgap2 Team"
+author = "Urgap2 Team"
 
 # The full version, including alpha/beta/rc tags stored in version.txt
 # version_path = os.path.join(
+#     os.path.dirname(__file__), os.pardir, os.pardir, "urgap", "version.txt"
 # )
 # with open(version_path, "r") as version_file:
+#     urgap_version = version_file.read().strip()
 
 # The full version, including alpha/beta/rc tags.
+release = version("urgap")
 # # for example take major/minor
 version = ".".join(release.split(".")[:2])
 

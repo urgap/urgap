@@ -1,8 +1,10 @@
+"""Env credentials subclass of urgap2's IOCreds submodule."""
 
 import os
 
 from typing import ParamSpec
 
+from urgap.ucredentials.io._base import IOBaseCreds
 
 P = ParamSpec("P")
 

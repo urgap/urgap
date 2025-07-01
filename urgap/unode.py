@@ -22,11 +22,13 @@ from pathlib import Path
 import requests
 
 
+import urgap
 
 P = ParamSpec("P")
 
 
 class UNodeBase:
+    """Base class for urgap UNodes."""
 
     def __init__(self) -> None:
         """Initialize the UNodeBase instance."""
@@ -67,6 +69,7 @@ class UNodeBase:
         Returns:
             True if the resource is available.
         """
+        return urgap.instances.unode_manager.node_availability_lookup[
             self.META_INFO["unode_full_identifier"]
         ]["resource_available"]
 
@@ -77,12 +80,17 @@ class UNodeBase:
         Returns:
             True if 3rd party tools are required, otherwise False.
         """
+        return urgap.instances.unode_manager.node_availability_lookup[
             self.META_INFO["unode_full_identifier"]
         ]["has_3rd_party_requirements"]
 
     def run(
         self,
+        ufiles: urgap.UFileList | None = None,
+        urun_dict: urgap.URunDict | None = None,
         **kwargs: P.kwargs,
+    ) -> urgap.UFileList:
+        if isinstance(urun_dict, urgap.URunDict) is False:
             msg = "UNode.run() function requires URunDict."
             raise TypeError(msg)
         urun_dict = copy.deepcopy(urun_dict)
@@ -112,6 +120,8 @@ class UNodeBase:
 
     def _run_remotely(
         self,
+        urun_dict: urgap.URunDict | None = None,
+    ) -> urgap.UFileList:
 
 
         urun_dict["is_remote_run"] = True
@@ -127,9 +137,16 @@ class UNodeBase:
 
     def _run_locally(
         self,
+        ufiles: urgap.UFileList | None = None,
+        urun_dict: urgap.URunDict | None = None,
+    ) -> urgap.UFileList:
             if all(isinstance(file, str) for file in ufiles):
+                ufiles = urgap.UFileList.from_uri_list(ufiles)
             else:
+                ufiles = urgap.UFileList(ufiles)
+        urgap.scratch_disk = urgap.scratch_disk_base / urun_dict.wid
         ufiles = ufiles.create_flat_and_non_redundant_list()
+        ut = urgap.UTrace(
             urun_dict=urun_dict,
             input_files=ufiles,
             unode_meta=self.META_INFO,
@@ -161,7 +178,10 @@ class UNodeBase:
 
     def _open_execution_span(
         self,
+        urun_dict: urgap.URunDict,
+        utrace: urgap.UTrace,
             )
+        urgap.utl.increase_counter("urgap_node_execution")
 
         if len(reasons) == 0:
         else:
@@ -169,7 +189,9 @@ class UNodeBase:
 
     def execute_rerun(
         self,
+        utrace: urgap.UTrace,
         starting_time: float,
+    ) -> urgap.UTrace:
         """Execute a rerun of the node if required.
 
         Args:
@@ -191,6 +213,7 @@ class UNodeBase:
             msg = f"Running {flight_stage} ..."
 
             utrace = stage_function(utrace)
+            if isinstance(utrace, urgap.URunDict | urgap.UTrace) is False:
                 raise TypeError
         for output_ufile in utrace.output_files:
             if output_ufile is None:
@@ -209,6 +232,7 @@ class UNodeBase:
                 f" longer than the timeout value {utrace.urun_dict['file_io_timeout']}."
                 "Therefore re-initializing IO classes for all UFiles."
             )
+            utrace.output_files = urgap.UFileList.from_uri_list(
                 utrace.output_files.as_uri_list(),
             )
         utrace.upload_output_files()
@@ -247,6 +271,7 @@ class UNodeBase:
         custom_exe_path = self.META_INFO.get("exe_path", None)
         if self.META_INFO["platform_independent"] is True:
             base_path = (
+                Path(urgap.home)
                 / "resources"
                 / "platform_independent"
                 / "arc_independent"
@@ -263,6 +288,7 @@ class UNodeBase:
         else:
             sys_platform = sys.platform
             comp_arch = self.get_comp_arch()
+            base_path = Path(urgap.home) / "resources" / sys_platform / comp_arch
             try:
                 rel_exe_path = (
                     Path(self.META_INFO["name"])
@@ -328,6 +354,7 @@ class UNodeBase:
         Raises:
             RuntimeError: If version or exe_path information is missing.
         """
+        base_path = Path(urgap.home) / "resources"
         tagged_exe_path = None
         version_info = None
         for v in self.META_INFO["versions"]:
@@ -389,16 +416,19 @@ class UNodeBase:
 
     def install_resource(
         self,
+        remote_ufile: urgap.UFile,
         engine_exe_list: list,
     ) -> bool | None:
         """Install the given resource package and set correct permissions on executables.
 
         Args:
+            remote_ufile: Urgap resource package file to be installed.
             engine_exe_list: List of expected executable names.
 
         Returns:
             True if successfully installed, otherwise None.
         """
+        urgap_resource_dir = urgap.home / "resources" / self.resource_subfolder
         try:
             new_ufiles = remote_ufile.uncompress()
         except (FileNotFoundError, NotImplementedError) as e:
@@ -408,6 +438,7 @@ class UNodeBase:
 
         pure_engine_exe_list = [Path(x).name for x in engine_exe_list]
         for uf in new_ufiles:
+            uf.rebase(f"file://{urgap_resource_dir}", upload=True)
             if uf.path.name in pure_engine_exe_list:
                 Path(uf.io.remote_path).chmod(stat.S_IRWXU)
             uf.purge_local()
@@ -467,9 +498,11 @@ class UNodeBase:
         Returns:
             True if all required 3rd party installations are available, otherwise False.
         """
+        return urgap.instances.unode_manager.node_availability_lookup[
             self.META_INFO["unode_full_identifier"]
         ]["requirements_available"]
 
+    def remove_output_folder(self, output_file: urgap.UFile = None) -> None:
         """Remove the output folder for the specified output_file.
 
         Args:
@@ -477,11 +510,13 @@ class UNodeBase:
         """
         output_file.remove_remote_object()
 
+    def remove_umeta(self, output_file: urgap.UFile = None) -> None:
         """Remove umeta data for a given output_file.
 
         Args:
             output_file: UFile for which umeta should be removed.
         """
+        umeta = urgap.UMeta()
         msg = f"Removing {output_file}"
 
         umeta.delete(output_file)
@@ -496,6 +531,7 @@ class UNodeBase:
         return self.META_INFO.get("requires", None)
 
     @classmethod
+    def generate_node_vis(cls, ufile: urgap.UFile) -> list:
         """Generate basic node-specific data visualization structure.
 
         Note: For example::
@@ -530,10 +566,12 @@ class UNodeBase:
             ]
 
         Args:
+            ufile: Urgap resource package file.
 
         Returns:
             List with visualization data (tables, figures, etc) describing the node.
         """
+        um = urgap.UMeta(ufile=ufile, load_umeta=True)
         data = [
             {
                 "section_title": "General Node Info",
@@ -543,6 +581,7 @@ class UNodeBase:
                         "headers": ["key", "value"],
                         "rows": [
                             {
+                                "key": "Urgap version",
                                 "value": f"{um.urun_dict['version']}",
                             },
                         ],
@@ -568,12 +607,14 @@ class UNodeBase:
                     {"key": k, "value": v}
                     for k, v in um.urun_dict["parameters"].items()
                 ],
+                "caption": "Urgap style Parameters used to create this file",
             },
         )
         if hasattr(cls, "generate_wrapper_vis") and callable(cls.generate_wrapper_vis):
             data += cls.generate_wrapper_vis(ufile)
         return data
 
+    def execute(self, utrace: urgap.UTrace) -> urgap.UTrace:
         """Execute method for a node using subprocess.run.
 
         Args:
@@ -618,6 +659,8 @@ class UNodeBase:
         self,
         proc: subprocess.CompletedProcess,
         execute_answer: list,
+        utrace: urgap.UTrace,
+    ) -> tuple[urgap.UTrace, str]:
         """Check the outcome of the executed process and handle output.
 
         Args:
@@ -648,6 +691,7 @@ class UNodeBase:
             )
             for line in execute_answer:
                 msg += line + "\n"
+            utrace.output_files = urgap.UFileList([None])
             utrace.set_stop_time(crashed=True)
             if utrace.urun_dict.unode_parameters["crash_on_resource_crash"] is True:
                 raise RuntimeError(msg)

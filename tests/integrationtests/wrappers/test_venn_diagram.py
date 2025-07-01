@@ -2,10 +2,15 @@
 
 import re
 
+import urgap
 
 
+def test_wrapper_venn_diagram(tmp_dir: urgap.Path) -> None:  # noqa: D103
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
     )
+    urun_dict = urgap.URunDict(
         {
             "parameters": {
                 "VennDiagram:2.0.0": {
@@ -22,6 +27,7 @@ import re
         r"<text[^>]*?>.*?n = 28.*?</text>",
         r"<text[^>]*?>.*?n = 17.*?</text>",
     ]
+    venn_node = urgap.init_unode("VennDiagram:2.0.0")
     venn_svg = venn_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert venn_svg[0].path.exists()
     with open(venn_svg[0].path) as svg_file:

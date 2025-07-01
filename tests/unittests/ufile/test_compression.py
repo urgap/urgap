@@ -1,9 +1,12 @@
 from pathlib import Path
 
+import urgap
 
 
 def test_uncompress_zip(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("compressions/test.txt.zip")
+    uf = urgap.UFile(
         uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()
@@ -12,7 +15,9 @@ def test_uncompress_zip(tmp_scratch_disk):
 
 
 def test_uncompress_tar_gz(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("compressions/test.txt.tar.gz")
+    uf = urgap.UFile(
         uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()
@@ -20,7 +25,9 @@ def test_uncompress_tar_gz(tmp_scratch_disk):
 
 
 def test_compress_zip(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("compressions/test.txt")
+    uf = urgap.UFile(
         uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_uf = uf.compress(compression_format="zip")
@@ -30,7 +37,9 @@ def test_compress_zip(tmp_scratch_disk):
 
 
 def test_compress_tar_gz(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("compressions/test.txt")
+    uf = urgap.UFile(
         uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_uf = uf.compress(compression_format="tar")
@@ -41,7 +50,9 @@ def test_compress_tar_gz(tmp_scratch_disk):
 
 
 def test_multiple_files(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data")
     content = Path("compressions/asdf.zip")
+    uf = urgap.UFile(
         uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()
@@ -52,7 +63,9 @@ def test_multiple_files(tmp_scratch_disk):
 
 
 def test_uncompress_split_tar(tmp_scratch_disk):
+    base_folder = Path(f"{urgap._test_folder}/data/compressions/split_tars")
     content = Path("test_part_aa")
+    uf = urgap.UFile(
         uri=f"file://{base_folder.resolve()}?test_tag=something#{content}",
     )
     new_ufl = uf.uncompress()

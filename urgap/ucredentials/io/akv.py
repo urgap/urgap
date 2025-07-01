@@ -1,3 +1,4 @@
+"""Azure credentials subclass of urgap2's IOCreds submodule."""
 
 import logging
 
@@ -7,6 +8,7 @@ from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
+from urgap.ucredentials.io._base import IOBaseCreds
 
 P = ParamSpec("P")
 

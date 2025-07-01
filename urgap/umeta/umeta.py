@@ -1,14 +1,18 @@
+"""UFile module of urgap2."""
 
 from __future__ import annotations
 
 import logging
 
+import urgap
 
 
 class UMeta:
+    """Urgap UMeta interface.
 
     This interface is used to track run information based on UTraces.
 
+    It manages three collections/tables in the IO interfaces defined in `urgap.json`
     or passed via the `io` argument.
 
     Notes:
@@ -22,12 +26,16 @@ class UMeta:
         """Initialize UMeta Interface.
 
         Args:
+            io: UMeta interface to use. Options are in `urgap.umeta.io`.
+                Defaults to None, which uses the interface specified in `$URGAP_HOME/urgap.config`.
         """
         self._io = None
         if io is None:
+            io = urgap.config.get("umeta", "dummy")
         self._io_id = io
 
     @property
+    def io(self) -> urgap.UMeta:
         """IO Property, enabling on-demand initialization of the IO class.
 
         Notes:
@@ -35,11 +43,13 @@ class UMeta:
             - This property allows deleting `_io` safely, as it will be re-initialized when accessed.
 
         Returns:
+            Initialized Urgap IO class.
         """
         if self._io is None:
             self._io = self.init_io_class()
         return self._io
 
+    def init_io_class(self) -> urgap.UMeta:
         """Initialize the appropriate IO class for UMeta.
 
         Raises:
@@ -49,6 +59,9 @@ class UMeta:
             Initialized IO class for UMeta operations.
         """
         available_ios = {
+            "postgresql": urgap.umeta.io.postgresql.UMeta,
+            "sqlite3": urgap.umeta.io.sqlite3.UMeta,
+            "gcpsql": urgap.umeta.io.gcpsql.UMeta,
         }
 
         if self._io_id in available_ios:
@@ -69,6 +82,7 @@ class UMeta:
         """
         return self.io.umeta_exists(self)
 
+    def save_utrace(self, utrace: urgap.UTrace) -> None:
         """Save a UTrace object using the IO backend.
 
         Args:
@@ -81,6 +95,7 @@ class UMeta:
         wid: str,
         storage_base_uri: str,
         history: dict | None = None,
+    ) -> urgap.UTrace:
         """Load a UTrace object using the IO backend.
 
         Args:
@@ -91,6 +106,7 @@ class UMeta:
             Loaded UTrace object.
         """
         if history is None:
+            urd = urgap.URunDict(
                 {
                     "parameters": node_exe_details["parameters"],
                     "user_dict": {
@@ -101,6 +117,7 @@ class UMeta:
             )
             _, unode_version = node_exe_details["unode"].split(":")
         else:
+            urd = urgap.URunDict(
                 {
                     "parameters": node_exe_details["parameters"],
                     "user_dict": {
@@ -112,13 +129,19 @@ class UMeta:
             unode_version = None
         urd.command_list = node_exe_details["command"].split(" ")
         urd["wid"] = wid  # not using urd.wid to avoid the warning :)
+        return urgap.UTrace(
             urun_dict=urd,
+            input_files=urgap.UFileList(
                 [
+                    urgap.UFile(uri=f"{storage_base_uri}#{ucfs}")
                     for ucfs in node_exe_details["input_ufiles"]
                 ],
             ),
+            unode_meta=urgap.init_unode(node_exe_details["unode"]).META_INFO,
             unode_version=unode_version,
+            output_files=urgap.UFileList(
                 [
+                    urgap.UFile(uri=f"{storage_base_uri}#{ucfs}")
                     for ucfs in node_exe_details["output_ufiles"]
                 ],
             ),
@@ -149,6 +172,7 @@ class UMeta:
         """
             raise OSError
 
+    def delete(self, reference_ufile: urgap.UFile) -> None:
         """Delete UMeta entries for a given reference file.
 
         Args:
@@ -189,6 +213,7 @@ class UMeta:
         """Load history for a given workflow ID (wid).
 
         Args:
+            wid: Urgap workflow ID.
             limit: Maximum number of resulting history objects.
 
         Returns:
@@ -214,6 +239,7 @@ class UMeta:
         Returns:
         """
 
+    def save_rebased_file_to_ucfs_storage_location(self, ufile: urgap.UFile) -> None:
         """Save rebased file information to UMeta.
 
         Args:

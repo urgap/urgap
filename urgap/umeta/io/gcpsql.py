@@ -1,6 +1,8 @@
 """UMeta subclass for using the sqlite interface."""
 
+import urgap
 
+from urgap.umeta.io._sqalchemy_base import SQLAlchemyBaseUMeta
 
 
 class UMeta(SQLAlchemyBaseUMeta):
@@ -19,9 +21,11 @@ class UMeta(SQLAlchemyBaseUMeta):
         Returns:
             Connection string for SQLAlchemy to connect to the GCP Cloud SQL instance.
         """
+        gcpsql_connection_string = urgap.config.get(
             "umeta-gcpsql-url",
             "postgresql+pg8000://10.0.0.0:5432",
         )
+        credentials = urgap.instances.ucredential_manager.extract_credentials(
             gcpsql_connection_string,
         )
         connection_string = (
@@ -29,5 +33,6 @@ class UMeta(SQLAlchemyBaseUMeta):
                 "postgresql+pg8000://",
                 "postgresql+pg8000://{user}:{password}@",
             )
+            + "/urgap"
         )
         return connection_string.format(**credentials)

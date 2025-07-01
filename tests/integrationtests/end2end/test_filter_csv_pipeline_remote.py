@@ -1,6 +1,7 @@
 import pandas as pd
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
@@ -9,11 +10,15 @@ import pytest
     indirect=["provide_uctl_server"],
 )
 def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}"
                 f"#unified_csvs/BSA1_xtandem_alanine_unified.csv",
             ),
         ],
     )
+    urun_dict_filter = urgap.URunDict(
         {
             "parameters": {
                 "FilterTabularToCSV:latest": {
@@ -24,6 +29,7 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
                 "storage_base_uri": f"file://{tmp_dir}",
                 "remote_url": "http://localhost",
                 "latest_exe_paths": {
+                    "FilterTabularToCSV:latest": urgap.home
                     / "resources"
                     / "FilterTabular"
                     / "1_0_0"
@@ -32,12 +38,14 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
             },
         },
     )
+    urun_dict_compress = urgap.URunDict(
         {
             "parameters": {"CompressToTar:latest": {}},
             "unode_parameters": {
                 "remote_url": "http://localhost",
                 "storage_base_uri": f"file://{tmp_dir}",
                 "latest_exe_paths": {
+                    "CompressToTar:latest": urgap.home
                     / "resources"
                     / "Compressor"
                     / "1_0_0"
@@ -47,6 +55,8 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
             "wid": urun_dict_filter["wid"],
         },
     )
+    filter_tab_to_csv_node = urgap.init_unode("FilterTabularToCSV:latest")
+    compress_to_tar_node = urgap.init_unode("CompressToTar:latest")
 
     filter_1 = filter_tab_to_csv_node.run(urun_dict=urun_dict_filter, ufiles=ufiles)
     df = pd.read_csv(filter_1[0].path)

@@ -3,7 +3,9 @@ import tempfile
 
 from pathlib import Path
 
+import urgap
 
+urgap_ascii = """
 
                                                              88
                                                              88
@@ -20,7 +22,9 @@ from pathlib import Path
 
 def test_uio_calculate_md5_standard():
     with tempfile.NamedTemporaryFile(mode="w", delete=False, newline="\n") as output:
+        print(urgap_ascii, file=output)
 
+    output_md5 = urgap.ucore.calculate_file_hash(
         Path(output.name),
         hash_algorithm="md5",
     )

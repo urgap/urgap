@@ -3,6 +3,7 @@
 UWid Class
 ##########
 
+.. autoclass:: urgap.uwid.uwid.UWIDGenerator
    :members:
 
    .. automethod:: __init__

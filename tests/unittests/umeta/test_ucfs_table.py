@@ -1,5 +1,6 @@
 import pytest
 
+import urgap
 
 
 # TODO: Something we need to fix. Maybe two different rebases. One user-facing, one internal.
@@ -8,15 +9,18 @@ import pytest
     "check_if_meta_interface_backend_is_available",
     [
         ("sqlite3", None),
+        ("postgresql", urgap.config["umeta-postgresql-url"]),
     ],
     indirect=["check_if_meta_interface_backend_is_available"],
 )
 def test_read_write_user_dict(check_if_meta_interface_backend_is_available, tmp_dir):
+    uf = urgap.UFile(uri=f"file://{urgap._test_folder}/data#unified_csvs/demo.csv")
     uf.rebase(f"file://{tmp_dir}/1/test#unified_csvs1/demo.csv", upload=True)
     uf.rebase(f"file://{tmp_dir}/1/test#unified_csvs2/demo.csv", upload=True)
     uf.rebase(f"file://{tmp_dir}/1/test#unified_csvs3/demo.csv", upload=True)
     uf.rebase(f"file://{tmp_dir}/2/test", upload=True)
 
+    um = urgap.UMeta()
     filter_object_names = um.io.get_ucfs_object_name_info(
         storage_base_uri=f"file://{tmp_dir}/1/test",
         object_name="unified_csvs1/demo.csv",

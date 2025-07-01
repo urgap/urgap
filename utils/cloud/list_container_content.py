@@ -2,16 +2,20 @@
 
 import sys
 
+import urgap
 
 
 def main(url: str, container_name: str) -> None:
     """List object in cloud storage container.
 
+    Using urgap credentials and ufile functionality to list
     content of google cloud storage container
 
     Args:
+            (need host eg.g hdbsalx091:9010/urgap_dev)
         container_name (str): name of container
     """
+    ufile = urgap.UFile(f"{url}/{container_name}/#might_not_even_exists/not_sure.txt")
     driver = ufile.io.driver
     if "/" in container_name:
         container_name = container_name.split("/")[-1]
@@ -25,6 +29,7 @@ def main(url: str, container_name: str) -> None:
     uri_list = [
         f"{url}/{container_name}#{obj.name}" for obj in container.list_objects()
     ]
+    uf_list = urgap.UFileList.from_uri_list(uri_list)
     for _uf in uf_list:
         pass
 

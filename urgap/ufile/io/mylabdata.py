@@ -1,3 +1,4 @@
+"""Mylabdata scheme subclass of urgap2's UIO submodule."""
 
 import json
 import logging
@@ -8,7 +9,9 @@ from typing import ParamSpec
 
 import requests
 
+import urgap
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 
@@ -21,6 +24,7 @@ def make_expiration_safe_request(func: Callable) -> requests.Response:
     """
 
     def request_func_wrapper(
+        self: urgap.UFile.io,
         *args: str,
         **kwargs: P.kwargs,
     ) -> requests.Response:
@@ -46,6 +50,7 @@ class IOMyLabData(UIOBase):
             **kwargs: Passed to UIOBase, contains uri and any configuration keys.
         """
         super().__init__(**kwargs)
+        self._api_cert = urgap.config["certificates"].get(self.uuri.netloc, True)
         self._api_token = None
         self._get_token_bearer()
 
@@ -81,6 +86,8 @@ class IOMyLabData(UIOBase):
             json=files_cred,
             verify=self._api_cert,
             timeout=(
+                urgap.config.get("requests_timeout_connect", None),
+                urgap.config.get("requests_timeout_read", None),
             ),
         )
         if response.status_code == 200:
@@ -108,6 +115,8 @@ class IOMyLabData(UIOBase):
             verify=self._api_cert,
             headers=self._api_token,
             timeout=(
+                urgap.config.get("requests_timeout_connect", None),
+                urgap.config.get("requests_timeout_read", None),
             ),
         )
         if response.status_code == 200:
@@ -135,6 +144,8 @@ class IOMyLabData(UIOBase):
                 verify=self._api_cert,
                 headers=self._api_token,
                 timeout=(
+                    urgap.config.get("requests_timeout_connect", None),
+                    urgap.config.get("requests_timeout_read", None),
                 ),
             )
         if response.status_code == 409:
@@ -149,6 +160,8 @@ class IOMyLabData(UIOBase):
                 verify=self._api_cert,
                 headers=self._api_token,
                 timeout=(
+                    urgap.config.get("requests_timeout_connect", None),
+                    urgap.config.get("requests_timeout_read", None),
                 ),
             )
             if tag_response.status_code == 409:
@@ -175,6 +188,8 @@ class IOMyLabData(UIOBase):
             verify=self._api_cert,
             headers=self._api_token,
             timeout=(
+                urgap.config.get("requests_timeout_connect", None),
+                urgap.config.get("requests_timeout_read", None),
             ),
         )
         if response.status_code == 200:
@@ -217,6 +232,8 @@ class IOMyLabData(UIOBase):
             verify=self._api_cert,
             headers=self._api_token,
             timeout=(
+                urgap.config.get("requests_timeout_connect", None),
+                urgap.config.get("requests_timeout_read", None),
             ),
         )
         while len(response.json()["data"].get("nextPage", "")) != 0:
@@ -224,6 +241,8 @@ class IOMyLabData(UIOBase):
                 verify=self._api_cert,
                 headers=self._api_token,
                 timeout=(
+                    urgap.config.get("requests_timeout_connect", None),
+                    urgap.config.get("requests_timeout_read", None),
                 ),
             )
         return container_objects

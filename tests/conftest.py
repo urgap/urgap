@@ -13,7 +13,9 @@ from urllib.parse import urlparse
 import pytest
 import urllib3
 
+import urgap
 
+urgap._test_folder = Path(__file__).parent.resolve()
 
 
 def ping(host):
@@ -50,9 +52,11 @@ def check_if_meta_interface_backend_is_available(request):
 
 
 def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
+    if isinstance(ufile_path_list, urgap.UFile) is True:
         ufile_path_list = [ufile_path_list]
     unodes_dict = {}
     for node in unodes:
+        unodes_dict[node] = urgap.init_unode(node)
         if unodes_dict[node].resource_is_available is False:
             pytest.skip(f"{node} is missing resources ...")
         if unodes_dict[node].has_all_required_installations() is False:
@@ -61,6 +65,7 @@ def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
     for u in ufiles:
         check_ufile_can_be_tested(u)
     for node_name, node_obj in unodes_dict.items():
+        ut = urgap.UTrace(
             urun_dict=urun_dict,
             input_files=ufiles,
             unode_meta=node_obj.META_INFO,
@@ -118,12 +123,16 @@ def tmp_file():
 
 @pytest.fixture
 def tmp_scratch_disk(tmp_dir):
+    urgap.scratch_disk = urgap.uinit.set_scratch_disk_path(tmp_dir)
     yield tmp_dir
+    urgap.scratch_disk = urgap.uinit.set_scratch_disk_path()
 
 
 @pytest.fixture
 def change_hash_algorithm():
+    urgap.config["hash_algorithm"] = "Argon2"
     yield None
+    urgap.config["hash_algorithm"] = "md5"
 
 
 @pytest.fixture
@@ -138,18 +147,24 @@ def provide_clean_scratch_and_remote(request):
 @pytest.fixture
 def provide_standard_TestNode1_setup_and_set_umeta_interface(request):
     if str(request.param[0]) == "mongodb":
+        print(urgap.config)
+        parsed_url = urlparse(urgap.config["umeta-mongodb-url"])
         host, port = parsed_url.netloc.split(":")
         try:
             urllib3.util.connection.create_connection((host, port))
         except ConnectionRefusedError:
             pytest.skip(f"MongoDB at {host}:{port} not reachable ...")
 
+    um = urgap.UMeta(io=str(request.param[0]))
     if str(request.param[0]) == "json":
         um.ufile.io.remote_path.parent.mkdir(parents=True, exist_ok=True)
         with open(um.ufile.io.remote_path, "w") as oo:
             print("test", file=oo)
 
     ufile_path_list = [
+        urgap.UFile(
+            uri=f"file://{urgap._test_folder}/data#"
+            f"test_node_data/test.txt?uftype={urgap.uftypes.test.TEST_FILE1}",
         ),
     ]
     run_dict = {
@@ -170,6 +185,8 @@ def provide_standard_TestNode1_setup_and_set_umeta_interface(request):
 
 @pytest.fixture
 def provide_changeable_config():
+    default = urgap.home / "urgap.json"
+    backup = urgap.home / "backup_config.json"
     shutil.copy(default, backup)
     yield None
     shutil.copy(backup, default)
@@ -178,6 +195,8 @@ def provide_changeable_config():
 
 @pytest.fixture
 def provide_changeable_credentials():
+    default = urgap.home / "credentials_lookup.json"
+    backup = urgap.home / "backup_credentials.json"
     shutil.copy(default, backup)
     yield None
     shutil.copy(backup, default)
@@ -190,6 +209,7 @@ def provide_uctl_server(request):
     if isinstance(request.param, str):
         unode = request.param
         call.extend(["-n", unode])
+        required_ports.append(urgap.instances.unode_manager.unode_port_mapping[unode])
     else:
             required_ports.append(
             )

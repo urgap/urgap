@@ -16,16 +16,23 @@ from fastapi.responses import JSONResponse
 
 
 def run_unode_in_loop(payload: dict, name: str) -> list:
+    """Run a Urgap node inside an event loop context.
 
     Args:
         payload: The JSON payload to configure the node execution.
+        name: Name of the urgap node to be executed.
 
     Returns:
         List of UFile UUris for output files.
     """
+    urgap_node = urgap.init_node(name)
+    urgap.config.update(payload["config"])
+    urgap.instances.ucredential_manager.add_credentials(payload["ucredentials"])
+    ur = urgap.URunDict(payload["urun_dict"])
     uf = payload["ufiles"]
     ur["unode_parameters"]["remote_url"] = None
     try:
+        output_files = urgap_node.run(
             urun_dict=ur,
             ufiles=uf,
         )
@@ -39,6 +46,7 @@ def create_app(name: str) -> FastAPI:
     """Create FastAPI app with /v1/run and /v1/terminate endpoints.
 
     Args:
+        name: urgap node name to be executed by this server.
 
     Returns:
         FastAPI application instance.
@@ -52,8 +60,10 @@ def create_app(name: str) -> FastAPI:
         payload = await request.json()
         payload = json.loads(
             payload,
+            cls=urgap.uconvert.JSONDecoder,
         )
         loop = asyncio.get_running_loop()
+        msg = f"Launching urgap node {name}"
 
 
     @app.post("/v1/terminate")
@@ -78,6 +88,7 @@ def create_app(name: str) -> FastAPI:
     """Run uvicorn server in a background thread and listen for shutdown event.
 
     Args:
+        name: urgap node name to serve.
         port: Port number to serve on.
         shutdown_event: multiprocessing.Event used to trigger shutdown.
     """
@@ -111,6 +122,7 @@ def create_app(name: str) -> FastAPI:
     shutdown_event = multiprocessing.Event()
     nodes_list = get_all_relevant_nodes(nodes=nodes)
     for unode in nodes_list:
+        port = urgap.instances.unode_manager.unode_port_mapping[unode]
         p = multiprocessing.Process(
             target=run_server,
             args=(

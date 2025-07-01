@@ -1,3 +1,4 @@
+"""Azure file SMB Share subclass of urgap2's UIO submodule."""
 
 import contextlib
 import logging
@@ -16,7 +17,9 @@ from azure.core.exceptions import (
     ServiceRequestError,
 )
 
+import urgap
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 

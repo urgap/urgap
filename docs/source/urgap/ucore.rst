@@ -3,4 +3,5 @@
 UCore
 #####
 
+.. automodule:: urgap.ucore
    :members:

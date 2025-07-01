@@ -1,6 +1,10 @@
+"""Urgap venndiagram wrapper."""
+
+import urgap
 
 
-
+class VennDiagram(urgap.unode.UNodeBase):
+    """Urgap wrapper for the Venn Diagram resource.
 
     Creates Venn Diagram SVG graphics from 1-n csv files.
     """
@@ -13,20 +17,24 @@
         ],
         "parameters_not_triggering_rerun": [],
         "input_uftypes": {
+            urgap.uftypes.any.CSV: {
                 "min": 1,
                 "max": -1,
             },
         },
         "output_uftypes": {
+            urgap.uftypes.plotter.VENN_RESULTS_SVG: {
                 "min": 1,
                 "max": 1,
             },
+            # urgap.uftypes.plotter.VENN_RESULTS_CSV: {
             #     "min": 1,  # noqa: ERA001
             #     "max": 1,  # noqa: ERA001
             # }, # Not implemented yet. Will be as soon someone needs it
         },
         "engine": None,
         "engine_type": ("plotter",),
+        "citation": "Urgap team 2025",
         "parameter_examples": """
             {
                 "--id-column": "<id-name>" #  Column used to group data
@@ -43,6 +51,8 @@
 
     def preflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Preflight routine for VennDiagram wrapper.
 
         Args:

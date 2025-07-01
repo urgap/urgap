@@ -1,3 +1,4 @@
+"""UHelper.beam module of urgap2."""
 
 import argparse
 import copy
@@ -13,6 +14,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
 from pyvis.network import Network
 
+import urgap
 
 P = ParamSpec("P")
 
@@ -20,6 +22,7 @@ P = ParamSpec("P")
 def parse_inputs(
     argv: list,
     save_main_session: bool,
+) -> tuple[PipelineOptions, urgap.URunDict, dict]:
     """Parse command line inputs and return pipeline options, URunDict, and input json.
 
     Args:
@@ -27,6 +30,7 @@ def parse_inputs(
         save_main_session: Whether to save main session for Beam (required for some runners).
 
     Returns:
+        Pipeline options, Urgap URunDict, and the input JSON dict.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -59,6 +63,7 @@ def parse_inputs(
 
     if "credentials_lookup" not in input_json:
         input_json["credentials_lookup"] = None
+    urd = urgap.URunDict(input_json.get("urun_dict", {}))
 
     # Extract pipeline configuration from default configuration
     pipeline_config = default_pipeline_args.get("pipeline_configuration", {})
@@ -101,16 +106,23 @@ def flatten_to_list(pcol_input: list) -> list:
     return ["GroupKey", ufiles]
 
 
+class UrgapNodeExecutor(beam.DoFn):
+    """Executes an Urgap node as a Beam DoFn."""
 
     def __init__(
         self,
         unode: str = "None",
+        urd: urgap.URunDict | None = None,
         ucredentials: list | None = None,
         config: dict | None = None,
         **kwargs: P.kwargs,
     ) -> None:
+        """Initialize wrapper for Urgap Nodes as Apache Beam DoFn.
 
         Args:
+            unode: Urgap UNode name.
+            urd: Urgap URunDict.
+            config: Temporary Urgap config (does not overwrite main config).
             ucredentials: List of credentials to add before execution.
             kwargs: Extra kwargs to be passed to unode.run.
         """
@@ -130,22 +142,32 @@ def flatten_to_list(pcol_input: list) -> list:
 
         if self._check_input(unode=unode, urd=urd):
             self.ready = True
+            self.unode = urgap.init_node(unode)
+            msg = f"Setting up urgap unode {self.unode} with {urd.parameters}"
 
     def _check_input(
         self,
         unode: str | None = None,
+        urd: urgap.URunDict | None = None,
     ) -> bool:
         """Check validity of unode and urd input.
 
         Args:
+            unode: Urgap UNode name.
+            urd: Urgap URunDict.
 
         Returns:
             True if input is valid, else False.
         """
         input_is_ok = True
+        if not isinstance(urd, urgap.URunDict):
             input_is_ok = False
+            msg = f"{urd} is not a urgap URunDict!"
+        if unode not in urgap.instances.unode_manager.wrapper_lookup:
             input_is_ok = False
             msg = (
+                f"{unode} is not a urgap node. "
+                f"Available nodes are {list(urgap.instances.unode_manager.wrapper_lookup.keys())}"
             )
         return input_is_ok
 
@@ -156,6 +178,7 @@ def flatten_to_list(pcol_input: list) -> list:
         """Execute before a bundle starts."""
 
     def process(self, utuple: tuple) -> list[tuple]:
+        """Run Urgap node for the given tuple input.
 
         Args:
             utuple: (group_key, ufile_uris) as a tuple, where ufile_uris can be nested.
@@ -178,6 +201,9 @@ def flatten_to_list(pcol_input: list) -> list:
                     yield x
 
         if self.ready is True:
+            urgap.config.update(self.config)
+            urgap.instances.ucredential_manager.add_credentials(self.ucredentials)
+            ufile_list = urgap.UFileList.from_uri_list(list(_unpack_list(elements)))
 
             output_ufiles = self.unode.run(
                 ufiles=ufile_list,
@@ -222,6 +248,7 @@ def generate_pyvis_network(pipeline: beam) -> Network:
 
 
 class Concat(beam.DoFn):
+    """Concat PColl to another PColl, Urgap style."""
 
     def process(
         self,
@@ -268,6 +295,7 @@ class FilterByUftype(beam.DoFn):
             Tuple of (element_key, filtered list).
         """
         element_key, element_list = element
+        uflist = urgap.UFileList.from_uri_list(element_list)
         if uftypes is not None:
             if mode == "remove":
                 uflist = uflist.remove_uftypes(uftypes)
@@ -306,6 +334,7 @@ class OutputRenamer(beam.DoFn):
         for _, source_files in source_pcol:
             for source_file in source_files:
                 source_object_names.add(source_file.split("#")[-1])
+        uf_list = urgap.UFileList.from_uri_list(element_list)
         renamed_uf_list = uf_list.simplify_names(
             source_object_names=source_object_names,
             prefix=prefix,

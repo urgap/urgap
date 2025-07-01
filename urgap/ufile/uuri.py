@@ -1,3 +1,4 @@
+"""Urgap uri dict class."""
 
 import ast
 import getpass
@@ -6,9 +7,11 @@ import re
 
 from pathlib import Path
 
+import urgap
 
 
 class UUri:
+    """A normalized UUri parser and container for Urgap.
 
     This class encapsulates the components of a UUri or UCFS string as attributes,
     parses them, and provides helpers to access the elements as a dict.
@@ -43,6 +46,7 @@ class UUri:
     def _get_credentials(self) -> None:
         """Attempt to load credentials for this UUri's scheme and netloc, unless it's a local or https UUri.
 
+        If found, sets _user and _password attributes using Urgap's credential manager.
         """
         if self.scheme == "github":
             cred_key = (
@@ -53,10 +57,12 @@ class UUri:
             cred_key = f"{self.scheme}://{self.netloc}"
         if self.scheme not in ("file", "https"):
             try:
+                credentials = urgap.instances.ucredential_manager.extract_credentials(
                     cred_key,
                 )
                 msg = f"Set credentials for {credentials['user']}"
             except KeyError:
+                msg = f"No credentials entry found in .urgap/credentials_lookup.json for {cred_key}"
                 credentials = {"user": getpass.getuser(), "password": None}
             self._user = credentials["user"]
             self._password = credentials["password"]

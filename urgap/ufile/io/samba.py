@@ -1,3 +1,4 @@
+"""FTP scheme subclass of urgap2's UIO submodule."""
 
 import json
 import logging
@@ -11,6 +12,7 @@ from smb.base import NotConnectedError, SMBTimeout
 from smb.smb_structs import OperationFailure
 from smb.SMBConnection import SMBConnection
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 
@@ -32,6 +34,7 @@ class IOSMB(UIOBase):
         self.conn_object = SMBConnection(
             self.uuri.query,
             self.uuri.password,
+            "Urgap-UFile-SMB-IO",
             "Target",
             use_ntlm_v2=True,
             is_direct_tcp=True,

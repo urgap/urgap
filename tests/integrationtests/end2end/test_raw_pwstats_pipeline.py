@@ -2,13 +2,26 @@
 
 import pytest
 
+import urgap
 
 
 @pytest.mark.slow
 @pytest.mark.skip(reason="Takes too long!")
 @pytest.mark.xfail(strict=False)
 def test_raw_to_pwstats_pipeline():
+    raw_to_mzml = urgap.init_node("thermo_raw_file_parser_1_1_11")
+    mzml_to_mgf = urgap.init_node("pymzml2mgf_2_5")
+    spectrum_meta_data = urgap.init_node("spectrum_meta_data_0_0_1")
+    target_decoy = urgap.init_node("generate_target_decoy_fasta_2_0_0")
+    msfragger = urgap.init_node("msfragger_3")
+    msgfplus = urgap.init_node("msgfplus_2021_03_22")
+    pyiohat_csv = urgap.init_node("pyiohat_1_7_1")
+    peptide_forest = urgap.init_node("peptide_forest_3")
+    filter_node = urgap.init_node("filter_csv_1_0_0")
+    urgap.init_node("flash_lfq_1_2_0")
+    urgap.init_node("pw_stats_1_0_0")
 
+    urun_dict = urgap.urun_dict.URunDict(
         {
             "parameters": {
                 "pandas_query_string": "`q-value_peptide_forest` < 0.01 and `is_decoy` == False",
@@ -51,24 +64,32 @@ def test_raw_to_pwstats_pipeline():
                 ],
             },
             "unode_parameters": {
+                "storage_base_uri": f"file://{urgap._test_folder}/data/end2end",
             },
         },
     )
 
+    raw_uftype = urgap.uftypes.proteomics.THERMO_RAW
+    fasta_uftype = urgap.uftypes.proteomics.FASTA
 
     # curdir = Path(__file__).resolve()
+    raw = urgap.UFile(
         uri=f"file:///Users/av568207/data/PXD005590/B?uftype={raw_uftype}#B02_08_161103_B2_HCD_OT_4ul.raw",
     )
     assert raw.path.exists()
+    fasta = urgap.UFile(
         "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/Eukaryota#UP000005640/UP000005640_9606.fasta.gz",
     )
     fasta = fasta.uncompress()
+    fasta.rebase(f"file://{urgap._test_folder}/data")
     fasta.upload()
     fasta.tags.update({"uftype": fasta_uftype})
     assert fasta.path.exists()
     td_fasta = target_decoy.run([fasta], urun_dict)
     assert td_fasta[0].path.exists()
+    # mzml = urgap.UFile(
     #     f"https://ftp.ebi.ac.uk/pride-archive/2017/04#PXD005590/B02_08_161103_B2_HCD_OT_4ul.raw",
+    #     query=f"uftype={urgap.uftypes.ms.converter.mzml.THERMORAWPARSER_MZML}",
     # )
     # assert mzml.path.exists()
     mzml = raw_to_mzml.run([raw], urun_dict)

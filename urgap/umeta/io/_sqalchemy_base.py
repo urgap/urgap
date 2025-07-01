@@ -33,6 +33,7 @@ from sqlalchemy.orm import (
 from ._base import UMetaIOBase
 
 if TYPE_CHECKING:
+    import urgap
 
 
 class Base(DeclarativeBase):
@@ -334,6 +335,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 ).scalar(),
             }
 
+    def save(self, utrace: urgap.UTrace) -> None:
         """Save UTrace information to the database.
 
         Args:
@@ -367,6 +369,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
     def _save_input_and_output_files(
         self,
         session: Session,
+        utrace: urgap.UTrace,
     ) -> tuple[list, list]:
         """Save input and output files to database and return lists of objects.
 
@@ -395,6 +398,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             output_objs.append(obj)
         return input_objs, output_objs
 
+    def save_rebased_file_to_ucfs_storage_location(self, ufile: urgap.UFile) -> None:
         """Save file information to UMeta.
 
         Args:
@@ -412,6 +416,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             except IntegrityError:
                 session.rollback()
 
+    def umeta_exists(self, utrace: urgap.UTrace) -> bool:
         """Check if UMeta (Unode execution details) exist for a given UTrace.
 
         Args:

@@ -1,11 +1,15 @@
+"""Urgap CompressToTar wrapper."""
 
 import json
 import shutil
 
 from pathlib import Path
 
+import urgap
 
 
+class CompressToTar(urgap.unode.UNodeBase):
+    """Urgap wrapper for the CompressToTar resource.
 
     This class allows to tar compress a UFileList of UFiles and Tags.
     """
@@ -17,8 +21,11 @@ from pathlib import Path
             {"version": "1.0.0", "exe_path": "Compressor/1_0_0/compressor.py"},
         ],
         "parameters_not_triggering_rerun": [],
+        "input_uftypes": {urgap.uftypes.any.ANY: {"min": 1, "max": -1}},
+        "output_uftypes": {urgap.uftypes.compression.TAR: {"min": 1, "max": -1}},
         "engine": None,
         "engine_type": ("io",),
+        "citation": "Urgap team (2022)",
     }
 
     def __init__(self) -> None:
@@ -27,6 +34,8 @@ from pathlib import Path
 
     def preflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Preflight routine for CompressToTar wrapper.
 
         Maximum output tar file size can be defined using -s in parameters.
@@ -45,6 +54,7 @@ from pathlib import Path
                 json.dump(file.tags, tag_file)
             input_files.append((str(file_path), str(tmp_tag_path)))
         output_file = utrace.output_files.get_path_objects_by_uftype(
+            urgap.uftypes.compression.TAR,
         )[0]
 
         utrace.urun_dict.command_list = ["python", str(self.exe_path)]
@@ -67,6 +77,8 @@ from pathlib import Path
 
     def postflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Postflight routine for CompressToTar wrapper.
 
         Args:
@@ -83,6 +95,7 @@ from pathlib import Path
             is not None
         ):
             output_file = utrace.output_files.get_path_objects_by_uftype(
+                urgap.uftypes.compression.TAR,
             )[0]
             split_tars = [
                 file
@@ -92,18 +105,22 @@ from pathlib import Path
             self._rename_and_extend_safely(
                 utrace,
                 sorted(split_tars),
+                urgap.uftypes.compression.TAR,
             )
         return utrace
 
     def _rename_and_extend_safely(
         self,
+        utrace: urgap.UTrace,
         split_tars: list,
         uftype: str,
+    ) -> urgap.UTrace:
         """Extend output file list if any file exists and rename it appropriately.
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.
             split_tars: List of paths to split tars.
+            uftype: Urgap uftype.
         """
         dst = utrace.output_files.get_path_objects_by_uftype(uftype)[0]
         shutil.move(src=split_tars[0], dst=dst)

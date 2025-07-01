@@ -2,13 +2,16 @@ import pprint
 
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "provide_clean_test_node_dirs",
     [
         (
+            urgap.UFile(
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "TestNode1:1.0.0": {
@@ -51,8 +54,12 @@ def test_node_workflow_rerun_is_skipped_if_parameter_of_other_node_change(
     print("Output node3 - first run:")
     pprint.pprint(return_file_node3_first_run)
 
+    report = urgap.UReport(wid=wid)
+    report = urgap.UReport(wid=wid)
 
     urun_dict["parameters"]["triggers_nuttin"] = 200
     urun_dict.assign_wid()
 
     pprint.pprint(return_file_node3_second_run)
+
+    report = urgap.UReport(wid=wid)

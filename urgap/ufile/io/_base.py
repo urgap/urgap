@@ -1,13 +1,17 @@
+"""UIO submodule of urgap2."""
 
 from pathlib import Path
 from typing import ParamSpec
 
+import urgap
 
 P = ParamSpec("P")
 
 
 class UIOBase:
+    """Base class for local file IO implementations in Urgap.
 
+    All UIO (Urgap Input/Output) classes should inherit from this to
     provide a consistent interface for working with local copies of files.
     """
 
@@ -31,6 +35,7 @@ class UIOBase:
             The Path object pointing to the file on the local scratch disk.
         """
         _scratch_path = (
+            urgap.scratch_disk
             / self.uuri.get_container_name()
             / self.uuri.get_object_name()
         ).resolve()

@@ -1,3 +1,4 @@
+"""HTTPS scheme subclass of urgap2's UIO submodule."""
 
 import json
 import logging
@@ -7,7 +8,9 @@ from typing import ParamSpec
 
 import requests
 
+import urgap
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 
@@ -36,6 +39,8 @@ class IOHTTPS(UIOBase):
         response = requests.get(
             self.uuri.get_https_remote_tag_path(),
             timeout=(
+                urgap.config.get("requests_timeout_connect", None),
+                urgap.config.get("requests_timeout_read", None),
             ),
         )
         if response.status_code == 200:

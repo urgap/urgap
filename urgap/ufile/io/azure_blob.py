@@ -1,3 +1,4 @@
+"""Azure Blob scheme subclass of urgap2's UIO submodule."""
 
 import json
 import logging
@@ -8,7 +9,9 @@ from typing import ParamSpec
 
 from azure.storage.blob import BlobServiceClient
 
+import urgap
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 
@@ -81,11 +84,14 @@ class IOAzureBlobStorage(UIOBase):
         """
         download_object = False
         if self.scratch_path.exists():
+            local_hash = urgap.ucore.calculate_file_hash(
                 input_file=self.scratch_path,
+                hash_algorithm=urgap.config["hash_algorithm"],
             )
             remote_tags = self.get_remote_tags()
             if remote_tags is not None:
                 remote_hash = remote_tags.get(
+                    urgap.config["hash_algorithm"],
                     "Have you ever questioned the nature of your reality?",
                 )
                 if local_hash != remote_hash:

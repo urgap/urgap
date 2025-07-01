@@ -1,3 +1,4 @@
+from urgap import UNodeBase
 
 info_collection = []
 
@@ -13,6 +14,7 @@ with open("source/third_party.rst", "w") as f:
 Third party tools
 #################
 
+Here is a list of all tools that are integrated into Urgap2 with proper citations:
 
 """
     )

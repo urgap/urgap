@@ -6,8 +6,10 @@ requires = ["hatchling", "versioningit"]
 build-backend = "hatchling.build"
 
 [project]
+name = "urgap"
 readme = "README.rst"
 dynamic = ["version"]
+urls = { Source = "https://mygithub.gsk.com/gsk-tech/urgap" }
 classifiers = [
     'Development Status :: 4 - Beta',
     'Environment :: Console',
@@ -38,6 +40,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# E.g. pip install "urgap[cloud]"
 cloud = [
     'azure-keyvault-secrets==4.10.0',
     'cloud-sql-python-connector~=1.0',
@@ -67,6 +70,7 @@ all = [
 ]
 
 [project.scripts]
+uctl = "urgap.uctl.uctl:cli"
 
 [tool.setuptools.packages.find]
 
@@ -75,6 +79,11 @@ include-package-data = false
 
 [tool.setuptools.package-data]
 "*" = ["*.txt"]
+"urgap.config_defaults" = ["*.json"]
+'urgap.uctl.server.static.css' = ["*.css"]
+"urgap.uctl.server.static.js" = ["*.js"]
+"urgap.uctl.server.templates" = ["*.html"]
+"urgap.ureport.templates" = ["*.html"]
 
 [tool.hatch.version]
 source = "versioningit"
@@ -130,5 +139,6 @@ line-ending = "auto"
 
 [tool.ruff.lint.isort]
 force-single-line = false
+known-first-party = ["urgap"]
 combine-as-imports = true
 lines-between-types = 1

@@ -1,3 +1,4 @@
+"""URunDict module of urgap2."""
 
 from __future__ import annotations
 
@@ -8,11 +9,13 @@ import logging
 from collections import UserDict
 from typing import ParamSpec
 
+import urgap
 
 P = ParamSpec("P")
 
 
 class URunDict(UserDict):
+    """Bag of configuration and runtime information for Urgap pipeline nodes.
 
     This object is initialized by the user prior to pipeline execution.
     During node execution (`node.run()`), this object (or a copy) is used to
@@ -96,6 +99,7 @@ class URunDict(UserDict):
 
         if "wid" not in kwargs:
             self.assign_wid()
+        self["version"] = urgap.__version__
 
     def _update_default_storage(self, storage_key: str, user_dict: dict) -> str:
         """Update internal storage defaults with user dictionary.
@@ -136,6 +140,7 @@ class URunDict(UserDict):
 
     def assign_wid(self) -> None:
         """Assign a new workflow ID (wid) to the run dict."""
+        self["wid"] = urgap.uwid_obj.generate_wid()
 
     def reassign_wid(self) -> None:
         """Assign a new workflow ID (wid) to the run dict (alias for assign_wid)."""
@@ -248,6 +253,7 @@ class URunDict(UserDict):
         self.unode_rinfo["meta_info"] = meta_info
 
     @property
+    def input_files(self) -> urgap.UFileList:
         """Get input UFileList.
 
         Returns:
@@ -256,6 +262,7 @@ class URunDict(UserDict):
         return self.data["input_files"]
 
     @input_files.setter
+    def input_files(self, input_files: urgap.UFileList) -> None:
         """Set input UFileList.
 
         Args:
@@ -264,11 +271,13 @@ class URunDict(UserDict):
         Raises:
             TypeError: If input_files is not a UFileList.
         """
+        if isinstance(input_files, urgap.UFileList) is False:
             msg = "Input files must be instance of UFileList"
             raise TypeError(msg)
         self.data["input_files"] = input_files
 
     @property
+    def output_files(self) -> urgap.UFileList:
         """Get output UFileList.
 
         Returns:
@@ -277,6 +286,7 @@ class URunDict(UserDict):
         return self.data["output_files"]
 
     @output_files.setter
+    def output_files(self, output_files: urgap.UFileList) -> None:
         """Set output UFileList.
 
         Args:
@@ -285,6 +295,7 @@ class URunDict(UserDict):
         Raises:
             TypeError: If output_files is not a UFileList.
         """
+        if isinstance(output_files, urgap.UFileList) is False:
             msg = "Output files must be instance of UFileList"
             raise TypeError(msg)
         self.data["output_files"] = output_files
@@ -356,12 +367,17 @@ class URunDict(UserDict):
         )
         tmp_json = json.dumps(
             param_set,
+            cls=urgap.uconvert.JSONEncoder,
         )
+        tmp_json = json.loads(tmp_json, cls=urgap.uconvert.JSONDecoder)
         sorted_json = json.dumps(
             tmp_json,
             sort_keys=True,
+            cls=urgap.uconvert.JSONEncoder,
         )
+        return urgap.ucore.calculate_string_hash(
             hashable_iterable=[sorted_json.encode("UTF-8")],
+            hash_algorithm=urgap.config["hash_algorithm"],
         )
 
     def _generate_container_folder_name(
@@ -390,6 +406,7 @@ class URunDict(UserDict):
             container_folder_name += "_" + self.rerun_params_hash
         return container_folder_name
 
+    def determine_output_files_stem(self, ufiles: urgap.UFileList = None) -> str:
         """Determine the root folder for output files.
 
         The output file stem is composed as: <object_folder>/<prefix><input_sequence_hash>.

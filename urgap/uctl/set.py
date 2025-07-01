@@ -18,6 +18,7 @@ def _check_if_config_key_value_is_valid(
     if verbose is True:
     is_valid = True
     if config_key not in config:
+        msg = f"{config_key} is not in urgap.json, thus cannot be set ..."
         is_valid = False
     else:
         options = config[config_key].get("options", None)
@@ -33,8 +34,10 @@ def set_config(
     verbose: bool = False,
     **kwargs: P.kwargs,
 ) -> None:
+    """Set urgap config key/value pairs in $URGAP_HOME/urgap.json."""
     if config_value in ("true", "false", "null"):
         config_value = json.loads(config_value)
+    with URGAP_HOME_JSON.open() as config_json:
         config = json.load(config_json)
     kv_is_valid = _check_if_config_key_value_is_valid(
         config,
@@ -49,7 +52,10 @@ def set_config(
 
         if kwargs.get("dry", False) is True and verbose is True:
             msg = (
+                f"Dry-run. Modified urgap.json entry for {config_key} would look like:"
             )
         else:
+            with URGAP_HOME_JSON.open("w") as config_json:
                 json.dump(config, config_json, indent=4, sort_keys=True)
             if verbose is True:
+                msg = f"Modifying urgap.json entry for {config_key} to:"

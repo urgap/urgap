@@ -1,6 +1,10 @@
+"""Urgap TestNode3 wrapper."""
+
+import urgap
 
 
-
+class TestNode3(urgap.unode.UNodeBase):
+    """Urgap wrapper for TestNode3 resource."""
 
     META_INFO = {
         "name": "TestNode3",
@@ -15,9 +19,12 @@
         "engine": None,
         "engine_type": ("test_engine",),
         "input_uftypes": {
+            urgap.uftypes.test.TEST_FILE1: {"min": 1, "max": -1},
         },
         "output_uftypes": {
+            urgap.uftypes.test.TEST_FILE2: {"min": 1, "max": -1},
         },
+        "citation": "Urgap team (2021)",
     }
 
     def __init__(self) -> None:
@@ -26,6 +33,8 @@
 
     def execute(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Execute routine for TestNode3 wrapper.
 
         Args:

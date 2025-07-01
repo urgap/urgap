@@ -6,6 +6,7 @@ from copy import deepcopy
 class UMetaIOBase:
     """UMetaIO Base Class.
 
+    Base class for UMeta IO interfaces in urgap, which handle runtime metadata and history.
 
     Prior to the introduction of UMeta, .ujson files were created. With UMeta,
     any backend (such as MongoDB, PostgreSQL, etc.) can be used to persist this information.

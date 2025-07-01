@@ -3,6 +3,7 @@ text {
     font-size: 10px;
 }
 
+div.tooltip-urgap-node {
     position: absolute;
     text-align: center;
     padding: .5rem;

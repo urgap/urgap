@@ -1,3 +1,4 @@
+"""UTrace module of Urgap."""
 
 from __future__ import annotations
 
@@ -11,12 +12,14 @@ from base64 import b64encode
 from collections import defaultdict as ddict
 from pathlib import Path
 
+import urgap
 
 if TYPE_CHECKING:
     import os
 
 
 class UTrace:
+    """Urgap UTrace class.
 
     Each unode.run creates a UTrace, which combines URun_dict, ufile_list, and unode.meta information.
 
@@ -25,14 +28,18 @@ class UTrace:
 
     def __init__(
         self,
+        urun_dict: urgap.URunDict | None = None,
+        input_files: urgap.UFileList | list | None = None,
         unode_meta: dict | None = None,
         unode_version: str | None = None,
         umeta_io: str | None = None,
+        output_files: urgap.UFileList | list | None = None,
         history: dict | None = None,
     ) -> None:
         """Construct a new UTrace instance.
 
         Args:
+            urun_dict: Urgap run dict holding all relevant parameters.
             input_files: UFileList of (unfiltered) UFiles.
             unode_meta: UNode meta information dictionary.
             unode_version: UNode tag / version, introduced in u3.
@@ -55,20 +62,25 @@ class UTrace:
 
         self.urun_dict = self._init_urun_dict(urun_dict)
         if input_files is None:
+            input_files = urgap.UFileList()
         self.input_files = input_files
 
         if output_files is None:
+            self.output_files = urgap.ufile_list.UFileList()
             self.populate_minimal_output_file_list()
             self.evaluate_retain_uftype()
         else:
             self.output_files = output_files
 
     @property
+    def umeta(self) -> urgap.UMeta:
         """Get umeta IO object.
 
         Returns:
+            Urgap umeta object.
         """
         if self._umeta is None:
+            self._umeta = urgap.UMeta(io=self.umeta_io)
         return self._umeta
 
     @property
@@ -82,19 +94,24 @@ class UTrace:
             self._remote_output_files = self._query_remote_by_uftype()
         return self._remote_output_files
 
+    def _init_urun_dict(self, urun_dict: urgap.URunDict) -> urgap.URunDict:
         if self.unode_meta.get("unode_version", None) is None:
             if urun_dict is None:
+                urun_dict = urgap.URunDict()
             else:
                 urun_dict = copy.deepcopy(urun_dict)
             urun_dict.register_unode_meta_info(self.unode_meta)
         else:
             if urun_dict is None:
+                urun_dict = urgap.URunDict()
             else:
                 wid = urun_dict.wid
+                urun_dict = urgap.URunDict(copy.deepcopy(urun_dict))
                 urun_dict["wid"] = wid
             urun_dict.register_unode_meta_info(self.unode_meta)
         return urun_dict
 
+    def filter_input_files(self, input_files: urgap.UFileList) -> urgap.UFileList:
         """Filter a UFileList by required input uftypes.
 
         Args:
@@ -119,7 +136,9 @@ class UTrace:
             raise OSError(msg)
         return input_files
 
+    def _init_unode_meta(self, unode_meta: urgap.UMeta) -> dict:
         if unode_meta is None:
+            unode_meta = urgap.UNodeBase.META_INFO
         return copy.deepcopy(unode_meta)
 
     def _init_umeta(self) -> None:
@@ -173,6 +192,7 @@ class UTrace:
 
     @property
     def wid(self) -> str:
+        """Get the Urgap workflow ID.
 
         Returns:
             Workflow ID as a string.
@@ -313,6 +333,7 @@ class UTrace:
                 ].pop(o_uftype)
                 new_output_file_list = []
                 for ofile in self.output_files:
+                    uf = urgap.UFile(
                         uri=ofile.as_uri(
                             fragment=ofile.object_name.replace(o_uftype, i_uftype),
                         ),
@@ -320,6 +341,7 @@ class UTrace:
                     uf.tags.update({"uftype": i_uftype})
                     new_output_file_list.append(uf)
                 msg = f"Changed output uftypes to {i_uftype}."
+                self.output_files = urgap.UFileList(new_output_file_list)
 
     def populate_minimal_output_file_list(self) -> None:
         """Initialize the minimum number of UFiles for each uftype based on UNode meta info."""
@@ -356,6 +378,7 @@ class UTrace:
             else:
                 msg = f"{ouftype} - don't know what to do with {mdict}."
         uris = [uri for uri in uris if uri is not None]
+        self.output_files = urgap.UFileList.from_uri_list(uris)
 
     def get_output_file_uri(
         self,
@@ -366,6 +389,7 @@ class UTrace:
         """Compute the UUri for a new extended UFile in output UFiles.
 
         Args:
+            uftype: Urgap uftype to extend output files by.
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
 
@@ -399,6 +423,7 @@ class UTrace:
         """Extend the output UFileList with a new UFile for the specified uftype.
 
         Args:
+            uftype: Urgap uftype to extend output files by.
             n: Current number of files matching uftype.
             max_n: Max number of files matching uftype or "N" for an unspecified number.
             exact_n_to_extend_by: Exact number of files matching uftype.
@@ -439,8 +464,11 @@ class UTrace:
                 strict=True,
             )
         ]
+        if urgap.config.get("max_parallel_cores", None) is not None:
+            number_of_threads = urgap.config.get("max_parallel_cores")
         else:
             number_of_threads = 8
+        urgap.util.execute_threaded_function(
             func=self._move_output_file,
             args_list=args_list,
             number_of_threads=number_of_threads,
@@ -478,6 +506,7 @@ class UTrace:
                 ):
                     if remote_file.endswith(".tag"):
                         continue
+                    ufile = urgap.UFile(
                     )
                     remote_ofiles[uftype].append(ufile)
         return remote_ofiles
@@ -566,6 +595,7 @@ class UTrace:
         Operation is performed inplace.
         """
         if len(self.rerun_reasons) == 0:
+            self.output_files = urgap.UFileList(self.remote_output_files.values())
         else:
             self.output_files.complete_file_counts()
         self.output_files = self.output_files.create_flat_and_non_redundant_list()
@@ -577,6 +607,7 @@ class UTrace:
             unique_parents.update(ifile.parents)
             unique_parents.add(ifile.object_name)
         parents_str = ",".join(sorted(unique_parents))
+        files_to_upload = urgap.UFileList()
         for ofile in self.output_files:
             if ofile is None:
                 continue
@@ -598,15 +629,18 @@ class UTrace:
         wid: str,
         storage_base_uri: str,
         umeta_io: str | None = None,
+    ) -> urgap.UTrace:
         """Retrieve a UTrace from any given node and WID using the specified UMeta interface.
 
         Args:
+            wid: Urgap WID to retrieve associated UTrace.
             storage_base_uri: Storage_base_uri to retrieve associated UTrace.
             umeta_io: UMeta interface to be used.
 
         Returns:
             UTrace object for the requested run.
         """
+        umeta = urgap.UMeta(io=umeta_io)
         return umeta.load_utrace(
             wid=wid,
             storage_base_uri=storage_base_uri,

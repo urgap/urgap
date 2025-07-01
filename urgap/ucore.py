@@ -1,3 +1,4 @@
+"""Core utility functions for the urgap2 package."""
 
 import contextlib
 import hashlib
@@ -12,11 +13,13 @@ from pathlib import Path
 
 import requests
 
+import urgap
 
 
 def folder_has_uparam_signature(folder: Path) -> bool:
     """Check if a folder has the uparam-generated signature.
 
+    urgap nodes create directories following the pattern:
         `<node_name>_<hash_of_parameters_triggering_rerun>`
 
     Args:
@@ -28,6 +31,7 @@ def folder_has_uparam_signature(folder: Path) -> bool:
     Raises:
         NotImplementedError: If the configured hash algorithm is unsupported.
     """
+    hash_algorithm = urgap.config.get("hash_algorithm", "md5")
     if hash_algorithm == "md5":
         signature = re.search(r"_[0-9a-z]{32}$", folder.name)
     else:
@@ -80,10 +84,13 @@ def calculate_string_hash(hashable_iterable: Iterable, hash_algorithm: str) -> s
 def clean_up_scratch_space() -> None:
     """Delete all temporary scratch folders created during the current session.
 
+    Iterates through all WIDs issued by urgap and removes their scratch directories.
 
     Raises:
         OSError: Logs a warning if a scratch directory cannot be deleted.
     """
+    for wid in urgap.uwid_obj.issued_wids:
+        wid_folder = urgap.scratch_disk_base
         if wid_folder.name != wid:
             wid_folder /= wid
         if wid_folder.exists():
@@ -100,6 +107,8 @@ def shutdown_local_upi_servers(force: bool = False) -> None:
     Args:
         force: If True, forces the shutdown of servers regardless of configuration.
     """
+    if urgap.config.get("terminate_remote_servers_on_exit") is True or force:
+        for port in urgap.instances.unode_manager.unode_port_mapping.values():
             run_payload = {"be humble": "sit down"}
             run_url = f"http://127.0.0.1:{port}/v1/terminate"
             with contextlib.suppress(requests.exceptions.RequestException):
@@ -107,12 +116,16 @@ def shutdown_local_upi_servers(force: bool = False) -> None:
                     run_url,
                     json=run_payload,
                     timeout=(
+                        urgap.config.get("requests_timeout_connect", None),
+                        urgap.config.get("requests_timeout_read", None),
                     ),
                 )
 
 
 def shutdown_telemetry() -> None:
     """Shut down Utelemetry servers."""
+    if urgap.utl.tracing_enabled is True:
+        urgap.utl.shutdown()
 
 
 def append_query_to_uri(uri: str, query: str) -> str:

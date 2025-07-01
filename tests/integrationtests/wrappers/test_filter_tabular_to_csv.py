@@ -1,7 +1,10 @@
 import pandas as pd
 
+import urgap
 
 
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.validator.PEPTIDEFOREST_CSV}"
                 f"#unified_csvs/demo.csv",
             ),
                 },
@@ -10,11 +13,15 @@ import pandas as pd
     df = pd.read_csv(filtered_csv[0].path)
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.PARQUET}"
                 f"#parquets/demo.parquet",
             ),
         ],
     )
+    urun_dict = urgap.URunDict(
         {
             "parameters": {
                 },
@@ -30,11 +37,15 @@ import pandas as pd
     assert df.shape[0] == 2
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.PARQUET}"
                 f"#parquets/demo.parquet",
             ),
         ],
     )
+    urun_dict = urgap.URunDict(
         {
             "parameters": {
                     "-q": None,
@@ -51,13 +62,19 @@ import pandas as pd
     assert df.shape[0] == 3
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.TABULAR}"
                 f"#unified_csvs/demo.csv",
             ),
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.XLSX}"
                 f"#xlsx/demo.xlsx",
             ),
         ],
     )
+    urun_dict = urgap.URunDict(
         {
             "parameters": {
                 },

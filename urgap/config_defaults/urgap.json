@@ -1,4 +1,6 @@
 {
+    "info": "Urgap will internally reformat this config into a simple dictionary (k, v[v'value']) available under urgap.config",
+    "description": "urgap default config",
     "umeta": {
         "value": "sqlite3",
         "description": "Storage interface for meta data. Might require 3rd party installations",
@@ -6,9 +8,11 @@
     },
     "logging_level": {
         "value": "DEBUG",
+        "description": "Verbosity of urgap, can be set to any python logger level"
     },
     "update_resources": {
         "value": false,
+        "description": "Define whether resources from the repo will be force copied into $URGAP_HOME on startup. This is useful if resources are developed in the urgap repo, yet code execution will use $URGAP_HOME/resource code."
     },
     "update_uparma": {
         "value": false,
@@ -16,6 +20,7 @@
     },
     "hash_algorithm": {
         "value": "md5",
+        "description": "Hash algorithm used in Urgap in order to create unique identifiers"
     },
     "max_parallel_cores": {
         "value": null,
@@ -37,16 +42,22 @@
         "value": "postgresql+pg8000://10.138.0.5:5432"
     },
     "scratch_disk": {
+        "description": "Temporary urgap processing disk"
     },
     "resource_urls": {
         "value": [
+            "file:///Users/Shared/urgap_resources",
+            "file:///fs/shared/software/urgap_resources/",
+            "https://raw.githubusercontent.com/computational-ms/demo_files/main/urgap_resources"
     },
     "mode": {
         "value": "dev",
+        "description": "Mode in which urgap is running. Can be set to prod for stricter rules.",
         "options": ["dev", "prod"]
     },
     "clean_scratch_at_exit": {
         "value": true,
+        "description": "Urgap uses scratch <scratch_disk>/<wid> as temporary spaces. This flag will ensure that temporary directories (<wid>s) will be deleted when interpreter exits."
     },
     "requests_timeout_connect": {
         "value": null,
@@ -58,6 +69,7 @@
     },
     "terminate_remote_servers_on_exit": {
         "value": false,
+        "description": "Send a termination signal to all ports on localhost during urgap exit"
     },
     "opentelemetry_collector_url": {
         "value": null,

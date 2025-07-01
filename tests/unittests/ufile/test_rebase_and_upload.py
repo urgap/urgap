@@ -3,9 +3,13 @@ import tempfile
 
 from pathlib import Path
 
+import urgap
 
 
 def test_rebase_and_upload(tmpdir):
+    file = urgap.UFile.from_path_object(
+        path_object=Path(f"{urgap._test_folder}/data/usermods/usermods.xml"),
+        query=f"uftype={urgap.uftypes.proteomics.MODS_XML}",
     )
     file.rebase(f"file://{tmpdir}/data/test_node_data")
     file.upload()
@@ -23,6 +27,7 @@ def test_rename_object_name():
         with open(source_object, "w") as oo:
             print("___--->>>", file=oo)
 
+        source_ufile = urgap.UFile(
             uri=f"file://{_temp_directory}#{source_subfolder_structure}/{source_object_name}",
         )
         new_subfolder_structure = "level_3"

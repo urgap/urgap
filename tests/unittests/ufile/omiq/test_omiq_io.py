@@ -5,11 +5,14 @@ from unittest.mock import ANY, MagicMock, patch
 
 import pytest
 
+import urgap
 
+from urgap.ufile.io.omiq import IOOmiq
 
 
 @pytest.fixture
 def mock_omiq_api():
+    with patch("urgap.ext.omiq_api.API") as mock:
         mock.return_value.get_user.return_value = {
             "name": "Test User",
             "lastLoginTime": "2023-01-01",
@@ -25,6 +28,8 @@ def mock_omiq_api():
 
 
 @pytest.fixture
+def mock_urgap_credential_manager():
+    with patch("urgap.instances.ucredential_manager") as mock:
         mock.get_password.return_value = "test_password"
         mock.get_user.return_value = "test_user@example.com"
         yield mock
@@ -32,33 +37,45 @@ def mock_omiq_api():
 
 @pytest.fixture
 def uuri():
+    return urgap.UUri(uri="omiq://example.com/123456789#file.txt")
 
 
 @pytest.fixture
 def uuri2():
+    return urgap.UUri(uri="omiq://example.com/123456789#file.csv")
 
 
 @pytest.fixture
 def uuri3():
+    return urgap.UUri(
         uri="omiq://example.com/123456789?filter_usage_mode=BOOLCOLS&reverse_scaling=True&derived_from_fcs=True&from_task_id=123&filter_ids=['filter1','filter3']#file.csv",
     )
 
 
 @pytest.fixture
+def io_omiq_instance(mock_omiq_api, mock_urgap_credential_manager, uuri):
+    with patch("urgap.ufile.io.omiq.omiq_api_available", True):
         return IOOmiq(uuri=uuri, scratch_path=Path(tempfile.gettempdir()))
 
 
 @pytest.fixture
+def io_omiq_instance2(mock_omiq_api, mock_urgap_credential_manager, uuri2):
+    with patch("urgap.ufile.io.omiq.omiq_api_available", True):
         return IOOmiq(uuri=uuri2, scratch_path=Path(tempfile.gettempdir()))
 
 
 @pytest.fixture
+def io_omiq_instance3(mock_omiq_api, mock_urgap_credential_manager, uuri3):
+    with patch("urgap.ufile.io.omiq.omiq_api_available", True):
         return IOOmiq(uuri=uuri3, scratch_path=Path(tempfile.gettempdir()))
 
 
 @pytest.fixture
+def io_omiq_instance_with_fcs(mock_omiq_api, mock_urgap_credential_manager):
+    uuri = urgap.UUri(
         uri="omiq://example.com/123456789?derived_from_fcs=True#file.txt",
     )
+    with patch("urgap.ufile.io.omiq.omiq_api_available", True):
         return IOOmiq(uuri=uuri, scratch_path=Path(tempfile.gettempdir()))
 
 

@@ -1,10 +1,13 @@
 import json
 
+import urgap
 
+from urgap.uhelpers.prefect import (
     filter_by_uftype,
     parse_inputs,
     retrieve_processed_uris,
     run_unode,
+    setup_urgap,
     simplify_output_names,
 )
 
@@ -29,11 +32,16 @@ def test_parse_inputs(tmp_dir):
     input_json = {"default_pipeline_config_json": p}
     urd, input_json = parse_inputs(input_json)
     assert "credentials_lookup" in input_json
+    assert isinstance(urd, urgap.URunDict)
 
 
+def test_setup_urgap():
+    setup_urgap(ucredentials=CREDS, config=CONFIG)
     assert (
         "a_scheme://thats_a_host"
+        in urgap.instances.ucredential_manager.ingested_credentials
     )
+    assert "i_hope" in urgap.config
 
 
 def test_retrieve_processed_uris():
@@ -50,6 +58,8 @@ def test_retrieve_processed_uris():
 
 
 def test_run_unode(tmp_dir):
+    uri = f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#unified_csvs/BSA1_xtandem_alanine_unified.csv"
+    urd = urgap.URunDict(
         {
             "parameters": {"TestNode1:1.0.0": {}},
             "unode_parameters": {
@@ -73,6 +83,8 @@ def test_run_unode(tmp_dir):
 
 def test_simplify_output_names(tmp_dir):
     uris = [
+        f"file://{urgap._test_folder}/data?parent_0=eJwrzctMy0xNiU8uLivWdwp2NIyvKEnMS0nNjU/MSczLzEuNL4Wo0AOqAACQjxF9#unified_csvs/BSA1_xtandem_alanine_unified.csv",
+        f"file://{urgap._test_folder}/data?parent_0=eJwrzctMy0xNiU8uLivWT0nNzdcDsgBdDwhR#unified_csvs/demo.csv",
     ]
     simplify_output_names.fn(
         uris=[None],
@@ -105,12 +117,17 @@ def test_simplify_output_names(tmp_dir):
 
 def test_filter_by_uftype():
     uris = [
+        f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#unified_csvs/BSA1_xtandem_alanine_unified.csv",
+        f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE2}#unified_csvs/demo.csv",
     ]
+    filtered = filter_by_uftype.fn(uris=uris, uftype=[urgap.uftypes.test.TEST_FILE1])
     assert len(filtered) == 1
 
     filtered = filter_by_uftype.fn(
         uris=uris,
+        uftype=[urgap.uftypes.test.TEST_FILE1, urgap.uftypes.test.TEST_FILE2],
     )
     assert len(filtered) == 2
 
+    filtered = filter_by_uftype.fn(uris=uris, uftype=[urgap.uftypes.test.TEST_FILE3])
     assert len(filtered) == 0

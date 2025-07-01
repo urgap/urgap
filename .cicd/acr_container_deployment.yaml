@@ -6,6 +6,7 @@ resources:
       ref: main
       endpoint: DSO-R1-Github
   pipelines:
+    - pipeline: urgapMain
       trigger:
         branches:
           include:

@@ -1,3 +1,4 @@
+"""Azure DataLake subclass of urgap2's UIO submodule."""
 
 import contextlib
 import logging
@@ -16,6 +17,7 @@ from azure.core.exceptions import (
 from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 

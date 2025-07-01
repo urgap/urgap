@@ -1,13 +1,17 @@
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "provide_clean_test_node_dirs",
     [
         (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#"
                 f"unified_csvs/BSA1_xtandem_alanine_unified.csv",
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "FilterTabularToCSV:1.0.0": {
@@ -35,6 +39,7 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs, tmp
         urun_dict=urun_dict,
         retain_uftype=retain_uftype,
     )
+    report = urgap.UReport(wid=wid)
 
     urun_dict.reassign_wid()
 
@@ -44,5 +49,6 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs, tmp
         retain_uftype=retain_uftype,
     )
 
+    report = urgap.UReport(wid=wid)
 
     assert len(second_run_return_file) == len(return_file)

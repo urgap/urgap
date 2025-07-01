@@ -3,6 +3,7 @@
 UNodeManager Class
 ####################
 
+.. autoclass:: urgap.unode_manager.UNodeManager
    :members:
 
    .. automethod:: __init__

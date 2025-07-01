@@ -1,6 +1,7 @@
 steps:
   - template: misc/checkout_package.yaml@templates
     parameters:
+      package: urgap
   - template: misc/setup_python.yaml@templates
   - script: |
       pip install uv hatch versioningit
@@ -9,4 +10,6 @@ steps:
       hatch build -t wheel
       uctl info version
       uctl info unodes
+    displayName: Setup urgap
     env:
+      URGAP_HOME: $(Pipeline.Workspace)/.urgap

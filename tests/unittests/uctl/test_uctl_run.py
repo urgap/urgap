@@ -1,3 +1,4 @@
+import urgap
 
 
 
@@ -18,6 +19,7 @@ def test_get_all_relevant_nodes():
 def test_run_unode_in_loop(tmp_dir):
     ufl = run_unode_in_loop(
         {
+            "config": urgap.config,
         },
         "BasicFunctionTestNode:1.3.0",
     )

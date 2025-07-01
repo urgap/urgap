@@ -2,17 +2,24 @@ import tempfile
 
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "provide_clean_test_node_dirs",
     [
         (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE2}#"
                 f"test_node_data/test.txt",
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                            urgap.uftypes.test.TEST_FILE1: 1,
+                            urgap.uftypes.test.TEST_FILE2: 1,
+                            urgap.uftypes.test.MITSURUGI: 3,
                         },
                     },
                     "unode_parameters": {
@@ -23,11 +30,17 @@ import pytest
             ["TestNode5:1.0.0"],
         ),
         (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE2}#"
                 f"test_node_data/test.txt",
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                            urgap.uftypes.test.TEST_FILE1: 0,
+                            urgap.uftypes.test.TEST_FILE2: 9,
+                            urgap.uftypes.test.MITSURUGI: 3,
                         },
                     },
                     "unode_parameters": {
@@ -39,14 +52,22 @@ import pytest
         ),
         (
             [
+                urgap.UFile(
+                    uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE2}#"
                     f"test_node_data/test.txt",
                 ),
+                urgap.UFile(
+                    uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
                     f"test_node_data/test.txt",
                 ),
             ],
+            urgap.URunDict(
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                            urgap.uftypes.test.TEST_FILE1: 0,
+                            urgap.uftypes.test.TEST_FILE2: 1,
+                            urgap.uftypes.test.MITSURUGI: 3,
                         },
                     },
                     "unode_parameters": {
@@ -57,11 +78,17 @@ import pytest
             ["TestNode5:1.0.0"],
         ),
         (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE2}#"
                 f"test_node_data/test.txt",
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "TestNode5:1.0.0": {
+                            urgap.uftypes.test.TEST_FILE1: 0,
+                            urgap.uftypes.test.TEST_FILE2: 1,
+                            urgap.uftypes.test.MITSURUGI: 3,
                         },
                     },
                     "unode_parameters": {
@@ -85,6 +112,7 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
         for uftype, n in urun_dict.parameters["TestNode5:1.0.0"].items():
             assert n == return_file.number_of_uftypes().get(uftype, 0)
 
+        report = urgap.UReport(wid=wid)
 
         second_run_return_file = test_node9.run(
             ufiles=ufiles,
@@ -93,6 +121,7 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
         for uftype, n in urun_dict.parameters["TestNode5:1.0.0"].items():
             assert n == second_run_return_file.number_of_uftypes().get(uftype, 0)
 
+        report = urgap.UReport(wid=wid)
 
 
         for output_file in second_run_return_file:

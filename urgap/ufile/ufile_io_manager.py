@@ -1,3 +1,4 @@
+"""UFileIOManager module of urgap2."""
 
 import contextlib
 import importlib
@@ -51,5 +52,6 @@ class UFileIOManager:
         for io_module, schema in io_modules_schema_map.items():
             with contextlib.suppress(ImportError):
                 self.available_io_classes[schema] = getattr(
+                    importlib.import_module(f"urgap.ufile.io.{io_module}"),
                     class_mappings[schema],
                 )

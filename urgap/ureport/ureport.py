@@ -1,3 +1,4 @@
+"""UReport module of urgap2."""
 
 from __future__ import annotations
 
@@ -13,23 +14,28 @@ import plotly.graph_objects as go
 
 from plotly.offline import init_notebook_mode, iplot
 
+import urgap
 
 
 class UReport:
+    """Urgap pipeline report."""
 
     def __init__(
         self,
+        ufile: urgap.UFile | None = None,
         ucfs: str | None = None,
         wid: str | None = None,
         storage_base_uri: str | None = None,
         umeta_io: str | None = None,
     ) -> None:
+        """Initialize a Urgap Pipeline report and load UTraces.
 
         Args:
             ufile: UFile associated with report.
             ucfs: Object associated with report.
             wid: Workflow ID.
             storage_base_uri: Storage base UUri, where to find the referenced UFiles.
+            umeta_io: Which umeta interface to use. Default defined in urgap.json.
         """
         self._umeta = None
         self._os = []
@@ -37,6 +43,7 @@ class UReport:
         self._traces = {}
         self.storage_base_uri = storage_base_uri
         if umeta_io is None:
+            umeta_io = urgap.config.get("umeta", "sqlite3")
         self.umeta_io = umeta_io
 
         if ufile is not None:
@@ -56,17 +63,21 @@ class UReport:
             )
 
     @property
+    def umeta(self) -> urgap.UMeta:
         """Get umeta interface.
 
         Returns:
+            Urgap UMeta instance.
         """
         if self._umeta is None:
+            self._umeta = urgap.UMeta(self.umeta_io)
         return self._umeta
 
     def get_trace(
         self,
         wid: str,
         storage_base_uri: str,
+    ) -> urgap.UTrace:
         """Get UTrace object for a specific node execution and workflow.
 
         Args:
@@ -243,6 +254,7 @@ UMeta:
         """
         return self.ufile.remote_object_exists()
 
+    def meta_data_exists(self, reference_ufile: urgap.UFile) -> bool:
         """Check if meta data file object exists.
 
         Args:
@@ -260,6 +272,7 @@ UMeta:
             List of visualizations.
         """
         node_name = self.umeta.urun_dict["unode_rinfo"]["meta_info"]["name"]
+        return urgap.init_node(node_name).generate_node_vis(self.ufile)
 
     def draw_execution_dag(self) -> None:
         """Generate and display a DAG of execution described by UReport, with node aliases."""
@@ -360,6 +373,7 @@ UMeta:
 
     def _append_ufile_source(
         self,
+        ufile: urgap.UFile,
         non_root_ufiles: set,
         nodes: list,
     ) -> tuple:
@@ -381,6 +395,7 @@ UMeta:
             nodes.append(source)
         return nodes, source
 
+    def query_node_outputs_by_aliases(self, nodes: dict[int, list]) -> urgap.UFileList:
 
         Args:
             nodes: Dictionary with node alias (int) as key and list of requested output uftypes as value.
@@ -389,6 +404,7 @@ UMeta:
         Returns:
             UFileList of requested output files.
         """
+        query_results = urgap.UFileList()
         translated_aliases = {
             self.node_aliases[alias]: value for alias, value in nodes.items()
         }
@@ -467,6 +483,7 @@ UMeta:
         data = [
             {
                 "section_title": "Data lineage overview",
+                "section_text": f"Urgap high workflow ID: {wid}",
                 "networks": [],
                 "figures": [],
                 "tables": [],
@@ -491,6 +508,7 @@ UMeta:
         }
         execution_graph = {
             "title": "Execution graph",
+            "caption": "Data are denoted by grey nodes, processing urgap nodes are displayed using "
             "the magma color palette and scaled according to execution time. "
             "Purple arrows indicate incoming data and green arrows"
             " point to data produced. Use scroll wheel to zoom.",

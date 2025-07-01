@@ -1,8 +1,12 @@
+"""Urgap FilterTabularToCSV wrapper."""
 
 import pandas as pd
 
+import urgap
 
 
+class FilterTabularToCSV(urgap.unode.UNodeBase):
+    """Urgap wrapper for the filter_csv resource.
 
     Allows to filter and merge multiple csv files based on a pandas query string.
     """
@@ -15,17 +19,20 @@ import pandas as pd
         ],
         "parameters_not_triggering_rerun": [],
         "input_uftypes": {
+            urgap.uftypes.any.TABULAR: {
                 "min": 1,
                 "max": -1,
             },
         },
         "output_uftypes": {
+            urgap.uftypes.any.CSV: {
                 "min": 1,
                 "max": 1,
             },
         },
         "engine": None,
         "engine_type": ("io",),
+        "citation": "Urgap team (2021)",
     }
 
     def __init__(self) -> None:
@@ -34,6 +41,8 @@ import pandas as pd
 
     def preflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Preflight routine for FilterTabularToCSV wrapper.
 
         Args:
@@ -61,11 +70,14 @@ import pandas as pd
         return utrace
 
     @classmethod
+    def generate_wrapper_vis(cls, ufile: urgap.UFile) -> list:
         """Generate basic nodes specific data visualization.
 
         Args:
+            ufile (urgap.UFile): UFile object
 
         Returns:
+            list of urgap.<TBD_VIS_LIST_CLASS>: FilterTabularToCSV information.
             format similar to
             data = [
                 {

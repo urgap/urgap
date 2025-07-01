@@ -3,12 +3,15 @@ import tempfile
 
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "check_if_ufilelist_can_be_tested",
     [
         (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
                 f"test_node_data/test.txt",
             ),
         ),
@@ -20,6 +23,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
     for unode_version in ["1.3.0", "latest"]:
         with tempfile.TemporaryDirectory() as tmpdirname:
             storage_base_uri = f"file://{tmpdirname}"
+            urun_dict = urgap.URunDict(
                 {
                     "parameters": {
                         f"BasicFunctionTestNode:{unode_version}": {
@@ -35,10 +39,12 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
                     },
                 },
             )
+            test_node1 = urgap.init_unode(f"BasicFunctionTestNode:{unode_version}")
             if unode_version == "latest":
                 urun_dict["unode_parameters"]["latest_exe_paths"][
                     test_node1.META_INFO["unode_full_identifier"]
                 ] = (
+                    urgap.home
                     / "resources"
                     / "TestNodes"
                     / "BasicFunctionTestNode"
@@ -59,6 +65,7 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
 
             print("Output node1:")
             pprint.pprint(return_file)
+            report = urgap.UReport(wid=wid)
 
             print(
                 """
@@ -83,3 +90,4 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
             )
             print("Output:")
             pprint.pprint(second_run_return_file)
+            report = urgap.UReport(wid=wid)

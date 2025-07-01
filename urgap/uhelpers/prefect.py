@@ -1,3 +1,4 @@
+"""UHelpers for prefect of urgap2."""
 
 import json
 import logging
@@ -11,11 +12,14 @@ from typing import ParamSpec
 from prefect import flow, task
 from prefect.flows import load_flow_from_entrypoint
 
+import urgap
 
 P = ParamSpec("P")
 INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
 
 
+def parse_inputs(input_json: dict) -> tuple[urgap.URunDict, dict]:
+    """Parse input config for Prefect-based urgap pipeline.
 
     Args:
         input_json: Configuration as Python dict.
@@ -33,6 +37,7 @@ INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
 
     if "credentials_lookup" not in input_json:
         input_json["credentials_lookup"] = None
+    urd = urgap.URunDict(input_json.get("urun_dict", {}))
 
     # Extract pipeline configuration from default configuration
     pipeline_config = default_pipeline_args.get("pipeline_configuration", {})
@@ -65,10 +70,15 @@ def flatten_no_strings(iterable: Iterable) -> Generator:
             yield e
 
 
+def setup_urgap(ucredentials: list[dict], config: dict) -> None:
+    """Initialize urgap config and credentials.
 
     Args:
         ucredentials: List of credentials dicts.
+        config: urgap configuration dict.
     """
+    urgap.config.update(config)
+    urgap.instances.ucredential_manager.add_credentials(ucredentials)
 
 
 def retrieve_processed_uris(
@@ -99,6 +109,7 @@ def retrieve_processed_uris(
 @task(retries=3, retry_delay_seconds=10)
 def run_unode(
     uris: list[str] | str,
+    urd: urgap.URunDict,
     unode: str,
     ucredentials: list[dict],
     config: dict,
@@ -111,14 +122,17 @@ def run_unode(
         urd: URunDict configuration.
         unode: UNode name.
         ucredentials: List of credential dicts.
+        config: urgap config dict.
         kwargs: Passed through to UNode.run.
 
     Returns:
         List of output UUris, or [None] if incomplete.
     """
+    setup_urgap(ucredentials=ucredentials, config=config)
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
         return [None]
+    node = urgap.init_node(unode)
     result = node.run(ufiles=uris, urun_dict=urd, **kwargs)
     return [uf.as_uri() if uf is not None else None for uf in result]
 
@@ -138,6 +152,7 @@ def simplify_output_names(
     Args:
         uris: Input UUris (list or single string).
         ucredentials: Credentials dict.
+        config: urgap config dict.
         sources: List of source file UUris.
         prefix: Prefix for new file names.
         suffix: Suffix for new file names.
@@ -146,11 +161,13 @@ def simplify_output_names(
     Returns:
         None.
     """
+    setup_urgap(ucredentials=ucredentials, config=config)
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
         return
     if len(uris) == 0:
         return
+    ufiles = urgap.UFileList().from_uri_list(uri_list=uris)
     source_uris = retrieve_processed_uris(uris=sources)
     source_object_names = set()
     for uri in source_uris:
@@ -180,6 +197,7 @@ def filter_by_uftype(
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
         return None
+    ufile_list = urgap.UFileList().from_uri_list(uri_list=uris)
     filtered_ufile_list = ufile_list.keep_uftypes(uftype)
     return [uf.as_uri() for uf in filtered_ufile_list]
 
@@ -201,6 +219,7 @@ def group_by_tag(
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
         return None
+    ufile_list = urgap.UFileList().from_uri_list(uri_list=uris)
     index_groups = ufile_list.get_index_groups_by_tag(tag=tag)
     return {k: [ufile_list[idx].as_uri() for idx in v] for k, v in index_groups.items()}
 
@@ -218,13 +237,16 @@ def rebase(
         uris: List of UUris.
         storage_base_uri: New storage base UUri.
         ucredentials: List of credentials.
+        config: urgap config dict.
 
     Returns:
         bool: True on success otherwise False.
     """
+    setup_urgap(ucredentials=ucredentials, config=config)
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
         return False
+    ufile_list = urgap.UFileList().from_uri_list(uri_list=uris)
     for uf in ufile_list:
         uf.rebase(uri=storage_base_uri, upload=True)
     return True
@@ -237,6 +259,7 @@ def import_flow(flow_str: str, flow_name: str, input_json: dict) -> None:
     Args:
         flow_str: Python source code for the flow.
         flow_name: Name of the flow in the source code.
+        input_json: urgap input_json for the run.
     """
     pipeline = None
 

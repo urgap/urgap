@@ -1,3 +1,4 @@
+"""UFile module of urgap2."""
 
 from __future__ import annotations
 
@@ -21,11 +22,13 @@ from zipfile import ZipFile
 
 import networkx as nx
 
+import urgap
 
 P = ParamSpec("P")
 
 
 class UFile:
+    """Urgap pipeline file interface."""
 
     def __init__(
         self,
@@ -45,6 +48,7 @@ class UFile:
         self.was_downloaded_to_scratch = False
         self._tags = None
 
+        self.uuri = urgap.UUri(
             uri=self.uri,
         )
         self._io = None
@@ -53,7 +57,9 @@ class UFile:
     def format_uri(self) -> None:
         """Format the URI if storage_base_uri and ucfs combination was used to construct uri."""
         if "@" in self.uri:
+            hash_algorithm = urgap.config["hash_algorithm"]
             uri, ucfs_hash = self.uri.split("@")
+            self.uri = urgap.ucore.append_query_to_uri(
                 uri=uri,
                 query=f"{hash_algorithm}={ucfs_hash}",
             )
@@ -114,21 +120,28 @@ class UFile:
                         " Delete local explicitly UFile.purge_local_files() if needed.",
                     )
                 download_file = False
+            elif remote_tags.get(urgap.config["hash_algorithm"], None) is None:
                     "Remote has tag capability but hash was not set."
                     " Will not download file anymore."
                     " Delete local explicitly UFile.purge_local_files() if needed.",
                 )
                 download_file = False
             else:
+                if urgap.config["hash_algorithm"] not in self.tags:
                     self.tags.update(
                         {
+                            urgap.config[
                                 "hash_algorithm"
+                            ]: urgap.ucore.calculate_file_hash(
                                 self.io.scratch_path,
+                                hash_algorithm=urgap.config["hash_algorithm"],
                             ),
                         },
                     )
                 if self.tags.get(
+                    urgap.config["hash_algorithm"],
                     None,
+                ) != remote_tags.get(urgap.config["hash_algorithm"], None):
                         "Remote and local have different hash. Overwriting local",
                     )
                     download_file = True
@@ -155,6 +168,7 @@ class UFile:
         Returns:
             True if both are UFiles with the same ucfs, otherwise False.
         """
+        if isinstance(other, urgap.UFile) is True:
             return self.ucfs == other.ucfs
         return False
 
@@ -170,6 +184,7 @@ class UFile:
         """
         return hash(self.ucfs)
 
+    def __lt__(self, other: urgap.UFile) -> bool:
         """Lexical comparison by ucfs for sorting.
 
         Args:
@@ -178,6 +193,7 @@ class UFile:
         Returns:
             True if this ucfs is less than other's.
         """
+        if isinstance(other, urgap.UFile) is True:
             return self.ucfs < other.ucfs
         return False
 
@@ -237,9 +253,11 @@ class UFile:
         Returns:
             The hash string using the algorithm specified in the configuration. Will be calculated if missing.
         """
+        hash_algorithm = urgap.config["hash_algorithm"]
         if hash_algorithm not in self.tags:
             self.tags.update(
                 {
+                    hash_algorithm: urgap.ucore.calculate_file_hash(
                         input_file=self.path,
                         hash_algorithm=hash_algorithm,
                     ),
@@ -249,12 +267,14 @@ class UFile:
 
     @property
     def uftype(self) -> str:
+        """The Urgap file type for this file.
 
         Returns:
             The uftype string, or 'UNKNOWN' if not defined.
         """
         uftype = self.tags.get("uftype", None)
         if uftype is None:
+            uftype = urgap.uftypes.unknown.UNKNOWN
         return uftype
 
     def download(self) -> None:
@@ -264,8 +284,11 @@ class UFile:
         verify: bool = False,
         retries: int = 3,
     ) -> None:
+            urgap.utl.increase_counter("ufiles-uploaded")
 
     @property
+    def io(self) -> urgap.io:
+        """IO property to access the Urgap IO backend for this file.
 
         Returns:
             The initialized IO instance.
@@ -364,6 +387,7 @@ class UFile:
         """
         return f"{self.uuri.scheme}://{self.uuri.netloc}{self.uuri.path}"
 
+    def init_io_class(self) -> urgap.UFile.io:
         """Initialize the IO backend for this file, based on the UUri scheme.
 
         Returns:
@@ -373,6 +397,7 @@ class UFile:
             ImportError: If the IO backend is not installed.
         """
         scheme = self.uuri.scheme
+        available_io_classes = urgap.instances.ufile_io_manager.available_io_classes
         if scheme not in available_io_classes:
             msg = (
             )
@@ -402,14 +427,19 @@ class UFile:
         """
         if force_local is True:
             if self.io.scratch_path.exists():
+                hash_value = urgap.ucore.calculate_file_hash(
                     self.io.scratch_path,
+                    hash_algorithm=urgap.config["hash_algorithm"],
                 )
             else:
                 msg = f"Cannot force calculation from local file as {self.io.scratch_path} does not exist."
                 raise FileNotFoundError(msg)
         else:
+            hash_value = urgap.ucore.calculate_file_hash(
                 self.path,
+                hash_algorithm=urgap.config["hash_algorithm"],
             )
+        self.tags.update({urgap.config["hash_algorithm"]: hash_value})
 
     def rebase(
         self,
@@ -437,6 +467,7 @@ class UFile:
 
             self.upload(**kwargs)
 
+    def compress(self, compression_format: str) -> urgap.UFile:
         """Compress this UFile into a new compressed file.
 
         Args:
@@ -472,6 +503,7 @@ class UFile:
             msg = "Unsupported compression format."
             raise NotImplementedError(msg)
 
+        compressed_ufile = urgap.UFile(uri=self.as_uri() + suffix)
         msg = f"Compressed UFile to {compressed_ufile.as_uri()}"
         return compressed_ufile
 
@@ -493,6 +525,7 @@ class UFile:
         self,
         compression_format: str | None = None,
         recursive: bool = True,
+    ) -> urgap.UFileList:
         """Uncompress this UFile (auto-detecting format if needed).
 
         Args:
@@ -506,6 +539,9 @@ class UFile:
             NotImplementedError: If the format is unsupported.
         """
         if compression_format is None:
+            compression_format = urgap.util.sense_compression_format(self.path)
+        wid = urgap.uwid_obj.generate_wid()
+        temp_folder = urgap.scratch_disk_base / wid / "uncompress"
         match compression_format:
             case "zip":
                 with ZipFile(self.path, "r") as z_file:
@@ -520,6 +556,7 @@ class UFile:
             case "tar":
                 with tarfile.open(self.path, mode="r:") as tfile:
             case "split_tar":
+                urgap.UFileList.from_folder(
                     self.uuri.path,
                 ).uncompress(temp_folder)
             case "bz2":
@@ -533,6 +570,7 @@ class UFile:
                 )
                 msg = "Unsupported compression format."
                 raise NotImplementedError(msg)
+        uncompressed_ufilelist = urgap.UFileList.from_folder(temp_folder)
         return self._uncompress_recursive(
             ufl=uncompressed_ufilelist,
             recursive=recursive,
@@ -540,7 +578,9 @@ class UFile:
 
     @staticmethod
     def _uncompress_recursive(
+        ufl: urgap.UFileList,
         recursive: bool = False,
+    ) -> urgap.UFileList:
         """Recursively uncompress UFileLists.
 
         Args:
@@ -552,6 +592,7 @@ class UFile:
         """
         if recursive is True:
             for uf in ufl:
+                if urgap.util.sense_compression_format(uf.path) == "tar":
                         "Uncompressed UFile is a tar archive which will be unpacked.",
                     )
                     try:
@@ -627,6 +668,7 @@ class UFile:
         """
         if self._lineage_graph is None:
             if use_umeta is True:
+                ur = urgap.UReport(
                     ucfs=self.ucfs,
                     storage_base_uri=self.as_storage_base_uri(),
                 )
@@ -640,6 +682,7 @@ class UFile:
             self._lineage_graph = graph
         return self._lineage_graph
 
+    def _walk_via_objects(self, graph: nx.DiGraph, ufile: urgap.UFile) -> nx.DiGraph:
         """Recursively walk parent relationships and build a lineage graph.
 
         Args:
@@ -658,6 +701,7 @@ class UFile:
                 arrow=True,
             )
             parent_uri = ufile.as_uri(fragment=parent, query="")
+            parent_ufile = urgap.UFile(uri=parent_uri)
             parent_ufile.purge_local()
             graph = self._walk_via_objects(
                 graph=graph,
@@ -679,6 +723,7 @@ class UFile:
         prefix: str | None = None,
         suffix: str | None = None,
         storage_base_uri: str | None = None,
+    ) -> urgap.UFile | None:
         """Rename and optionally rebase this file for user-friendly output.
 
         Args:

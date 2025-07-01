@@ -1,3 +1,4 @@
+"""file scheme subclass of urgap2's UIO submodule."""
 
 import json
 import logging
@@ -8,6 +9,7 @@ import shutil
 from pathlib import Path
 from typing import ParamSpec
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 

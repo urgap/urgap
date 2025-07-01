@@ -7,6 +7,7 @@ import networkx as nx
 
 from pyvis.network import Network
 
+import urgap
 
 
 def main() -> None:
@@ -16,6 +17,7 @@ def main() -> None:
     for (
         unode_name,
         unode_class,
+    ) in urgap.instances.unode_manager.wrapper_lookup.items():
         graph.add_node(unode_name, color="red", size=7)
         for sft in unode_class.META_INFO.get("input_uftypes", {}):
             graph.add_node(sft, color="blue", size=12)
@@ -28,6 +30,7 @@ def main() -> None:
             )
             leafs = []
             with contextlib.suppress(KeyError):
+                leafs = urgap.instances.utree_querier.get_leafs_from_node(sft)
             if len(leafs) > 1:
                 for the_any_child in leafs:
                     graph.add_edge(

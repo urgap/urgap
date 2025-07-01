@@ -3,6 +3,7 @@
 UFile Class
 ###########
 
+.. autoclass:: urgap.ufile.ufile.UFile
    :members:
 
    .. automethod:: __init__
@@ -21,26 +22,32 @@ UUriDict Class
 UFile IO Classes
 ################
 
+.. autoclass:: urgap.ufile.io._base.UIOBase
    :members:
 
    .. automethod:: __init__
 
+.. autoclass:: urgap.ufile.io.azure_blob.IOAzureBlobStorage
    :members:
 
    .. automethod:: __init__
 
+.. autoclass:: urgap.ufile.io.file.IOPython
    :members:
 
    .. automethod:: __init__
 
+.. autoclass:: urgap.ufile.io.google_storage.IOGoogleCloudStorage
    :members:
 
    .. automethod:: __init__
 
+.. autoclass:: urgap.ufile.io.https.IOHTTPS
    :members:
 
    .. automethod:: __init__
 
+.. autoclass:: urgap.ufile.io.mylabdata.IOMyLabData
    :members:
 
    .. automethod:: __init__

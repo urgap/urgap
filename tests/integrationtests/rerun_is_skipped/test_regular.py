@@ -2,13 +2,16 @@ import pprint
 
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "provide_clean_test_node_dirs",
     [
         (
+            urgap.UFile(
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "TestNode1:1.0.0": {
@@ -36,6 +39,7 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
     return_file = test_node1.run(ufiles=ufiles, urun_dict=urun_dict)
     print("Output node1:")
     pprint.pprint(return_file)
+    report = urgap.UReport(wid=wid)
 
     urun_dict.assign_wid()
     print("Input:")
@@ -44,3 +48,4 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
 
     print("Output:")
     pprint.pprint(second_run_return_file)
+    report = urgap.UReport(wid=wid)

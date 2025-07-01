@@ -10,6 +10,7 @@ Installation from pypi
 
 .. code-block:: bash
 
+    user@localhost:~$ pip install urgap2
 
 Installation from github
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -28,19 +29,28 @@ Installation (development environment)
 Installation from source
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
+1. Download Urgap using `GitHub`_ **or** the zip file:
 
 * GitHub version: Starting from your command line, the easiest way is to clone the GitHub repo.
 
 .. code-block:: bash
 
+    user@localhost:~$ git clone https://github.com/fu/urgap2.git
 
+* ZIP version: Alternatively, download and extract the `urgap zip file`_
 
 .. _GitHub:
+   https://github.com/fu/urgap2
 
+.. _urgap zip file:
+   https://github.com/fu/urgap2/archive/master.zip
 
+2. Next, navigate into the Urgap2 folder and install the requirements. Use virtualenv for maximum convenience.
 
 .. code-block:: bash
 
+    user@localhost:~$ cd urgap2
+    user@localhost:~/urgap$ pip install -r requirements.txt
 
 
 You might need administrator privileges to write in the Python site-package folder.
@@ -71,9 +81,11 @@ Installing the client, required to interact with thte server, e.g configure it
     brew install minio/stable/mc
 
 
+Starting the server and pointing it to urgap test data folder.
 
 .. code-block:: bash
 
+    minio server <your_path_to_urgap>/urgap/tests
 
 
 Adding our test server to the client 
@@ -114,6 +126,7 @@ mongoDB
     docker run \
         -p 27017:27017 \
         -v ~/mongo/data:/data/db \
+        --name urgap-mongo \
         mongo:latest
 
 
@@ -130,6 +143,7 @@ MinIO
         -p 9001:9001 \
         -e "MINIO_ROOT_USER=$uuser_minio" \
         -e "MINIO_ROOT_PASSWORD=$upassword_minio" \
+        --name urgap-minio \
         -v ~/minio/data:/data \
         quay.io/minio/minio server /data \
         --console-address ":9001"

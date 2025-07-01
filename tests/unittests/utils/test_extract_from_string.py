@@ -1,6 +1,8 @@
+import urgap
 
 
 def test_extract_from_string_one_match():
+    match = urgap.util.extract_from_string(
         any_string="One Ring to rule them all.",
         regex_pattern=r"One Ring",
     )
@@ -9,6 +11,7 @@ def test_extract_from_string_one_match():
 
 
 def test_extract_from_string_dates():
+    match = urgap.util.extract_from_string(
         any_string="The War of the Ring lasted from TA 3018 to TA 3019.",
         regex_pattern=r"TA \d{4}",
     )
@@ -17,6 +20,7 @@ def test_extract_from_string_dates():
 
 
 def test_extract_from_string_no_match():
+    match = urgap.util.extract_from_string(
         any_string="One Ring to find them.",
         regex_pattern=r"to rule them all",
     )

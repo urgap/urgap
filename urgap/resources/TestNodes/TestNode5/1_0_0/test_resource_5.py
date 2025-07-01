@@ -20,6 +20,7 @@ def main(argv: Sequence[str] | None = None) -> str:
     for file in known_args.output_files:
         with Path(file).open("w") as oo:
             print(known_args.params, file=oo)
+            print("known_args.input_files", file=oo)
     return "Mischief Managed."
 
 

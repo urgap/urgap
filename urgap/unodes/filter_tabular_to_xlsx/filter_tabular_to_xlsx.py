@@ -1,6 +1,10 @@
+"""Urgap FilterTabularToXlsx wrapper."""
+
+import urgap
 
 
-
+class FilterTabularToXlsx(urgap.unode.UNodeBase):
+    """Urgap wrapper for the FilterTabularToXlsx resource.
 
     Allows to filter and merge multiple csv files based on a pandas query string.
     """
@@ -13,17 +17,20 @@
         ],
         "parameters_not_triggering_rerun": [],
         "input_uftypes": {
+            urgap.uftypes.any.TABULAR: {
                 "min": 1,
                 "max": -1,
             },
         },
         "output_uftypes": {
+            urgap.uftypes.any.XLSX: {
                 "min": 1,
                 "max": 1,
             },
         },
         "engine": None,
         "engine_type": ("io",),
+        "citation": "Urgap team (2021)",
     }
 
     def __init__(self) -> None:
@@ -32,6 +39,8 @@
 
     def preflight(
         self,
+        utrace: urgap.UTrace,
+    ) -> urgap.UTrace:
         """Preflight routine for FilterTabularToXlsx wrapper.
 
         Args:

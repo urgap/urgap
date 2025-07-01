@@ -1,8 +1,11 @@
 import pandas as pd
 
+import urgap
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
             ),
     )
                 },
@@ -14,7 +17,10 @@ import pandas as pd
     df = pd.read_parquet(filtered_parquet[0].path)
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.PARQUET}"
                 f"#parquets/demo.parquet",
             ),
     )
@@ -24,7 +30,10 @@ import pandas as pd
     df = pd.read_parquet(filtered_parquet[0].path)
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.PARQUET}"
                 f"#parquets/demo.parquet",
             ),
         ],
@@ -36,7 +45,9 @@ import pandas as pd
     df = pd.read_parquet(filtered_parquet[0].path)
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
             ),
         ],
     )
@@ -45,13 +56,19 @@ import pandas as pd
     df = pd.read_parquet(filtered_parquet[0].path)
 
 
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.PARQUET}"
                 f"#parquets/demo_from_csv.parquet",
             ),
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}"
                 f"#unified_csvs/demo.csv",
             ),
         ],
     )
+    urun_dict = urgap.URunDict(
         {
             "parameters": {
                     "-q": "`spectrum_id` > 3000",

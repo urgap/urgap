@@ -1,15 +1,22 @@
 import random
 import re
 
+import urgap
 
 
 def test_single_input():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega",
             ),
         ],
     )
+    urd = urgap.URunDict()
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -24,10 +31,14 @@ def test_single_input():
 
 
 def test_single_input_no_data_versioning():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega",
             ),
         ],
     )
+    urd = urgap.URunDict(
         {
             "parameters": {},
             "unode_parameters": {
@@ -35,8 +46,10 @@ def test_single_input_no_data_versioning():
             },
         },
     )
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
 
@@ -47,10 +60,14 @@ def test_single_input_no_data_versioning():
 
 
 def test_single_input_with_run_folder_name():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega",
             ),
         ],
     )
+    urd = urgap.URunDict(
         {
             "parameters": {},
             "unode_parameters": {
@@ -58,8 +75,10 @@ def test_single_input_with_run_folder_name():
             },
         },
     )
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
 
@@ -75,12 +94,18 @@ def test_single_input_with_run_folder_name():
 
 
 def test_single_input_with_prefix_and_nested_dir():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega",
             ),
         ],
     )
+    urd = urgap.URunDict({"unode_parameters": {"prefix": "_!_"}})
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -95,12 +120,18 @@ def test_single_input_with_prefix_and_nested_dir():
 
 
 def test_single_input_with_data_versioning():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega",
             ),
         ],
     )
+    urd = urgap.URunDict()
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -117,14 +148,24 @@ def test_single_input_with_data_versioning():
 
 
 def test_multi_input():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega2",
             ),
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Cats/_.sega",
             ),
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zig/seriously.sega",
             ),
         ],
     )
+    urd = urgap.URunDict()
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -140,13 +181,23 @@ def test_multi_input():
 
 def test_multi_input_shuffled_input():
     pre_list = [
+        urgap.UFile(
+            f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega2",
         ),
+        urgap.UFile(
+            f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Cats/_.sega",
         ),
+        urgap.UFile(
+            f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zig/seriously.sega",
         ),
     ]
     random.shuffle(pre_list)
+    input_files = urgap.UFileList(pre_list)
+    urd = urgap.URunDict()
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -161,14 +212,24 @@ def test_multi_input_shuffled_input():
 
 
 def test_multi_input_with_data_versioning():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega2",
             ),
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Cats/_.sega",
             ),
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zig/seriously.sega",
             ),
         ],
     )
+    urd = urgap.URunDict()
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
     assert (
@@ -194,14 +255,24 @@ def test_multi_input_with_data_versioning():
 
 
 def test_override_folder_creation_with_md5():
+    input_files = urgap.UFileList(
         [
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zero/Wing.sega2",
             ),
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Cats/_.sega",
             ),
+            urgap.UFile(
+                f"file://{urgap._test_folder}/data/?uftype={urgap.uftypes.any.ANY}#Zig/seriously.sega",
             ),
         ],
     )
+    urd = urgap.URunDict({"unode_parameters": {"override_folder_creation": True}})
+    ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
+        unode_meta=urgap.init_unode("TestNode4:1.0.0").META_INFO,
     )
     _output = ut.determine_output_files_stem()
     assert _output == "9dbda1cf7a25c9e8da2b4e7d60be1387"

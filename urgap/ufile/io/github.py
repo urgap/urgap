@@ -1,3 +1,4 @@
+"""Github subclass of urgap2's UIO submodule."""
 
 import logging
 import re
@@ -7,6 +8,7 @@ from typing import ParamSpec
 
 from github import Auth, Github, GithubException
 
+from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 

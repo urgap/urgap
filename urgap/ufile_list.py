@@ -1,3 +1,4 @@
+"""UFileList module of urgap2."""
 
 from __future__ import annotations
 
@@ -10,9 +11,11 @@ from collections import UserList, defaultdict, defaultdict as ddict
 from collections.abc import Iterable
 from pathlib import Path
 
+import urgap
 
 
 class UFileList(UserList):
+    """Urgap List of UFile container.
 
     Acts as a list with additional functionality to access and filter UFiles based on tags.
     """
@@ -46,6 +49,7 @@ class UFileList(UserList):
     def __setitem__(
         self,
         i: int,
+        item: urgap.UFile | urgap.UFileList | list | tuple,
     ) -> None:
         """Insert an item at a specified index in the UFileList.
 
@@ -61,6 +65,7 @@ class UFileList(UserList):
 
     def __add__(
         self,
+        other: urgap.UFile | urgap.UFileList | list | tuple,
     ) -> UFileList:
         """Concatenate another object to this UFileList.
 
@@ -78,6 +83,7 @@ class UFileList(UserList):
 
     def __radd__(
         self,
+        other: urgap.UFile | urgap.UFileList | list | tuple,
     ) -> UFileList:
         """Concatenate this UFileList to another object.
 
@@ -95,6 +101,7 @@ class UFileList(UserList):
 
     def __iadd__(
         self,
+        other: urgap.UFile | urgap.UFileList | list | tuple,
     ) -> UFileList:
         """Extend this UFileList in-place with another object.
 
@@ -110,6 +117,7 @@ class UFileList(UserList):
         self._eval_if_item_is_of_correct_type(other)
         return super().__iadd__(other)
 
+    def append(self, item: urgap.UFile | urgap.UFileList | list | tuple) -> None:
         """Append an item to the UFileList if it follows conventions.
 
         Args:
@@ -124,6 +132,7 @@ class UFileList(UserList):
     def insert(
         self,
         i: int,
+        item: urgap.UFile | urgap.UFileList | list | tuple,
     ) -> None:
         """Insert an item at a specified position if it follows conventions.
 
@@ -149,7 +158,9 @@ class UFileList(UserList):
             uf.ucfs.encode("utf-8")
             for uf in sorted(self.create_flat_and_non_redundant_list())
         ]
+        return urgap.ucore.calculate_string_hash(
             hashable_iterable=hashable_iterable,
+            hash_algorithm=urgap.config["hash_algorithm"],
         )
 
     @property
@@ -163,6 +174,7 @@ class UFileList(UserList):
 
     def _eval_if_item_is_of_correct_type(
         self,
+        item: urgap.UFile | urgap.UFileList | list | tuple,
     ) -> None:
         """Check if an item is suitable for inclusion in UFileList.
 
@@ -173,8 +185,10 @@ class UFileList(UserList):
             TypeError: If the item does not follow UFileList conventions.
         """
         kosha = False
+        if item is None or isinstance(item, urgap.UFile | UFileList) is True:
             kosha = True
         elif isinstance(item, list | tuple) is True:
+            kosha = all(isinstance(x, urgap.UFile) for x in item if x is not None)
         if kosha is False:
             msg = f"Item {item} cannot be used in UFileLists!"
             raise TypeError(msg)
@@ -200,6 +214,7 @@ class UFileList(UserList):
         self,
         list_to_flatten: Iterable,
         already_seen_objects: set,
+    ) -> tuple[list, urgap.UFileList]:
         """Flatten nested lists and remove duplicates.
 
         Args:
@@ -222,6 +237,7 @@ class UFileList(UserList):
                     already_seen_objects=already_seen_objects,
                     flat_list=flat_list,
                 )
+            elif isinstance(entry, urgap.UFile) is False:
                 msg = "Input files can only be list of UFiles and/or list of lists of Ufiles"
                 raise TypeError(msg)
             elif entry.ucfs in already_seen_objects:
@@ -243,6 +259,7 @@ class UFileList(UserList):
 
             META_INFO = {
                 "input_uftypes": {
+                    urgap.uftypes.test.TEST_FILE1: {  # < Defining the required data type
                         "min": 2,                # < minimum number of UFiles
                         "max": 4,                # < maximum number of UFiles
                     },
@@ -252,6 +269,7 @@ class UFileList(UserList):
             granular filtering on UFile tag bases, e.g. QC=bad, which has to be set on UFile
             level beforehand, e.g. manually::
                 {
+                    urgap.uftypes.test.TEST_FILE1: {  # < Defining the required data type
                             "tags": {"QC": "good"}, # < dict with tags the UFiles are checked against
                         }
                 }
@@ -290,6 +308,7 @@ class UFileList(UserList):
     def check_tags_on_ufile_for_uftype(
         self,
         input_uftypes: dict,
+        ufile: urgap.UFile,
     ) -> str | None:
         """Check if a UFile has compatible uftype and the required tags.
 
@@ -301,6 +320,7 @@ class UFileList(UserList):
             The compatible uftype if found, else None.
         """
         mappable_uftypes = list(
+            {ext for _, ext in urgap.instances.utree_querier.to_root(ufile.uftype)}
             & set(input_uftypes.keys()),
         )
         if len(mappable_uftypes) == 0:
@@ -323,6 +343,7 @@ class UFileList(UserList):
         self,
         ufile_classes: dict,
         input_uftypes: dict,
+    ) -> urgap.UFileList:
         """Check that the count of UFiles for each uftype is within allowed range.
 
         Args:
@@ -335,6 +356,7 @@ class UFileList(UserList):
         Raises:
             ValueError: If there are too few or too many UFiles for a given uftype.
         """
+        filtered_ufile_list = urgap.ufile_list.UFileList()
         for file_data_type, ufile_sublist in ufile_classes.items():
             min_number_required = input_uftypes[file_data_type].get("min", 1)
             max_number_allowed = input_uftypes[file_data_type].get("max", -1)
@@ -391,6 +413,8 @@ class UFileList(UserList):
                 continue
             leafs_with_matching_tag = [
                 ext
+                for _, ext in urgap.instances.utree_querier.get_leafs_from_node(
+                    urgap.instances.utree_querier.get_nodes_with_ext(search_value)[0],
                 )
             ]
             if (".any." in search_value) or search_value.endswith(".ANY"):
@@ -516,6 +540,7 @@ class UFileList(UserList):
             else:
                 counter = current_count
             self.append(
+                urgap.UFile(
                     uri=f"{self.output_definitions['storage_base_uri']}?uftype={self.output_definitions['uftype']}"
                     f"#{self.output_definitions['output_file_stem']}_{counter}{uftype}",
                 ),
@@ -528,6 +553,7 @@ class UFileList(UserList):
         Args:
             uri: UUri to use for creating the UFile.
         """
+        self.append(urgap.UFile(uri=uri))
 
     def get_storage_base_uris(self) -> list:
         """Return storage base UUris for each UFile in the list.
@@ -559,6 +585,7 @@ class UFileList(UserList):
             if key not in uftype_list:
                 indices.extend(value)
 
+        return urgap.ufile_list.UFileList(self[i] for i in indices)
 
     def keep_uftypes(self, uftype_list: list) -> UFileList:
         """Keep only UFiles with specified uftypes in the list.
@@ -582,6 +609,7 @@ class UFileList(UserList):
             if key in uftype_list:
                 indices.extend(value)
 
+        return urgap.ufile_list.UFileList(self[i] for i in indices)
 
     @classmethod
     def from_uri_list(
@@ -594,9 +622,13 @@ class UFileList(UserList):
 
 
         """
+        if urgap.config.get("max_parallel_cores", None) is not None:
+            number_of_threads = urgap.config.get("max_parallel_cores")
 
         import concurrent.futures
 
+        def _init_ufile(uri: str) -> urgap.UFile:
+            uf = urgap.UFile(uri=uri)
             if uftype is not None:
                 uf.tags["uftype"] = uftype
             return uf
@@ -667,6 +699,7 @@ class UFileList(UserList):
         Returns:
             UFileList with simplified names.
         """
+        renamed_ufile_list = urgap.UFileList()
         for ufile in self:
             renamed_ufile_list.append(
                 ufile.simplify_name(
@@ -684,7 +717,11 @@ class UFileList(UserList):
         Args:
             number_of_threads: Number of parallel threads to use.
         """
+        if urgap.config.get("max_parallel_cores", None) is not None:
+            number_of_threads = urgap.config.get("max_parallel_cores")
         msg = f"Starting download of UFileList in parallel with {number_of_threads} threads."
+        urgap.util.execute_threaded_function(
+            func=urgap.UFile.download,
             args_list=self,
             number_of_threads=number_of_threads,
         )
@@ -695,7 +732,11 @@ class UFileList(UserList):
         Args:
             number_of_threads: Number of parallel threads to use.
         """
+        if urgap.config.get("max_parallel_cores", None) is not None:
+            number_of_threads = urgap.config.get("max_parallel_cores")
         msg = f"Starting upload of UFileList in parallel with {number_of_threads} threads."
+        urgap.util.execute_threaded_function(
+            func=urgap.UFile.upload,
             args_list=self,
             number_of_threads=number_of_threads,
         )

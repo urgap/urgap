@@ -1,6 +1,7 @@
 Please structure tests as following:
 
 unittest folder structure should mirror the package, ie
+unittests/         # containing top level urgap module tests
 unittests/wrapper/ # containing tests for wrappers
 
 within those folders create files with the following syntax

@@ -1,13 +1,17 @@
 import pytest
 
+import urgap
 
 
 @pytest.mark.parametrize(
     "provide_clean_node_dirs",
     [
         (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.validator.PEPTIDEFOREST_CSV}"
                 f"#unified_csvs/demo.csv",
             ),
+            urgap.URunDict(
                 {
                     "parameters": {
                         "FilterTabularToCSV:1.0.0": {

@@ -1,3 +1,4 @@
+"""Describe submodule of urgap.uctl."""
 
 import logging
 import pprint
@@ -14,11 +15,13 @@ def describe_wid_click(wid: str) -> None:
     """
 
 
+def describe_wid(wid: str) -> urgap.UReport | str:
     """Retrieve UMeta information for a given WID.
 
     Returns a UReport or a not-found message.
     """
     try:
+        return urgap.UReport(wid=wid)
     except ValueError:
         return f"No History found for given wid: {wid}"
 
@@ -34,6 +37,7 @@ def describe_object_name(object_name: str) -> dict:
 
     Returns a dictionary with producer and consumers.
     """
+    um = urgap.UMeta()
     return {
     }
 
@@ -66,6 +70,7 @@ def describe_last_runs(unode: str, last: int = 10) -> list[tuple]:
 
     Returns a list of (file, ...) tuples.
     """
+    um = urgap.UMeta()
     return um.find_last_processed_files(unode, last=last)
 
 
@@ -91,7 +96,9 @@ def describe_ucfs(
     storage_base_uri: str | None = None,
     object_name: str | None = None,
     ucfs: str | None = None,
+) -> urgap.UReport:
     """Retrieve UMeta information for ucfs storage location."""
+    um = urgap.UMeta()
     return um.io.get_ucfs_object_name_info(
         storage_base_uri=storage_base_uri,
         object_name=object_name,

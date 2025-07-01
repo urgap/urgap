@@ -2,6 +2,7 @@ __pycache__/
 __notebooks__
 *.py[cod]
 .DS_Store
+# urgap/wrappers/GimmaSomeName/
 example_scripts/*.ujson
 example_scripts/*.txt
 docs/build/
@@ -10,6 +11,9 @@ docs/source/example_scripts.rst
 .eggs
 .idea
 .coverage
+urgap/.coverage
+urgap/version.txt
+urgap/_version.py
 .tox
 tests/integrationtests/test_t1.txt
 tests/integrationtests/test.txt.ujson
@@ -29,5 +33,7 @@ BSA1.mzML.ujson
 .vscode/
 _playground/
 _notebooks_/
+# BSA1_urgap_lookup.csv.bz2
+urgap.egg-info/
 /**/tmp
 .env

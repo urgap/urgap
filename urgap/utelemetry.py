@@ -1,3 +1,4 @@
+"""Urgap Opentelemetry class."""
 
 
 from azure.monitor.opentelemetry.exporter import (
@@ -19,6 +20,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.trace import SpanKind
 
+import urgap
 
 logging.getLogger("azure.monitor").setLevel(logging.WARNING)
 logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
@@ -28,6 +30,7 @@ logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
 
 
 class UTelemetry:
+    """Class to handle OpenTelemetry instrumentation in urgap."""
 
     started_spans = []
     trace_was_initialized = False
@@ -44,17 +47,21 @@ class UTelemetry:
 
     @property
     def otlp_url(self) -> str | None:
+        """Get the OpenTelemetry collector URL from urgap config.
 
         Returns:
             The OpenTelemetry collector URL or None if not set.
         """
+        return urgap.config.get("opentelemetry_collector_url", None)
 
     @property
     def otlp_type(self) -> str | None:
+        """Get the OpenTelemetry exporter type from urgap config.
 
         Returns:
             The exporter type (e.g. 'OTLP', 'Console', 'AZ-Insights') or None.
         """
+        return urgap.config.get("opentelemetry_exporter_type", None)
 
     @property
     def tracing_enabled(self) -> bool:
@@ -105,6 +112,7 @@ class UTelemetry:
             elif self.otlp_type == "Console":
                 exporter = ConsoleMetricExporter()
             elif self.otlp_type == "AZ-Insights":
+                connection_string = urgap.instances.ucredential_manager.get_password(
                     self.otlp_url,
                 )
                 exporter = AzureMonitorMetricExporter.from_connection_string(
@@ -124,6 +132,7 @@ class UTelemetry:
                 ),
             )
             UTelemetry.metric_was_initialized = True
+        return metrics.get_meter_provider().get_meter("urgap")
 
     def init_tracer(self) -> trace.Tracer:
         """Initialize and configure a Tracer for distributed tracing.
@@ -139,16 +148,20 @@ class UTelemetry:
                 TracerProvider(
                     resource=Resource.create(
                         {
+                            "service.name": "urgap",
+                            "service.instance.id": urgap.__version_str__,
                         },
                     ),
                 ),
             )
             if self.otlp_type == "OTLP":
                 exporter = OTLPSpanExporter(
+                    endpoint=urgap.config["opentelemetry_collector_url"],
                 )
             elif self.otlp_type == "Console":
                 exporter = ConsoleSpanExporter()
             elif self.otlp_type == "AZ-Insights":
+                connection_string = urgap.instances.ucredential_manager.get_password(
                     self.otlp_url,
                 )
                 exporter = AzureMonitorTraceExporter.from_connection_string(
@@ -159,6 +172,7 @@ class UTelemetry:
                 raise ValueError(msg)
             trace.get_tracer_provider().add_span_processor(BatchSpanProcessor(exporter))
             UTelemetry.trace_was_initialized = True
+        return trace.get_tracer_provider().get_tracer("urgap")
 
     def increase_counter(self, counter_name: str, count: float = 1) -> None:
 

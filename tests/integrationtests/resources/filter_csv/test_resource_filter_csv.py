@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+import urgap
 
 sys.path.insert(0, str(Path(__file__).parent.parent.resolve()))
 print(sys.path)
@@ -35,11 +36,14 @@ def import_engine_as_python_function(
 
 
 def test_filter_int():
+    filter_csv = urgap.init_node("FilterTabularToCSV:1.0.0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
     )
 
+    input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
+    output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
         input_files=[input_file],
         output=output_file,
@@ -52,11 +56,14 @@ def test_filter_int():
 
 
 def test_filter_int_input_twice():
+    filter_csv = urgap.init_node("filter_csv_1_0_0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
     )
 
+    input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
+    output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
         csvs=[input_file, input_file],
         output=output_file,
@@ -68,11 +75,14 @@ def test_filter_int_input_twice():
 
 
 def test_filter_float():
+    filter_csv = urgap.init_node("filter_csv_1_0_0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
     )
 
+    input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
+    output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
         csvs=[input_file],
         output=output_file,
@@ -84,11 +94,14 @@ def test_filter_float():
 
 
 def test_filter_str():
+    filter_csv = urgap.init_node("filter_csv_1_0_0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
     )
 
+    input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
+    output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
         csvs=[input_file],
         output=output_file,
@@ -100,11 +113,14 @@ def test_filter_str():
 
 
 def test_filter_combined_str_and_float():
+    filter_csv = urgap.init_node("filter_csv_1_0_0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
     )
 
+    input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
+    output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
         csvs=[input_file],
         output=output_file,
@@ -116,12 +132,15 @@ def test_filter_combined_str_and_float():
 
 
 def test_query_string_wrong_format():
+    filter_csv = urgap.init_node("filter_csv_1_0_0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
     )
 
     with pytest.raises(RuntimeError):
+        input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
+        output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
         main(
             csvs=[input_file],
             output=output_file,
@@ -130,12 +149,15 @@ def test_query_string_wrong_format():
 
 
 def test_query_string_missing_column():
+    filter_csv = urgap.init_node("filter_csv_1_0_0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
     )
 
     with pytest.raises(RuntimeError):
+        input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
+        output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
         main(
             csvs=[input_file],
             output=output_file,

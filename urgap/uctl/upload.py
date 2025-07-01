@@ -1,3 +1,4 @@
+"""Upload submodule of urgap.uctl."""
 
 import logging
 import pprint
@@ -8,6 +9,7 @@ import click
 
 from tqdm import tqdm
 
+import urgap
 
 
 @click.command()
@@ -44,6 +46,7 @@ def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> 
         bucket_structure: Prefix for object name in the bucket.
     """
     base_folder = Path(folder)
+    all_files = urgap.UFileList.from_folder(base_folder)
     resulting_uris = []
     with tqdm(
         total=len(all_files),

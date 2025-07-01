@@ -5,6 +5,7 @@ import sys
 
 from pathlib import Path
 
+import urgap
 
 
 def main(scheme: str, container_name: str, object_folder: str, input_file: str) -> None:
@@ -19,6 +20,7 @@ def main(scheme: str, container_name: str, object_folder: str, input_file: str) 
     if input_file.exists() is False:
         msg = "Local file does not exist!"
         raise OSError(msg)
+    ufile = urgap.UFile(f"{scheme}://{container_name}#{object_folder}/{input_file}")
     driver = ufile.io.driver
     available_containers = [x.name for x in driver.list_containers()]
     logging.info("Available containers:")

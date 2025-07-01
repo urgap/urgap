@@ -1,9 +1,13 @@
 import pandas as pd
 
+import urgap
 
 
 def test_filter_csv_pipeline(tmp_dir):
+    ufiles = urgap.UFileList(
         [
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}"
                 f"#unified_csvs/BSA1_xtandem_alanine_unified.csv",
             ),
         ],
@@ -22,6 +26,7 @@ def test_filter_csv_pipeline(tmp_dir):
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
                 "latest_exe_paths": {
+                    "CompressToTar:latest": urgap.home
                     / "resources"
                     / "Compressor"
                     / "1_0_0"
