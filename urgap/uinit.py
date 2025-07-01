@@ -176,8 +176,27 @@ def show_banner() -> str:
     """
     banners = [
         r"""
+
+  .__.   .__________.__________.____________._________.______________.     .__.
+   \__\   \_    \    \_     _.  \_    ______/_     _.  \_      _.     \.    \__\
+            \    \     \    \'   /\    \__    \     \     \     \'    /
+    ____    /     \     \        ‾‾\           \           \     \___/
+    \___\   \____________\____\     \______     \_____\     \_____/        ______
+    """,
         r"""
+
+          ._____________________  _______________________________.
+           \     |   \    __    \/      ____/    _    |     __    \
+            |    |    |   |/    /\          |    _    |     |/____/
+            |_________|___|\    \_\____|    |____|____|_____|
+                            \_____/    |____|
         """,
+        """
+
+                ...   ... ........   ........  .......  ........
+                :::   ::: :::...::' :::   ... :::...::: :::...::'
+                `::...::' :::` `::. ::::::::: :::   ::: :::
+                                          :::
         """,
     ]
     constellations = [
@@ -189,9 +208,14 @@ def show_banner() -> str:
             urgap.uwid_obj.nouns,
         ],
     ]
+    con = constellations[0]
     urgap_anagram = []
     for i, letter in enumerate("urgap"):
+        random_word = secrets.choice(
+            [word for word in con[i] if word.startswith(letter)],
+        )
         urgap_anagram.append(random_word)
 
     banner = secrets.choice(banners)
     return f"""{banner}
+          {urgap_anagram[0]: ^8s}   {urgap_anagram[1]: ^8}   {urgap_anagram[2]: ^8}   {urgap_anagram[3]: ^8}   {urgap_anagram[4]: ^8}
