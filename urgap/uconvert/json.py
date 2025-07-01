@@ -20,6 +20,7 @@ class JSONEncoder(json.JSONEncoder):
     def default(
         self,
         obj: (
+            datetime.datetime | set | urgap.UFile | pathlib.PosixPath | urgap.UFileList
         ),
     ) -> dict:
         """Serialize additional urgap and built-in types.
@@ -76,6 +77,7 @@ class JSONDecoder(json.JSONDecoder):
     def object_hook(
         self,
         obj: dict,
+    ) -> dict | datetime.datetime | set | pathlib.Path | urgap.UFile | urgap.UFileList:
         """Decode urgap-specific objects from dicts.
 
         Args:

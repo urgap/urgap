@@ -215,6 +215,8 @@ def test_keep_single_uftypes():
     ufl = ufl.keep_uftypes([urgap.uftypes.test.MITSURUGI])
     assert len(ufl) == 2
     assert urgap.uftypes.test.MITSURUGI in ufl.get_index_groups_by_uftypes().keys()
+    assert urgap.uftypes.test.TEST_FILE1 not in ufl.get_index_groups_by_uftypes().keys()
+    assert urgap.uftypes.test.TEST_FILE2 not in ufl.get_index_groups_by_uftypes().keys()
 
 
 def test_keep_single_uftypes_typeerror():
@@ -256,3 +258,4 @@ def test_keep_multiple_uftypes():
     assert len(ufl) == 2
     for uftype in uftype_list:
         assert uftype in ufl.get_index_groups_by_uftypes().keys()
+    assert urgap.uftypes.test.TEST_FILE2 not in ufl.get_index_groups_by_uftypes().keys()
