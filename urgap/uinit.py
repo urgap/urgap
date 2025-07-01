@@ -220,3 +220,4 @@ def show_banner() -> str:
     banner = secrets.choice(banners)
     return f"""{banner}
           {urgap_anagram[0]: ^8s}   {urgap_anagram[1]: ^8}   {urgap_anagram[2]: ^8}   {urgap_anagram[3]: ^8}   {urgap_anagram[4]: ^8}
+    """
