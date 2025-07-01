@@ -8,6 +8,7 @@ import urgap
 
 # Mock IO
 uf = urgap.UFile(
+    uri="github://github.com/numpy/numpy/main#README.rst",
 )
 uf.io.target_branch_name = "fake_target_branch"
 uf.io.source_branch = MagicMock()
