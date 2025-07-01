@@ -27,6 +27,7 @@ stages:
   - stage: PythonPackage
     variables:
       PACKAGE_VERSION: $[stageDependencies.create_variables_stage.create_variables_job.outputs['ADO_variables.PACKAGE_VERSION']]
+      REPOSITORY_NAME: gsk-tech/urgap
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     dependsOn:
       - SetVariables

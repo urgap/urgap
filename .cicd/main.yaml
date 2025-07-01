@@ -73,17 +73,21 @@ stages:
               package: urgap
               testFolder: tests/unittests
               testCategory: Unittests
+              envUrgapHome: $(Pipeline.Workspace)/.urgap
           - template: tests/tests.yaml@templates
             parameters:
               package: urgap
               testFolder: tests/integrationtests
               testCategory: Integrationtests
+              envUrgapHome: $(Pipeline.Workspace)/.urgap
           - template: tests/coverage_report.yaml@templates
             parameters:
               coverageType: 'xml'
               flags: -o ../urgap/coverage.xml
           - template: code_quality/sonarqube.yaml@templates
             parameters:
+              SonarQube: dso-sonarqube-urgap
+              cliProjectKey: dso-urgap
               projectBaseDir: ../urgap
               sonarSources: ../urgap
               sonarExclusions: '**/tests/**,**/build/**,**/docs/**,**/utils/**,**/examples/**,**/ext/**,**/wrappers/**,**/urgap/resources/**,**/unodes/**'
