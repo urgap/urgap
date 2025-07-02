@@ -45,6 +45,7 @@ cloud = [
     'azure-keyvault-secrets==4.10.0',
     'cloud-sql-python-connector~=1.0',
     'pg8000~=1.29',
+    'pyvis==0.3.2',
 ]
 databases = [
     'pymongo>=3.8.0,<5.0.0',
