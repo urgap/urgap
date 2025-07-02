@@ -86,6 +86,7 @@ class UNodeBase:
 
     def run_node_as_mcp_tool(
         self,
+        ufiles: list,
         tool_parameter: dict,
         force: bool = False,
         latest_exe_path: str | None = None,
@@ -95,7 +96,10 @@ class UNodeBase:
 
         Args:
             ufiles (list of uri strings): List of urgap uri strings
+            tool_parameter (dict): Parameters that are added to the
                 command line for tools execution.
+                a urgap_storage_base_uri can be used to defines where the output files
+                of the run is uploaded to. Defaults to None.
             force (bool, optional): Defines if re-run logic is checked. Defaults to False.
             latest_exe_path (str | None, optional): path to the executable. Defaults to None.
             workflow_id (str | None, optional): workflow ID. Defaults to None.
@@ -117,6 +121,7 @@ class UNodeBase:
             "retain_uftypes: str | bool = workflow ID,",
             "file_io_timeout: int | None = None,",
             "remote_url: str | None = None,",
+            "remote_execution_timeout: int = 7200,",
         ]
                 },
                 },
