@@ -174,6 +174,21 @@ beacon.SUMMARY_PARQUET = ".summary.parquet"
 beacon.BRIGHTFIELD_SUMMARY_PARQUET = ".brightfield_summary.parquet"
 beacon.RESULT_PNG = ".result.png"
 
+# Interdock=====================================================================
+molecular_structure = types.SimpleNamespace()
+molecular_structure.ANY = "molecular_structure.ANY"
+molecular_structure.PROTEIN = ".protein.ctf"
+molecular_structure.POLYSACC = ".polysacc.yaml"
+
+interdock = types.SimpleNamespace()
+interdock.model = types.SimpleNamespace()
+interdock.model.ANY = "interdock.model.ANY"
+interdock.model.PDBQT = ".model_pdbqt.pdbqt"
+interdock.model.PDB = ".model_pdb.pdb"
+interdock.LOG = ".interdock.log"
+interdock.CONFIG = ".interdock.config"  # is a mock, file has no extension
+interdock.OUT = ".interdock.out"
+
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
 ms.RUN_META_CSV = ".run_meta.csv"
