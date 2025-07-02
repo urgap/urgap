@@ -1,4 +1,5 @@
 """Resources for MCP module of urgap2."""
+
 import urllib.parse
 
 from mcp.server.fastmcp import FastMCP
@@ -27,6 +28,7 @@ def register_resources(server: FastMCP) -> None:
     Args:
         server (FastMCP): mcp fastmcp instance
     """
+
     @server.resource(
         "uu-greeting://{name}",
         name="Personal Greeting",
@@ -44,6 +46,10 @@ def register_resources(server: FastMCP) -> None:
         mime_type="text/plain",
     )
     def generate_mld_uat(
+        equipment_id: str,
+        task_id: str,
+        data_type: str,
+        path: str,
     ) -> str:
         """Generate urgap file uri for mylabdata uat.
 

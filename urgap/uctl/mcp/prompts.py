@@ -1,4 +1,5 @@
 """Prompts for MCP module of urgap2."""
+
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.prompts import base
 from mcp.types import Prompt
@@ -28,8 +29,12 @@ def register_prompts(server: FastMCP) -> None:
     Args:
         server (FastMCP): mcp fastmcp instance
     """
+
     @server.prompt()
     async def mylabdata_urgap_storage_base_uri_pattern(
+        equipment_id: str,
+        task_id: str,
+        env: str = "uat",
     ) -> Prompt:
         """Mylabdata urgap storage base uri pattern.
 

@@ -128,6 +128,7 @@ class UNodeBase:
             },
         if workflow_id is not None:
             urun_dict["wid"] = workflow_id
+        ufile_list = self.run(ufiles, urun_dict)
         uri_list = ufile_list.as_uri_list()
         if isinstance(uri_list, str):
             uri_list = [uri_list]
