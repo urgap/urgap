@@ -116,6 +116,14 @@ def create_app(name: str) -> FastAPI:
     required=True,
     multiple=True,
 )
+@click.option(
+    "--mcp",
+    "-m",
+    help="Expose Nodes as model context protocol tools given port.",
+    required=False,
+    multiple=False,
+    default=None,
+)
 
     """
     processes = []
@@ -134,6 +142,18 @@ def create_app(name: str) -> FastAPI:
         processes.append(p)
         p.start()
 
+    if mcp is not None:
+        p = multiprocessing.Process(
+            target=run_mcp_server,
+            args=(
+                nodes_list,
+                mcp,
+                shutdown_event,
+            ),
+        )
+        processes.append(p)
+        p.start()
+
     def signal_handler(sig: int, _frame: FrameType | None) -> None:
         msg = f"Parent process received termination signal {sig}"
         for proc in processes:
@@ -144,3 +164,13 @@ def create_app(name: str) -> FastAPI:
 
     for process in processes:
         process.join()
+
+
+    """
+
+
+
+    )
+
+
+

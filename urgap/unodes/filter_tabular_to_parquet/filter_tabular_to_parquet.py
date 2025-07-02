@@ -31,6 +31,11 @@ class FilterTabularToParquet(urgap.unode.UNodeBase):
         "engine": None,
         "engine_type": ("io",),
         "citation": "Urgap team (2021)",
+        "parameter_examples": """
+            {
+                "-q": "500 < `exp_mz` < 1000" #  Pandas query string
+            }
+        """,
     }
 
     def __init__(self) -> None:

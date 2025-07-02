@@ -84,6 +84,50 @@ class UNodeBase:
             self.META_INFO["unode_full_identifier"]
         ]["has_3rd_party_requirements"]
 
+    def run_node_as_mcp_tool(
+        self,
+        tool_parameter: dict,
+        force: bool = False,
+        latest_exe_path: str | None = None,
+        workflow_id: str | None = None,
+    ) -> list:
+        """Run UNode via mcp tools.
+
+        Args:
+            ufiles (list of uri strings): List of urgap uri strings
+                command line for tools execution.
+            force (bool, optional): Defines if re-run logic is checked. Defaults to False.
+            latest_exe_path (str | None, optional): path to the executable. Defaults to None.
+            workflow_id (str | None, optional): workflow ID. Defaults to None.
+
+        Returns:
+            list: list of uri strings
+        """
+        _unused_kargs_as_sometimes_to_complex_for_llm = [
+            "wid (str | None, optional): workflow ID. Defaults to None.",
+            "additional_filters: dict | None = None,",
+            "dry_run: bool = False,",
+            "override_folder_creation: bool = False,",
+            "prefix: str | None = None,",
+            "run_folder_name: str | None = None,",
+            "skip_data_versioning: bool = False,",
+            "record_skipped_runs: str | bool = False,",
+            "skip_pre_checks: bool = False,",
+            "remove_temporary_files: str | bool = False,",
+            "retain_uftypes: str | bool = workflow ID,",
+            "file_io_timeout: int | None = None,",
+            "remote_url: str | None = None,",
+        ]
+                },
+                },
+            },
+        if workflow_id is not None:
+            urun_dict["wid"] = workflow_id
+        uri_list = ufile_list.as_uri_list()
+        if isinstance(uri_list, str):
+            uri_list = [uri_list]
+        return uri_list
+
     def run(
         self,
         ufiles: urgap.UFileList | None = None,

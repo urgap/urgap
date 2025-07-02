@@ -33,6 +33,10 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
         "engine": None,
         "engine_type": ("io",),
         "citation": "Urgap team (2021)",
+        "parameter_examples": """
+            {
+            }
+        """,
     }
 
     def __init__(self) -> None:
