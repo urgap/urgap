@@ -144,6 +144,7 @@ def load_certificates() -> None:
 
 
 def set_scratch_disk_path(
+    path: Path | None = None,
     wid: str | None = None,
 ) -> os.PathLike:
     """Create and return a scratch disk path, creating the directory if necessary.

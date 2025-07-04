@@ -50,3 +50,9 @@ def test_read_config(tmp_dir):
 
 def test_scratch_disk_base_has_uwid():
     assert urgap.scratch_disk_base.name == urgap.session_uwid
+
+
+def test_scratch_disk_base_from_config(provide_changeable_config):
+    urgap.config["scratch_disk"] = "/tmp/"
+    scratch_path = urgap.uinit.set_scratch_disk_path(wid="scratch_wid")
+    assert scratch_path == Path("/tmp/scratch_wid")
