@@ -159,6 +159,10 @@ def set_scratch_disk_path(
         The path to the created scratch disk directory.
     """
     if path is None:
+        if urgap.config.get("scratch_disk", None) is not None:
+            path = Path(urgap.config.get("scratch_disk"))
+        else:
+            path = Path(tempfile.TemporaryDirectory().name)
     if wid is not None:
         path = path / wid
     path.mkdir(exist_ok=True, parents=True)

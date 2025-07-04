@@ -42,6 +42,7 @@
         "value": "postgresql+pg8000://10.138.0.5:5432"
     },
     "scratch_disk": {
+        "value": null,
         "description": "Temporary urgap processing disk"
     },
     "resource_urls": {
