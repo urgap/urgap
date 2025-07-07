@@ -75,6 +75,7 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
     assert df["sequence_start"].sum() == 1144
     assert df.shape[0] == 4
 
+    # Test proper error handling
     urun_dict_filter = urgap.URunDict(
         {
             "parameters": {
