@@ -6,6 +6,7 @@ import multiprocessing
 import os
 import signal
 import threading
+import traceback
 
 from concurrent.futures import ProcessPoolExecutor
 from types import FrameType
@@ -65,6 +66,22 @@ def create_app(name: str) -> FastAPI:
         loop = asyncio.get_running_loop()
         msg = f"Launching urgap node {name}"
 
+        try:
+            output_files = await loop.run_in_executor(
+                app.state.executor,
+                run_unode_in_loop,
+                payload,
+                app.state.name,
+            )
+            return JSONResponse(
+                content=output_files,
+                status_code=200,
+            )
+        except Exception as e:
+            return JSONResponse(
+                content={"error": str(e), "traceback": traceback.format_exc()},
+                status_code=500,
+            )
 
     @app.post("/v1/terminate")
     def terminate_server() -> dict:

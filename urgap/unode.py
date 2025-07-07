@@ -184,6 +184,9 @@ class UNodeBase:
                 span.set_attribute("exception.type", type(e).__name__)
                 span.set_attribute("exception.message", str(e))
             raise requests.HTTPError(msg) from e
+        data = response.json()
+            raise RuntimeError(msg)
+        return urgap.UFileList.from_uri_list(data)
 
     def _run_locally(
         self,

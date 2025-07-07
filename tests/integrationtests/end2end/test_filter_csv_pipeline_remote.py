@@ -74,3 +74,27 @@ def test_filter_csv_pipeline(tmp_dir, provide_uctl_server):
     df = pd.read_csv(filtered_1a[0].path)
     assert df["sequence_start"].sum() == 1144
     assert df.shape[0] == 4
+
+    urun_dict_filter = urgap.URunDict(
+        {
+            "parameters": {
+                "FilterTabularToCSV:latest": {
+                    "-q": "whatisreal < `howdoyoudefinereal` < electrical_signals?",
+                },
+            },
+            "unode_parameters": {
+                "storage_base_uri": f"file://{tmp_dir}",
+                "remote_url": "http://localhost",
+                "latest_exe_paths": {
+                    "FilterTabularToCSV:latest": urgap.home
+                    / "resources"
+                    / "FilterTabular"
+                    / "1_0_0"
+                    / "filter_tabular.py",
+                },
+            },
+        },
+    )
+
+    with pytest.raises(RuntimeError):
+        filter_1 = filter_tab_to_csv_node.run(urun_dict=urun_dict_filter, ufiles=ufiles)
