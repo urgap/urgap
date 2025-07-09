@@ -211,7 +211,13 @@ def provide_uctl_server(request):
         call.extend(["-n", unode])
         required_ports.append(urgap.instances.unode_manager.unode_port_mapping[unode])
     else:
+        for param in request.param:
+            if isinstance(param, int):
+                call.extend(["--mcp", str(param)])
+                continue
+            call.extend(["-n", param])
             required_ports.append(
+                urgap.instances.unode_manager.unode_port_mapping[param],
             )
     proc = subprocess.Popen(call)
     for _ in range(30):
