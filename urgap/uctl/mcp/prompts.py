@@ -128,19 +128,62 @@ def register_prompts(server: FastMCP) -> None:
                 }
             """
 
+        _for_later = """
         "unode_parameters": {        // Parameters specific to the UNode
 
+                "additional_filters": dict|None,  // Optional: Additional filters during input file filtering
+                                                // Format: {urgap.uftypes.test.TEST_FILE1: {"tags": {"QC": "good"}}}
 
+                "dry_run": bool,                // Optional: Whether execution is skipped (default: false)
+                                                // Not implemented yet
 
+                "force": bool,                  // Optional: Whether execution is forced (default: false)
 
+                "override_folder_creation": bool,  // Optional: Skip folder creation (default: false)
+                                                // Not sure if still used
 
+                "prefix": str|None,             // Optional: Additional prefix for all object names
+                                                // Example: "ROS1_" would yield ROS1_<input_file_ids_md5>_0.test_file2
 
+                "run_folder_name": str|None,    // Optional: Override folder name creation
+                                                // Default: node name + re-run param md5
 
+                "skip_data_versioning": bool,   // Optional: Skip versioning in folder names (default: false)
+                                                // Results in: test_node_v1/<input_file_ids_md5>_0.test_file2
 
+                "skip_pre_checks": bool,        // Optional: Skip pre-checks before execution (default: false)
+                                                // Pre-checks include 3rd party installation verification
 
+                "storage_base_uri": str|None,   // Optional: Storage base URI for output files
 
+                "record_skipped_runs": bool,    // Deprecated: All execution info will be stored (default: false)
 
+                "remove_temporary_files": bool, // Optional: Delete temporary files from wrapper (default: false)
 
+                "retain_uftypes": bool,         // Optional: Retain output file uftypes regardless of wrapper definition (default: false)
 
+                "file_io_timeout": int|None,    // Optional: Timeout in seconds for re-initializing ufile list
+                                                // Helpful if IO backend times out during long processing
+                                                // None = skip re-init
 
+                "remote_url": str|None,         // Optional: Remote execution URL (e.g., "localhost")
+                                                // Requires uctl upi_server (API) on remote host
+                                                // Only for wrappers with api_port in UMETA
 
+                "remote_execution_timeout": int, // Optional: Timeout for remote execution in seconds (default: 7200)
+                                                // Default: 2 hours
+
+                "latest_exe_paths": dict|None   // Optional: Explicit exe paths when using latest tag
+                                                // Format: {'msfragger:latest': "/path/to/exe/in_upi_server"}
+            }
+        """
+
+        return Prompt(
+            name="urun_default_dict",
+            description="Default urgap urun_dict requireed to run all urgap tools.",
+            messages=[
+                base.AssistantMessage(
+                    content={"type": "text", "text": tool_docs},
+                ),
+            ],
+        )
