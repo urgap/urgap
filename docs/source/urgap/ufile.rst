@@ -15,6 +15,7 @@ UFile Class
 UUriDict Class
 ##############
 
+.. autoclass:: urgap.ufile.uuri.UUri
    :members:
 
    .. automethod:: __init__
