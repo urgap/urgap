@@ -115,6 +115,7 @@ class UUri:
 
     def get_https_remote_path(self) -> str:
         """Get the https_remote_path."""
+        return f"{self.scheme}://{self.netloc}{self.path}/{self.fragment}"
 
 
     def get_https_remote_tag_path(self) -> str:
