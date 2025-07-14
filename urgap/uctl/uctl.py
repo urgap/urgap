@@ -5,6 +5,7 @@ This is the main CLI entrypoint and command group dispatcher for urgap2.
 
 import click
 
+from urgap.uctl.info import info
 
 
 @click.group()

@@ -99,3 +99,8 @@ def info_umeta_click() -> None:
     click.secho(f"UMeta {urgap.config['umeta']}", fg="bright_green")
     for k, v in interface_stats.items():
         click.echo(f"{k: >50}:{v: >12}")
+
+@click.group()
+def info() -> None:
+    """Show information about the Urgap installation."""
+info.add_command(info_unodes_click, name="unodes")
