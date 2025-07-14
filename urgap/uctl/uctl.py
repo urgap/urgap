@@ -12,6 +12,9 @@ from urgap.uctl.info import info
 def cli() -> None:
     """Start the urgap command-line interface (CLI)."""
 
+
 # Register subcommands and command groups
+cli.add_command(set_command, name="set")
 cli.add_command(describe)
 cli.add_command(info)
+cli.add_command(upload)

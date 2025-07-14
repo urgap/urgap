@@ -3,8 +3,10 @@
 import collections
 import logging
 import pprint
+
 import click
 
+import urgap
 
 
 @click.command()
@@ -100,7 +102,12 @@ def info_umeta_click() -> None:
     for k, v in interface_stats.items():
         click.echo(f"{k: >50}:{v: >12}")
 
+
 @click.group()
 def info() -> None:
     """Show information about the Urgap installation."""
+
+
+info.add_command(info_version_click, name="version")
+info.add_command(info_umeta_click, name="umeta")
 info.add_command(info_unodes_click, name="unodes")
