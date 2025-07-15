@@ -34,7 +34,13 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
         "engine_type": ("io",),
         "citation": "Urgap team (2021)",
         "parameter_examples": """
+
+            -q: Use pandas query string
+
+            For example:
+
             {
+                "-q": "500 < `exp_mz` < 1000"
             }
         """,
     }

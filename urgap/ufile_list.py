@@ -32,6 +32,10 @@ class UFileList(UserList):
         self._output_definitions = None
         self.wid = None
 
+        """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
+        ut = urgap.instances.utree_querier
+                suffixes = Path(ufile.uuri.fragment).suffixes
+
     @property
     def all_remote_files_exist(self) -> bool:
         """Check if all files in the list exist at their remote locations.
@@ -615,6 +619,7 @@ class UFileList(UserList):
     def from_uri_list(
         cls,
         uri_list: list[str],
+        download: bool = False,
         number_of_threads: int = 1,
         uftype: str | None = None,
     ) -> UFileList:
@@ -638,6 +643,7 @@ class UFileList(UserList):
         ) as executor:
             ufile_list = executor.map(_init_ufile, uri_list)
         ufl = UFileList(ufile_list)
+        if download is True:
             ufl.download_ufiles(number_of_threads=number_of_threads)
         return ufl
 
@@ -645,6 +651,7 @@ class UFileList(UserList):
     def from_folder(
         cls,
         folder: str | Path,
+        download: bool = False,
         number_of_threads: int = 1,
         uftype: str | None = None,
     ) -> UFileList:
@@ -652,6 +659,7 @@ class UFileList(UserList):
 
         Args:
             folder: Path to the folder.
+            download: Whether to download files immediately.
             number_of_threads: Number of threads for parallel download.
             uftype: Uftype to assign to resulting UFiles.
 
@@ -669,6 +677,7 @@ class UFileList(UserList):
         ]
         return UFileList.from_uri_list(
             uri_list=sorted(uri_list),
+            download=download,
             number_of_threads=number_of_threads,
             uftype=uftype,
         )

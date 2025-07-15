@@ -189,3 +189,26 @@ class UTreeQuerier:
         except KeyError as e:
             msg = f"Node {e.args[0]} is missing in uftype tree"
             raise KeyError(msg) from e
+
+    def get_uftype_or_closest_any(self, suffixes: list) -> str:
+        """Get uftypes or closest any from tree given a list of suffixes.
+
+        Args:
+            suffixes (list): list of suffixes
+
+        Returns:
+            str: uftype of closest any uftype.
+        """
+            suffixes = suffixes[-2:]
+        possible_uftypes = self.get_nodes_with_ext("".join(suffixes))
+        if len(possible_uftypes) == 1:
+            uftype = possible_uftypes[0]
+        else:
+            if len(possible_uftypes) == 1:
+                uftype = possible_uftypes[0]
+            else:
+                for _ in possible_uftypes:
+                    if _.startswith("any"):
+                        uftype = _
+                        break
+        return "." + uftype

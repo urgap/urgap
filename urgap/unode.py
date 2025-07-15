@@ -89,6 +89,7 @@ class UNodeBase:
         ufiles: list,
         tool_parameter: dict,
         force: bool = False,
+        output_urgap_storage_base_uri: str | None = None,
         latest_exe_path: str | None = None,
         workflow_id: str | None = None,
     ) -> list:
@@ -98,6 +99,7 @@ class UNodeBase:
             ufiles (list of uri strings): List of urgap uri strings
             tool_parameter (dict): Parameters that are added to the
                 command line for tools execution.
+            output_urgap_storage_base_uri (str | None, optional):
                 a urgap_storage_base_uri can be used to defines where the output files
                 of the run is uploaded to. Defaults to None.
             force (bool, optional): Defines if re-run logic is checked. Defaults to False.

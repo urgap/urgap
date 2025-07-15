@@ -67,6 +67,14 @@ class UUri:
             self._user = credentials["user"]
             self._password = credentials["password"]
 
+    @property
+    def storage_uri(self) -> str:
+        """Get the storage_uri."""
+        if self.path == "":
+            return f"{self.scheme}://{self.netloc}"
+        return f"{self.scheme}://{self.netloc}{self.path}"
+
+
         """Get the api_url."""
 
         """Get the api_url_files."""

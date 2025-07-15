@@ -45,6 +45,7 @@ def list_container_times(
     """
     msg = f"Listing container Items with {urgap_storage_base_uri}"
 
+    return urgap.UFile(f"{urgap_storage_base_uri}#dummy.txt").list_container_items(
         pattern=regex_pattern_string,
         limit=limit,
     )
@@ -140,8 +141,13 @@ def register_tools(server: FastMCP, nodes_list: list) -> None:
             f"{unode_name}",
             f"""{unode_name}:
 
+    {un.run_node_as_mcp_tool.__doc__}
 
+    This is an example of the parameters for {unode_name}:
+        {un.META_INFO["parameter_examples"]}
 
+    Input file types (uftypes) are:
+        {un.META_INFO["input_uftypes"]}
 
             """,
         )

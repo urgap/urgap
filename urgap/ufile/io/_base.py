@@ -68,3 +68,6 @@ class UIOBase:
             True if the file exists on disk, False otherwise.
         """
         return self.scratch_path.exists()
+
+        """Add the storage URI to the container items.
+        hence this function can be called to add the missing storage_uri#.

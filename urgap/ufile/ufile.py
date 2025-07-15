@@ -635,7 +635,12 @@ class UFile:
         """Remove only the cached local tags for this UFile."""
         self._tags = None
 
+    def list_container_items(
         """List all objects in the remote container.
+
+        Args:
+            pattern: Regex pattern for filtering object names.
+            limit: Maximum number of files to request in one query.
 
         Returns:
             List of object names.
