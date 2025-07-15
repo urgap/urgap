@@ -133,3 +133,46 @@ def log_table(rows: list[dict] | None = None) -> None:
     ]
     # Combine and log
     output = "\n".join([header_row, divider, *row_lines])
+
+
+@click.command()
+def umeta() -> None:
+    """Check metadata for UMeta."""
+
+
+@click.command()
+def unodes() -> None:
+    """Check metadata for UNodes."""
+
+
+@click.command()
+def version() -> None:
+    """Check metadata for URGAP version."""
+
+
+@click.group()
+def meta_info() -> None:
+    """See specific resource metadata."""
+
+
+meta_info.add_command(umeta)
+meta_info.add_command(unodes)
+meta_info.add_command(version)
+
+
+@click.command()
+def meta_creds() -> None:
+    """See metadata for credentials."""
+
+
+@click.group()
+def describe() -> None:
+    """Describe UMeta entries in more detail."""
+
+
+describe.add_command(meta_info, name="info")
+describe.add_command(meta_creds, name="credentials")
+describe.add_command(describe_wid_click, name="wid")
+describe.add_command(describe_object_name_click, name="object")
+describe.add_command(describe_last_runs_click, name="history")
+describe.add_command(describe_ucfs_click, name="ucfs")

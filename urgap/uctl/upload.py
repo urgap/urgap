@@ -64,3 +64,11 @@ def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> 
             pbar.update(1)
     for uri in resulting_uris:
         msg = f"'{uri}'"
+
+
+@click.group()
+def upload() -> None:
+    """Upload files or folders to object storage."""
+
+
+upload.add_command(upload_folder_click, name="folder")

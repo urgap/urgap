@@ -1,4 +1,5 @@
 import json
+import logging
 
 from click.testing import CliRunner
 
@@ -27,27 +28,26 @@ def load_credentials(scheme=None):
             return creds
 
 
-def test_set_config(provide_changeable_config):
-    from urgap.uctl.set import set_config
+def test_show_config(caplog):
+    from urgap.uctl.show import show_config_click
 
-    test_objectives = load_config().get("umeta")["options"]
-    for option in test_objectives:
-        set_config(config_key="umeta", config_value=option, dry=False)
-        new_umeta = load_config().get("umeta")["value"]
-        assert new_umeta == option
+    config = load_config()
+    umeta = config.get("umeta")["value"]
+    hash_algorithm = config.get("hash_algorithm")["value"]
+    with caplog.at_level(logging.INFO):
+        runner.invoke(show_config_click)
+    assert f"'value': '{hash_algorithm}'" in caplog.text
+    assert f"'value': '{umeta}'" in caplog.text
 
 
-def test_set_credentials(provide_changeable_credentials):
-    from urgap.uctl.set import set_credentials
+def test_show_credentials():
+    from urgap.uctl.show import show_credentials
 
     creds = load_credentials()
-    pw = "test"
     for entry in creds:
         scheme = entry.get("scheme")
         host = entry.get("host")
         if host.startswith("<"):
             continue
         cred_key = scheme + "://" + host
-        set_credentials(cred_key=cred_key, password=pw, dry=False)
-        new_creds = load_credentials(scheme=scheme)
-        assert new_creds.get("password") == pw
+        show_credentials(cred_key=cred_key)

@@ -1,3 +1,4 @@
+"""Run submodule of urgap.uctl."""
 
 import asyncio
 import json
@@ -12,8 +13,15 @@ from concurrent.futures import ProcessPoolExecutor
 from types import FrameType
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from flask import Flask, render_template
+from flask_wtf.csrf import CSRFProtect
 
 
+"""UPI server submodule of urgap.uctl.
+
+This module provides utilities to launch FastAPI-based microservices for urgap nodes
+for remote execution via HTTP endpoints, using uvicorn.
+"""
 
 
 def run_unode_in_loop(payload: dict, name: str) -> list:
@@ -125,6 +133,86 @@ def create_app(name: str) -> FastAPI:
     thread.join()
 
 
+def run_mcp_server(
+    nodes: list,
+    mcp_port: int,
+    shutdown_event: multiprocessing.Event,
+    google_adk_style: bool = True,
+) -> None:
+    """Expose urgap nodes as MCP Server tools.
+
+    Args:
+        nodes (list): List of ursgal nodes
+        mcp_port (int): port for the mcp sse server
+        shutdown_event (multiprocessing.Event): ...
+        google_adk_style (bool, optional): If resources and prompts should not be exposed. Defaults to True.
+    """
+    name = f"urgap mcp server for {', '.join(nodes)}"
+    server = FastMCP(name)
+
+    from urgap.uctl.mcp.tools import register_tools
+
+    register_tools(server, nodes)
+
+    if google_adk_style is False:
+        from urgap.uctl.mcp.prompts import register_prompts
+        from urgap.uctl.mcp.resources import register_resources
+
+        register_resources(server)
+        register_prompts(server)
+
+    config = uvicorn.Config(
+        server.sse_app(),
+        host="127.0.0.1",
+        port=int(mcp_port),
+        log_level="info",
+    )
+    server = uvicorn.Server(config)
+
+    thread = threading.Thread(target=server.run)
+    thread.start()
+
+    shutdown_event.wait()
+
+    server.should_exit = True
+    thread.join()
+
+
+
+def get_all_relevant_nodes(nodes: tuple | str) -> list:
+    """Expand provided nodes to include both 'latest' and explicit version for each node.
+
+    Args:
+        nodes: Node names or versions to expand.
+
+    Returns:
+        List of nodes to serve, ensuring both 'latest' and its explicit version are included.
+    """
+    if isinstance(nodes, tuple):
+        nodes_list = list(nodes)
+    elif isinstance(nodes, str):
+        nodes_list = [nodes]
+    for unode in nodes_list:
+        unode_name, _ = unode.split(":")
+        all_unode_versions = [
+            node.split(":")[1]
+            for node in sorted(
+                urgap.instances.unode_manager.wrapper_lookup.keys(),
+                key=sort_versions,
+            )
+            if node.split(":")[0] == unode_name
+        ]
+
+        actual_latest_version = unode_name + ":" + all_unode_versions[-1]
+        latest_in_name = unode_name + ":latest"
+
+        if unode == latest_in_name and actual_latest_version not in nodes_list:
+            nodes_list.append(actual_latest_version)
+        elif unode == actual_latest_version and latest_in_name not in nodes_list:
+            nodes_list.append(latest_in_name)
+    return nodes_list
+
+
 @click.command()
 @click.option(
     "--nodes",
@@ -183,14 +271,95 @@ def create_app(name: str) -> FastAPI:
         process.join()
 
 
+"""Dashboard submodule of urgap.uctl."""
+urgap_server = Path(__file__).parent / "server"
+urgap_server_static = urgap_server / "static"
+urgap_server_templates = urgap_server / "templates"
 
+app = Flask(
+    __name__,
+    static_folder=urgap_server_static,
+    template_folder=urgap_server_templates,
+)
+csrf = CSRFProtect()
+csrf.init_app(app)
+
+
+@app.route("/")
+def homepage() -> str:
+    """Homepage of the dashboard.
+
+    Returns the dashboard base info page.
     """
+    with app.app_context():
+        return render_template(
+            "dashboard.html",
+            version="0.7.0",
+            data=app.config["data"],
+        )
 
 
+def launch_dashboard() -> None:
+    """Launch the dashboard and open in a web browser."""
+    if not os.environ.get("WERKZEUG_RUN_MAIN"):
+        webbrowser.open_new("http://127.0.0.1:2000/")
+    app.run(host="127.0.0.1", port=2000)
 
 
+@click.group()
+def dashboard() -> None:
+    """Spin up the urgap dashboard."""
 
+
+@click.command()
+@click.argument("wid")
+def dashboard_wid_click(wid: str) -> None:
+    """Show dashboard for a given workflow ID (wid)."""
+    app.config["data"] = []
+    ur = urgap.UReport(wid=wid)
+    app.config["data"] = ur.generate_report()
+    launch_dashboard()
+
+
+@click.command()
+@click.argument("uri")
+def dashboard_uri_click(uri: str) -> None:
+    """Show dashboard based on a file UUri.
+
+    Note: Currently only works with mongo backend.
+    """
+    ufile = urgap.UFile(uri=uri)
+    ur = urgap.UReport(ufile=ufile)
+    logging.info(pprint.pformat(ur.graph))
+    logging.info(pprint.pformat(ur))
+    logging.info(
+        pprint.pformat(
+            "Dashboard for all wids might be the overkill. Please select one.",
+        ),
     )
 
 
+@click.command()
+@click.argument("object_name")
+def dashboard_object_name_click(object_name: str) -> None:
+    """Show dashboard based on object name.
 
+    Note: Currently only works with mongo backend.
+    """
+    ur = urgap.UReport(ucfs=object_name)
+    logging.info(pprint.pformat(ur.graph))
+    logging.info(pprint.pformat(ur))
+    logging.info(
+        pprint.pformat(
+            "Dashboard for all wids might be the overkill. Please select one.",
+        ),
+    )
+
+
+@click.group()
+def run() -> None:
+    """Run Urgap services or jobs."""
+
+
+run.add_command(upi_server)
+run.add_command(dashboard)

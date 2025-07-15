@@ -1,5 +1,23 @@
+
 import urgap
 
+
+runner = CliRunner()
+
+
+def test_dashboard_uri_click(caplog):
+    runner.invoke(
+        dashboard_uri_click,
+        [f"file://{urgap._test_folder}/data/unified_csvs#demo.csv"],
+    )
+    assert "<networkx.classes.digraph.DiGraph object at" in caplog.text
+    assert "<urgap.umeta.umeta.UMeta object at" in caplog.text
+
+
+def test_dashboard_object_name_click(caplog):
+    runner.invoke(dashboard_object_name_click, ["test_wid"])
+    assert "<networkx.classes.digraph.DiGraph object at" in caplog.text
+    assert "<urgap.umeta.umeta.UMeta object at" in caplog.text
 
 
 def test_get_all_relevant_nodes():
