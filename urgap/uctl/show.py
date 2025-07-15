@@ -39,6 +39,7 @@ def show_credentials(cred_key: str) -> None:
         _log_cred_entry(cred_entry)
     else:
 
+
 @click.command()
 @click.option("--output", "-o", help="Output format")
 def show_config_click(output: str) -> None:
