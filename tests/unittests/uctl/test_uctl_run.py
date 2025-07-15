@@ -1,6 +1,11 @@
 
 import urgap
 
+from urgap.uctl.run import (
+    dashboard_object_name_click,
+    dashboard_uri_click,
+    get_all_relevant_nodes,
+)
 
 runner = CliRunner()
 
