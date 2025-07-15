@@ -83,6 +83,7 @@ class IOMyLabData(UIOBase):
             "password": self.uuri.password,
         }
         response = requests.post(
+            url=self.uuri.get_mylabdata_api_url() + "/login",
             json=files_cred,
             verify=self._api_cert,
             timeout=(
@@ -105,6 +106,7 @@ class IOMyLabData(UIOBase):
         """
         tags = None
         url = (
+            self.uuri.get_mylabdata_api_url_files()
             + self.uuri.path
             + "/"
             + self.uuri.fragment
@@ -227,6 +229,7 @@ class IOMyLabData(UIOBase):
                 ),
             ),
         )
+        url = self.uuri.get_mylabdata_api_url_files() + f"?{query}"
         response = requests.get(
             url=url,
             verify=self._api_cert,
@@ -238,6 +241,8 @@ class IOMyLabData(UIOBase):
         )
         while len(response.json()["data"].get("nextPage", "")) != 0:
             response = requests.get(
+                url=self.uuri.get_mylabdata_api_url()
+                + response.json()["data"]["nextPage"],
                 verify=self._api_cert,
                 headers=self._api_token,
                 timeout=(

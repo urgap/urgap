@@ -47,19 +47,26 @@ class IOAzureSMB(UIOBase):
             credential=self.uuri.password,
         )
         available_shares = [x["name"] for x in self.share_service_client.list_shares()]
+        if self.uuri.get_azure_share() not in available_shares:
             msg = (
+                f"Share {self.uuri.get_azure_share()} is not available on host {self.uuri.netloc}."
                 f" Available shares are: {sorted(available_shares)}"
             )
             raise OSError(msg)
         self.share_client = self.share_service_client.get_share_client(
+            self.uuri.get_azure_share(),
         )
         self.directory_client = self.share_client.get_directory_client(
             directory_path="/".join(
+                self.uuri.get_azure_directory_list()
+                + self.uuri.get_azure_object_directory_list(),
             ),
         )
         self.object_directory_client = self.share_client.get_directory_client(
+            directory_path="/".join(self.uuri.get_azure_directory_list()),
         )
         self.file_client = self.directory_client.get_file_client(
+            self.uuri.get_azure_object_file(),
         )
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
             logging.ERROR,

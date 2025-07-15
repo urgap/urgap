@@ -56,20 +56,27 @@ class IOAzureDL(UIOBase):
         available_file_systems = [
             x["name"] for x in self.datalake_service_client.list_file_systems()
         ]
+        if self.uuri.get_azure_share() not in available_file_systems:
             msg = (
+                f"File system '{self.uuri.get_azure_share()}' is not available on host {self.uuri.netloc}"
                 f". Available file systems are: {sorted(available_file_systems)}"
             )
             raise OSError(msg)
 
         self.file_system_client = self.datalake_service_client.get_file_system_client(
+            self.uuri.get_azure_share(),
         )
         self.directory_client = self.file_system_client.get_directory_client(
             directory="/".join(
+                self.uuri.get_azure_directory_list()
+                + self.uuri.get_azure_object_directory_list(),
             ),
         )
         self.object_directory_client = self.file_system_client.get_directory_client(
+            directory="/".join(self.uuri.get_azure_directory_list()),
         )
         self.file_client = self.directory_client.get_file_client(
+            self.uuri.get_azure_object_file(),
         )
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
             logging.ERROR,
