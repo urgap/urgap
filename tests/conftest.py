@@ -205,6 +205,7 @@ def provide_changeable_credentials():
 
 @pytest.fixture
 def provide_uctl_server(request):
+    call = ["uctl", "run", "upi-server"]
     required_ports = []
     if isinstance(request.param, str):
         unode = request.param
