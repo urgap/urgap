@@ -8,6 +8,40 @@ import urgap
 runner = CliRunner()
 
 
+def test_show_credentials_not_found(caplog):
+    from urgap.uctl.show import show_credentials
+
+    fake_key = "somerandomtest://abc"
+    with caplog.at_level(logging.INFO):
+        show_credentials(fake_key)
+    assert "No credentials found for key" in caplog.text
+
+
+def test_show_config_json_output(caplog):
+    from urgap.uctl.show import show_config_click
+
+    with caplog.at_level(logging.INFO):
+        runner.invoke(show_config_click, ["--output", "json"])
+    assert "{" in caplog.text and "}" in caplog.text
+
+
+def test_show_credentials_click_exists(caplog):
+    from urgap.uctl.show import show_credentials_click
+
+    creds = load_credentials()
+    cred = None
+    for entry in creds:
+        scheme = entry.get("scheme")
+        host = entry.get("host")
+        if not host.startswith("<"):
+            cred = scheme + "://" + host
+            break
+    if cred:
+        with caplog.at_level(logging.INFO):
+            runner.invoke(show_credentials_click, [cred])
+        assert "Credential key" in caplog.text
+
+
 def load_config():
     config_path = urgap.home / "urgap.json"
     with open(config_path) as fp:

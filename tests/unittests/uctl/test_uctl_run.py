@@ -10,6 +10,31 @@ from urgap.uctl.run import (
 runner = CliRunner()
 
 
+def test_homepage():
+    run_module.app.config["data"] = ["foo"]
+    with run_module.app.test_client() as client:
+        resp = client.get("/")
+        assert resp.status_code == 200
+        assert b"dashboard" in resp.data
+
+
+def test_run_cli_group_loads():
+    result = runner.invoke(run_module.run, ["--help"])
+    assert result.exit_code == 0
+    assert "Run Urgap services or jobs." in result.output
+
+
+def test_create_app_and_livez_readyz():
+    app = create_app("test_node")
+    client = TestClient(app)
+    resp = client.get("/livez")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "livez"}
+    resp = client.get("/readyz")
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "readyz"}
+
+
 def test_dashboard_uri_click(caplog):
     runner.invoke(
         dashboard_uri_click,

@@ -7,6 +7,70 @@ import urgap
 runner = CliRunner()
 
 
+def test_check_if_config_key_value_is_valid():
+    from urgap.uctl.set import _check_if_config_key_value_is_valid
+
+    config = load_config()
+    options = config.get("umeta", {}).get("options", [])
+    if not options:
+        options = ["sqlite3", "mongodb", "postgresql", "gcpsql"]
+        config = {"umeta": {"options": options, "value": options[0]}}
+
+    for option in options:
+        assert _check_if_config_key_value_is_valid(config, "umeta", option) is True
+
+    assert (
+        _check_if_config_key_value_is_valid(config, "notarealkey", options[0]) is False
+    )
+    assert (
+        _check_if_config_key_value_is_valid(config, "umeta", "notarealvalue") is False
+    )
+
+    config2 = {"valo": {"value": "valo"}}
+    assert _check_if_config_key_value_is_valid(config2, "valo", "valo") is True
+
+    _check_if_config_key_value_is_valid(config, "umeta", options[0], verbose=True)
+
+
+def test_set_credentials_edge_cases():
+    from urgap.uctl.set import set_credentials
+
+    urgap.instances.ucredential_manager.ingested_credentials["notakey"] = None
+    set_credentials(cred_key="notakey", password="secret", dry=True)
+
+
+def test_set_credentials_click():
+    from urgap.uctl.set import set_credentials_click
+
+    runner = CliRunner()
+    result = runner.invoke(
+        set_credentials_click,
+        [
+            "test123",
+            "--scheme",
+            "x",
+            "--host",
+            "h",
+            "--user",
+            "u",
+            "--password",
+            "p",
+            "--dry",
+        ],
+    )
+    assert result.exit_code == 0
+
+
+def test_check_if_config_key_value_is_valid_mode():
+    from urgap.uctl.set import _check_if_config_key_value_is_valid
+
+    config = load_config()
+
+    assert _check_if_config_key_value_is_valid(config, "mode", "dev") is True
+    assert _check_if_config_key_value_is_valid(config, "mode", "prod") is True
+    assert _check_if_config_key_value_is_valid(config, "mode", "notamode") is False
+
+
 def load_config():
     config_path = urgap.home / "urgap.json"
     with open(config_path) as fp:
