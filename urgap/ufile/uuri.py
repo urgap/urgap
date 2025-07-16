@@ -76,6 +76,7 @@ class UUri:
             raise ValueError(msg)
 
     @property
+    def user(self) -> str | None:
         """Return the username for this UUri. If not already set, attempts to load it.
 
         Returns:
@@ -86,6 +87,7 @@ class UUri:
         return self._user
 
     @property
+    def password(self) -> str | None:
         """Return the password for this UUri. If not already set, attempts to load it.
 
         Returns:
