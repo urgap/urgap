@@ -69,7 +69,11 @@ class UIOBase:
         """
         return self.scratch_path.exists()
 
+    def add_storage_uri_to_container_items(self, container_items: list) -> list:
         """Add the storage URI to the container items.
 
         Most IO backends will not add urgap style uri to the listed container items,
         hence this function can be called to add the missing storage_uri#.
+
+        """
+        return [f"{self.uuri.storage_uri}#{file}" for file in container_items]

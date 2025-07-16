@@ -205,6 +205,7 @@ class UTreeQuerier:
             uftype = possible_uftypes[0]
         else:
             possible_uftypes = urgap.instances.utree_querier.get_nodes_with_ext(
+                suffixes[-1],
             )
             if len(possible_uftypes) == 1:
                 uftype = possible_uftypes[0]

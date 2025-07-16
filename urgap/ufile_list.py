@@ -32,9 +32,11 @@ class UFileList(UserList):
         self._output_definitions = None
         self.wid = None
 
+    def set_uftypes_if_none_available(self) -> None:
         """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
         ut = urgap.instances.utree_querier
                 suffixes = Path(ufile.uuri.fragment).suffixes
+                    suffixes,
                 ).lower()
 
     @property
