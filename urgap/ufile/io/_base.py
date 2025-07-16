@@ -70,4 +70,6 @@ class UIOBase:
         return self.scratch_path.exists()
 
         """Add the storage URI to the container items.
+
+        Most IO backends will not add urgap style uri to the listed container items,
         hence this function can be called to add the missing storage_uri#.

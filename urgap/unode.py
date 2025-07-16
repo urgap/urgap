@@ -125,9 +125,20 @@ class UNodeBase:
             "remote_url: str | None = None,",
             "remote_execution_timeout: int = 7200,",
         ]
+        urun_dict = urgap.URunDict(
+            {
+                "parameters": {
+                    self.META_INFO["unode_full_identifier"]: tool_parameter,
                 },
+                "unode_parameters": {
+                    "storage_base_uri": output_urgap_storage_base_uri,
+                    "latest_exe_paths": {
+                        "force": force,
+                        self.META_INFO["unode_full_identifier"]: latest_exe_path,
+                    },
                 },
             },
+        )
         if workflow_id is not None:
             urun_dict["wid"] = workflow_id
         ufile_list = self.run(ufiles, urun_dict)

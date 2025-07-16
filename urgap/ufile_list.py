@@ -35,6 +35,7 @@ class UFileList(UserList):
         """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
         ut = urgap.instances.utree_querier
                 suffixes = Path(ufile.uuri.fragment).suffixes
+                ).lower()
 
     @property
     def all_remote_files_exist(self) -> bool:
@@ -625,7 +626,14 @@ class UFileList(UserList):
     ) -> UFileList:
         """Create a UFileList from a list of UUris.
 
+        Args:
+            uri_list: Uri formatted in urgap style (see urgap.UFile.create_uuri for more info).
+            download: Whether to download to scratch in parallel immediately.
+            number_of_threads: ThreadPoolExecutor workers.
+            uftype: Uftype of the resulting UFiles.
 
+        Returns:
+            Initialized UFileList.
         """
         if urgap.config.get("max_parallel_cores", None) is not None:
             number_of_threads = urgap.config.get("max_parallel_cores")

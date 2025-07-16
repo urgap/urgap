@@ -558,6 +558,7 @@ class UFile:
             case "split_tar":
                 urgap.UFileList.from_folder(
                     self.uuri.path,
+                    download=True,
                 ).uncompress(temp_folder)
             case "bz2":
                 temp_folder.mkdir(parents=True, exist_ok=True)
@@ -636,6 +637,10 @@ class UFile:
         self._tags = None
 
     def list_container_items(
+        self,
+        pattern: str | None = None,
+        limit: int = 1000,
+    ) -> list:
         """List all objects in the remote container.
 
         Args:
