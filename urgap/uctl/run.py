@@ -143,7 +143,10 @@ def create_app(name: str) -> FastAPI:
     server.should_exit = True
     thread.join()
 
+    send_signal_to_pid()
 
+
+def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
 
 def run_mcp_server(
     nodes: list,
@@ -189,6 +192,7 @@ def run_mcp_server(
     server.should_exit = True
     thread.join()
 
+    send_signal_to_pid()
 
 
 def get_all_relevant_nodes(nodes: tuple | str) -> list:
