@@ -9,7 +9,9 @@ def test_move_output_file(tmp_scratch_disk):
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?output_file_index="
                 f"{urgap.uftypes.test.TEST_FILE1}#csvs"
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
     urd = urgap.URunDict()
     ut = urgap.UTrace(
@@ -32,7 +34,9 @@ def test_move_output_file_keep_original_name(tmp_scratch_disk):
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?output_file_index="
                 f"{urgap.uftypes.test.TEST_FILE1}#csvs"
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
     urd = urgap.URunDict()
     ut = urgap.UTrace(
@@ -57,7 +61,9 @@ def test_move_output_file_twice(tmp_scratch_disk):
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?output_file_index="
                 f"{urgap.uftypes.test.TEST_FILE1}#csvs"
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
     urd = urgap.URunDict()
     ut = urgap.UTrace(
@@ -85,7 +91,9 @@ def test_move_output_file_twice_with_original_name(tmp_scratch_disk):
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?output_file_index="
                 f"{urgap.uftypes.test.TEST_FILE1}#csvs"
+                f"/sequence_defghij.csv",
             ),
+        ],
     )
     urd = urgap.URunDict()
     ut = urgap.UTrace(

@@ -9,6 +9,9 @@ def test_wrapper_venn_diagram(tmp_dir: urgap.Path) -> None:  # noqa: D103
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype=.any.csv#unified_csvs/human_ecoli_sample_pyiohat.csv",  # noqa: SLF001
+            ),
+        ],
     )
     urun_dict = urgap.URunDict(
         {
@@ -16,10 +19,12 @@ def test_wrapper_venn_diagram(tmp_dir: urgap.Path) -> None:  # noqa: D103
                 "VennDiagram:2.0.0": {
                     "--id-column": ["charge"],
                     "--value-column": ["sequence"],
+                },
             },
             "unode_parameters": {
                 "storage_base_uri": f"file://{tmp_dir}",
             },
+        },
     )
     expected_patterns_svg = [
         r"<text[^>]*?>.*?n = 39.*?</text>",

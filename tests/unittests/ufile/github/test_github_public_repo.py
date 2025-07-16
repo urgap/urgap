@@ -33,6 +33,7 @@ def test_github_public_repo():
 
     # Test downloading the file
     uf_io_object.repo.get_contents.return_value = MagicMock(
+        decoded_content=b"hello from github",
     )
     m = mock_open()
     with patch("pathlib.Path.open", m):
