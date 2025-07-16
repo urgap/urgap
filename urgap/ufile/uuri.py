@@ -137,6 +137,7 @@ class UUri:
 
     def get_mylabdata_api_url(self) -> str:
         """Get the api_url."""
+        return f"https://{self.netloc}"
 
     @property
     def mylabdata_api_url_files(self) -> str | None:
