@@ -1,7 +1,9 @@
 
 import urgap
 
+from urgap.uctl import run as run_module
 from urgap.uctl.run import (
+    create_app,
     dashboard_object_name_click,
     dashboard_uri_click,
     get_all_relevant_nodes,
@@ -65,9 +67,37 @@ def test_get_all_relevant_nodes():
 
 
 def test_run_unode_in_loop(tmp_dir):
+    from urgap.uctl.run import run_unode_in_loop
+
+    ufiles = urgap.UFileList(
+        [
+            urgap.UFile(
+    )
+    # Filter out None credentials
+    ucredentials = [
+        cred
+        for cred in urgap.instances.ucredential_manager.ingested_credentials.values()
+        if cred is not None
+    ]
+
+    urun_dict = {
+        "parameters": {
+            "BasicFunctionTestNode:1.3.0": {
+                "triggers_nuttin": 100,
+                "triggers_rerun": 100,
+                "no_rerun_node_trigger": 100,
+            },
+        },
+        "unode_parameters": {
+            "storage_base_uri": f"file://{tmp_dir}",
+        },
+    }
     ufl = run_unode_in_loop(
         {
+            "ufiles": ufiles,
+            "ucredentials": ucredentials,
             "config": urgap.config,
+            "urun_dict": urun_dict,
         },
         "BasicFunctionTestNode:1.3.0",
     )
