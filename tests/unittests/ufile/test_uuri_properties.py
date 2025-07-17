@@ -31,8 +31,10 @@ def test_uuri_properties_file_schema():
     assert uf.uuri.user is None
     assert uf.uuri.password is None
     assert uf.uuri.file_remote_path == Path(
+        f"{urgap._test_folder}/data/test_node_data/test.txt",
     )
     assert uf.uuri.file_remote_tag_path == Path(
+        f"{urgap._test_folder}/data/test_node_data/test.txt.tag",
     )
     assert uf.uuri.container_name == "data"
     assert uf.uuri.object_name == "test_node_data/test.txt"

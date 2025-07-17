@@ -72,6 +72,9 @@ def test_run_unode_in_loop(tmp_dir):
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#test_node_data/test.txt",
+            ),
+        ],
     )
     # Filter out None credentials
     ucredentials = [
