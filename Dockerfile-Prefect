@@ -9,6 +9,7 @@ RUN addgroup --system nonroot && \
 RUN mkdir -p "/home/urgap" && \
     chown -R nonroot:nonroot /home/urgap
 
+ENV HOME=/home/nonroot
 USER nonroot
 
 # Add Urgap repo
