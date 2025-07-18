@@ -62,6 +62,7 @@ class UCredentialManager:
 
         self.available_io_classes = {}
         io_modules = (
+            "akv",
             "echo",
             "env",
             "gcp",
