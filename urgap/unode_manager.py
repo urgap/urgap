@@ -8,6 +8,7 @@ import copy
 import importlib
 import inspect
 import logging
+import os
 import re
 import subprocess
 
@@ -292,6 +293,7 @@ class UNodeManager(UserDict):
             The imported class for the UNode/wrapper.
         """
         class_path_string, class_name = self.wrapper_lookup[unode]
+        module_path = class_path_string.replace(os.sep, ".")
         module = importlib.import_module(module_path)
         unode_class = getattr(module, class_name)
 
