@@ -53,7 +53,9 @@ def check_if_meta_interface_backend_is_available(request):
 
 def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
     if isinstance(ufile_path_list, urgap.UFile) is True:
+        check_ufile_can_be_tested(ufile_path_list)
         ufile_path_list = [ufile_path_list]
+    ufiles = urgap.UFileList(ufile_path_list)
     unodes_dict = {}
     for node in unodes:
         unodes_dict[node] = urgap.init_unode(node)
