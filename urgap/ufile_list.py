@@ -35,7 +35,15 @@ class UFileList(UserList):
     def set_uftypes_if_none_available(self) -> None:
         """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
         ut = urgap.instances.utree_querier
+        if all(isinstance(x, urgap.UFile) for x in self):
+            flat_list = self
+        else:
+            flat_list = sorted(self.create_flat_and_non_redundant_list())
+        if all(isinstance(x, urgap.UFile) for x in flat_list) and all(
+        ):
+            for pos, ufile in enumerate(flat_list):
                 suffixes = Path(ufile.uuri.fragment).suffixes
+                flat_list[pos].tags["uftype"] = ut.get_uftype_or_closest_any(
                     suffixes,
                 ).lower()
 
@@ -210,6 +218,7 @@ class UFileList(UserList):
             TypeError: If an item is not a UFile or if more than one level of nesting is found.
         """
         already_seen_objects = set()
+        flat_list = urgap.UFileList()
         already_seen_objects, flat_list = self._get_flat_list(
             list_to_flatten=self.data,
             already_seen_objects=already_seen_objects,
@@ -221,6 +230,7 @@ class UFileList(UserList):
         self,
         list_to_flatten: Iterable,
         already_seen_objects: set,
+        flat_list: urgap.UFileList,
     ) -> tuple[list, urgap.UFileList]:
         """Flatten nested lists and remove duplicates.
 

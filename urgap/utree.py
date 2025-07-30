@@ -199,6 +199,9 @@ class UTreeQuerier:
         Returns:
             str: uftype of closest any uftype.
         """
+        uftype = "unknown"
+        if len(suffixes) == 0:
+            return "." + uftype
             suffixes = suffixes[-2:]
         possible_uftypes = self.get_nodes_with_ext("".join(suffixes))
         if len(possible_uftypes) == 1:
