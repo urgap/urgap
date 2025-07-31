@@ -507,6 +507,7 @@ class UTrace:
                     if remote_file.endswith(".tag"):
                         continue
                     ufile = urgap.UFile(
+                        uri=remote_file,
                     )
                     remote_ofiles[uftype].append(ufile)
         return remote_ofiles
