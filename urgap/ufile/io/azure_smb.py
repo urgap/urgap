@@ -188,6 +188,8 @@ class IOAzureSMB(UIOBase):
         Returns:
             List of object names matching the filter (or all if no filter/limit).
         """
+                self.object_directory_client,
+                limit=limit,
         if pattern is not None:
             container_objects = [
                 f for f in container_objects if re.search(pattern, f) is not None

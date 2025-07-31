@@ -259,3 +259,18 @@ def test_keep_multiple_uftypes():
     for uftype in uftype_list:
         assert uftype in ufl.get_index_groups_by_uftypes().keys()
     assert urgap.uftypes.test.TEST_FILE2 not in ufl.get_index_groups_by_uftypes().keys()
+
+
+def test_set_uftype_if_none_available():
+    base_folder = Path(f"{urgap._test_folder}/data").resolve()
+    ufiles = urgap.UFileList.from_uri_list(
+        [f"file://{base_folder}?uftype={urgap.uftypes.unknown.UNKNOWN}#test_1.txt"]
+    )
+    assert ufiles[0].uftype == urgap.uftypes.any.TXT
+
+    ufiles = urgap.UFileList.from_uri_list(
+        [
+            f"file://{base_folder}?uftype={urgap.uftypes.unknown.UNKNOWN}#unified_csvs/demo.csv"
+        ]
+    )
+    assert ufiles[0].uftype == urgap.uftypes.any.CSV
