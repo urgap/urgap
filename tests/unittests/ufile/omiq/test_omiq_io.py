@@ -214,6 +214,9 @@ def test_list_container_items(io_omiq_instance):
 
 
     assert set(items) == {
+        "omiq://example.com/123456789#A1 0001_24h_U_Plate001.fcs",
+        "omiq://example.com/123456789#A2 0001_24h_FS1_Plate001.fcs",
+        "omiq://example.com/123456789#artifact1.txt",
     }
 
 
