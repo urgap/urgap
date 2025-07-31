@@ -31,6 +31,7 @@ class UFileList(UserList):
             self._eval_if_item_is_of_correct_type(item)
         self._output_definitions = None
         self.wid = None
+        self.set_uftypes_if_none_available()
 
     def set_uftypes_if_none_available(self) -> None:
         """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
@@ -40,6 +41,7 @@ class UFileList(UserList):
         else:
             flat_list = sorted(self.create_flat_and_non_redundant_list())
         if all(isinstance(x, urgap.UFile) for x in flat_list) and all(
+            ufile.uuri.query.get("uftype", None) == ".unknown" for ufile in flat_list
         ):
             for pos, ufile in enumerate(flat_list):
                 suffixes = Path(ufile.uuri.fragment).suffixes
