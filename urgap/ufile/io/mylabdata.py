@@ -143,6 +143,7 @@ class IOMyLabData(UIOBase):
         with self.scratch_path.open("rb") as file:
             response = requests.post(
                 url=url,
+                data=file,
                 verify=self._api_cert,
                 headers=self._api_token,
                 timeout=(
@@ -193,9 +194,13 @@ class IOMyLabData(UIOBase):
                 urgap.config.get("requests_timeout_connect", None),
                 urgap.config.get("requests_timeout_read", None),
             ),
+            stream=True,
         )
         if response.status_code == 200:
             with self.scratch_path.open("wb") as file:
+                for chunk in response.iter_content(8192):
+                    if chunk:
+                        file.write(chunk)
             url += ".tag"
             self.get_remote_tags()
         return response
