@@ -152,8 +152,11 @@ class IOMyLabData(UIOBase):
                 ),
             )
         if response.status_code == 409:
+            msg = f"File {self.scratch_path} already exists in remote location {url} , skipping upload"
         elif response.status_code == 200:
+            msg = f"Uploaded file {self.scratch_path} to remote location {url}"
         else:
+            msg = f"Uploading file {self.scratch_path} to remote location {url} failed with status code: {response.status_code}"
             raise ValueError(msg)
         if tags is not None:
             url += ".tag"
