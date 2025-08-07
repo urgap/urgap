@@ -97,6 +97,24 @@ class UTelemetry:
     @staticmethod
     def shutdown() -> None:
         """Shutdown UTelemetry and close all OpenTelemetry connections."""
+        if UTelemetry.is_shutdown:
+            return
+        tracer_provider = trace.get_tracer_provider()
+        if hasattr(tracer_provider, "shutdown"):
+            try:
+                tracer_provider.shutdown()
+
+        meter_provider = metrics.get_meter_provider()
+        if hasattr(meter_provider, "shutdown"):
+            try:
+                meter_provider.shutdown()
+            except ValueError as ve:
+                if "closed file" in str(ve):
+                else:
+                    raise
+
+        UTelemetry.is_shutdown = True
+
     def init_meter(self) -> metrics.Meter:
         """Initialize and configure a Meter for collecting metrics.
 
