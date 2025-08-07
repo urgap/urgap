@@ -13,6 +13,7 @@ import urgap
 P = ParamSpec("P")
 
 URGAP_HOME_JSON = urgap.home / "urgap.json"
+logger = logging.getLogger(__name__)
 
 
 def _check_if_config_key_value_is_valid(
@@ -23,14 +24,17 @@ def _check_if_config_key_value_is_valid(
 ) -> bool:
     """Check if a config key/value pair is valid."""
     if verbose is True:
+        logger.warning("Verbose config changes are not implemented yet.")
     is_valid = True
     if config_key not in config:
         msg = f"{config_key} is not in urgap.json, thus cannot be set ..."
+        logger.info(pprint.pformat(msg))
         is_valid = False
     else:
         options = config[config_key].get("options", None)
         if (options is not None) and (config_value not in options):
             msg = f"{config_key} cannot be set with {config_value}. Valid options are {options}."
+            logger.info(pprint.pformat(msg))
             is_valid = False
     return is_valid
 
@@ -61,11 +65,14 @@ def set_config(
             msg = (
                 f"Dry-run. Modified urgap.json entry for {config_key} would look like:"
             )
+            logger.info(pprint.pformat(msg))
         else:
             with URGAP_HOME_JSON.open("w") as config_json:
                 json.dump(config, config_json, indent=4, sort_keys=True)
             if verbose is True:
                 msg = f"Modifying urgap.json entry for {config_key} to:"
+                logger.info(msg)
+                logger.info(pprint.pformat(config[config_key]))
 
 
 @click.command()
@@ -113,8 +120,10 @@ def set_credentials(cred_key: str, **kwargs: P.kwargs) -> None:
                     k
                 ] = v
         if dry_run:
+            logger.info("Dry-run. Modified credentials meta entry would look like:")
         else:
             msg = f"Changed entry for {cred_key} to:"
+            logger.info(msg)
             urgap.instances.ucredential_manager.write_credentials()
         _log_cred_entry(cred_entry)
 
@@ -123,6 +132,7 @@ def _log_cred_entry(cred_entry: dict) -> None:
     """Log all key-value pairs in the credential entry."""
     for k, v in cred_entry.items():
         msg = f"{k: >20}:{v}"
+        logger.info(msg)
 
 
 @click.command()

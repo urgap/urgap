@@ -13,6 +13,8 @@ from pathlib import Path
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 def copy_resources_if_needed(
     target_dir: str | os.PathLike,
@@ -45,8 +47,10 @@ def copy_resources_if_needed(
                 shutil.copy(rfile, target_rfile)
                 if force is False:
                     msg = f"Copied resource {target_rfile.name}"
+                    logger.info(msg)
                 else:
                     msg = f"Resource {target_rfile.name} has been overwritten"
+                    logger.debug(msg)
 
 
 def configure_logger() -> None:
@@ -82,6 +86,7 @@ def create_home_folder(home_dir_parent: str | os.PathLike) -> None:
     """
     home_dir = Path(home_dir_parent) / ".urgap"
     msg = f"Creating urgap home directory at {home_dir}"
+    logger.info(msg)
     Path(home_dir).mkdir(exist_ok=True, parents=True)
 
 
@@ -99,6 +104,7 @@ def copy_config_if_needed(target_dir: str | os.PathLike) -> None:
         if target_json_path.exists() is False:
             shutil.copy(config_json, target_json_path)
             msg = f"{target_json_path} has been copied from default to urgap home"
+            logger.info(msg)
 
 
 def read_config(home_dir: str | os.PathLike | None = None) -> dict:
@@ -140,6 +146,7 @@ def load_certificates() -> None:
             f"Using custom SSL certificate for {cert_url}."
             "Consider using a non-self-signed certificate."
         )
+        logger.warning(msg)
         urgap.config["certificates"][cert_url] = certificate
 
 

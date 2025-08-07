@@ -11,6 +11,8 @@ from tqdm import tqdm
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 @click.command()
 @click.argument("folder")
@@ -62,8 +64,10 @@ def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> 
             file.upload()
             resulting_uris.append(file.as_uri())
             pbar.update(1)
+    logger.info(pprint.pformat("Upload finished, final uris:"))
     for uri in resulting_uris:
         msg = f"'{uri}'"
+        logger.info(pprint.pformat(msg))
 
 
 @click.group()

@@ -22,6 +22,7 @@ import urgap
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOAzureSMB(UIOBase):

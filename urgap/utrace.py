@@ -16,6 +16,7 @@ import urgap
 
 if TYPE_CHECKING:
     import os
+logger = logging.getLogger(__name__)
 
 
 class UTrace:
@@ -323,6 +324,7 @@ class UTrace:
                 len(output_files_uftype_counts.keys()) != 1
                 or len(input_files_uftype_counts.keys()) != 1
             ):
+                logger.warning(
                     "Input/output uftypes are not unique. Cannot retain uftype.",
                 )
             else:
@@ -341,6 +343,7 @@ class UTrace:
                     uf.tags.update({"uftype": i_uftype})
                     new_output_file_list.append(uf)
                 msg = f"Changed output uftypes to {i_uftype}."
+                logger.debug(msg)
                 self.output_files = urgap.UFileList(new_output_file_list)
 
     def populate_minimal_output_file_list(self) -> None:
@@ -349,9 +352,11 @@ class UTrace:
         for ouftype, mdict in self.unode_meta["output_uftypes"].items():
             if mdict["min"] == 0:
                 msg = f"{ouftype} optional, init skipped."
+                logger.debug(msg)
                 continue
             if mdict["min"] == mdict["max"]:
                 msg = f"{ouftype} initialising {mdict['max']}."
+                logger.debug(msg)
                 for n in range(1, mdict["max"] + 1):
                     uri = self.get_output_file_uri(
                         uftype=ouftype,
@@ -361,6 +366,7 @@ class UTrace:
                     uris.append(uri)
             elif mdict["max"] == -1:
                 msg = f"{ouftype} unbound, initialised 1 of N."
+                logger.debug(msg)
                 uri = self.get_output_file_uri(
                     uftype=ouftype,
                     n=1,
@@ -369,6 +375,7 @@ class UTrace:
                 uris.append(uri)
             elif mdict["min"] < mdict["max"]:
                 msg = f"{ouftype} range of files, initialised 1 of N."
+                logger.debug(msg)
                 uri = self.get_output_file_uri(
                     uftype=ouftype,
                     n=1,
@@ -377,6 +384,7 @@ class UTrace:
                 uris.append(uri)
             else:
                 msg = f"{ouftype} - don't know what to do with {mdict}."
+                logger.warning(msg)
         uris = [uri for uri in uris if uri is not None]
         self.output_files = urgap.UFileList.from_uri_list(uris)
 
@@ -407,6 +415,7 @@ class UTrace:
                 safe_to_create = False
             if n == self.unode_meta["output_uftypes"][uftype]["max"]:
                 msg = f"Could finalize counts on {uftype}, reached maximum."
+                logger.debug(msg)
         if safe_to_create:
             uri = f"{self.output_base_storage_uri}?uftype={uftype}#{self.output_files_stem}_{n}_of_{max_n}{uftype}"
         else:

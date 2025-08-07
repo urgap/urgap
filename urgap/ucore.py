@@ -15,6 +15,8 @@ import requests
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 def folder_has_uparam_signature(folder: Path) -> bool:
     """Check if a folder has the uparam-generated signature.
@@ -99,6 +101,7 @@ def clean_up_scratch_space() -> None:
                 shutil.rmtree(wid_folder)
             except OSError:
                 msg = f"Could not delete {wid_folder} - OSError ..."
+                logger.warning(msg)
 
 
 def shutdown_local_upi_servers(force: bool = False) -> None:

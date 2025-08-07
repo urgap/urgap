@@ -13,6 +13,7 @@ from google.cloud import secretmanager
 from urgap.ucredentials.io._base import IOBaseCreds
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOGCPCreds(IOBaseCreds):
@@ -57,6 +58,7 @@ class IOGCPCreds(IOBaseCreds):
             crc32c.update(response.payload.data)
             if response.payload.data_crc32c != int(crc32c.hexdigest(), 16):
                 msg = f"Secret {self.secret_id} payload is corrupted."
+                logger.warning(msg)
 
             secret = response.payload.data.decode("UTF-8")
         return secret

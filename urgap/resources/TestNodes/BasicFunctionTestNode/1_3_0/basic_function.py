@@ -6,6 +6,8 @@ import pprint
 
 from pathlib import Path
 
+logger = logging.getLogger(__name__)
+
 
 def main(
     input_files: str | None = None,
@@ -22,6 +24,7 @@ def main(
     Returns:
         str: Test String
     """
+    logger.info(pprint.pformat("Running basic!"))
     if output_files is not None:
         for output_file in output_files:
             with Path(output_file).open("w") as oo:

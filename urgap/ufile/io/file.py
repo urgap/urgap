@@ -12,6 +12,7 @@ from typing import ParamSpec
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOPython(UIOBase):
@@ -60,6 +61,7 @@ class IOPython(UIOBase):
             shutil.copyfile(self.uuri.get_file_remote_path(), self.scratch_path)
         except FileNotFoundError:
             msg = f"File {self.uuri.get_file_remote_path()} does not exist"
+            logger.debug(msg)
 
     def upload(self, tags: dict | None = None) -> None:
         """Upload local scratch file and associated tag to remote location.
@@ -80,6 +82,7 @@ class IOPython(UIOBase):
                     json.dump(tags, remote_tag_file)
         except OSError as e:
             msg = f"Could not copy file {self.scratch_path} due to {e}"
+            logger.warning(msg)
             raise OSError(msg) from e
 
     def remote_object_exists(self) -> bool:
@@ -101,6 +104,7 @@ class IOPython(UIOBase):
         """
         container_folder = self.uuri.get_file_remote_path().parent
         msg = f"Creating {container_folder} if needed"
+        logger.debug(msg)
         container_folder.mkdir(exist_ok=exist_ok, parents=True)
 
     def get_container(self, container_name: str | None = None) -> os.PathLike:
@@ -137,6 +141,7 @@ class IOPython(UIOBase):
                 is_file = obj.is_file()
             except PermissionError:
                 msg = f"Cannot determine if {obj} is file or directory, skipping..."
+                logger.debug(msg)
                 continue
             if is_file:
                 name = str(obj).replace(str(container), "").lstrip("/")

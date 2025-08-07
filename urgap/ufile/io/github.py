@@ -11,6 +11,7 @@ from github import Auth, Github, GithubException
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOGithub(UIOBase):
@@ -38,6 +39,7 @@ class IOGithub(UIOBase):
                 self.github_io = Github(auth=Auth.Token(password))
         except GithubException as e:
             msg = f"Incorrect/no credentials found for {cred_key} - if needed, please supply!"
+            logger.exception(msg)
             raise KeyError(msg) from e
 
         available_branches = [x.name for x in self.repo.get_branches()]
@@ -131,6 +133,7 @@ class IOGithub(UIOBase):
     def upload(self, tags: dict | None = None) -> None:
         """Upload local object from scratch to the github remote branch and create a PR."""
         msg = f"tags will be skipped. {tags}!"
+        logger.warning(msg)
         target_ref = f"refs/heads/{self.target_branch_name}"
         self.repo.create_git_ref(ref=target_ref, sha=self.source_branch.commit.sha)
         commit_message = "New ufile is available"
@@ -152,6 +155,7 @@ class IOGithub(UIOBase):
                 )
             except GithubException as e:
                 msg = f"Failed to update the ufile: {e}!"
+                logger.exception(msg)
                 raise RuntimeError(msg) from e
         else:
             try:
@@ -172,6 +176,7 @@ class IOGithub(UIOBase):
                 base=self.source_branch.name,
             )
             msg = f"PR #{pr.number} is created"
+            logger.info(msg)
         except GithubException as e:
             msg = f"Unable to create pull request. {e}!"
             raise RuntimeError(msg) from e
@@ -186,6 +191,7 @@ class IOGithub(UIOBase):
             self.repo.get_contents(self.object_filepath, ref=self.source_branch.name)
         except GithubException as e:
             msg = f"Unable to find {self.object_filepath}. {e}!"
+            logger.info(msg)
             return False
         return True
 

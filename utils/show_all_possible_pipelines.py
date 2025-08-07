@@ -9,6 +9,8 @@ from pyvis.network import Network
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 def main() -> None:
     """Build network with all possible pipelines."""
@@ -41,6 +43,7 @@ def main() -> None:
                         color="black",
                     )
             msg = f"Added {sft} to {unode_name}"
+            logger.debug(msg)
         for oft in unode_class.META_INFO.get("output_uftypes", {}):
             graph.add_node(oft, color="blue", size=12)
             graph.add_edge(
@@ -51,6 +54,7 @@ def main() -> None:
                 color="black",
             )
             msg = f"Added {oft} to {unode_name}"
+            logger.debug(msg)
 
     net = Network(
         height="750px",
@@ -60,6 +64,7 @@ def main() -> None:
     net.from_nx(graph)
     net.show_buttons(filter_=["layout", "physics"])
     net.show("all_possible_pipelines.html")
+    logger.info("Wrote all_possible_pipelines.html")
 
 
 if __name__ == "__main__":

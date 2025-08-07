@@ -21,6 +21,8 @@ import urgap
 
 from urgap.util import get_next_port, sort_versions
 
+logger = logging.getLogger(__name__)
+
 
 class UNodeManager(UserDict):
     """Manager for urgap UNodes and wrappers.
@@ -222,6 +224,7 @@ class UNodeManager(UserDict):
             spec.loader.exec_module(mod)
         except ImportError:
             msg = f"Cannot import {mod} due to missing dependencies."
+            logger.warning(msg)
             return
         classes = inspect.getmembers(mod, inspect.isclass)
         node_name = None
@@ -270,13 +273,18 @@ class UNodeManager(UserDict):
                 and not self.node_availability_lookup[unode]["requirements_available"]
             ):
                 msg = f"UNode {unode} could not be initialized because requirements are missing."
+                logger.debug(msg)
             if self.node_availability_lookup[unode]["resource_available"] is False:
                 msg = f"UNode {unode} could not be initialized the resource/executable are missing."
+                logger.debug(msg)
             return unode_obj
         msg = f"UNode {unode} not available."
+        logger.debug(msg)
         for available_unode in self.data["all"]:
             if unode.upper() in available_unode.upper():
                 msg = f"Did you mean {available_unode}?"
+                logger.debug(msg)
+        logger.debug(
             "You can try to shorten the name to get a list of possible matches",
         )
         return None
@@ -356,6 +364,7 @@ class UNodeManager(UserDict):
             unode_obj.META_INFO["unode_full_identifier"] = unode
 
         if unode_obj.META_INFO["unode_version"] == "latest":
+            logger.debug(
                 "running latest Urgap expects exe_path "
                 "to be supplied by "
                 "urun_dict['unode_parameters']['latest_exe_paths']",
@@ -470,6 +479,7 @@ class UNodeManager(UserDict):
                     "or adjust urgap.UNodeManger._3rd_party_test_commands."
                     f" Currently, availabililty can be tested for {self._3rd_party_test_commands.keys()}"
                 )
+                logger.warning(msg)
                 is_available = None
             else:
                 if resource not in self.availability["other_dependencies"]:

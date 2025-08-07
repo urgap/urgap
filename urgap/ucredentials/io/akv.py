@@ -11,6 +11,7 @@ from azure.keyvault.secrets import SecretClient
 from urgap.ucredentials.io._base import IOBaseCreds
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOAzureCreds(IOBaseCreds):
@@ -39,5 +40,6 @@ class IOAzureCreds(IOBaseCreds):
 
             secret = client.get_secret(self.secret_name).value
         except (ResourceNotFoundError, HttpResponseError):
+            logger.warning("Secret could not be retrieved from Azure.")
 
         return secret

@@ -25,6 +25,7 @@ import requests
 import urgap
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class UNodeBase:
@@ -155,6 +156,7 @@ class UNodeBase:
     ) -> urgap.UFileList:
         if isinstance(urun_dict, urgap.URunDict) is False:
             msg = "UNode.run() function requires URunDict."
+            logger.error(msg)
             raise TypeError(msg)
         urun_dict = copy.deepcopy(urun_dict)
 
@@ -172,6 +174,7 @@ class UNodeBase:
 
         self.tmp_files = []
         if len(kwargs.keys()) != 0:
+            logger.warning("Manually overwriting UNode parameters.")
             urun_dict.unode_parameters.update(kwargs)
 
         if urun_dict["unode_parameters"]["remote_url"] is None:
@@ -240,6 +243,8 @@ class UNodeBase:
             self.delete_tmp_files()
 
         msg = f"Finished execution of {self.META_INFO['name']} node with utrace.id {ut.id}"
+        logger.info(msg)
+        logger.info("+------------ ----  -----------------")
         return ut.output_files
 
     def _open_execution_span(
@@ -272,14 +277,17 @@ class UNodeBase:
         for flight_stage in flight_sequence:
             if hasattr(self, flight_stage) is False:
                 msg = f"Skipping {flight_stage} as it is not defined ..."
+                logger.info(msg)
                 continue
 
             stage_function = getattr(self, flight_stage)
 
             msg = f"Running {flight_stage} ..."
 
+            logger.info(msg)
             utrace = stage_function(utrace)
             if isinstance(utrace, urgap.URunDict | urgap.UTrace) is False:
+                logger.warning("Wrapper did not return URunDict as second element!")
                 raise TypeError
         for output_ufile in utrace.output_files:
             if output_ufile is None:
@@ -298,6 +306,7 @@ class UNodeBase:
                 f" longer than the timeout value {utrace.urun_dict['file_io_timeout']}."
                 "Therefore re-initializing IO classes for all UFiles."
             )
+            logger.info(msg)
             utrace.output_files = urgap.UFileList.from_uri_list(
                 utrace.output_files.as_uri_list(),
             )
@@ -317,6 +326,7 @@ class UNodeBase:
                 f"it requires {self.required_3rd_party_installation} "
                 "which not available on this system ..."
             )
+            logger.info(msg)
             return
 
         for uftype_spec in itertools.chain(
@@ -324,6 +334,7 @@ class UNodeBase:
             self.META_INFO.get("output_uftypes").values(),
         ):
             if set(uftype_spec.keys()) != {"min", "max"}:
+                logger.warning(
                     "uftype specifications should be set explicitly ('min' & 'max')! Please set to -1",
                 )
         self.tmp_files = []
@@ -362,6 +373,7 @@ class UNodeBase:
                 )
             except KeyError:
                 msg = f"Your platform ({sys_platform} {comp_arch}) does not seem to be supported by {self.META_INFO['name']}."
+                logger.debug(msg)
                 rel_exe_path = ""
 
         if self.META_INFO["engine"].get("system", None) is not None:
@@ -407,6 +419,7 @@ class UNodeBase:
             raise RuntimeError(msg)
         if str(self.latest_exe_paths).startswith("$"):
             msg = f"Using system resource {self.latest_exe_paths} as exe path"
+            logger.info(msg)
         else:
             exe_path = self.latest_exe_paths
         return Path(exe_path)
@@ -499,7 +512,9 @@ class UNodeBase:
             new_ufiles = remote_ufile.uncompress()
         except (FileNotFoundError, NotImplementedError) as e:
             if isinstance(e, FileNotFoundError):
+                logger.warning("Resource package not found...")
             elif isinstance(e, NotImplementedError):
+                logger.warning("Resource package cannot be uncompressed...")
             return None
 
         pure_engine_exe_list = [Path(x).name for x in engine_exe_list]
@@ -533,6 +548,7 @@ class UNodeBase:
 
         if len(missing_exe) != 0:
             msg = f"The following executables are missing: {','.join(missing_exe)}"
+            logger.info(msg)
             return False
         return True
 
@@ -543,10 +559,12 @@ class UNodeBase:
             Files with paths containing ".", "/", "./", or "../" will not be deleted for safety.
         """
         msg = f"Removing tmp_files ... {self.tmp_files}"
+        logger.debug(msg)
         self.tmp_files = [Path(p) for p in self.tmp_files]
         for path in self.tmp_files:
             if str(path) in [".", "/", "./", "../"]:
                 msg = f"Not deleting {path}, might be unsafe"
+                logger.info(msg)
                 continue
             if path.exists():
                 if path.is_dir():
@@ -584,6 +602,7 @@ class UNodeBase:
         """
         umeta = urgap.UMeta()
         msg = f"Removing {output_file}"
+        logger.debug(msg)
 
         umeta.delete(output_file)
 
@@ -702,6 +721,7 @@ class UNodeBase:
 
         utrace.urun_dict.command_list = [str(x) for x in utrace.urun_dict.command_list]
         cmd_msg = f"Executing command list: {' '.join(utrace.urun_dict.command_list)}"
+        logger.info(cmd_msg)
         execute_answer = []
         proc = None
         if len(utrace.urun_dict.command_list) != 0:
@@ -713,12 +733,14 @@ class UNodeBase:
                 check=False,
             )
         else:
+            logger.info("Command list is empty, nothing to do here...")
             execute_answer.append("Command list is empty")
         utrace, msg = self._check_proc_outcome(
             proc=proc,
             execute_answer=execute_answer,
             utrace=utrace,
         )
+        logger.info("Finished executing command list ...")
         return utrace
 
     def _check_proc_outcome(
@@ -743,8 +765,10 @@ class UNodeBase:
         if (proc is not None) and (proc.stdout is not None):
             for line in proc.stdout.split("\n"):
                 try:
+                    logger.info(line)
                     execute_answer.append(line)
                 except ValueError:
+                    logger.info(
                         "stdout Line skipped as it cannot be reformatted with logger",
                     )
         if proc.returncode != 0:
@@ -757,6 +781,7 @@ class UNodeBase:
             )
             for line in execute_answer:
                 msg += line + "\n"
+            logger.error(msg)
             utrace.output_files = urgap.UFileList([None])
             utrace.set_stop_time(crashed=True)
             if utrace.urun_dict.unode_parameters["crash_on_resource_crash"] is True:

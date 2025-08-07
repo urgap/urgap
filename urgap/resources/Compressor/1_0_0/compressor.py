@@ -10,6 +10,8 @@ from ast import literal_eval
 from pathlib import Path
 from zipfile import ZipFile
 
+logger = logging.getLogger(__name__)
+
 
 def main(
     compression_format: str,
@@ -52,9 +54,12 @@ def main(
         tar_process.wait()
         if tar_process.returncode != 0:
             msg = f"Tar process failed with code {tar_process.returncode}"
+            logger.error(msg)
         if split_process.returncode != 0:
             msg = f"Split process failed with code {split_process.returncode}"
+            logger.error(msg)
         else:
+            logger.info("Tar archive created and split successfully")
     elif compression_format == "tar":
         with tarfile.open(output_file_path, mode="w:") as tar:
             for file, tag in file_list:

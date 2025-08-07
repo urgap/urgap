@@ -13,6 +13,7 @@ import urgap
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOHTTPS(UIOBase):
@@ -48,6 +49,7 @@ class IOHTTPS(UIOBase):
                 tags = response.json()
             except json.decoder.JSONDecodeError:
                 msg = f"Connection to {self.uuri.get_https_remote_tag_path()} seems to be OK, but cannot receive tags!"
+                logger.warning(msg)
         return tags
 
     def get_object(self) -> str:
@@ -76,6 +78,7 @@ class IOHTTPS(UIOBase):
                 f"[ - HTTP - ] WARNING! Could not download {self.uuri.get_https_remote_path()} Check your internet connection!",
                 "[ - HTTP - ] For OSX, make sure that certificates are installed (/Applications/Python 3.x/Install Certificates.command)",
             )
+            logger.warning(msg)
             self.scratch_path.unlink()
 
     def upload(self, tags: dict | None = None) -> None:
@@ -88,6 +91,7 @@ class IOHTTPS(UIOBase):
             NotImplementedError: Always raised, as HTTP/S does not support upload.
         """
         if tags is None:
+            logger.warning("No tags provided, skipping upload.")
         msg = "Cannot upload via https!"
         raise NotImplementedError(msg)
 

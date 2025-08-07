@@ -6,6 +6,8 @@ import logging
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 class UMeta:
     """Urgap UMeta interface.
@@ -170,6 +172,7 @@ class UMeta:
 
         Raises:
         """
+            logger.warning("Will NOT extract complete UMeta DB! Use a DB browser ...")
             raise OSError
 
     def delete(self, reference_ufile: urgap.UFile) -> None:

@@ -12,6 +12,7 @@ from typing import ParamSpec
 import urgap
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class URunDict(UserDict):
@@ -136,6 +137,7 @@ class URunDict(UserDict):
         Warning:
             Be sure what you are doing as this will affect data finding in umeta.
         """
+        logger.warning("Modifying WID, be sure that you know what you are doing ...")
         self["wid"] = wid
 
     def assign_wid(self) -> None:
@@ -361,6 +363,7 @@ class URunDict(UserDict):
             parameters = self.parameters[unode_full_identifier]
         except KeyError as e:
             msg = f"KeyError for {e}: Parameters have to be supplied under unode_full_identifier"
+            logger.warning(msg)
             parameters = self.parameters
         param_set = sorted(
             [(k, v) for k, v in parameters.items() if k not in no_rerun_params],

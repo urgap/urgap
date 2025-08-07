@@ -11,6 +11,7 @@ import urgap
 from urgap.uctl.info import info
 
 URGAP_HOME_JSON = urgap.home / "urgap.json"
+logger = logging.getLogger(__name__)
 
 
 @click.command()
@@ -24,6 +25,7 @@ def _log_cred_entry(cred_entry: dict) -> None:
     """Log all key-value pairs in the credential entry."""
     for k, v in cred_entry.items():
         msg = f"{k: >20}:{v}"
+        logger.info(msg)
 
 
 def show_credentials(cred_key: str) -> None:
@@ -36,8 +38,10 @@ def show_credentials(cred_key: str) -> None:
         None,
     )
     if cred_entry is not None:
+        logger.info("Credential key: %s", cred_key)
         _log_cred_entry(cred_entry)
     else:
+        logger.exception("No credentials found for key: %s", cred_key)
 
 
 @click.command()
@@ -54,8 +58,11 @@ def show_config(output: str) -> None:
     with URGAP_HOME_JSON.open() as config_json:
         config = json.load(config_json)
     if output == "pprint":
+        logger.info(pprint.pformat(config))
     if output == "json":
+        logger.info(json.dumps(config))
     else:
+        logger.info(pprint.pformat(config))
 
 
 @click.group()

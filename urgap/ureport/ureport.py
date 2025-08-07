@@ -16,6 +16,8 @@ from plotly.offline import init_notebook_mode, iplot
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 class UReport:
     """Urgap pipeline report."""
@@ -49,6 +51,7 @@ class UReport:
         if ufile is not None:
             if ucfs is not None:
                 msg = "You cannot define ufile and ucfs to initialize a report"
+                logger.warning(msg)
                 raise KeyError(msg)
             ucfs = ufile.ucfs
         if ucfs is not None:
@@ -188,6 +191,7 @@ UMeta:
                         graph=graph,
                         storage_base_uri=storage_base_uri,
                     )
+                    logger.warning(msg)
                     raise OSError(msg)
         return graph
 
@@ -205,6 +209,7 @@ UMeta:
                 > self.execution_history[other_key]["started_time"]
             ):
                 msg = f"Overwriting entry for {other_key} with newer timestamp"
+                logger.info(msg)
                 self.execution_history[other_key] = other_value
 
     def was_skipped(
@@ -600,3 +605,4 @@ UMeta:
         with output_path.open("w") as oo:
             print(html_out, file=oo)
         msg = f"Writing report to {output_path}"
+        logger.debug(msg)

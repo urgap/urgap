@@ -15,6 +15,7 @@ from smb.SMBConnection import SMBConnection
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOSMB(UIOBase):
@@ -151,9 +152,11 @@ class IOSMB(UIOBase):
             NotConnectedError,
         ) as e:
             msg = f"Could not copy file {self.scratch_path}"
+            logger.warning(msg)
             raise RuntimeError(msg) from e
 
         if tags is None:
+            logger.warning("No tags provided, skipping upload.")
         else:
             json_data = json.dumps(tags)
             json_bytes = json_data.encode("utf-8")
@@ -255,3 +258,4 @@ class IOSMB(UIOBase):
                 )
             except OperationFailure as e:
                 msg = f"Could not create folder {path_to_create} with {e}"
+                logger.warning(msg)

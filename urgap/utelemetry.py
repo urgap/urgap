@@ -27,6 +27,7 @@ logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
     logging.WARNING,
 )
 logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class UTelemetry:
@@ -282,6 +283,7 @@ class UTelemetry:
         span = self.find_span(nested_span_list)
         if span is None:
             msg = f"Cannot add {event} for {nested_span_list}"
+            logger.debug(msg)
         else:
             span.add_event(event)
 
@@ -300,6 +302,7 @@ class UTelemetry:
         for event in events:
             if span is None:
                 msg = f"Cannot add {event} for {nested_span_list}"
+                logger.debug(msg)
             else:
                 span.add_event(event)
 
@@ -319,6 +322,7 @@ class UTelemetry:
         span = self.find_span(nested_span_list)
         if span is None:
             msg = f"Cannot add {key}, {value} for {nested_span_list}"
+            logger.debug(msg)
         else:
             span.set_attribute(key, value)
 
@@ -336,6 +340,7 @@ class UTelemetry:
         span = self.find_span(nested_span_list)
         if span is None:
             msg = f"Cannot add {attributes} for {nested_span_list}"
+            logger.debug(msg)
         else:
             span.set_attributes(attributes)
 
@@ -353,6 +358,7 @@ class UTelemetry:
         span = self.find_span(nested_span_list)
         if span is None:
             msg = f"Cannot set {status} for {nested_span_list}"
+            logger.debug(msg)
         else:
             span.set_status(status)
 

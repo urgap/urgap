@@ -14,6 +14,7 @@ import urgap
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 def make_expiration_safe_request(func: Callable) -> requests.Response:
@@ -30,6 +31,7 @@ def make_expiration_safe_request(func: Callable) -> requests.Response:
     ) -> requests.Response:
         response = func(self, *args, **kwargs)
         if (response is not None) and (response.status_code == 403):
+            logger.warning("The API token seems to be invalid. Requesting new token.")
             self._get_token_bearer()
             response = func(self, *args, **kwargs)
         return response
@@ -96,6 +98,7 @@ class IOMyLabData(UIOBase):
             self._api_token = {"Authorization": f"Bearer {token}"}
         else:
             msg = f"Login failed with status code: {response.status_code}"
+            logger.error(msg)
             raise ConnectionError(msg)
 
     def get_remote_tags(self) -> dict | None:
@@ -153,10 +156,13 @@ class IOMyLabData(UIOBase):
             )
         if response.status_code == 409:
             msg = f"File {self.scratch_path} already exists in remote location {url} , skipping upload"
+            logger.info(msg)
         elif response.status_code == 200:
             msg = f"Uploaded file {self.scratch_path} to remote location {url}"
+            logger.info(msg)
         else:
             msg = f"Uploading file {self.scratch_path} to remote location {url} failed with status code: {response.status_code}"
+            logger.error(msg)
             raise ValueError(msg)
         if tags is not None:
             url += ".tag"
@@ -171,12 +177,15 @@ class IOMyLabData(UIOBase):
                 ),
             )
             if tag_response.status_code == 409:
+                logger.info("Tag already exists, skipping upload")
             elif tag_response.status_code == 200:
                 msg = f"Uploaded tag to remote location {url}"
+                logger.info(msg)
             else:
                 msg = (
                     f"Uploading tag failed with status code: {tag_response.status_code}"
                 )
+                logger.error(msg)
                 raise ValueError(msg)
         return response
 

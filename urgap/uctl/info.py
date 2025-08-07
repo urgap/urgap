@@ -8,10 +8,13 @@ import click
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 @click.command()
 def info_version_click() -> None:
     """Show the version number of the installed Urgap package."""
+    logger.info(pprint.pformat(urgap.__version__))
 
 
 def get_status(condition: bool | None) -> click.style:

@@ -20,6 +20,7 @@ from azure.storage.filedatalake import DataLakeServiceClient
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOAzureDL(UIOBase):
@@ -168,6 +169,7 @@ class IOAzureDL(UIOBase):
 
             with self.scratch_path.open("rb") as data:
                 self.file_client.upload_data(data, metadata=tags, overwrite=True)
+            logger.info("File uploaded successfully!")
         except (
             AzureError,
             ServiceRequestError,
@@ -176,6 +178,7 @@ class IOAzureDL(UIOBase):
             HttpResponseError,
         ) as e:
             msg = f"File {self.scratch_path} couldn't be uploaded!"
+            logger.exception(msg)
             raise RuntimeError(msg) from e
 
         if tags is not None:

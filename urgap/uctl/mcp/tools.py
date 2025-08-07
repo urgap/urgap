@@ -6,6 +6,8 @@ from mcp.server.fastmcp import FastMCP
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 """
 Tools
 -----
@@ -44,6 +46,7 @@ def list_container_times(
         list: A list of urgap ufile uris
     """
     msg = f"Listing container Items with {urgap_storage_base_uri}"
+    logger.info(msg)
 
     return urgap.UFile(f"{urgap_storage_base_uri}#dummy.txt").list_container_items(
         pattern=regex_pattern_string,
@@ -115,6 +118,7 @@ def register_tools(server: FastMCP, nodes_list: list) -> None:
 
     for tool_item in tools:
         msg = "Registering {tool_name}".format(**tool_item)
+        logger.info(msg)
 
         server.add_tool(
             tool_item["function"],
@@ -133,6 +137,7 @@ def register_tools(server: FastMCP, nodes_list: list) -> None:
         un = urgap.init_unode(unode)
         if un.META_INFO.get("parameter_examples", None) is None:
             msg = f"\n\nCannot use {unode} as mcp tools, because `parameter_example` are missing in META_INFO!\n"
+            logger.warning(msg)
             continue
 
         unode_name = unode.replace(":", "_").replace(".", "_")

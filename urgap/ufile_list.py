@@ -13,6 +13,8 @@ from pathlib import Path
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 class UFileList(UserList):
     """Urgap List of UFile container.
@@ -344,6 +346,7 @@ class UFileList(UserList):
         )
         if len(mappable_uftypes) == 0:
             msg = f"Filtered {ufile.uftype} UFile {ufile} - uftype is not compatible with wrapper uftype requirement"
+            logger.warning(msg)
             return None
 
         for uftype in mappable_uftypes:
@@ -355,6 +358,7 @@ class UFileList(UserList):
             if ufile_has_all_tags:
                 return uftype
             msg = f"Filtered {ufile.uftype} UFile {ufile} - missing tags"
+            logger.warning(msg)
             return None
         return None
 
@@ -595,6 +599,7 @@ class UFileList(UserList):
             TypeError: If uftype_list is not a list.
         """
         if isinstance(uftype_list, list) is False:
+            logger.error(
                 "Only list type is supported! If you want to keep one uftype, provide a one element list!",
             )
             raise TypeError
@@ -619,6 +624,7 @@ class UFileList(UserList):
             TypeError: If uftype_list is not a list.
         """
         if isinstance(uftype_list, list) is False:
+            logger.error(
                 "Only list type is supported! If you want to keep one uftype, provide a one element list!",
             )
             raise TypeError
@@ -751,6 +757,7 @@ class UFileList(UserList):
         if urgap.config.get("max_parallel_cores", None) is not None:
             number_of_threads = urgap.config.get("max_parallel_cores")
         msg = f"Starting download of UFileList in parallel with {number_of_threads} threads."
+        logger.info(msg)
         urgap.util.execute_threaded_function(
             func=urgap.UFile.download,
             args_list=self,
@@ -766,6 +773,7 @@ class UFileList(UserList):
         if urgap.config.get("max_parallel_cores", None) is not None:
             number_of_threads = urgap.config.get("max_parallel_cores")
         msg = f"Starting upload of UFileList in parallel with {number_of_threads} threads."
+        logger.info(msg)
         urgap.util.execute_threaded_function(
             func=urgap.UFile.upload,
             args_list=self,
@@ -793,6 +801,8 @@ class UFileList(UserList):
             tar_process.wait()
             if tar_process.returncode != 0:
                 msg = f"Tar extraction failed with returncode: {tar_process.returncode}"
+                logger.error(msg)
             else:
+                logger.info("Tar extraction completed successfully")
         finally:
             os.chdir(workdir)

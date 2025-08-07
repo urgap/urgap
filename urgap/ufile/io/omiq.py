@@ -15,6 +15,7 @@ from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 omiq_api_available = True
+logger = logging.getLogger(__name__)
 
 
 class IOOmiq(UIOBase):
@@ -53,6 +54,7 @@ class IOOmiq(UIOBase):
                 msg = "Authenticated to OMIQ API as {name} [last login:{lastLoginTime}]".format(
                     **self._omiq_user_info,
                 )
+                logger.info(msg)
         self._workflow_id = self.uuri.get_container_name()
         self._workflow = self._api.get_workflow(self._workflow_id)
         self._dataset_id = int(self._workflow["datasetId"])
@@ -115,6 +117,7 @@ class IOOmiq(UIOBase):
                     file_value = file_dict.get(key, None)
                     if file_value is None:
                         msg = f"OMIQ API does not provide {key}"
+                        logger.warning(msg)
                     self._tags[key] = file_dict.get(key, None)
         return self._tags
 
@@ -149,6 +152,7 @@ class IOOmiq(UIOBase):
             Tag upload is not yet implemented.
         """
         if tags is not None:
+            logger.warning("Upload of tags is not implemented yet.")
         self._api.upload_files_to_dataset(self._dataset_id, [self.scratch_path])
 
     def _handle_derived_fcs(self) -> None:

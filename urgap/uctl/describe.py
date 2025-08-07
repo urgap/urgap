@@ -7,6 +7,8 @@ import click
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 @click.command()
 @click.argument("wid")
@@ -15,6 +17,7 @@ def describe_wid_click(wid: str) -> None:
 
     Note: Only works with mongo; requires umeta.UMeta.find_wid_members() to be implemented.
     """
+    logger.info(pprint.pformat(describe_wid(wid)))
 
 
 def describe_wid(wid: str) -> urgap.UReport | str:
@@ -32,6 +35,7 @@ def describe_wid(wid: str) -> urgap.UReport | str:
 @click.argument("object_name")
 def describe_object_name_click(object_name: str) -> None:
     """Retrieve UMeta information for a given object name (click wrapper)."""
+    logger.info(pprint.pformat(describe_object_name(object_name)))
 
 
 def describe_object_name(object_name: str) -> dict:
@@ -65,6 +69,7 @@ def describe_object_name(object_name: str) -> dict:
 )
 def describe_last_runs_click(unode: str, last: int = 10) -> None:
     """Retrieve last n processed files for a given unode (click wrapper)."""
+    logger.info(pprint.pformat(describe_last_runs(unode, last=last)))
 
 
 def describe_last_runs(unode: str, last: int = 10) -> list[tuple]:
@@ -115,6 +120,7 @@ def log_table(rows: list[dict] | None = None) -> None:
         rows: List of UMeta entries.
     """
     if not rows:
+        logger.info("No rows to display.")
         return
     # Extract column headers from the first row
     headers = rows[0].keys()
@@ -133,6 +139,7 @@ def log_table(rows: list[dict] | None = None) -> None:
     ]
     # Combine and log
     output = "\n".join([header_row, divider, *row_lines])
+    logger.info("\n%s", output)
 
 
 @click.command()

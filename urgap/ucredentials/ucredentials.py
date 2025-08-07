@@ -12,6 +12,8 @@ from jsonschema import validate
 
 import urgap.ucredentials.io
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_CREDENTIALS_SCHEME = {
     "type": "object",
     "maxItems": 8,
@@ -125,6 +127,7 @@ class UCredentialManager:
                 f"Don't know secret backend {secret_store}."
                 f"Currently supported secret_stores are 'echo', 'env', 'gcp' and 'akv'."
             )
+            logger.info(msg)
 
     def get_user(
         self,
@@ -147,6 +150,7 @@ class UCredentialManager:
             user = self.extract_credentials(ce_or_ck, force=force)["user"]
         else:
             user = None
+            logger.warning("Can only get user based on cred_entry or cred_key")
         return user
 
     def get_password(
@@ -170,6 +174,7 @@ class UCredentialManager:
             password = self.extract_credentials(ce_or_ck, force=force)["password"]
         else:
             password = None
+            logger.warning("Can only get password based on cred_entry or cred_key")
         return password
 
     def extract_credentials(
@@ -239,6 +244,7 @@ class UCredentialManager:
                 f"The credentials for {cred_key} were not valid. Hence, "
                 f"{cred_key} will not be ingested."
             )
+            logger.warning(msg)
         if cred_key in self._extracted_secrets:
             del self._extracted_secrets[cred_key]
 
@@ -275,6 +281,7 @@ class UCredentialManager:
         try:
             c_key = self.ID_KEY.format(**cred_entry)
             msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
+            logger.warning(msg)
         return c_key
 
     def read_credentials(self, json_path: str | os.PathLike | None = None) -> dict:
@@ -294,6 +301,7 @@ class UCredentialManager:
                 cred_json = json.load(uj)
         else:
             msg = f"{json_path} does not exist!"
+            logger.warning(msg)
         return cred_json["credentials"]
 
     def write_credentials(
@@ -321,3 +329,4 @@ class UCredentialManager:
                 indent=4,
             )
             msg = f"Wrote {json_path} containing {len(self.ingested_credentials)} entries."
+            logger.debug(msg)

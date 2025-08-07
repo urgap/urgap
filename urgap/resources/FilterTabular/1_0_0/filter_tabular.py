@@ -9,6 +9,8 @@ from pathlib import Path
 
 import pandas as pd
 
+logger = logging.getLogger(__name__)
+
 
 def sense_file_format(file: str) -> str:
     """Sense the format of a file.
@@ -155,6 +157,7 @@ def main(
         raise OSError(msg)
 
     grouped_input_files = get_input_file_lists(input_files)
+    logger.info(pprint.pformat(grouped_input_files))
     if (
         mode == "parquet"
         and len(grouped_input_files.get("csv", [])) == 0
@@ -173,11 +176,14 @@ def main(
                 concatenated_df = concatenated_df.query(query_string)
             except (pd.errors.UndefinedVariableError, SyntaxError, ValueError) as e:
                 msg = f"Query string {query_string} is invalid"
+                logger.warning(msg)
                 raise RuntimeError(msg) from e
 
             msg = f"Filtered {old_len - concatenated_df.shape[0]} rows"
 
+            logger.info(msg)
         if concatenated_df.empty is True:
+            logger.warning("All rows have been filtered out!")
         concatenated_df = concatenated_df.reset_index(drop=True)
         write_dfs(concatenated_df, mode=mode, output=output)
 

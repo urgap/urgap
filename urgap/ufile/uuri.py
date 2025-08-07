@@ -9,6 +9,8 @@ from pathlib import Path
 
 import urgap
 
+logger = logging.getLogger(__name__)
+
 
 class UUri:
     """A normalized UUri parser and container for Urgap.
@@ -115,8 +117,10 @@ class UUri:
                     cred_key,
                 )
                 msg = f"Set credentials for {credentials['user']}"
+                logger.debug(msg)
             except KeyError:
                 msg = f"No credentials entry found in .urgap/credentials_lookup.json for {cred_key}"
+                logger.warning(msg)
                 credentials = {"user": getpass.getuser(), "password": None}
             self._user = credentials["user"]
             self._password = credentials["password"]

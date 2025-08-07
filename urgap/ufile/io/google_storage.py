@@ -12,6 +12,7 @@ import urgap
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOGoogleCloudStorage(UIOBase):
@@ -66,6 +67,7 @@ class IOGoogleCloudStorage(UIOBase):
             tags: Optional dictionary of metadata to set for the blob.
         """
         if tags is None:
+            logger.warning("No tags provided, skipping upload.")
         else:
             self.blob.metadata = tags
         self.blob.upload_from_filename(filename=self.scratch_path)
@@ -98,8 +100,10 @@ class IOGoogleCloudStorage(UIOBase):
             if self.remote_object_exists():
                 self.blob.download_to_filename(filename=self.scratch_path)
                 msg = f"Downloaded {self.blob.name} into {self.scratch_path.parent}"
+                logger.debug(msg)
             else:
                 msg = f"{self.blob.name} does not exist remotely. Skipping download."
+                logger.warning(msg)
 
         """Get objects in folder/'container', optionally filtered by a regex pattern.
 

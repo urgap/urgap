@@ -14,6 +14,7 @@ import urgap
 from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 class IOAzureBlobStorage(UIOBase):
@@ -68,10 +69,12 @@ class IOAzureBlobStorage(UIOBase):
         """
         if tags is None:
             tags = {}
+            logger.warning("No tags provided, skipping upload.")
         if (len(tags.keys()) > 100) or (sys.getsizeof(json.dumps(tags)) > 7000):
             msg = (
                 f"Too many keys for azure blob storage in {self.uuri.fragment}. "
             )
+            logger.warning(msg)
             tags["ParentsRemoved"] = "Yes"
 
         with self.scratch_path.open("rb") as data:
@@ -108,10 +111,12 @@ class IOAzureBlobStorage(UIOBase):
                 msg = (
                     f"Downloaded {self.blob.blob_name} into {self.scratch_path.parent}"
                 )
+                logger.debug(msg)
             else:
                 msg = (
                     f"{self.blob.blob_name} does not exist remotely. Skipping download."
                 )
+                logger.warning(msg)
 
         """List all objects in the Azure container, optionally filtering by regex pattern.
 

@@ -17,6 +17,7 @@ from pyvis.network import Network
 import urgap
 
 P = ParamSpec("P")
+logger = logging.getLogger(__name__)
 
 
 def parse_inputs(
@@ -144,6 +145,7 @@ class UrgapNodeExecutor(beam.DoFn):
             self.ready = True
             self.unode = urgap.init_node(unode)
             msg = f"Setting up urgap unode {self.unode} with {urd.parameters}"
+            logger.debug(msg)
 
     def _check_input(
         self,
@@ -163,12 +165,14 @@ class UrgapNodeExecutor(beam.DoFn):
         if not isinstance(urd, urgap.URunDict):
             input_is_ok = False
             msg = f"{urd} is not a urgap URunDict!"
+            logger.warning(msg)
         if unode not in urgap.instances.unode_manager.wrapper_lookup:
             input_is_ok = False
             msg = (
                 f"{unode} is not a urgap node. "
                 f"Available nodes are {list(urgap.instances.unode_manager.wrapper_lookup.keys())}"
             )
+            logger.warning(msg)
         return input_is_ok
 
     def setup(self) -> None:
@@ -191,6 +195,7 @@ class UrgapNodeExecutor(beam.DoFn):
                 f"Cannot process {utuple} as input format must be a tuple "
                 "in the form of (groupByKey, list of ufile.as_uri strings)"
             )
+            logger.warning(msg)
         input_group_key, elements = utuple
 
         def _unpack_list(nested_list: list) -> Generator:

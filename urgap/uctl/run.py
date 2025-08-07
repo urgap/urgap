@@ -28,6 +28,8 @@ import urgap
 
 from urgap.util import sort_versions
 
+logger = logging.getLogger(__name__)
+
 """UPI server submodule of urgap.uctl.
 
 This module provides utilities to launch FastAPI-based microservices for urgap nodes
@@ -58,6 +60,7 @@ def run_unode_in_loop(payload: dict, name: str) -> list:
         )
     except Exception as e:
         msg = f"During remote run execution the following error occurred: {e}"
+        logger.exception(msg)
         raise
     return [o.as_uri() for o in output_files]
 
@@ -84,6 +87,7 @@ def create_app(name: str) -> FastAPI:
         )
         loop = asyncio.get_running_loop()
         msg = f"Launching urgap node {name}"
+        logger.info(msg)
 
         try:
             output_files = await loop.run_in_executor(
@@ -97,6 +101,7 @@ def create_app(name: str) -> FastAPI:
                 status_code=200,
             )
         except Exception as e:
+            logger.exception("Error during remote UNode execution!")
             return JSONResponse(
                 content={"error": str(e), "traceback": traceback.format_exc()},
                 status_code=500,
@@ -278,6 +283,7 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
 
     def signal_handler(sig: int, _frame: FrameType | None) -> None:
         msg = f"Parent process received termination signal {sig}"
+        logger.info(msg)
         for proc in processes:
             proc.terminate()
 

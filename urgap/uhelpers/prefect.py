@@ -16,6 +16,7 @@ import urgap
 
 P = ParamSpec("P")
 INCOMPLETE_WARNING = "Incomplete inputs. Skipping task."
+logger = logging.getLogger(__name__)
 
 
 def parse_inputs(input_json: dict) -> tuple[urgap.URunDict, dict]:
@@ -97,6 +98,7 @@ def retrieve_processed_uris(
     else:
         uris = list(flatten_no_strings(uris))
     if len(uris) == 0:
+        logger.info("Nothing to receive here")
     elif not (isinstance(uris[0], str) or (uris[0] is None)):
         while True:
             uris = [uri.get_state() for uri in uris]
@@ -131,6 +133,7 @@ def run_unode(
     setup_urgap(ucredentials=ucredentials, config=config)
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
+        logger.warning(INCOMPLETE_WARNING)
         return [None]
     node = urgap.init_node(unode)
     result = node.run(ufiles=uris, urun_dict=urd, **kwargs)
@@ -164,8 +167,10 @@ def simplify_output_names(
     setup_urgap(ucredentials=ucredentials, config=config)
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
+        logger.warning(INCOMPLETE_WARNING)
         return
     if len(uris) == 0:
+        logger.warning("Nothing to simplify")
         return
     ufiles = urgap.UFileList().from_uri_list(uri_list=uris)
     source_uris = retrieve_processed_uris(uris=sources)
@@ -196,6 +201,7 @@ def filter_by_uftype(
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
+        logger.warning(INCOMPLETE_WARNING)
         return None
     ufile_list = urgap.UFileList().from_uri_list(uri_list=uris)
     filtered_ufile_list = ufile_list.keep_uftypes(uftype)
@@ -218,6 +224,7 @@ def group_by_tag(
     """
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
+        logger.warning(INCOMPLETE_WARNING)
         return None
     ufile_list = urgap.UFileList().from_uri_list(uri_list=uris)
     index_groups = ufile_list.get_index_groups_by_tag(tag=tag)
@@ -245,6 +252,7 @@ def rebase(
     setup_urgap(ucredentials=ucredentials, config=config)
     uris = retrieve_processed_uris(uris=uris)
     if None in uris:
+        logger.warning(INCOMPLETE_WARNING)
         return False
     ufile_list = urgap.UFileList().from_uri_list(uri_list=uris)
     for uf in ufile_list:

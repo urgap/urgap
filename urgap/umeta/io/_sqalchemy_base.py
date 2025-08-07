@@ -35,6 +35,8 @@ from ._base import UMetaIOBase
 if TYPE_CHECKING:
     import urgap
 
+logger = logging.getLogger(__name__)
+
 
 class Base(DeclarativeBase):
     """SQLAlchemy base class."""
@@ -415,6 +417,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 session.commit()
             except IntegrityError:
                 session.rollback()
+                logger.warning("Duplicate entry detected")
 
     def umeta_exists(self, utrace: urgap.UTrace) -> bool:
         """Check if UMeta (Unode execution details) exist for a given UTrace.

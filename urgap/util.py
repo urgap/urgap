@@ -10,6 +10,8 @@ from collections.abc import Callable
 
 from packaging.version import Version
 
+logger = logging.getLogger(__name__)
+
 
 def sense_compression_format(file: os.PathLike) -> str:
     """Determine the format of a compressed file.
@@ -40,9 +42,11 @@ def sense_compression_format(file: os.PathLike) -> str:
         else:
             compression_format = "split_tar"
             msg = f"{file} is last file of split tar"
+            logger.info(msg)
     elif signature[257 * 2 :].startswith("7573746172"):
         compression_format = "split_tar"
         msg = f"{file} is first file of split tar"
+        logger.info(msg)
     elif signature.startswith("504b0304"):
         compression_format = "zip"
     elif signature.startswith("425a68"):
@@ -89,6 +93,7 @@ def execute_threaded_function(
 
     if len(args_list) == 0:
         msg = f"Can't execute function without args! Args list is {args_list}"
+        logger.error(msg)
         results = None
     else:
         first_is_nested = _is_nested(args_list[0])
