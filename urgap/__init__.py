@@ -66,6 +66,7 @@ if not hasattr(sys, "version_info") or sys.version_info < (3, 10):
     msg = "Urgap2 requires Python 3.10 or later."
     raise RuntimeError(msg)
 
+logger = logging.getLogger(__name__)
 uwid_obj = urgap.UWIDGenerator()
 
 home = Path(os.getenv("URGAP_HOME", str(Path.home() / ".urgap")))
@@ -91,6 +92,7 @@ urgap.session_uwid = uwid_obj.generate_wid()
 scratch_disk_base = urgap.uinit.set_scratch_disk_path(wid=urgap.session_uwid)
 scratch_disk = scratch_disk_base  # Temporary as we will update during run with WID
 info_box.append(info_format_string.format(k="scratch disk", v=scratch_disk_base))
+logger.info("\n".join([*info_box]))
 
 urgap.uinit.copy_resources_if_needed(
     target_dir=urgap.home,

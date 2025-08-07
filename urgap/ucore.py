@@ -111,6 +111,7 @@ def shutdown_local_upi_servers(force: bool = False) -> None:
         force: If True, forces the shutdown of servers regardless of configuration.
     """
     if urgap.config.get("terminate_remote_servers_on_exit") is True or force:
+        logging.getLogger().setLevel(level="CRITICAL")
         for port in urgap.instances.unode_manager.unode_port_mapping.values():
             run_payload = {"be humble": "sit down"}
             run_url = f"http://127.0.0.1:{port}/v1/terminate"
