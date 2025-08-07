@@ -26,6 +26,8 @@ import urgap
 
 P = ParamSpec("P")
 
+logger = logging.getLogger(__name__)
+
 
 class UFile:
     """Urgap pipeline file interface."""
@@ -116,11 +118,13 @@ class UFile:
                     set(self.tags.keys()) - hashlib.__dict__["algorithms_available"]
                 )
                 if len(non_standard_tags) > 0:
+                    logger.debug(
                         "Remote has no tags, thus the file is not downloaded again."
                         " Delete local explicitly UFile.purge_local_files() if needed.",
                     )
                 download_file = False
             elif remote_tags.get(urgap.config["hash_algorithm"], None) is None:
+                logger.debug(
                     "Remote has tag capability but hash was not set."
                     " Will not download file anymore."
                     " Delete local explicitly UFile.purge_local_files() if needed.",
@@ -142,6 +146,7 @@ class UFile:
                     urgap.config["hash_algorithm"],
                     None,
                 ) != remote_tags.get(urgap.config["hash_algorithm"], None):
+                    logger.debug(
                         "Remote and local have different hash. Overwriting local",
                     )
                     download_file = True
@@ -498,6 +503,7 @@ class UFile:
                 file.add(self.path, arcname=self.path.name)
 
         else:
+            logger.error(
                 "Unsupported compression format. Valid options are zip, gz, and tar",
             )
             msg = "Unsupported compression format."
@@ -505,6 +511,7 @@ class UFile:
 
         compressed_ufile = urgap.UFile(uri=self.as_uri() + suffix)
         msg = f"Compressed UFile to {compressed_ufile.as_uri()}"
+        logger.info(msg)
         return compressed_ufile
 
     def _unpack_gz(self, gz_output: str | Path, encoding: str = "utf-8") -> None:
@@ -567,6 +574,7 @@ class UFile:
                     with temp_folder / file_names[0].open("wb") as f:
                         shutil.copyfileobj(bz_file, f)
             case _:
+                logger.error(
                     "Unsupported compression format. Valid options are zip, bz2, tar, split_tar and gz",
                 )
                 msg = "Unsupported compression format."
@@ -594,6 +602,7 @@ class UFile:
         if recursive is True:
             for uf in ufl:
                 if urgap.util.sense_compression_format(uf.path) == "tar":
+                    logger.info(
                         "Uncompressed UFile is a tar archive which will be unpacked.",
                     )
                     try:
@@ -601,6 +610,7 @@ class UFile:
                         ufl.remove(uf)
                         Path.unlink(uf.path)
                     except (FileExistsError, IsADirectoryError, NotADirectoryError):
+                        logger.warning(
                             "Tarball contains folder with identical name renaming tarfile.",
                         )
                         to_be_removed = uf.path
@@ -748,6 +758,7 @@ class UFile:
         matching_source = source_object_names.intersection(self.parents)
         if len(matching_source) != 1:
             msg = f"Could not find matching source file in parents for {self}"
+            logger.error(msg)
             return None
         simple_name = ""
         if prefix is not None:
