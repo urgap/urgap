@@ -103,6 +103,7 @@ class UTelemetry:
         if hasattr(tracer_provider, "shutdown"):
             try:
                 tracer_provider.shutdown()
+            except RuntimeError as e:
 
         meter_provider = metrics.get_meter_provider()
         if hasattr(meter_provider, "shutdown"):
@@ -112,6 +113,7 @@ class UTelemetry:
                 if "closed file" in str(ve):
                 else:
                     raise
+            except RuntimeError as e:
 
         UTelemetry.is_shutdown = True
 
