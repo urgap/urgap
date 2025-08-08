@@ -287,9 +287,12 @@ class UFile:
         self,
         overwrite: bool = True,
         verify: bool = False,
+        purge: bool = True,
         retries: int = 3,
     ) -> None:
             urgap.utl.increase_counter("ufiles-uploaded")
+        if purge:
+            self.purge_local_file()
 
     @property
     def io(self) -> urgap.io:
