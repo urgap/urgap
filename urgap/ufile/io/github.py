@@ -29,6 +29,7 @@ class IOGithub(UIOBase):
 
         org_name = self.uuri.get_github_resource_name("org")
         repo_name = self.uuri.get_github_resource_name("repo")
+        self.object_filepath = self.uuri.fragment
         try:
             password = self.uuri.password
             if password is None:
