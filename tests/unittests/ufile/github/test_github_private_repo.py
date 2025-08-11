@@ -63,6 +63,7 @@ def test_github_private_repo():
         "github://dso.github.com/gsk-tech/dso-dval-r2d2/main#docs/DataValidationReport.html"
         in found_uris
     )
+    assert "github://dso.github.com/gsk-tech/dso-dval-r2d2/main#README.md" in found_uris
 
     # Test the file that doesn't exist
     uf = urgap.UFile(
