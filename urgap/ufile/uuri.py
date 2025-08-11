@@ -323,6 +323,7 @@ class UUri:
             case "repo":
                 return segments[1]
             case "branch":
+                return "/".join(segments[2:])
             case _:
                 msg = "Unknown param for github resource"
                 raise KeyError(msg)
