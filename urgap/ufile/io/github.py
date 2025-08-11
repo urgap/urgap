@@ -23,6 +23,7 @@ class IOGithub(UIOBase):
         Args:
             **kwargs: Requires parsed_uri key to set respective attributes.
 
+        github://<github_host>/<org_name>/<repo_name>/<branch>#path/to/dir/<object_name>
         """
         super().__init__(**kwargs)
         self.query_params = self.uuri.query
