@@ -105,6 +105,7 @@ class UTelemetry:
             try:
                 tracer_provider.shutdown()
             except RuntimeError as e:
+                logger.debug("Tracer shutdown failed: %s", e)
 
         meter_provider = metrics.get_meter_provider()
         if hasattr(meter_provider, "shutdown"):
@@ -112,9 +113,11 @@ class UTelemetry:
                 meter_provider.shutdown()
             except ValueError as ve:
                 if "closed file" in str(ve):
+                    logger.debug("Metric exporter tried to write to closed stdout.")
                 else:
                     raise
             except RuntimeError as e:
+                logger.debug("Metric shutdown failed: %s", e)
 
         UTelemetry.is_shutdown = True
 
@@ -374,6 +377,7 @@ class UTelemetry:
         container = self._find_container(nested_span_list)
         if container is None:
             msg = f"Cannot find span for {nested_span_list} in tree"
+            logger.debug(msg)
             return None
         return container["span"]
 
