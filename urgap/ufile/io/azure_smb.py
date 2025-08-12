@@ -141,6 +141,7 @@ class IOAzureSMB(UIOBase):
         try:
             with self.scratch_path.open("rb") as data:
                 self.file_client.upload_file(data)
+                logger.info(pprint.pformat("File uploaded successfully!"))
         except (
             AzureError,
             ServiceRequestError,
@@ -149,6 +150,7 @@ class IOAzureSMB(UIOBase):
             HttpResponseError,
         ) as e:
             msg = f"File {self.scratch_path} couldn't be uploaded!"
+            logger.exception(msg)
             raise RuntimeError(msg) from e
 
         if tags is not None:

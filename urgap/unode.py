@@ -178,6 +178,7 @@ class UNodeBase:
             urun_dict.unode_parameters.update(kwargs)
 
         if urun_dict["unode_parameters"]["remote_url"] is None:
+            logger.debug("Running locally")
             output_files = self._run_locally(ufiles=ufiles, urun_dict=urun_dict)
         else:
             output_files = self._run_remotely(ufiles=ufiles, urun_dict=urun_dict)
