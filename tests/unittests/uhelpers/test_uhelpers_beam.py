@@ -25,6 +25,21 @@ class StrPath(str):
         return Path(self).open(*args, **kwargs)
 
 
+def test_urgap_node_executor_invalid_urd_logs_warning(caplog):
+    invalid_urd = {"not": "a URunDict"}
+
+    with caplog.at_level("WARNING"):
+        executor = UrgapNodeExecutor(
+            unode="TestNode1:1.0.0",
+            urd=invalid_urd,
+        )
+
+    assert any(
+        "is not a urgap URunDict!" in record.message for record in caplog.records
+    )
+    assert executor.ready is False
+
+
 def test_urgap_node_executor_with_credentials():
     creds = [{"host": "dummy_host", "user": "dummy_user"}]
     urd = urgap.URunDict({})
