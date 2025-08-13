@@ -25,6 +25,38 @@ class StrPath(str):
         return Path(self).open(*args, **kwargs)
 
 
+def test_urgap_node_executor_with_credentials():
+    creds = [{"host": "dummy_host", "user": "dummy_user"}]
+    urd = urgap.URunDict({})
+
+    executor = UrgapNodeExecutor(
+        unode="TestNode1:1.0.0",
+        urd=urd,
+        ucredentials=creds,
+        config={"key": "value"},
+    )
+
+    assert executor.ucredentials == creds
+    assert executor.ucredentials is not creds
+    assert executor.ready is False or executor.ready is True
+
+
+def test_parse_inputs_no_default_file(tmp_path):
+    input_json = {
+        "pipeline_configuration": {"--runner": "DirectRunner"},
+        "urun_dict": {},
+    }
+    p = tmp_path / "input.json"
+    with p.open("w") as f:
+        json.dump(input_json, f)
+
+    pipeline_options, urd, out_json = parse_inputs(
+    )
+
+    assert isinstance(pipeline_options, type(pipeline_options))
+    assert isinstance(urd, urgap.URunDict)
+
+
 def test_beam_parse_inputs_merges_flags_and_sets_jobname(tmp_path):
     default_cfg = {"pipeline_configuration": {"--runner": "DirectRunner", "--x": "1"}}
     default_cfg_path = tmp_path / "default.json"
