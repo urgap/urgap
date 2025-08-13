@@ -4,7 +4,12 @@ import urgap
 
 runner = CliRunner()
 
+def test_info_version():
+    from urgap.uctl.info import info_version_click
 
+    result = runner.invoke(info_version_click)
+    assert result.exit_code == 0
+    assert urgap.__version__ is not None
 def test_info_unodes():
     from urgap.uctl.info import info_unodes_click
 
