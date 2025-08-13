@@ -2,6 +2,7 @@ import json
 
 import urgap
 
+from urgap import URunDict
 from urgap.uhelpers.prefect import (
     filter_by_uftype,
     parse_inputs,
@@ -131,3 +132,57 @@ def test_filter_by_uftype():
 
     filtered = filter_by_uftype.fn(uris=uris, uftype=[urgap.uftypes.test.TEST_FILE3])
     assert len(filtered) == 0
+
+
+def test_parse_inputs_no_default_file():
+    input_json = {"pipeline_configuration": {"param": 42}}
+    urd, updated_json = parse_inputs(input_json)
+
+    assert isinstance(urd, URunDict)
+
+    assert isinstance(updated_json, dict)
+
+    assert updated_json["pipeline_configuration"]["param"] == 42
+
+
+def test_parse_inputs_with_none_values():
+    from urgap import URunDict
+
+    input_json = {"pipeline_configuration": {"param1": None, "param2": 100}}
+
+    urd, updated_json = parse_inputs(input_json)
+
+    assert isinstance(urd, URunDict)
+
+    pipeline_config = updated_json.get("pipeline_configuration", {})
+    pipeline_args = []
+    for key, value in pipeline_config.items():
+        if value is None:
+            pipeline_args.append(key)
+        else:
+            pipeline_args.append(f"{key}={value}")
+
+    assert "param1" in pipeline_args
+    assert "param2=100" in pipeline_args
+
+
+def test_retrieve_processed_uris_empty_list(caplog):
+    caplog.set_level("INFO")
+
+    uris = []
+    result = retrieve_processed_uris(uris)
+
+    # Check that logger.info was called with the expected message
+    assert "Nothing to receive here" in caplog.text
+    # The result should still be an empty list
+    assert result == []
+
+
+def test_retrieve_processed_uris_with_none():
+    uris = [None]
+    result = retrieve_processed_uris(uris)
+    assert result == [None]  # just check the output
+
+
+
+    assert result is True
