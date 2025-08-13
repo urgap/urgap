@@ -51,10 +51,12 @@ def test_parse_inputs_no_default_file(tmp_path):
         json.dump(input_json, f)
 
     pipeline_options, urd, out_json = parse_inputs(
+        ["--input_json", StrPath(str(p))], save_main_session=False
     )
 
     assert isinstance(pipeline_options, type(pipeline_options))
     assert isinstance(urd, urgap.URunDict)
+    assert pipeline_options.get_all_options().get("runner") == "DirectRunner"
 
 
 def test_beam_parse_inputs_merges_flags_and_sets_jobname(tmp_path):
