@@ -4,6 +4,8 @@ import pytest
 
 import urgap
 
+from urgap.ucredentials.io._base import IOBaseCreds
+
 
 def test_echo_init_works():
     us = urgap.UCredentialManager()
@@ -91,3 +93,9 @@ def format_cred_key(self, cred_entry: dict) -> str:
     except KeyError:
         msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
 
+
+def test_io_base_creds_get_secret_raises():
+    creds = IOBaseCreds(secret_id="dummy")
+    with pytest.raises(NotImplementedError) as excinfo:
+        creds.get_secret()
+    assert "needs to be implemented in the IOCreds class" in str(excinfo.value)

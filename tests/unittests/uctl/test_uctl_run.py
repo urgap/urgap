@@ -7,6 +7,7 @@ from urgap.uctl.run import (
     dashboard_object_name_click,
     dashboard_uri_click,
     get_all_relevant_nodes,
+    run_unode_in_loop,
 )
 
 runner = CliRunner()
