@@ -1,11 +1,14 @@
 import json
 
+from unittest.mock import MagicMock, patch
+
 import urgap
 
 from urgap import URunDict
 from urgap.uhelpers.prefect import (
     filter_by_uftype,
     parse_inputs,
+    rebase,
     retrieve_processed_uris,
     run_unode,
     setup_urgap,
@@ -183,6 +186,8 @@ def test_retrieve_processed_uris_with_none():
     result = retrieve_processed_uris(uris)
     assert result == [None]  # just check the output
 
+
+    from urgap.uhelpers.prefect import rebase
 
 
     assert result is True
