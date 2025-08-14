@@ -231,5 +231,79 @@ def test_remote_object_exists(io_omiq_instance):
     io_omiq_instance.uuri.fragment = "non_existent_file.txt"
     assert io_omiq_instance.remote_object_exists() is False
 
+def test_get_remote_tags_cached(io_omiq_instance):
+    io_omiq_instance._tags = {"omiq_tags": True, "id": 123}
+
+    tags = io_omiq_instance.get_remote_tags()
+
+    assert tags == {"omiq_tags": True, "id": 123}
+
+def test_download_omiq_gfile(io_omiq_instance):
+    io_omiq_instance._download_file_from_workflow = MagicMock()
+    io_omiq_instance.download()
+    io_omiq_instance._download_file_from_workflow.assert_called_once()
+
+def test_download_file_not_found(io_omiq_instance):
+    io_omiq_instance._corresponding_fcs_filename = None
+    io_omiq_instance._query_params["uftype"] = None
+    io_omiq_instance._list_files_in_dataset = MagicMock(return_value=[])
+    io_omiq_instance._list_artifacts = MagicMock(return_value=[])
+
+    with pytest.raises(FileNotFoundError):
+        io_omiq_instance.download()
+
+def test_upload_with_tags_triggers_warning(io_omiq_instance, caplog):
+    with caplog.at_level("WARNING"):
+        io_omiq_instance.upload(tags={"key": "value"})
+    assert "Upload of tags is not implemented yet." in caplog.text
+    io_omiq_instance._api.upload_files_to_dataset.assert_called_once_with(
+        io_omiq_instance._dataset_id, [io_omiq_instance.scratch_path]
+    )
+
+@pytest.fixture
+def io_omiq_instance_with_tasks(mock_omiq_api, mock_urgap_credential_manager, uuri):
+    with patch("urgap.ufile.io.omiq.omiq_api_available", True):
+        return IOOmiq(uuri=uuri, scratch_path=Path(tempfile.gettempdir()))
+
+
+def test_set_from_task_id_based_on_task_type(io_omiq_instance_with_tasks):
+    io_omiq_instance_with_tasks._workflow = {
+        "tasks": [
+            {"id": 1, "type": "OtherTask"},
+        ]
+    }
+    io_omiq_instance_with_tasks._query_params = {}
+
+    io_omiq_instance_with_tasks._set_from_task_id()
+
+    assert io_omiq_instance_with_tasks._query_params["from_task_id"] == 2
+
+
+@pytest.fixture
+def io_omiq_instance_with_workflow(mock_omiq_api, mock_urgap_credential_manager, uuri):
+    with patch("urgap.ufile.io.omiq.omiq_api_available", True):
+        return IOOmiq(uuri=uuri, scratch_path=Path(tempfile.gettempdir()))
+
+def test_dict_workflow_creation(io_omiq_instance_with_workflow):
+    io_omiq_instance_with_workflow._dataset_id = 12345
+
+    io_omiq_instance_with_workflow._query_params = {}
+
+
+    assert dict_workflow["dataset"] == 12345
+    assert dict_workflow["workflow"] == {"id": 271715923047819, "name": "Test Workflow"}
+
+    if "from_task_id" not in io_omiq_instance_with_workflow._query_params:
+        io_omiq_instance_with_workflow._query_params["from_task_id"] = 2
+
+    assert io_omiq_instance_with_workflow._query_params["from_task_id"] == 2
+
+def test_handle_corresponding_fcs_filename_is_none(io_omiq_instance_with_fcs):
+    io_omiq_instance_with_fcs._corresponding_fcs_filename = None
+    io_omiq_instance_with_fcs.uuri.fragment = "fallback_file.fcs"
+
+    assert f == "fallback_file.fcs"
+
+
 if __name__ == "__main__":
     pytest.main()
