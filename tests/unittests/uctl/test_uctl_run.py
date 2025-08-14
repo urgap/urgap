@@ -9,6 +9,7 @@ from urgap.uctl.run import (
     get_all_relevant_nodes,
     run_unode_in_loop,
 )
+from urgap.umeta.io.gcpsql import UMeta
 
 runner = CliRunner()
 
@@ -106,3 +107,21 @@ def test_run_unode_in_loop(tmp_dir):
         "BasicFunctionTestNode:1.3.0",
     )
     assert len(ufl) == 1
+
+
+def test_umeta_generate_connection_string(monkeypatch):
+    # Patch the config dict key
+    monkeypatch.setitem(
+        urgap.config, "umeta-gcpsql-url", "postgresql+pg8000://host:5432"
+    )
+
+    # Patch extract_credentials
+    monkeypatch.setattr(
+        "urgap.instances.ucredential_manager.extract_credentials",
+        lambda conn_str: {"user": "testuser", "password": "testpass"},
+    )
+
+    umeta = UMeta()  # <-- use gcpsql UMeta
+    conn_string = umeta.generate_connection_string()
+    expected = "postgresql+pg8000://testuser:testpass@host:5432/urgap"
+    assert conn_string == expected
