@@ -1,11 +1,15 @@
+import logging
 import os
 import types
 
+import google.api_core.exceptions
+import google_crc32c
 import pytest
 
 import urgap
 
 from urgap.ucredentials.io._base import IOBaseCreds
+from urgap.ucredentials.io.gcp import IOGCPCreds
 
 
 def test_echo_init_works():
@@ -217,3 +221,230 @@ def test_read_credentials_warns_for_missing_file(tmp_path, caplog):
 
     assert f"{fake_path} does not exist!" in caplog.text
 
+
+def test_get_secret_initialization(monkeypatch):
+    """Covers lines 38-40 and a normal get_secret path."""
+
+    class DummyPayload:
+        def __init__(self, data: bytes):
+            self.data = data
+            crc = google_crc32c.Checksum()
+            crc.update(data)
+            self.data_crc32c = int(crc.hexdigest(), 16)
+
+    class DummyResponse:
+        def __init__(self):
+            self.payload = DummyPayload(b"supersecret")
+
+    class DummyClient:
+        def access_secret_version(self, request):
+            return DummyResponse()
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClient(),
+    )
+
+    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    result = creds.get_secret()
+
+    assert result == "supersecret"
+
+
+def test_get_secret_try_block(monkeypatch):
+    """Covers client initialization and access_secret_version call (lines 42-44)."""
+
+    class DummyPayload:
+        def __init__(self, data: bytes):
+            self.data = data
+            crc = google_crc32c.Checksum()
+            crc.update(data)
+            self.data_crc32c = int(crc.hexdigest(), 16)
+
+    class DummyResponse:
+        def __init__(self):
+            self.payload = DummyPayload(b"topsecret")
+
+    class DummyClient:
+        def access_secret_version(self, request):
+            return DummyResponse()
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClient(),
+    )
+
+    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    secret = creds.get_secret()
+
+    assert secret == "topsecret"
+
+
+def test_get_secret_exception(monkeypatch, caplog):
+    """Covers the except block (line 49) in get_secret."""
+
+    class DummyClient:
+        def access_secret_version(self, request):
+            raise google.api_core.exceptions.PermissionDenied("Access denied")
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClient(),
+    )
+
+    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+
+    with caplog.at_level(logging.WARNING):
+        result = creds.get_secret()
+
+    assert "Secret could not be retrieved from GCP." in caplog.text
+    assert result is None
+
+
+def test_get_secret_logs_warning(monkeypatch, caplog):
+    """Covers logging.warning line in except block of get_secret."""
+
+    class DummyClient:
+        def access_secret_version(self, request):
+            raise google.api_core.exceptions.PermissionDenied("Access denied")
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClient(),
+    )
+
+    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+
+    with caplog.at_level(logging.WARNING):
+        result = creds.get_secret()
+
+    assert "Secret could not be retrieved from GCP." in caplog.text
+    assert result is None
+
+
+def test_get_secret_client_and_response(monkeypatch):
+    """Covers the if statement checking client and response (line 55)."""
+
+    class DummyPayload:
+        def __init__(self, data: bytes):
+            self.data = data
+            crc = google_crc32c.Checksum()
+            crc.update(data)
+            self.data_crc32c = int(crc.hexdigest(), 16)
+
+    class DummyResponse:
+        def __init__(self):
+            self.payload = DummyPayload(b"topsecret")
+
+    class DummyClient:
+        def access_secret_version(self, request):
+            return DummyResponse()
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClient(),
+    )
+
+    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    secret = creds.get_secret()
+
+    assert secret == "topsecret"
+
+
+def test_get_secret_crc32c(monkeypatch, caplog):
+    """Covers CRC32C verification and logger.warning for corrupted payload."""
+
+    class DummyPayloadMatch:
+        def __init__(self, data: bytes):
+            self.data = data
+            crc = google_crc32c.Checksum()
+            crc.update(data)
+            self.data_crc32c = int(crc.hexdigest(), 16)
+
+    class DummyResponseMatch:
+        def __init__(self):
+            self.payload = DummyPayloadMatch(b"secret_data")
+
+    class DummyClientMatch:
+        def access_secret_version(self, request):
+            return DummyResponseMatch()
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClientMatch(),
+    )
+
+    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    secret = creds.get_secret()
+
+    class DummyPayloadCorrupt:
+        def __init__(self, data: bytes):
+            self.data = data
+            self.data_crc32c = 0  # invalid checksum
+
+    class DummyResponseCorrupt:
+        def __init__(self):
+            self.payload = DummyPayloadCorrupt(b"bad_secret")
+
+    class DummyClientCorrupt:
+        def access_secret_version(self, request):
+            return DummyResponseCorrupt()
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClientCorrupt(),
+    )
+
+    with caplog.at_level(logging.WARNING):
+        secret = creds.get_secret()
+
+    assert "Secret dummy payload is corrupted." in caplog.text
+
+
+def test_get_secret_crc32c(monkeypatch, caplog):
+    """Covers CRC32C verification and logger.warning for corrupted payload."""
+
+    class DummyPayloadMatch:
+        def __init__(self, data: bytes):
+            self.data = data
+            crc = google_crc32c.Checksum()
+            crc.update(data)
+            self.data_crc32c = int(crc.hexdigest(), 16)
+
+    class DummyResponseMatch:
+        def __init__(self):
+            self.payload = DummyPayloadMatch(b"secret_data")
+
+    class DummyClientMatch:
+        def access_secret_version(self, request):
+            return DummyResponseMatch()
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClientMatch(),
+    )
+
+    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    secret = creds.get_secret()
+
+    class DummyPayloadCorrupt:
+        def __init__(self, data: bytes):
+            self.data = data
+
+    class DummyResponseCorrupt:
+        def __init__(self):
+            self.payload = DummyPayloadCorrupt(b"bad_secret")
+
+    class DummyClientCorrupt:
+        def access_secret_version(self, request):
+            return DummyResponseCorrupt()
+
+    monkeypatch.setattr(
+        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
+        lambda: DummyClientCorrupt(),
+    )
+
+    with caplog.at_level(logging.WARNING):
+        secret = creds.get_secret()
+
+    assert "Secret dummy payload is corrupted." in caplog.text
