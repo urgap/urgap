@@ -211,6 +211,7 @@ def format_cred_key(self, cred_entry: dict) -> str | None:
 
 
 def test_read_credentials_warns_for_missing_file(tmp_path, caplog):
+    us = urgap.UCredentialManager(json_path=None)
     fake_path = tmp_path / "non_existent.json"
 
     with caplog.at_level("WARNING"):
@@ -228,6 +229,7 @@ def test_get_secret_initialization(monkeypatch):
     class DummyPayload:
         def __init__(self, data: bytes):
             self.data = data
+
             crc = google_crc32c.Checksum()
             crc.update(data)
             self.data_crc32c = int(crc.hexdigest(), 16)
@@ -319,6 +321,7 @@ def test_get_secret_logs_warning(monkeypatch, caplog):
         result = creds.get_secret()
 
     assert "Secret could not be retrieved from GCP." in caplog.text
+
     assert result is None
 
 
@@ -376,6 +379,7 @@ def test_get_secret_crc32c(monkeypatch, caplog):
 
     creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
     secret = creds.get_secret()
+    assert secret == "secret_data"
 
     class DummyPayloadCorrupt:
         def __init__(self, data: bytes):
@@ -399,6 +403,7 @@ def test_get_secret_crc32c(monkeypatch, caplog):
         secret = creds.get_secret()
 
     assert "Secret dummy payload is corrupted." in caplog.text
+    assert secret == "bad_secret"
 
 
 def test_get_secret_crc32c(monkeypatch, caplog):
@@ -426,10 +431,12 @@ def test_get_secret_crc32c(monkeypatch, caplog):
 
     creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
     secret = creds.get_secret()
+    assert secret == "secret_data"
 
     class DummyPayloadCorrupt:
         def __init__(self, data: bytes):
             self.data = data
+            self.data_crc32c = 0
 
     class DummyResponseCorrupt:
         def __init__(self):
@@ -448,3 +455,4 @@ def test_get_secret_crc32c(monkeypatch, caplog):
         secret = creds.get_secret()
 
     assert "Secret dummy payload is corrupted." in caplog.text
+    assert secret == "bad_secret"
