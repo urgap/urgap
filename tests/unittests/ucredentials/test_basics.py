@@ -1,4 +1,5 @@
 import os
+import types
 
 import pytest
 
@@ -99,3 +100,31 @@ def test_io_base_creds_get_secret_raises():
     with pytest.raises(NotImplementedError) as excinfo:
         creds.get_secret()
     assert "needs to be implemented in the IOCreds class" in str(excinfo.value)
+
+
+def test_missing_io_class_raises_importerror():
+    us = urgap.UCredentialManager()
+    with pytest.raises(ImportError) as e:
+        us.init_io_class(secret_store="nonexistent_backend", secret_id="dummy")
+    assert "cannot be imported due to missing dependencies" in str(e.value)
+
+
+def test_gcp_io_class_init(monkeypatch):
+    class DummyGCPClass:
+        def __init__(self, secret_id, project_id, version_id):
+            self.secret_id = secret_id
+            self.project_id = project_id
+            self.version_id = version_id
+
+    dummy_module = types.SimpleNamespace(IOGCPCreds=DummyGCPClass)
+
+    us = urgap.UCredentialManager()
+
+    monkeypatch.setitem(us.available_io_classes, "gcp", dummy_module)
+
+    us.init_io_class(secret_store="gcp", secret_id="dummy", cloud_host_pid="project123")
+
+    assert isinstance(us.io, DummyGCPClass)
+    assert us.io.secret_id == "dummy"
+    assert us.io.project_id == "project123"
+    assert us.io.version_id == "latest"
