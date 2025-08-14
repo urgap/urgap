@@ -128,3 +128,92 @@ def test_gcp_io_class_init(monkeypatch):
     assert us.io.secret_id == "dummy"
     assert us.io.project_id == "project123"
     assert us.io.version_id == "latest"
+
+
+def test_akv_io_class_init(monkeypatch):
+    class DummyAKV:
+        def __init__(self, secret_id, vault_name):
+            self.secret_id = secret_id
+            self.vault_name = vault_name
+
+    class DummyAKVModule:
+        IOAzureCreds = DummyAKV
+
+    us = urgap.UCredentialManager()
+    monkeypatch.setitem(us.available_io_classes, "akv", DummyAKVModule)
+
+    us.init_io_class(secret_store="akv", secret_id="dummy", cloud_host_pid="vault123")
+
+    assert us._io.secret_id == "dummy"
+    assert us._io.vault_name == "vault123"
+
+
+def test_ingest_cred_entry_invalid_logs_warning(monkeypatch, caplog):
+    us = urgap.UCredentialManager()
+
+    monkeypatch.setattr(us, "validate_credential_entry", lambda x: None)
+
+    cred_entry = {
+        "description": "DemoInvalid",
+        "scheme": "invalid-scheme",
+        "host": "localhost",
+        "user": "USER",
+        "password": "PASS",
+        "secure": True,
+        "secret_store": "env",
+    }
+
+    with caplog.at_level("WARNING"):
+        us.ingest_cred_entry(cred_entry)
+
+    assert (
+        f"The credentials for {us.ID_KEY.format(**cred_entry)} were not valid"
+        in caplog.text
+    )
+
+
+def test_logger_warning_on_invalid_cred(monkeypatch, caplog):
+    us = urgap.UCredentialManager()
+
+    monkeypatch.setattr(us, "validate_credential_entry", lambda x: None)
+
+    cred_entry = {
+        "description": "DemoInvalid",
+        "scheme": "invalid-scheme",
+        "host": "localhost",
+        "user": "USER",
+        "password": "PASS",
+        "secure": True,
+        "secret_store": "env",
+    }
+
+    with caplog.at_level("WARNING"):
+        us.ingest_cred_entry(cred_entry)
+
+    assert (
+        f"The credentials for {us.ID_KEY.format(**cred_entry)} were not valid"
+        in caplog.text
+    )
+
+
+def format_cred_key(self, cred_entry: dict) -> str | None:
+    """Format the credential key based on self.ID_KEY."""
+    try:
+        c_key = self.ID_KEY.format(**cred_entry)
+    except KeyError:
+        msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
+        return None
+    return c_key
+
+
+def test_read_credentials_warns_for_missing_file(tmp_path, caplog):
+    fake_path = tmp_path / "non_existent.json"
+
+    with caplog.at_level("WARNING"):
+        try:
+            us.read_credentials(json_path=fake_path)
+        except KeyError:
+            pass
+
+    assert f"{fake_path} does not exist!" in caplog.text
+
