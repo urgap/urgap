@@ -1,5 +1,6 @@
 import contextlib
 import logging
+import re
 
 from unittest.mock import MagicMock, PropertyMock, call, patch
 
@@ -312,6 +313,7 @@ def test_get_file_metadata_returns_expected():
         io_dl = IOAzureDL(uuri=dummy_uuri)
 
         io_dl.remote_object_exists = MagicMock(return_value=True)
+
         io_dl.get_file_properties = MagicMock(return_value=file_props)
 
         result = io_dl.get_remote_tags()
@@ -332,6 +334,7 @@ def test_get_object_returns_expected():
         io_dl = IOAzureDL(uuri=dummy_uuri)
 
         io_dl.remote_object_exists = MagicMock(return_value=True)
+
         io_dl.get_file_properties = MagicMock(return_value=file_props)
 
         result = io_dl.get_object()
@@ -433,6 +436,7 @@ def test_create_directories_and_files_handles_resource_exists():
         self.file_client = MagicMock()
         self.file_system_client = MagicMock()
         self.client_keys = ["key1", "key2"]
+
         self.file_client.path_name = "dir1/dir2/file.txt"
 
     with patch("urgap.ufile.io.azure_datalake.IOAzureDL.__init__", new=dummy_init):
@@ -467,6 +471,7 @@ def test_create_directories_and_files_handles_resource_exists():
 
         io_dl.file_system_client.get_directory_client.assert_called()
         assert io_dl.file_client.create_file.called
+
         assert "key1" not in tags
         assert "key2" not in tags
         assert "other" in tags
