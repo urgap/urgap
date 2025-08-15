@@ -1,3 +1,5 @@
+from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -91,6 +93,7 @@ def test_upload_no_tags(monkeypatch, dummy_uuri, tmp_path):
     scratch_file.write_text("hello world")
 
     io_obj = IOAzureBlobStorage(uuri=dummy_uuri)
+
     monkeypatch.setattr(
         type(io_obj), "scratch_path", property(lambda self: scratch_file)
     )
@@ -120,6 +123,7 @@ def test_upload_large_tags(monkeypatch, dummy_uuri, tmp_path):
     scratch_file.write_text("hello world")
 
     io_obj = IOAzureBlobStorage(uuri=dummy_uuri)
+
     monkeypatch.setattr(
         type(io_obj), "scratch_path", property(lambda self: scratch_file)
     )
@@ -132,6 +136,95 @@ def test_upload_large_tags(monkeypatch, dummy_uuri, tmp_path):
     assert called_tags.get("ParentsRemoved") == "Yes"
 
 
+def test_remote_tag_path_property():
+    mock_uuri = MagicMock()
+    io_blob = IOAzureBlobStorage.__new__(IOAzureBlobStorage)
+    io_blob.uuri = mock_uuri
+
+    result = io_blob.remote_tag_path
+
+    assert result is None
 
 
+def test_get_remote_tags_existing_blob():
+    io_blob = IOAzureBlobStorage.__new__(IOAzureBlobStorage)
 
+    io_blob.blob = MagicMock()
+    io_blob.remote_object_exists = MagicMock(return_value=True)
+
+    io_blob.blob.get_blob_properties.return_value = {
+        "metadata": {"key1": "value1", "key2": "value2"}
+    }
+
+    tags = io_blob.get_remote_tags()
+
+    assert tags == {"key1": "value1", "key2": "value2"}
+    io_blob.blob.get_blob_properties.assert_called_once()
+
+
+def test_get_remote_tags_nonexistent_blob():
+    io_blob = IOAzureBlobStorage.__new__(IOAzureBlobStorage)
+
+    io_blob.remote_object_exists = MagicMock(return_value=False)
+
+    tags = io_blob.get_remote_tags()
+
+    assert tags is None
+
+
+def test_download_when_local_file_exists_and_hash_matches():
+    io_blob = IOAzureBlobStorage.__new__(IOAzureBlobStorage)
+
+    mock_path = MagicMock(spec=Path)
+    mock_path.exists.return_value = True
+    with patch.object(
+        IOAzureBlobStorage, "scratch_path", new_callable=lambda: mock_path
+    ):
+        io_blob.blob = MagicMock()
+        io_blob.blob.exists.return_value = True
+
+        with patch("urgap.ucore.calculate_file_hash", return_value="fakehash"):
+            with patch.object(
+                io_blob, "get_remote_tags", return_value={"sha256": "fakehash"}
+            ):
+                io_blob.download()
+
+
+def test_download_hash_matches():
+    io_blob = IOAzureBlobStorage.__new__(IOAzureBlobStorage)
+
+    mock_path = MagicMock(spec=Path)
+    mock_path.exists.return_value = True
+    with patch.object(
+        IOAzureBlobStorage, "scratch_path", new_callable=lambda: mock_path
+    ):
+        io_blob.blob = MagicMock()
+        io_blob.blob.exists.return_value = True
+
+        with patch("urgap.ucore.calculate_file_hash", return_value="fakehash"):
+            with patch.object(
+                io_blob, "get_remote_tags", return_value={"sha256": "fakehash"}
+            ):
+                io_blob.download()
+
+
+def test_list_container_items_with_and_without_pattern():
+    io_blob = IOAzureBlobStorage.__new__(IOAzureBlobStorage)
+
+    io_blob.container = MagicMock()
+    io_blob.add_storage_uri_to_container_items = lambda x: x
+    io_blob.container.list_blob_names.return_value = [
+        "file1.txt",
+        "file2.csv",
+        "image.png",
+        "data_file.txt",
+    ]
+
+    all_blobs = io_blob.list_container_items()
+    assert all_blobs == ["file1.txt", "file2.csv", "image.png", "data_file.txt"]
+
+    txt_blobs = io_blob.list_container_items(pattern=r"\.txt$")
+    assert txt_blobs == ["file1.txt", "data_file.txt"]
+
+    none_blobs = io_blob.list_container_items(pattern=r"\.pdf$")
+    assert none_blobs == []
