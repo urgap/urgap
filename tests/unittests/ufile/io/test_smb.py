@@ -34,6 +34,7 @@ def dummy_uuri():
 
 def test_iosmb_init_super_and_conn_object(dummy_uuri):
     """Test IOSMB initialization, covering super().__init__ and SMBConnection creation."""
+
     with patch("urgap.ufile.io.samba.SMBConnection") as mock_conn:
         mock_instance = MagicMock()
         mock_conn.return_value = mock_instance
@@ -72,6 +73,7 @@ def test_iosmb_validate_share_name_error():
             return 445
 
         def get_samba_share(self):
+            return "Invalid/Share"
 
     dummy_uuri_slash = DummyUUriWithSlash()
 
@@ -142,8 +144,10 @@ def test_iosmb_retrieve_tags(dummy_uuri):
 
         if hasattr(smb_io, "get_tags"):
             tags = smb_io.get_tags()
+
             assert tags is None or isinstance(tags, list)
         else:
+
             def fake_get_tags():
                 tags = None
                 with BytesIO() as bio:
@@ -219,10 +223,12 @@ class TestFileRetrieval(unittest.TestCase):
         self.uuri.fragment = "mock/file/path.txt"
 
         self.conn_object = MagicMock()
+        self.scratch_path = Path("/mock/path/to/file.txt")
 
     def test_successful_file_retrieval(self):
         """Test that the file is retrieved successfully from the Samba share."""
         with patch("builtins.open", unittest.mock.mock_open()) as mock_file:
+            self.conn_object.retrieveFile.return_value = None
 
             with patch("pathlib.Path.open", unittest.mock.mock_open()) as mock_open:
                 with self.scratch_path.open("wb") as ooo:
@@ -230,6 +236,7 @@ class TestFileRetrieval(unittest.TestCase):
                         self.uuri.get_samba_share(), self.uuri.fragment, ooo
                     )
 
+            file_mock = mock_open.return_value
             self.conn_object.retrieveFile.assert_called_once_with(
                 "mock_share", "mock/file/path.txt", file_mock
             )
@@ -263,6 +270,7 @@ def smb_io(dummy_uuri):
 
 def test_store_tags(smb_io, dummy_uuri):
     """Test that tags are stored correctly in the Samba share."""
+
     tags = ["tag1", "tag2", "tag3"]
 
     json_data = json.dumps(tags)
@@ -272,9 +280,39 @@ def test_store_tags(smb_io, dummy_uuri):
         with BytesIO(json_bytes) as bio:
             smb_io.conn_object.storeFile(
                 smb_io.uuri.get_samba_share(),
+                "path/to/store/tags.json",
                 bio,
             )
 
             mock_storeFile.assert_called_once_with(
                 smb_io.uuri.get_samba_share(), "path/to/store/tags.json", bio
             )
+
+
+def test_successful_file_retrieval(dummy_uuri):
+    """Test that the file is successfully retrieved from the Samba share."""
+    mock_file_content = b'{"tag1": "value1", "tag2": "value2"}'
+
+    with (
+        patch("urgap.ufile.io.samba.SMBConnection.retrieveFile") as mock_retrieve,
+        patch("urgap.ufile.io.samba.SMBConnection.connect") as mock_connect,
+    ):
+
+        def mock_retrieveFile(share, path, bio):
+            bio.write(mock_file_content)
+            return None
+
+        mock_connect.return_value = None
+
+        mock_retrieve.side_effect = mock_retrieveFile
+
+        smb_io = IOSMB(uuri=dummy_uuri)
+
+        with BytesIO() as bio:
+            smb_io.conn_object.retrieveFile(
+                smb_io.uuri.get_samba_share(), smb_io.remote_tag_path, bio
+            )
+            bio.seek(0)
+            content = bio.read()
+
+            assert content == mock_file_content
