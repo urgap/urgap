@@ -28,9 +28,12 @@ def test_azure_datalake_native_io():
     )
 
     assert new_uf.remote_object_exists() is True
+
     assert new_uf.path.read_text() in uf.path.read_text()
+
     new_uf.purge_local()
     assert new_uf.io.scratch_path.exists() is False
     new_uf.path
     assert new_uf.io.scratch_path.exists() is True
+
     assert new_uf.tags.get("temp", None) == "hot"
