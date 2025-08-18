@@ -316,3 +316,60 @@ def test_successful_file_retrieval(dummy_uuri):
             content = bio.read()
 
             assert content == mock_file_content
+
+
+def test_remote_path_property_real(dummy_uuri):
+    with patch("urgap.ufile.io.samba.SMBConnection") as mock_conn:
+        mock_conn.return_value = MagicMock()
+        smb_io = IOSMB(uuri=dummy_uuri)
+
+        assert smb_io.remote_path is None
+
+
+def test_retrieve_tags(dummy_uuri):
+    """Test that retrieving tags reads JSON data from SMB correctly."""
+
+    mock_tags = ["tag1", "tag2"]
+    mock_json_bytes = json.dumps(mock_tags).encode("utf-8")
+
+    with patch("urgap.ufile.io.samba.SMBConnection") as mock_conn:
+        mock_conn_instance = MagicMock()
+        mock_conn.return_value = mock_conn_instance
+
+        def mock_retrieveFile(share, path, bio):
+            bio.write(mock_json_bytes)
+            return None
+
+        mock_conn_instance.retrieveFile.side_effect = mock_retrieveFile
+
+        smb_io = IOSMB(uuri=dummy_uuri)
+
+        with patch.object(
+            smb_io.__class__, "remote_tag_path", new_callable=PropertyMock
+        ) as mock_remote_tag_path:
+            mock_remote_tag_path.return_value = "dummy_path"
+
+            tags = None
+            with BytesIO() as bio:
+                smb_io.conn_object.retrieveFile(
+                    smb_io.uuri.get_samba_share(),
+                    smb_io.remote_tag_path,
+                    bio,
+                )
+                bio.seek(0)
+                content = bio.read()
+                tags = json.loads(content.decode("utf-8"))
+
+            assert tags == ["tag1", "tag2"]
+
+
+def test_get_object_returns_remote_path(smb_io):
+    """Test that get_object returns the value of the remote_path property."""
+
+    with patch.object(
+        smb_io.__class__, "remote_path", new_callable=PropertyMock
+    ) as mock_remote_path:
+        mock_remote_path.return_value = "dummy/remote/path"
+
+        result = smb_io.get_object()
+        assert result == "dummy/remote/path"
