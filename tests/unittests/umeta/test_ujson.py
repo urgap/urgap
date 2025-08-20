@@ -164,3 +164,30 @@ def test_json_encoder_real_ufilelist_no_none():
     assert isinstance(decoded, urgap.ufile_list.UFileList)
     assert decoded[0].as_uri() == "file://dummy/path1"
     assert decoded[1].as_uri() == "file://dummy/path2"
+
+
+def test_json_encoder_fallback_and_none_in_ufilelist():
+    class DummyUFileList(list):
+        pass
+
+    ufile1 = urgap.UFile(uri="file://dummy/path1")
+    ufile2 = urgap.UFile(uri="file://dummy/path2")
+
+    ulist = DummyUFileList([ufile1, None, ufile2])
+
+    encoded = json.dumps(ulist, cls=urgap_json.JSONEncoder)
+    decoded = json.loads(encoded, cls=urgap_json.JSONDecoder)
+
+    assert isinstance(decoded, list)
+    assert decoded[0].as_uri() == "file://dummy/path1"
+    assert decoded[1] is None
+    assert decoded[2].as_uri() == "file://dummy/path2"
+
+    class DummyClass:
+        pass
+
+    obj = DummyClass()
+    encoder = urgap_json.JSONEncoder()
+    fallback_result = encoder.default(obj)
+
+    assert fallback_result is obj
