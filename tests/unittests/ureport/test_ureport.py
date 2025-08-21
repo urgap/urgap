@@ -1,17 +1,32 @@
+from datetime import timedelta
 from pathlib import Path
+from unittest.mock import MagicMock
+
 import networkx as nx
+import pytest
+
+import urgap
+
+from urgap.ureport.ureport import UReport
+
 
 def test_init_with_ufile_and_ucfs_raises_keyerror(caplog):
     dummy_ufile = "dummy_ufile"
     dummy_ucfs = ["dummy_ucf"]
 
     with caplog.at_level("WARNING"):
+        with pytest.raises(
+            KeyError, match="You cannot define ufile and ucfs to initialize a report"
+        ):
             UReport(ufile=dummy_ufile, ucfs=dummy_ucfs)
 
     assert "You cannot define ufile and ucfs to initialize a report" in caplog.text
 
+
 import pytest
+
 from urgap.ureport.ureport import UReport
+
 
 def test_missing_history_triggers_umeta_load_history(monkeypatch):
     dummy_wid = "wid123"
@@ -27,6 +42,7 @@ def test_missing_history_triggers_umeta_load_history(monkeypatch):
     report = UReport(ufile=DummyUFile())
 
     assert hasattr(report, "execution_history")
+
 
 def test_traces_populated_with_load_utrace(monkeypatch):
     dummy_wid = "wid123"
@@ -103,8 +119,11 @@ def test_get_wids_from_execution_history(monkeypatch):
 
     assert wids == {"widA", "widB"}
 
+
 import pytest
+
 from urgap.ureport.ureport import UReport
+
 
 def test_traces_assignment_line(monkeypatch):
     dummy_wid = "wid123"
@@ -131,6 +150,7 @@ def test_traces_assignment_line(monkeypatch):
     assert report._traces[key]["utrace_loaded"] is True
     assert report._traces[key]["wid"] == dummy_wid
 
+
     dummy_wid = "wid123"
 
     class DummyUFile:
@@ -143,15 +163,19 @@ def test_traces_assignment_line(monkeypatch):
 
     monkeypatch.setattr(UReport, "_merge_histories", lambda self, other_history: None)
 
+    report = UReport.__new__(UReport)
     report._umeta = DummyUMeta()
+    report._os = []
 
     producing_ucfs = "dummy_ucfs"
 
     with pytest.raises(OSError) as exc_info:
             import logging
+
             logger = logging.getLogger()
             logger.warning(msg)
             raise OSError(msg)
+
 
 
 def test_merge_histories_started_time():
@@ -161,14 +185,18 @@ def test_merge_histories_started_time():
         ("unode1", "wid1"): {"started_time": 10, "other": "data"}
     }
 
+    other_history = {("unode1", "wid1"): {"started_time": 20, "other": "new_data"}}
 
     UReport._merge_histories(report, other_history)
 
     assert report.execution_history[("unode1", "wid1")]["started_time"] == 20
     assert report.execution_history[("unode1", "wid1")]["other"] == "new_data"
 
+
 def test_merge_histories_overwrite(monkeypatch):
     import urgap.ureport.ureport as ureport_module
+
+    from urgap.ureport.ureport import UReport
 
     report = UReport.__new__(UReport)
 
@@ -176,6 +204,7 @@ def test_merge_histories_overwrite(monkeypatch):
         ("unode1", "wid1"): {"started_time": 10, "other": "old_data"}
     }
 
+    other_history = {("unode1", "wid1"): {"started_time": 20, "other": "new_data"}}
 
     logs = []
     monkeypatch.setattr(ureport_module.logger, "info", lambda msg: logs.append(msg))
@@ -188,10 +217,12 @@ def test_merge_histories_overwrite(monkeypatch):
 
     assert any("Overwriting entry" in msg for msg in logs)
 
+
 def test_was_skipped_called():
     report = UReport.__new__(UReport)
 
     class DummyHistory:
+            return True
 
     dummy_history = DummyHistory()
     report.execution_history = dummy_history
@@ -202,9 +233,11 @@ def test_was_skipped_called():
     assert result is True
 
 
+def test_was_run_called():
     report = UReport.__new__(UReport)
 
     class DummyHistory:
+            return True
 
     dummy_history = DummyHistory()
     report.execution_history = dummy_history
@@ -214,10 +247,12 @@ def test_was_skipped_called():
     assert dummy_history.called_with == ("dummy_wid", "dummy_node")
     assert result is True
 
+
 def test_crashed_called():
     report = UReport.__new__(UReport)
 
     class DummyHistory:
+            return True
 
     dummy_history = DummyHistory()
     report.execution_history = dummy_history
@@ -240,12 +275,14 @@ def test_remote_object_exists_dummy():
 
     def remote_object_exists(self):
         return self.ufile.remote_object_exists()
+
     UReport.remote_object_exists = remote_object_exists
 
     result = report.remote_object_exists()
 
     assert result is True
     assert report.ufile.called is True
+
 
 def test_umeta_exists_called(monkeypatch):
     report = UReport.__new__(UReport)
@@ -265,6 +302,7 @@ def test_umeta_exists_called(monkeypatch):
     result = report.umeta.umeta_exists(reference_ufile)
 
     assert result is True
+    assert report._umeta.called_with == reference_ufile
 
 
 def test_generate_node_vis(monkeypatch):
@@ -272,10 +310,14 @@ def test_generate_node_vis(monkeypatch):
 
     class DummyUFile:
         pass
+
     dummy_ufile = DummyUFile()
     report.ufile = dummy_ufile
 
     class DummyUMeta:
+        urun_dict = {"unode_rinfo": {"meta_info": {"name": "dummy_node"}}}
+
+    report._umeta = DummyUMeta()
 
     class DummyNode:
         def generate_node_vis(self, ufile):
@@ -295,6 +337,7 @@ def test_generate_node_vis(monkeypatch):
     assert result == "node_vis_result"
     assert report.ufile is dummy_ufile
 
+
 def test_exact_sources_condition(monkeypatch):
     report = UReport.__new__(UReport)
 
@@ -304,6 +347,7 @@ def test_exact_sources_condition(monkeypatch):
     dummy_ufile = DummyUFile()
     report.ufile = dummy_ufile
 
+    exact_sources_to_nodes = {"unode123": {"ucfs_1", "ucfs_2"}}
 
 
     new_connection = 1
@@ -311,6 +355,7 @@ def test_exact_sources_condition(monkeypatch):
         new_connection = 0
 
     assert new_connection == 0
+
 
 def test_summary_initialization():
     report = UReport.__new__(UReport)
@@ -322,6 +367,7 @@ def test_summary_initialization():
     assert isinstance(summary, dict)
     assert summary.get("dummy_key") == "dummy_value"
 
+
 def test_execution_summary(monkeypatch):
     report = UReport.__new__(UReport)
 
@@ -329,6 +375,7 @@ def test_execution_summary(monkeypatch):
         def keys(self):
             return [("unode1", "wid1"), ("unode2", "wid2")]
 
+            return 42
 
             return False
 
@@ -394,12 +441,15 @@ def test_reverse_graph_and_get_root_nodes(monkeypatch):
     for node in dummy_graph.nodes:
         get_root_nodes(node, reverse_graph, visited_nodes, root_nodes)
 
+    assert root_nodes == {"node3"}
     assert visited_nodes == {"node1", "node2", "node3"}
+
 
 def test_root_node_logic(monkeypatch):
     report = UReport.__new__(UReport)
 
     dummy_graph = nx.DiGraph()
+    dummy_graph.add_edges_from([("node1", "node2")])
     monkeypatch.setattr(type(report), "graph", property(lambda self: dummy_graph))
 
     root_nodes = set()
@@ -407,12 +457,20 @@ def test_root_node_logic(monkeypatch):
 
     def find_root(node):
         if node in visited_nodes:
+            return None
+        visited_nodes.add(node)
+        if report.graph.in_degree(node) == 0:
+            root_nodes.add(node)
+
         for pred in report.graph.predecessors(node):
             find_root(pred)
 
+    find_root("node2")
+    find_root("node1")
 
     assert "node1" in root_nodes
     assert visited_nodes == {"node2", "node1"}
+
 
 def test_reverse_graph_neighbors_traversal(monkeypatch):
     report = UReport.__new__(UReport)
@@ -432,6 +490,7 @@ def test_reverse_graph_neighbors_traversal(monkeypatch):
         visited_nodes.add(node)
         if report.graph.in_degree(node) == 0:
             root_nodes.add(node)
+
         for neighbor in reverse_graph.neighbors(node):
             get_root_nodes(neighbor, reverse_graph, visited_nodes, root_nodes)
         return list(root_nodes)
@@ -440,6 +499,7 @@ def test_reverse_graph_neighbors_traversal(monkeypatch):
 
     assert "node1" in roots
     assert "node2" in visited_nodes
+
 
 def test_get_root_nodes_invocation(monkeypatch):
     report = UReport.__new__(UReport)
@@ -471,10 +531,13 @@ def test_get_root_nodes_invocation(monkeypatch):
     assert "node1" in roots
     assert "node2" not in roots
 
+
 import pytest
+
 from urgap.ureport.ureport import UReport
 
 
+def test_data_lineage_overview_initialization(monkeypatch):
     report = UReport.__new__(UReport)
 
     report.execution_history = {}
@@ -485,6 +548,9 @@ from urgap.ureport.ureport import UReport
 
     monkeypatch.setattr(report.__class__, "umeta", property(lambda self: DummyUMeta()))
 
+    monkeypatch.setattr(
+        report.__class__, "wids", property(lambda self: ["wid1", "wid2"])
+    )
 
     node_id_header = "Node ID"
 
@@ -508,6 +574,7 @@ from urgap.ureport.ureport import UReport
     assert data[0]["figures"] == []
     assert data[0]["tables"] == []
 
+
 def test_execution_times_history_initialization(monkeypatch):
     report = UReport.__new__(UReport)
 
@@ -525,6 +592,7 @@ def test_execution_times_history_initialization(monkeypatch):
     assert history["caption"] == "History of execution times for wid123"
     assert history["headers"] == ["Node", "Node ID", "processing time [s]"]
     assert history["rows"] == []
+
 
 def test_urd_overview_initialization():
     node_id_header = "Node ID"
@@ -544,7 +612,14 @@ def test_urd_overview_initialization():
 
     assert urd_overview["title"] == "Run Parameters HL overview"
     assert urd_overview["caption"] == "URun dict information for workflow ID wid123"
+    assert urd_overview["headers"] == [
+        "Node ID",
+        "input_files",
+        "output_files",
+        "version",
+    ]
     assert urd_overview["rows"] == []
+
 
 def test_execution_graph_initialization():
     execution_graph = {
@@ -564,10 +639,13 @@ def test_execution_graph_initialization():
     assert execution_graph["links"] == []
     assert execution_graph["nodes"] == []
 
+
 class DummyUReport:
     def __init__(self):
+        self.execution_history = {("node1", "wid1"): {}, ("node2", "wid2"): {}}
         self.storage_base_uri = None
         self._traces = {}
+
 
 
 def test_already_seen_nodes_loop():
@@ -582,9 +660,12 @@ def test_already_seen_nodes_loop():
     assert "node2" in already_seen_nodes
         assert ut["utrace_loaded"] is True
 
+
 class DummyUReport:
     def __init__(self):
+        self.execution_history = {("node1", "wid1"): {}, ("node2", "wid2"): {}}
         self.storage_base_uri = None
+
 
 
 def test_already_seen_nodes_loop():
@@ -601,6 +682,8 @@ def test_already_seen_nodes_loop():
 class DummyHistory:
         class DummyDelta:
             def total_seconds(self):
+                return 42
+
         return DummyDelta()
 
 
@@ -609,6 +692,7 @@ class DummyTrace(dict):
         super().__init__()
         self["utrace_loaded"] = True
         self.history = DummyHistory()
+
 
 class DummyUReport(UReport):
     def __new__(cls):
@@ -638,6 +722,8 @@ def test_already_seen_nodes_loop():
 class DummyHistory:
         class DummyDelta:
             def total_seconds(self):
+                return 42
+
         return DummyDelta()
 
 
@@ -646,6 +732,7 @@ class DummyTrace(dict):
         super().__init__()
         self["utrace_loaded"] = True
         self.history = DummyHistory()
+        self.unode_meta = {"name": name}
 
 
 class DummyUReport(UReport):
