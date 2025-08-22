@@ -3,7 +3,10 @@
 import asyncio
 import functools
 import inspect
+import logging
+
 from collections.abc import Callable, Mapping
+from typing import Any
 
 from azure.monitor.opentelemetry.exporter import (
     AzureMonitorMetricExporter,
@@ -452,6 +455,7 @@ class UTelemetry:
         UTelemetry.started_spans = []
         self.span_lookup = {}
 
+    def _span_name_for(self, func: Callable[..., Any], custom: str | None) -> str:
         """Choose the span name (custom if provided, else module.qualname)."""
         if custom:
             return custom
@@ -460,9 +464,25 @@ class UTelemetry:
         return f"{module}.{qual}"
 
         """Stringify and clamp to max_arg_length; be resilient to odd types."""
+        if isinstance(value, (bytes, bytearray, memoryview)):
+            s = bytes(value).decode("utf-8", "replace")
+        else:
+            try:
+                s = str(value)
+            except (ValueError, TypeError, AttributeError):
                 try:
                     s = repr(value)
+                except (ValueError, TypeError, AttributeError):
+                    return "<unserializable>"
 
+        return s if len(s) <= self.max_arg_length else s[: self.max_arg_length] + "..."
+
+    def _get_function_attrs(
+        self,
+        func: Callable[..., Any],
+        args: tuple,
+        kwargs: dict,
+    ) -> dict[str, Any]:
         """Extract function args (excluding self/cls) for span attributes."""
         if not self.capture_function_args:
             return {}
@@ -470,8 +490,16 @@ class UTelemetry:
             sig = inspect.signature(func)
             bound = sig.bind_partial(*args, **kwargs)
             bound.apply_defaults()
+        except (ValueError, TypeError) as exc:
+            logger.debug("Signature extraction failed for %r: %s", func, exc)
             return {"function.args": "signature_extraction_failed"}
 
+        out: dict[str, Any] = {}
+        for k, v in bound.arguments.items():
+            if k in ("self", "cls"):
+                continue
+            out[f"function.arg.{k}"] = self._sanitize_value(v)
+        return out
 
     def _apply_attrs_to_span(
         self,
