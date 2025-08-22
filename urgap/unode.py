@@ -21,8 +21,12 @@ from pathlib import Path
 
 import requests
 
+from opentelemetry import trace as _ot
+from opentelemetry.trace import SpanKind, StatusCode
 
 import urgap
+
+from urgap.utelemetry import utl_trace
 
 P = ParamSpec("P")
 logger = logging.getLogger(__name__)
@@ -148,6 +152,10 @@ class UNodeBase:
             uri_list = [uri_list]
         return uri_list
 
+    @utl_trace(
+        span_name="unode.run",
+        attributes={"component": "unode"},
+    )
     def run(
         self,
         ufiles: urgap.UFileList | None = None,
@@ -185,37 +193,105 @@ class UNodeBase:
 
         return output_files
 
+    @utl_trace(
+        span_name="unode.run_remote",
+        attributes={"component": "unode"},
+    )
     def _run_remotely(
         self,
+        ufiles: urgap.UFileList | list[urgap.UFile] | list[str] | None = None,
         urun_dict: urgap.URunDict | None = None,
     ) -> urgap.UFileList:
+        if isinstance(ufiles, urgap.UFileList):
+            ufiles_list: list[str] = [uf.as_uri() for uf in ufiles]
+        elif isinstance(ufiles, list):
+            ufiles_list = [
+                uf.as_uri() if isinstance(uf, urgap.UFile) else uf for uf in ufiles
+        else:
+            ufiles_list = []
 
+        port = urgap.instances.unode_manager.unode_port_mapping[
+            self.META_INFO["unode_full_identifier"]
+        ]
+        remote_url = f"{urun_dict['unode_parameters']['remote_url']}:{port}/v1/run"
 
         urun_dict["is_remote_run"] = True
+
+        span = _ot.get_current_span()
+        span_rec = span is not None and span.is_recording()
+        if span_rec:
+            span.set_attribute("http.method", "POST")
+            span.set_attribute("http.url", remote_url)
+            span.set_attribute("span.kind", str(SpanKind.CLIENT))
+            span.set_attribute("ufiles.count", len(ufiles_list))
+
+        payload = json.dumps(
+            {
+                "urun_dict": dict(urun_dict.items()),
+                "ufiles": ufiles_list,
+                "config": urgap.config,
+                "ucredentials": list(
+                    urgap.instances.ucredential_manager.ingested_credentials.values(),
+                ),
+            },
+            indent=2,
+            allow_nan=True,
+            sort_keys=True,
+            cls=urgap.uconvert.JSONEncoder,
+        )
+
         try:
             response = requests.post(
                 remote_url,
+                json=payload,
                 timeout=urun_dict["unode_parameters"]["remote_execution_timeout"],
             )
         except Exception as e:
+            if span_rec:
                 span.set_attribute("exception.type", type(e).__name__)
                 span.set_attribute("exception.message", str(e))
+            msg = f"Remote execution failed with error: {e}"
+            logger.exception(msg)
             raise requests.HTTPError(msg) from e
+
+        if span_rec:
+            span.set_attribute("http.status_code", int(response.status_code))
+            span.set_status(StatusCode.OK if response.ok else StatusCode.ERROR)
+
         data = response.json()
+        if not response.ok:
+            msg = f"Remote error: {data.get('error')}\n\nTraceback:\n{data.get('traceback')}"
             raise RuntimeError(msg)
+
         return urgap.UFileList.from_uri_list(data)
 
+    @utl_trace(
+        span_name="unode.run_local",
+        attributes={"component": "unode"},
+        attrs_from=lambda a, kw: {
+            "unode_full_identifier": a[0].META_INFO["unode_full_identifier"],
+            "wid": kw["urun_dict"].wid
+            if "urun_dict" in kw and kw["urun_dict"] is not None
+            else None,
+            "span.kind": str(SpanKind.INTERNAL),
+        },
+    )
     def _run_locally(
         self,
         ufiles: urgap.UFileList | None = None,
         urun_dict: urgap.URunDict | None = None,
     ) -> urgap.UFileList:
+        if ufiles is None:
+            ufiles = urgap.UFileList([])
+        elif isinstance(ufiles, urgap.UFileList) is False:
             if all(isinstance(file, str) for file in ufiles):
                 ufiles = urgap.UFileList.from_uri_list(ufiles)
             else:
                 ufiles = urgap.UFileList(ufiles)
+
         urgap.scratch_disk = urgap.scratch_disk_base / urun_dict.wid
         ufiles = ufiles.create_flat_and_non_redundant_list()
+
         ut = urgap.UTrace(
             urun_dict=urun_dict,
             input_files=ufiles,
@@ -223,10 +299,23 @@ class UNodeBase:
             unode_version=self.META_INFO["unode_version"],
         )
         ut.input_files = ut.filter_input_files(ut.input_files)
+
+        span = _ot.get_current_span()
+        if span is not None and span.is_recording():
+            span.set_attribute("utrace.output_files_stem", ut.output_files_stem)
+            span.set_attribute(
+                "is_remote_run",
+                bool(urun_dict.get("is_remote_run", False)),
+            )
+            urgap.utl.increase_counter("urgap_node_execution")
+
         starting_time = time.time()
         self.utrace_history.append(ut.id)
+
         reasons = ut.evaluate_if_rerun_is_required()
         ut.info()
+        self._add_rerun_events(reasons)
+
         if len(reasons) > 0:
             ut.set_start_time()
             ut = self.execute_rerun(
@@ -237,27 +326,46 @@ class UNodeBase:
             ut.fix_dynamic_output_file_names()
             ut.set_start_time()
             ut.set_stop_time(skipped=True)
+
         if not hasattr(ut, "duration_seconds"):
             ut.set_stop_time()
+
         ut.save_umeta_information()
+
         if ut.urun_dict.unode_parameters["remove_temporary_files"] is True:
             self.delete_tmp_files()
 
         msg = f"Finished execution of {self.META_INFO['name']} node with utrace.id {ut.id}"
         logger.info(msg)
         logger.info("+------------ ----  -----------------")
+
         return ut.output_files
 
     def _open_execution_span(
         self,
         urun_dict: urgap.URunDict,
         utrace: urgap.UTrace,
+    ) -> None:
+        span = _ot.get_current_span()
+        if span is not None and span.is_recording():
+            span.set_attribute("wid", urun_dict.wid)
+            span.set_attribute(
+                "is_remote_run",
+                bool(urun_dict.get("is_remote_run", False)),
             )
+            span.set_attribute("utrace.output_files_stem", utrace.output_files_stem)
         urgap.utl.increase_counter("urgap_node_execution")
 
+    @staticmethod
+    def _add_rerun_events(reasons: list) -> None:
+        span = _ot.get_current_span()
+        if span is None or not span.is_recording():
+            return
         if len(reasons) == 0:
+            span.add_event("Run was skipped")
         else:
             for reason in reasons:
+                span.add_event(f"Reason run is executed: {reason}")
 
     def execute_rerun(
         self,
@@ -411,6 +519,7 @@ class UNodeBase:
             Path object to the latest engine executable.
 
         Raises:
+            RuntimeError: If latest_exe_paths is not set or system binary not found.
         """
         if self.latest_exe_paths is None:
             msg = (
@@ -419,6 +528,11 @@ class UNodeBase:
             )
             raise RuntimeError(msg)
         if str(self.latest_exe_paths).startswith("$"):
+            _p = shutil.which(self.latest_exe_paths.lstrip("$"))
+            if _p is None:
+                msg = f"System resource {self.latest_exe_paths} not found on PATH"
+                raise RuntimeError(msg)
+            exe_path = Path(_p)
             msg = f"Using system resource {self.latest_exe_paths} as exe path"
             logger.info(msg)
         else:
@@ -700,6 +814,14 @@ class UNodeBase:
             data += cls.generate_wrapper_vis(ufile)
         return data
 
+    @utl_trace(
+        span_name="unode.execute",
+        attributes={"component": "unode"},
+        attrs_from=lambda a, _kw: {
+            "wid": a[1].urun_dict.wid,
+            "unode_full_identifier": a[1].unode_meta["unode_full_identifier"],
+        },
+    )
     def execute(self, utrace: urgap.UTrace) -> urgap.UTrace:
         """Execute method for a node using subprocess.run.
 
@@ -723,6 +845,12 @@ class UNodeBase:
         utrace.urun_dict.command_list = [str(x) for x in utrace.urun_dict.command_list]
         cmd_msg = f"Executing command list: {' '.join(utrace.urun_dict.command_list)}"
         logger.info(cmd_msg)
+
+        span = _ot.get_current_span()
+        if span is not None and span.is_recording():
+            span.set_attribute("unode.command", " ".join(utrace.urun_dict.command_list))
+            span.add_event(cmd_msg)
+
         execute_answer = []
         proc = None
         if len(utrace.urun_dict.command_list) != 0:
@@ -736,11 +864,20 @@ class UNodeBase:
         else:
             logger.info("Command list is empty, nothing to do here...")
             execute_answer.append("Command list is empty")
+
         utrace, msg = self._check_proc_outcome(
             proc=proc,
             execute_answer=execute_answer,
             utrace=utrace,
         )
+
+        if span is not None and span.is_recording():
+            if proc is not None:
+                span.set_attribute("unode.return_code", int(proc.returncode))
+            for line in msg.split("\n"):
+                if line:
+                    span.add_event(line)
+
         logger.info("Finished executing command list ...")
         return utrace
 
@@ -753,6 +890,7 @@ class UNodeBase:
         """Check the outcome of the executed process and handle output.
 
         Args:
+            proc: The CompletedProcess from subprocess.run (or None if nothing was executed).
             execute_answer: List to store stdout lines.
             utrace: The UTrace for this execution.
 
@@ -772,6 +910,9 @@ class UNodeBase:
                     logger.info(
                         "stdout Line skipped as it cannot be reformatted with logger",
                     )
+
+        if proc is None:
+
         if proc.returncode != 0:
             msg = (
                 f"Node {self.META_INFO['name']} finished with exit code {proc.returncode}!\n"

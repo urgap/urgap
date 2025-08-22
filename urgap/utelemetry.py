@@ -1,5 +1,9 @@
 """Urgap Opentelemetry class."""
 
+import asyncio
+import functools
+import inspect
+from collections.abc import Callable, Mapping
 
 from azure.monitor.opentelemetry.exporter import (
     AzureMonitorMetricExporter,
@@ -19,6 +23,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from opentelemetry.trace import SpanKind
+from opentelemetry.trace.status import Status, StatusCode
 
 import urgap
 
@@ -45,6 +50,10 @@ class UTelemetry:
         self.counters = {}
         self._meter = None
         self._tracer = None
+        self.auto_instrument_logging = True
+        self.capture_function_args = True
+        self.capture_function_result = False
+        self.max_arg_length = 1000
 
     @property
     def otlp_url(self) -> str | None:
@@ -201,6 +210,19 @@ class UTelemetry:
     def increase_counter(self, counter_name: str, count: float = 1) -> None:
 
         """
+        if not self.tracing_enabled:
+            return
+
+        meter = self.meter
+        if meter is None:
+            return
+
+        counter = self.counters.get(counter_name)
+        if counter is None:
+            counter = meter.create_counter(name=counter_name, unit="1")
+            self.counters[counter_name] = counter
+
+        counter.add(count)
 
     def increase_counters(self, counter_name_list: list, count: float = 1) -> None:
         """Increase each counter in the list by a specified value.
@@ -429,3 +451,250 @@ class UTelemetry:
                 span.end()
         UTelemetry.started_spans = []
         self.span_lookup = {}
+
+        """Choose the span name (custom if provided, else module.qualname)."""
+        if custom:
+            return custom
+        module = getattr(func, "__module__", "unknown")
+        qual = getattr(func, "__qualname__", getattr(func, "__name__", "unknown"))
+        return f"{module}.{qual}"
+
+        """Stringify and clamp to max_arg_length; be resilient to odd types."""
+                try:
+                    s = repr(value)
+
+        """Extract function args (excluding self/cls) for span attributes."""
+        if not self.capture_function_args:
+            return {}
+        try:
+            sig = inspect.signature(func)
+            bound = sig.bind_partial(*args, **kwargs)
+            bound.apply_defaults()
+            return {"function.args": "signature_extraction_failed"}
+
+
+    def _apply_attrs_to_span(
+        self,
+        span: trace.Span,
+        func: Callable[..., object],
+        args: tuple[object, ...],
+        kwargs: dict[str, object],
+        *,
+        is_async: bool,
+        static_attrs: Mapping[str, object] | None,
+        dyn_attrs_from: Callable[[tuple, dict], Mapping[str, object]] | None,
+    ) -> None:
+        """Attach function metadata and custom attributes to a span."""
+        span.set_attribute("function.name", getattr(func, "__name__", "unknown"))
+        span.set_attribute("function.module", getattr(func, "__module__", "unknown"))
+        span.set_attribute(
+            "function.qualname",
+            getattr(func, "__qualname__", "unknown"),
+        )
+        if is_async:
+            span.set_attribute("function.type", "async")
+
+        for k, v in self._get_function_attrs(func, args, kwargs).items():
+            span.set_attribute(k, v)
+
+        if static_attrs:
+            for k, v in static_attrs.items():
+                span.set_attribute(k, self._sanitize_value(v))
+
+        if dyn_attrs_from:
+            try:
+                dyn = dyn_attrs_from(args, kwargs) or {}
+                for k, v in dyn.items():
+                    span.set_attribute(k, self._sanitize_value(v))
+            except (ValueError, TypeError, KeyError, AttributeError) as exc:
+                span.set_attribute("decorator.attrs_from.error", str(exc))
+
+    def _wrap_sync(
+        self,
+        func: Callable[..., object],
+        *,
+        span_name: str,
+        static_attrs: Mapping[str, object] | None,
+        dyn_attrs_from: Callable[[tuple, dict], Mapping[str, object]] | None,
+        capture_exception: bool,
+        record_exception: bool,
+    ) -> Callable[..., object]:
+        @functools.wraps(func)
+        def wrapper(*a: object, **kw: object) -> object:
+            with self.tracer.start_as_current_span(span_name) as span:
+                try:
+                    self._apply_attrs_to_span(
+                        span,
+                        func,
+                        a,
+                        kw,
+                        is_async=False,
+                        static_attrs=static_attrs,
+                        dyn_attrs_from=dyn_attrs_from,
+                    )
+                    result = func(*a, **kw)
+                except Exception as e:
+                    if capture_exception:
+                        span.set_status(Status(StatusCode.ERROR, str(e)))
+                        if record_exception:
+                            span.record_exception(e)
+                    raise
+                else:
+                    if self.capture_function_result and result is not None:
+                        span.set_attribute(
+                            "function.result",
+                            self._sanitize_value(result),
+                        )
+                    span.set_status(Status(StatusCode.OK))
+                    return result
+
+        return wrapper
+
+    def _wrap_async(
+        self,
+        func: Callable[..., object],
+        *,
+        span_name: str,
+        static_attrs: Mapping[str, object] | None,
+        dyn_attrs_from: Callable[[tuple, dict], Mapping[str, object]] | None,
+        capture_exception: bool,
+        record_exception: bool,
+    ) -> Callable[..., object]:
+        @functools.wraps(func)
+        async def wrapper_async(*a: object, **kw: object) -> object:
+            with self.tracer.start_as_current_span(span_name) as span:
+                try:
+                    self._apply_attrs_to_span(
+                        span,
+                        func,
+                        a,
+                        kw,
+                        is_async=True,
+                        static_attrs=static_attrs,
+                        dyn_attrs_from=dyn_attrs_from,
+                    )
+                    result = await func(*a, **kw)
+                except Exception as e:
+                    if capture_exception:
+                        span.set_status(Status(StatusCode.ERROR, str(e)))
+                        if record_exception:
+                            span.record_exception(e)
+                    raise
+                else:
+                    if self.capture_function_result and result is not None:
+                        span.set_attribute(
+                            "function.result",
+                            self._sanitize_value(result),
+                        )
+                    span.set_status(Status(StatusCode.OK))
+                    return result
+
+        return wrapper_async
+
+    def utl_trace(
+        self,
+        span_name: str | None = None,
+        attributes: Mapping[str, object] | None = None,
+        attrs_from: Callable[[tuple, dict], Mapping[str, object]] | None = None,
+        capture_exception: bool = True,
+        record_exception: bool = True,
+        enabled: bool | None = None,
+    ) -> Callable[[Callable[..., object]], Callable[..., object]]:
+        """Drop-in decorator for tracing functions."""
+
+        def decorate(func: Callable[..., object]) -> Callable[..., object]:
+            is_async = asyncio.iscoroutinefunction(func)
+            should_trace = self.tracing_enabled if enabled is None else bool(enabled)
+
+            if not should_trace:
+                if is_async:
+
+                    @functools.wraps(func)
+                    async def passthrough(*a: object, **kw: object) -> object:
+                        return await func(*a, **kw)
+
+                    return passthrough
+
+                @functools.wraps(func)
+                def passthrough(*a: object, **kw: object) -> object:
+                    return func(*a, **kw)
+
+                return passthrough
+
+            _ = self.tracer
+            name = self._span_name_for(func, span_name)
+
+            if is_async:
+                return self._wrap_async(
+                    func,
+                    span_name=name,
+                    static_attrs=attributes,
+                    dyn_attrs_from=attrs_from,
+                    capture_exception=capture_exception,
+                    record_exception=record_exception,
+                )
+            return self._wrap_sync(
+                func,
+                span_name=name,
+                static_attrs=attributes,
+                dyn_attrs_from=attrs_from,
+                capture_exception=capture_exception,
+                record_exception=record_exception,
+            )
+
+        return decorate
+
+
+def lazy_trace(
+    span_name: str | None = None,
+    attributes: Mapping[str, object] | None = None,
+    attrs_from: Callable[[tuple, dict], Mapping[str, object]] | None = None,
+    capture_exception: bool = True,
+    record_exception: bool = True,
+    enabled: bool | None = None,
+) -> Callable[[Callable[..., object]], Callable[..., object]]:
+    """Resolve urgap.utl at CALL TIME to avoid circular import.
+
+    Delegates to urgap.utl.utl_trace(...) if available; otherwise no-ops.
+    """
+
+    def decorate(func: Callable[..., object]) -> Callable[..., object]:
+        is_async = asyncio.iscoroutinefunction(func)
+        cached: dict[str, Callable[..., object] | None] = {"wrapped": None}
+
+        def build_wrapped(f: Callable[..., object]) -> Callable[..., object]:
+            utl = getattr(urgap, "utl", None)
+            if utl is None:
+                return f
+            real_deco = utl.utl_trace(
+                span_name=span_name,
+                attributes=attributes,
+                attrs_from=attrs_from,
+                capture_exception=capture_exception,
+                record_exception=record_exception,
+                enabled=enabled,
+            )
+            return real_deco(f)
+
+        if not is_async:
+
+            @functools.wraps(func)
+            def sync_wrapper(*a: object, **kw: object) -> object:
+                if cached["wrapped"] is None:
+                    cached["wrapped"] = build_wrapped(func)
+                return cached["wrapped"](*a, **kw)
+
+            return sync_wrapper
+
+        @functools.wraps(func)
+        async def async_wrapper(*a: object, **kw: object) -> object:
+            if cached["wrapped"] is None:
+                cached["wrapped"] = build_wrapped(func)
+            return await cached["wrapped"](*a, **kw)
+
+        return async_wrapper
+
+    return decorate
+
+
+utl_trace = lazy_trace

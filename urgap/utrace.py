@@ -12,7 +12,11 @@ from base64 import b64encode
 from collections import defaultdict as ddict
 from pathlib import Path
 
+from opentelemetry import trace as _ot
+
 import urgap
+
+from urgap.utelemetry import utl_trace
 
 if TYPE_CHECKING:
     import os
@@ -153,6 +157,9 @@ class UTrace:
             umeta_dict: Dict containing umeta information.
         """
 
+            "wid": a[0].wid,
+            "unode_full_identifier": a[0].unode_meta["unode_full_identifier"],
+    )
     def info(self) -> None:
         """Print runtime information for this UTrace instance to logging."""
         time_str = datetime.datetime.now().astimezone().strftime("%H:%M:%S - %d.%m.%Y")
@@ -161,6 +168,12 @@ class UTrace:
         log_message += "|   ]\n"
         log_message += f"+{'-' * 40}"
 
+        span = _ot.get_current_span()
+        if span is not None and span.is_recording():
+            span.set_attribute("time", time_str)
+            for line in log_message.split("\n"):
+                if line:
+                    span.add_event(line)
 
     @property
     def output_base_storage_uri(self) -> str:

@@ -283,6 +283,7 @@ class UFile:
         return uftype
 
     def download(self) -> None:
+
     def upload(
         self,
         overwrite: bool = True,
@@ -290,6 +291,8 @@ class UFile:
         purge: bool = True,
         retries: int = 3,
     ) -> None:
+
+                )
             urgap.utl.increase_counter("ufiles-uploaded")
         if purge:
             self.purge_local_file()
