@@ -541,6 +541,9 @@ class UFile:
     ) -> None:
         """Change this UFile's UUri and (optionally) upload it to new storage.
 
+        If the provided URI has no query string, clear dynamic tags (e.g. ``md5``,
+        ``parent_*``) but **preserve structural tags** like ``uftype`` so downstream
+        logic (e.g. rerun/skip) keeps working.
 
         Args:
             uri: New UUri string.
@@ -550,6 +553,12 @@ class UFile:
         old_scratch = self.io.scratch_path
 
         parsed_uri = urlparse(uri)
+
+        preserve_keys = {"uftype"}
+        preserved: dict[str, object] = {}
+        if parsed_uri.query == "":
+            try:
+                preserved = {}
 
         new_uri = self.as_uri(
             scheme=None if parsed_uri.scheme == "" else parsed_uri.scheme,
@@ -562,6 +571,10 @@ class UFile:
         self._io = None
         self.uuri = urgap.UUri(uri=new_uri)
 
+        if parsed_uri.query == "" and preserved:
+            keep_query = "&".join(f"{k}={v}" for k, v in preserved.items())
+            self.uuri = urgap.UUri(
+            )
 
         try:
             shutil.copyfile(old_scratch, self.io.scratch_path)
