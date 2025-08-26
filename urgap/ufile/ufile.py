@@ -467,15 +467,20 @@ class UFile:
         """
         parsed_uri = urlparse(uri)
 
+        new_uri = self.as_uri(
             scheme=None if parsed_uri.scheme == "" else parsed_uri.scheme,
             netloc=None if parsed_uri.netloc == "" else parsed_uri.netloc,
             path=None if parsed_uri.path == "" else parsed_uri.path,
             fragment=None if parsed_uri.fragment == "" else parsed_uri.fragment,
+            query="" if parsed_uri.query == "" else parsed_uri.query,
         )
         self._io = None
+        self.uuri = urgap.UUri(uri=new_uri)
         try:
         except (shutil.SameFileError, FileNotFoundError):
+            logger.debug("Could not move file for %s", new_uri)
 
+        if upload:
             self.upload(**kwargs)
 
     def compress(self, compression_format: str) -> urgap.UFile:
