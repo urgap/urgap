@@ -558,6 +558,10 @@ class UFile:
         preserved: dict[str, object] = {}
         if parsed_uri.query == "":
             try:
+                preserved = {
+                    k: v for k, v in (self.tags or {}).items() if k in preserve_keys
+                }
+            except AttributeError:
                 preserved = {}
 
         new_uri = self.as_uri(
@@ -574,6 +578,8 @@ class UFile:
         if parsed_uri.query == "" and preserved:
             keep_query = "&".join(f"{k}={v}" for k, v in preserved.items())
             self.uuri = urgap.UUri(
+                uri=urgap.ucore.append_query_to_uri(
+                ),
             )
 
         try:
