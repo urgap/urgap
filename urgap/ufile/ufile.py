@@ -283,6 +283,26 @@ class UFile:
         return uftype
 
     def download(self) -> None:
+        """Download this file from remote storage to local scratch."""
+        if urgap.utl.tracing_enabled is True:
+            span_context = [
+                "ufile-download",
+                self.object_name,
+            ]
+            urgap.utl.init_span(span_context, attributes={"id": "ufile-download"})
+            self.io.download()
+            urgap.utl.increase_counter("ufiles-downloaded")
+            file_size_mbytes = Path(self.io.scratch_path).stat().st_size / (1024 * 1024)
+            urgap.utl.set_span_attributes(
+                span_context,
+                {
+                    "size in MB": file_size_mbytes,
+                    "ufiles-size-transfered-in-MB": file_size_mbytes,
+                },
+            )
+            urgap.utl.close_span(span_context)
+        else:
+            self.io.download()
 
     def upload(
         self,
@@ -291,9 +311,68 @@ class UFile:
         purge: bool = True,
         retries: int = 3,
     ) -> None:
+        """Upload this file to remote storage.
 
+        Args:
+            overwrite: If True, always upload, overwriting existing remote files.
+            verify: If True, check that the remote hash matches local; re-upload if needed.
+            purge: If True, remove the local copy of the file after a successful upload.
+            retries: Number of times to retry verification on failure.
+        """
+        if urgap.utl.tracing_enabled is True:
+            span_context = [
+                "ufile-upload",
+                self.object_name,
+            ]
+            urgap.utl.init_span(span_context, attributes={"id": "ufile-upload"})
+        self.recalculate_hashes(force_local=overwrite)
+        if overwrite is True:
+            self.io.upload(tags=self.tags)
+        else:
+            remote_tags = self.io.get_remote_tags()
+            if remote_tags is None:
+                logger.info("No remote tags found. Uploading missing file.")
+                self.io.upload()
+            elif self.hash == remote_tags.get(urgap.config["hash_algorithm"]):
+                logger.info("Remote hash matches local one. Not uploading again.")
+            else:
+                logger.info("Remote hash differs from local one. Uploading again.")
+                self.io.upload()
+        if verify is True:
+            for attempt in range(retries + 1):
+                uf = urgap.UFile(uri=self.as_uri(query=""))
+                remote_hash = urgap.ucore.calculate_file_hash(
+                    uf.path,
+                    urgap.config["hash_algorithm"],
                 )
+                if remote_hash == self.hash:
+                    logger.debug("Upload verified successfully.")
+                    break
+                msg = f"Verification failed (attempt #{attempt + 1}). Re-trying."
+                logger.warning(msg)
+                self.recalculate_hashes()
+                self.io.upload(tags=self.tags)
+            else:
+                msg = "Could not upload file - hash mismatch after retries."
+                logger.error(msg)
+                raise OSError(msg)
+        if urgap.utl.tracing_enabled is True:
+            file_size_mbytes = Path(self.io.scratch_path).stat().st_size / (1024 * 1024)
+            urgap.utl.set_span_attributes(
+                span_context,
+                {
+                    "size in MB": file_size_mbytes,
+                    "uftype": self.tags.get("uftype", None),
+                    "scheme": self.io.uuri.scheme,
+                    "path": self.io.uuri.path,
+                },
+            )
             urgap.utl.increase_counter("ufiles-uploaded")
+            urgap.utl.increase_counter(
+                "ufiles-size-transfered-in-MB",
+                file_size_mbytes,
+            )
+            urgap.utl.close_span(span_context)
         if purge:
             self.purge_local_file()
 
@@ -330,6 +409,8 @@ class UFile:
         for _ in range(number_of_parents):
             container_content = Path(basefolder.name) / container_content
             basefolder = basefolder.parent.resolve()
+        uri = f"file://{basefolder}?{query}#{container_content}"
+        return UFile(uri=uri)
 
     def as_uri(
         self,
@@ -460,11 +541,14 @@ class UFile:
     ) -> None:
         """Change this UFile's UUri and (optionally) upload it to new storage.
 
+
         Args:
             uri: New UUri string.
             upload: If True, upload the file after rebasing.
             **kwargs: Passed to upload().
         """
+        old_scratch = self.io.scratch_path
+
         parsed_uri = urlparse(uri)
 
         new_uri = self.as_uri(
@@ -474,9 +558,13 @@ class UFile:
             fragment=None if parsed_uri.fragment == "" else parsed_uri.fragment,
             query="" if parsed_uri.query == "" else parsed_uri.query,
         )
+
         self._io = None
         self.uuri = urgap.UUri(uri=new_uri)
+
+
         try:
+            shutil.copyfile(old_scratch, self.io.scratch_path)
         except (shutil.SameFileError, FileNotFoundError):
             logger.debug("Could not move file for %s", new_uri)
 
