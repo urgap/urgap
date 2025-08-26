@@ -579,6 +579,8 @@ class UFile:
             keep_query = "&".join(f"{k}={v}" for k, v in preserved.items())
             self.uuri = urgap.UUri(
                 uri=urgap.ucore.append_query_to_uri(
+                    uri=self.as_uri(),
+                    query=keep_query,
                 ),
             )
 
