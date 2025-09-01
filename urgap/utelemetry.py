@@ -464,6 +464,8 @@ class UTelemetry:
         return f"{module}.{qual}"
 
     def _sanitize_value(
+        self,
+        value: str | int | bytes | bytearray | memoryview | None,
     ) -> str:
         """Stringify and clamp to max_arg_length; be resilient to odd types."""
         if isinstance(value, (bytes, bytearray, memoryview)):
