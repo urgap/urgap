@@ -11,6 +11,7 @@ import zlib
 from base64 import b64encode
 from collections import defaultdict as ddict
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from opentelemetry import trace as _ot
 
@@ -157,8 +158,17 @@ class UTrace:
             umeta_dict: Dict containing umeta information.
         """
 
+    @staticmethod
+    def _extract_info_attrs(a: Sequence[Any], _kw: dict[str, Any]) -> dict[str, Any]:
+        return {
             "wid": a[0].wid,
             "unode_full_identifier": a[0].unode_meta["unode_full_identifier"],
+        }
+
+    @utl_trace(
+        span_name="utrace.execution.info",
+        attributes={"component": "utrace"},
+        attrs_from=_extract_info_attrs,
     )
     def info(self) -> None:
         """Print runtime information for this UTrace instance to logging."""
