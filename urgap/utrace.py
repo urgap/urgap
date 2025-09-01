@@ -10,6 +10,7 @@ import zlib
 
 from base64 import b64encode
 from collections import defaultdict as ddict
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -173,11 +174,44 @@ class UTrace:
     def info(self) -> None:
         """Print runtime information for this UTrace instance to logging."""
         time_str = datetime.datetime.now().astimezone().strftime("%H:%M:%S - %d.%m.%Y")
+
+        log_message = ""
+        log_message += f"\n.{'-' * 40}\n"
+        log_message += f"| UNode {self.unode_meta['name']} run started at {time_str}\n"
+        log_message += f"|   WID: {self.urun_dict.wid}\n"
+        log_message += "| - input_files: [\n"
+        log_message += self._format_file_section(self.input_files)
         log_message += "|   ]\n"
         log_message += "| - output_files: [\n"
+        log_message += self._format_file_section(self.output_files)
         log_message += "|   ]\n"
+        log_message += self._format_rerun_section()
         log_message += f"+{'-' * 40}"
 
+        self._attach_to_span(time_str, log_message)
+        logger.info(log_message)
+
+    def _format_file_section(self, files: Iterable[Any]) -> str:
+        """Format a section of files for logging."""
+        lines = ""
+        for f in files:
+            lines += f"|       {f.object_name}\n"
+            lines += f"|         --> ({f})\n"
+        return lines
+
+    def _format_rerun_section(self) -> str:
+        """Format rerun reasons for logging."""
+        if self.rerun_reasons is None:
+            return ""
+        if not self.rerun_reasons:
+            return "| - run can be skipped ...\n"
+        lines = "| - run should be triggered, reasons:\n"
+        for n, r in enumerate(self.rerun_reasons):
+            lines += f"|       #{n} {r}\n"
+        return lines
+
+    def _attach_to_span(self, time_str: str, log_message: str) -> None:
+        """Attach log details to the current tracing span."""
         span = _ot.get_current_span()
         if span is not None and span.is_recording():
             span.set_attribute("time", time_str)
