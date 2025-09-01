@@ -17,7 +17,9 @@ import subprocess
 import sys
 import time
 
+from collections.abc import Sequence
 from pathlib import Path
+from typing import Any, ParamSpec
 
 import requests
 
@@ -152,9 +154,24 @@ class UNodeBase:
             uri_list = [uri_list]
         return uri_list
 
+    @staticmethod
+    def _extract_attrs(a: Sequence[Any], kw: dict[str, Any]) -> dict[str, Any]:
+        if len(a) > 2 and a[2] is not None:
+            wid_value = a[2].wid
+        elif kw.get("urun_dict"):
+            wid_value = kw["urun_dict"].wid
+        else:
+            wid_value = None
+
+        return {
+            "wid": wid_value,
+            "unode_full_identifier": a[0].META_INFO["unode_full_identifier"],
+        }
+
     @utl_trace(
         span_name="unode.run",
         attributes={"component": "unode"},
+        attrs_from=_extract_attrs,
     )
     def run(
         self,
@@ -193,9 +210,25 @@ class UNodeBase:
 
         return output_files
 
+    @staticmethod
+    def _extract_remote_attrs(a: Sequence[Any], kw: dict[str, Any]) -> dict[str, Any]:
+        if kw.get("urun_dict"):
+            wid_value = kw["urun_dict"].wid
+        elif len(a) > 2 and a[2] is not None:
+            wid_value = a[2].wid
+        else:
+            wid_value = None
+
+        return {
+            "wid": wid_value,
+            "unode_full_identifier": a[0].META_INFO["unode_full_identifier"],
+            "function.role": "client",
+        }
+
     @utl_trace(
         span_name="unode.run_remote",
         attributes={"component": "unode"},
+        attrs_from=_extract_remote_attrs,
     )
     def _run_remotely(
         self,
