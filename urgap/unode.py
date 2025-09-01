@@ -912,6 +912,7 @@ class UNodeBase:
                     )
 
         if proc is None:
+            return None
 
         if proc.returncode != 0:
             msg = (

@@ -463,6 +463,8 @@ class UTelemetry:
         qual = getattr(func, "__qualname__", getattr(func, "__name__", "unknown"))
         return f"{module}.{qual}"
 
+    def _sanitize_value(
+    ) -> str:
         """Stringify and clamp to max_arg_length; be resilient to odd types."""
         if isinstance(value, (bytes, bytearray, memoryview)):
             s = bytes(value).decode("utf-8", "replace")

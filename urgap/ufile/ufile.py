@@ -583,6 +583,7 @@ class UFile:
                     query=keep_query,
                 ),
             )
+        self._tags = None
 
         try:
             shutil.copyfile(old_scratch, self.io.scratch_path)
