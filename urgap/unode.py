@@ -984,6 +984,9 @@ class UNodeBase:
                     )
 
         if proc is None:
+            logger.warning(
+                "Process was not executed (proc is None). Marking trace as stopped.",
+            )
             return None
 
         if proc.returncode != 0:
