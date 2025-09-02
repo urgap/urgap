@@ -240,6 +240,7 @@ class UNodeBase:
         elif isinstance(ufiles, list):
             ufiles_list = [
                 uf.as_uri() if isinstance(uf, urgap.UFile) else uf for uf in ufiles
+            ]
         else:
             ufiles_list = []
 
