@@ -179,6 +179,16 @@ class UNodeBase:
         urun_dict: urgap.URunDict | None = None,
         **kwargs: P.kwargs,
     ) -> urgap.UFileList:
+        """Run the Urgap node.
+
+        Args:
+            ufiles: List of UFile objects or a single UFile to process.
+            urun_dict: URunDict with parameters for the node.
+            kwargs: Additional unode_parameters to manually supply or override.
+
+        Returns:
+            The resulting output UFileList after execution.
+        """
         if isinstance(urun_dict, urgap.URunDict) is False:
             msg = "UNode.run() function requires URunDict."
             logger.error(msg)
@@ -235,6 +245,15 @@ class UNodeBase:
         ufiles: urgap.UFileList | list[urgap.UFile] | list[str] | None = None,
         urun_dict: urgap.URunDict | None = None,
     ) -> urgap.UFileList:
+        """Run the node remotely via HTTP POST to the remote server.
+
+        Args:
+            ufiles: List of UFile objects or their UUris to process.
+            urun_dict: URunDict containing execution parameters.
+
+        Returns:
+            UFileList resulting from remote execution.
+        """
         if isinstance(ufiles, urgap.UFileList):
             ufiles_list: list[str] = [uf.as_uri() for uf in ufiles]
         elif isinstance(ufiles, list):
@@ -315,6 +334,15 @@ class UNodeBase:
         ufiles: urgap.UFileList | None = None,
         urun_dict: urgap.URunDict | None = None,
     ) -> urgap.UFileList:
+        """Run the node locally.
+
+        Args:
+            ufiles: List of UFile objects or their UUris to process.
+            urun_dict: URunDict containing execution parameters.
+
+        Returns:
+            UFileList with results of the local execution.
+        """
         if ufiles is None:
             ufiles = urgap.UFileList([])
         elif isinstance(ufiles, urgap.UFileList) is False:
@@ -380,6 +408,16 @@ class UNodeBase:
         urun_dict: urgap.URunDict,
         utrace: urgap.UTrace,
     ) -> None:
+        """Annotate the current tracing span for a local node execution.
+
+        Adds the attributes "wid", "is_remote_run", and "utrace.output_files_stem"
+        to the *active* decorator-managed span and increments the
+        "urgap_node_execution" counter. If no span is active, it does nothing.
+
+        Args:
+            urun_dict (urgap.URunDict): Runtime configuration for the current run.
+            utrace (urgap.UTrace): Execution context for this run.
+        """
         span = _ot.get_current_span()
         if span is not None and span.is_recording():
             span.set_attribute("wid", urun_dict.wid)

@@ -211,7 +211,13 @@ class UTelemetry:
         return trace.get_tracer_provider().get_tracer("urgap")
 
     def increase_counter(self, counter_name: str, count: float = 1) -> None:
+        """Increment a metric counter (create on first use).
 
+        Creates the counter lazily and adds `count`. If telemetry is
+        disabled or no meter is available, this safely does nothing.
+
+        Args:
+            counter_name: Name of the counter.
         """
         if not self.tracing_enabled:
             return
