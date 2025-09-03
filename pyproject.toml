@@ -38,6 +38,7 @@ dependencies = [
     'plotly',
     'requests>=2.26,<2.33',
     'tqdm==4.67.1',
+    'PyGithub==2.8.1',
 ]
 
 [project.optional-dependencies]
