@@ -569,6 +569,7 @@ class UTrace:
             _ufile = self.output_files[0]
             for uftype in self.unode_meta["output_uftypes"]:
                 for remote_file in _ufile.io.list_container_items(
+                    full_string=True,
                 ):
                     if remote_file.endswith(".tag"):
                         continue

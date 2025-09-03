@@ -177,6 +177,8 @@ def test_remote_object_exists_true(monkeypatch, tmp_path):
 
     monkeypatch.setattr(
         IOMyLabData,
+        "list_container_items",
+        lambda self: self.uuri.fragment,
         raising=False,
     )
 
