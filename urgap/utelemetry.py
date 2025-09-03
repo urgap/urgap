@@ -218,6 +218,7 @@ class UTelemetry:
 
         Args:
             counter_name: Name of the counter.
+            count: Value to increase the counter by. Defaults to 1.
         """
         if not self.tracing_enabled:
             return
