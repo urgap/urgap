@@ -550,6 +550,7 @@ class UFile:
             upload: If True, upload the file after rebasing.
             **kwargs: Passed to upload().
         """
+        _ = self.path  # call path property to ensure download of file before rebasing
         old_scratch = self.io.scratch_path
 
         parsed_uri = urlparse(uri)
