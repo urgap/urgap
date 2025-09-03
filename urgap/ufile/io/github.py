@@ -205,12 +205,18 @@ class IOGithub(UIOBase):
         """
         return self.remote_object_exists()
 
+    def list_container_items(
+        self,
+        pattern: str | None = None,
+        full_string: bool = True,
+    ) -> list:
         """Get objects in folder/'container'.
 
         Can be filtered by regex pattern.
 
         Args:
             pattern: Regex pattern for filtering.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names after filtering.
@@ -219,3 +225,8 @@ class IOGithub(UIOBase):
             container_objects = [
                 f for f in container_objects if re.search(pattern, f) is not None
             ]
+            return container_objects
+        logger.warning(
+            "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
+        )
+        return [obj.split("#")[1] for obj in container_objects]

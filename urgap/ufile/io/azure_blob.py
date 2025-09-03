@@ -118,10 +118,16 @@ class IOAzureBlobStorage(UIOBase):
                 )
                 logger.warning(msg)
 
+    def list_container_items(
+        self,
+        pattern: str | None = None,
+        full_string: bool = False,
+    ) -> list:
         """List all objects in the Azure container, optionally filtering by regex pattern.
 
         Args:
             pattern: Regular expression pattern to filter blob names.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             A list of blob names that match the pattern, or all blob names if pattern is None.

@@ -221,12 +221,14 @@ class IOMyLabData(UIOBase):
         self,
         pattern: str | None = None,
         limit: int = 1000,
+        full_string: bool = False,
     ) -> list:
         """Get objects in the folder/container, optionally filtered by a regex pattern.
 
         Args:
             pattern: Regex pattern for filtering object names.
             limit: Maximum number of files to request in one query.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names matching the filter.

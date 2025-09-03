@@ -322,15 +322,31 @@ class IOOmiq(UIOBase):
     def list_container_items(
         self,
         pattern: str | None = None,
+        full_string: bool = False,
     ) -> list:
         """Get all objects (files and artifacts) in the workflow or dataset.
 
         Args:
             pattern: Optional regex pattern to filter object names.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names matching the filter.
         """
+            container_objects = self.add_storage_uri_to_container_items(
+                [file["displayName"] for file in self._list_files_in_dataset()],
+            )
+            container_objects += self.add_storage_uri_to_container_items(
+                list(self._list_artifacts()),
+            )
+        else:
+            logger.warning(
+                "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
+            )
+            container_objects = [
+                file["displayName"] for file in self._list_files_in_dataset()
+            ]
+            container_objects.extend(file for file in self._list_artifacts())
         if pattern is not None:
             container_objects = [
                 name

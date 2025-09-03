@@ -181,18 +181,30 @@ class IOAzureSMB(UIOBase):
         self,
         pattern: str | None = None,
         limit: int | None = None,
+        full_string: bool = False,
     ) -> list:
         """Get all objects in a folder/'container', recursively, with optional regex filtering.
 
         Args:
             pattern: Optional regex pattern for filtering returned file names.
             limit: Optional limit for the number of objects returned.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names matching the filter (or all if no filter/limit).
         """
+            container_objects = self.add_storage_uri_to_container_items(
+                    self.object_directory_client,
+                    limit=limit,
+                ),
+            )
+        else:
+            logger.warning(
+                "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
+            )
                 self.object_directory_client,
                 limit=limit,
+            )
         if pattern is not None:
             container_objects = [
                 f for f in container_objects if re.search(pattern, f) is not None

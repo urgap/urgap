@@ -772,16 +772,23 @@ class UFile:
         self,
         pattern: str | None = None,
         limit: int = 1000,
+        full_string: bool = False,
     ) -> list:
         """List all objects in the remote container.
 
         Args:
             pattern: Regex pattern for filtering object names.
             limit: Maximum number of files to request in one query.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names.
         """
+        return self.io.list_container_items(
+            pattern=pattern,
+            limit=limit,
+            full_string=full_string,
+        )
 
     def identify_lineage_root_files(self, use_umeta: bool = True) -> list:
         """List root files in the lineage graph, optionally using UMeta.

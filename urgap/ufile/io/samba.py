@@ -224,6 +224,7 @@ class IOSMB(UIOBase):
         self,
         pattern: str | None = None,
         subpath: str = "/",
+        full_string: bool = False,
     ) -> list:
         """Get objects in folder/'container'.
 
@@ -232,10 +233,19 @@ class IOSMB(UIOBase):
         Args:
             pattern: Regex pattern for filtering filenames.
             subpath: Folder path on the SMB share to list objects in.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names matching the filter.
         """
+            container_objects = self.add_storage_uri_to_container_items(
+                self._get_files_recursively(subpath=subpath),
+            )
+        else:
+            logger.warning(
+                "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
+            )
+            container_objects = self._get_files_recursively(subpath=subpath)
         if pattern is not None:
             container_objects = [
                 f for f in container_objects if re.search(pattern, f) is not None

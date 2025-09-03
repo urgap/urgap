@@ -105,14 +105,26 @@ class IOGoogleCloudStorage(UIOBase):
                 msg = f"{self.blob.name} does not exist remotely. Skipping download."
                 logger.warning(msg)
 
+    def list_container_items(
+        self,
+        pattern: str | None = None,
+        full_string: bool = False,
+    ) -> list:
         """Get objects in folder/'container', optionally filtered by a regex pattern.
 
         Args:
             pattern: Optional regex pattern for filtering blob names.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of blob names (strings) matching the pattern, or all if pattern is None.
         """
+            container_objects = self.add_storage_uri_to_container_items(
+            )
+        else:
+            logger.warning(
+                "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
+            )
         return container_objects
 
     def remote_object_exists(self) -> bool:

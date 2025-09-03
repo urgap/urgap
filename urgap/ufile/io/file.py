@@ -124,12 +124,14 @@ class IOPython(UIOBase):
         self,
         container_name: str | None = None,
         pattern: str | None = None,
+        full_string: bool = False,
     ) -> list:
         """Get all objects in a container (directory), optionally filtered by pattern.
 
         Args:
             container_name: Name of the container or bucket. If None, uses self.container_name.
             pattern: Optional regex pattern for filtering file names.
+            full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names (relative paths) in the container matching the pattern.
@@ -145,6 +147,7 @@ class IOPython(UIOBase):
                 continue
             if is_file:
                 name = str(obj).replace(str(container), "").lstrip("/")
+        return container_objects
 
     def remove_remote_object(self) -> None:
         """Delete referenced remote location file and associated .tag file, if present."""
