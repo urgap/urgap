@@ -194,6 +194,7 @@ class IOAzureSMB(UIOBase):
             List of object names matching the filter (or all if no filter/limit).
         """
             container_objects = self.add_storage_uri_to_container_items(
+                self.list_all_files_with_paths(
                     self.object_directory_client,
                     limit=limit,
                 ),
@@ -202,6 +203,7 @@ class IOAzureSMB(UIOBase):
             logger.warning(
                 "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
             )
+            container_objects = self.list_all_files_with_paths(
                 self.object_directory_client,
                 limit=limit,
             )
@@ -210,3 +212,39 @@ class IOAzureSMB(UIOBase):
                 f for f in container_objects if re.search(pattern, f) is not None
             ]
         return container_objects
+
+    def list_all_files_with_paths(
+        self,
+        directory_client: urgap.UFile.io,
+        current_path: str | Path | None = None,
+        limit: int | None = None,
+    ) -> list:
+        """Recursively list all files in the given directory client, including their paths.
+
+        Args:
+            directory_client: The Azure directory client to list files from.
+            current_path: The current path prefix for recursion (default: None).
+            limit: Optional limit for the number of files returned.
+
+        Returns:
+            List of file paths as strings.
+        """
+        files_with_paths = []
+
+        for item in directory_client.list_directories_and_files():
+            if current_path is None:
+                item_path = item.name
+            else:
+                item_path = f"{current_path}/{item.name}"
+            if item.is_directory:
+                subdir_client = directory_client.get_subdirectory_client(item.name)
+                subdir_files = self.list_all_files_with_paths(
+                    subdir_client,
+                    current_path=item_path,
+                    limit=limit,
+                )
+                files_with_paths.extend(subdir_files)
+                files_with_paths.append(f"{item_path}")
+            if limit is not None and len(files_with_paths) >= limit:
+                break
+        return files_with_paths
