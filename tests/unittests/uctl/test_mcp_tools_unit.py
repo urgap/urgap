@@ -51,6 +51,7 @@ def test_list_container_times_calls_ufile(monkeypatch):
 
             calls["pattern"] = pattern
             calls["limit"] = limit
+            calls["full_string"] = full_string
             return ["file://x#one", "file://x#two"]
 
     monkeypatch.setattr(urgap, "UFile", DummyUfile)

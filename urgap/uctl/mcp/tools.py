@@ -51,6 +51,7 @@ def list_container_times(
     return urgap.UFile(f"{urgap_storage_base_uri}#dummy.txt").list_container_items(
         pattern=regex_pattern_string,
         limit=limit,
+        full_string=True,
     )
 
 

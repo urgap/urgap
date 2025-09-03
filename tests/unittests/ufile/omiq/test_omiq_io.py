@@ -212,6 +212,7 @@ def test_list_container_items(io_omiq_instance):
     io_omiq_instance._list_files_in_dataset = MagicMock(return_value=mock_file_list)
     io_omiq_instance._list_artifacts = MagicMock(return_value=["artifact1.txt"])
 
+    items = io_omiq_instance.list_container_items(full_string=True)
 
     assert set(items) == {
         "omiq://example.com/123456789#A1 0001_24h_U_Plate001.fcs",
