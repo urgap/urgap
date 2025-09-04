@@ -119,6 +119,7 @@ class IOGoogleCloudStorage(UIOBase):
         Returns:
             List of blob names (strings) matching the pattern, or all if pattern is None.
         """
+        if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
             )
         else:

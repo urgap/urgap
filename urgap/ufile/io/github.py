@@ -225,6 +225,7 @@ class IOGithub(UIOBase):
             container_objects = [
                 f for f in container_objects if re.search(pattern, f) is not None
             ]
+        if full_string is True:
             return container_objects
         logger.warning(
             "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",

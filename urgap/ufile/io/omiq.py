@@ -333,6 +333,7 @@ class IOOmiq(UIOBase):
         Returns:
             List of object names matching the filter.
         """
+        if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
                 [file["displayName"] for file in self._list_files_in_dataset()],
             )

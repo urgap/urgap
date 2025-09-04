@@ -49,6 +49,7 @@ def test_list_container_times_calls_ufile(monkeypatch):
         def __init__(self, uri):
             calls["uri"] = uri
 
+        def list_container_items(self, pattern=None, limit=None, full_string=False):
             calls["pattern"] = pattern
             calls["limit"] = limit
             calls["full_string"] = full_string

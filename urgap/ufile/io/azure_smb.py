@@ -193,6 +193,7 @@ class IOAzureSMB(UIOBase):
         Returns:
             List of object names matching the filter (or all if no filter/limit).
         """
+        if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
                 self.list_all_files_with_paths(
                     self.object_directory_client,

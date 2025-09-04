@@ -147,6 +147,7 @@ class IOPython(UIOBase):
                 continue
             if is_file:
                 name = str(obj).replace(str(container), "").lstrip("/")
+        if full_string is True:
         return container_objects
 
     def remove_remote_object(self) -> None:

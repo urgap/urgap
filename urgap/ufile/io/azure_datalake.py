@@ -220,6 +220,7 @@ class IOAzureDL(UIOBase):
             List of object names matching the filter, or all object names if no pattern is provided.
         """
         container_objects = self.file_system_client.get_paths(recursive=False)
+        if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
                 [item["name"] for item in container_objects],
             )

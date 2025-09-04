@@ -238,6 +238,7 @@ class IOSMB(UIOBase):
         Returns:
             List of object names matching the filter.
         """
+        if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
                 self._get_files_recursively(subpath=subpath),
             )
