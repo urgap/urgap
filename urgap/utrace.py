@@ -568,6 +568,7 @@ class UTrace:
         if len(self.output_files) != 0:
             _ufile = self.output_files[0]
             for uftype in self.unode_meta["output_uftypes"]:
+                uftype_escaped = uftype.replace(".", r"\.")
                 for remote_file in _ufile.io.list_container_items(
                     full_string=True,
                 ):
