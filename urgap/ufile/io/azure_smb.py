@@ -96,12 +96,18 @@ class IOAzureSMB(UIOBase):
 
         Returns:
         """
+        if self.remote_object_exists():
+        return None
 
+    def get_object(self) -> str | None:
         """Get the SMB file path for the referenced UUri.
 
         Returns:
             Path of the file on the share.
         """
+        if self.remote_object_exists():
+            return self.get_file_properties()["path"]
+        return None
 
     def download(self) -> None:
         """Download referenced remote object and write to local scratch path.
