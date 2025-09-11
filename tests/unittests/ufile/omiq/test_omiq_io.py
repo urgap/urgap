@@ -335,10 +335,54 @@ def test_handle_corresponding_fcs_filename_is_none(io_omiq_instance_with_fcs):
     assert f == "fallback_file.fcs"
 
 
+def test_list_container_items_with_pattern():
+    with (
+        mock.patch(
+            "urgap.instances.ucredential_manager.get_password",
+            return_value="dummy_token",
+        ),
+        mock.patch(
+            "urgap.instances.ucredential_manager.get_user", return_value="dummy_user"
+        ),
+        mock.patch("urgap.ext.omiq_api.API", autospec=True) as mock_api,
+    ):
+        mock_api.return_value.get_user.return_value = {
+            "name": "test",
+            "lastLoginTime": "now",
+        }
+        mock_api.return_value.get_workflow.return_value = {
+            "tasks": [],
+            "datasetId": 1,
+            "taskArtifacts": [
+                {"file": "artifact1", "taskId": 123},
+                {"file": "artifact2", "taskId": 124},
+            ],
+        }
+        mock_api.return_value.list_files_in_dataset.return_value = [
+            {"displayName": "file1"},
+            {"displayName": "file2"},
+        ]
 
+        mock_uuri = mock.Mock()
+        mock_uuri.scheme = "omiq"
+        mock_uuri.netloc = "example.com"
+        mock_uuri.fragment = "file1"
+        mock_uuri.get_container_name.return_value = "workflow_1"
+        mock_uuri.get_object_name.return_value = "file1"
+        mock_uuri.query = {}
 
+        io_omiq = IOOmiq(uuri=mock_uuri)
 
+        all_items = io_omiq.list_container_items(full_string=False)
+        assert sorted(all_items) == sorted(["file1", "file2", "artifact1", "artifact2"])
 
+        filtered_items = io_omiq.list_container_items(
+            pattern="artifact", full_string=False
+        )
+        assert sorted(filtered_items) == sorted(["artifact1", "artifact2"])
+
+        empty_items = io_omiq.list_container_items(pattern="nomatch", full_string=False)
+        assert empty_items == []
 
 
 def test_list_container_items_deprecation_warning(io_omiq_instance, caplog):
