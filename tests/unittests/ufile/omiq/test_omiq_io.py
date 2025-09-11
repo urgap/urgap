@@ -335,5 +335,109 @@ def test_handle_corresponding_fcs_filename_is_none(io_omiq_instance_with_fcs):
     assert f == "fallback_file.fcs"
 
 
+
+
+
+
+
+
+def test_list_container_items_deprecation_warning(io_omiq_instance, caplog):
+    io_omiq_instance._list_files_in_dataset = lambda: [{"displayName": "file.csv"}]
+    io_omiq_instance._list_artifacts = lambda: ["artifact.csv"]
+
+    with caplog.at_level("WARNING"):
+        result = io_omiq_instance.list_container_items(full_string=False)
+
+        assert "DeprecationWarning" in caplog.text
+
+        assert "file.csv" in result or "artifact.csv" in result
+
+
+def test_handle_missing_corresponding_fcs(monkeypatch):
+    monkeypatch.setattr(
+        "urgap.instances.ucredential_manager.get_password", lambda key: "dummy_token"
+    )
+    monkeypatch.setattr(
+        "urgap.instances.ucredential_manager.get_user", lambda key: "dummy_user"
+    )
+
+    mock_api = MagicMock()
+    mock_api.return_value.get_user.return_value = {
+        "name": "test",
+        "lastLoginTime": "now",
+    }
+    monkeypatch.setattr("urgap.ext.omiq_api.API", mock_api)
+
+    mock_uuri = type("MockUURI", (), {})()
+    mock_uuri.scheme = "omiq"
+    mock_uuri.netloc = "example.com"
+    mock_uuri.get_container_name = lambda: "workflow_1"
+    mock_uuri.get_object_name = lambda: "missing_file"
+    mock_uuri.fragment = "missing_file"
+    mock_uuri.query = {"derived_from_fcs": True}
+
+    monkeypatch.setattr(IOOmiq, "_list_files_in_dataset", lambda self: [])
+    monkeypatch.setattr(IOOmiq, "_list_artifacts", lambda self: [])
+
+    io_omiq = IOOmiq(uuri=mock_uuri)
+
+    assert io_omiq._corresponding_fcs_filename.endswith(".fcs")
+
+    monkeypatch.setattr(IOOmiq, "file_id", property(lambda self: None))
+
+    with pytest.raises(FileNotFoundError) as exc_info:
+        io_omiq.download()
+
+    assert "does not exist in workflow" in str(exc_info.value)
+
+
+def test_set_from_task_id_triggers(monkeypatch):
+    """Test that _set_from_task_id() and _set_optional_task_and_filter_params() handle workflow tasks."""
+
+    mock_uuri = type("MockUURI", (), {})()
+    mock_uuri.scheme = "omiq"
+    mock_uuri.netloc = "example.com"
+    mock_uuri.get_container_name = lambda: "workflow_1"
+    mock_uuri.fragment = "file.fcs"
+    mock_uuri.query = {}
+
+    io_omiq = IOOmiq.__new__(IOOmiq)
+
+    io_omiq._workflow = {
+        "datasetId": 123,
+        "tasks": [{"id": 42, "type": "GatingTask", "parentId": None}],
+        "taskArtifacts": [],
+    }
+    io_omiq._query_params = {}
+
+    monkeypatch.setattr(
+        "urgap.ext.omiq_api.get_available_filters", lambda workflow, from_task_id: []
+    )
+
+    io_omiq._set_optional_task_and_filter_params()
+
+    assert io_omiq._query_params["from_task_id"] == 42
+
+    assert io_omiq._query_params["filter_ids"] == []
+
+
+def test_handle_file_not_found():
+    """Test that _handle_file_not_found uses _corresponding_fcs_filename (line 281)."""
+
+    io_omiq = IOOmiq.__new__(IOOmiq)
+
+    io_omiq._corresponding_fcs_filename = "dummy_file.fcs"
+
+    io_omiq.uuri = MagicMock()
+    io_omiq.uuri.fragment = "some_file"
+    io_omiq.uuri.get_container_name.return_value = "workflow_dummy"
+
+    with pytest.raises(FileNotFoundError) as excinfo:
+        io_omiq._handle_file_not_found()
+
+    assert "dummy_file.fcs" in str(excinfo.value)
+    assert "workflow_dummy" in str(excinfo.value)
+
+
 if __name__ == "__main__":
     pytest.main()
