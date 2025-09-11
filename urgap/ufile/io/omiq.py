@@ -37,6 +37,7 @@ class IOOmiq(UIOBase):
 
         cred_key = f"{self.uuri.scheme}://{self.uuri.netloc}"
         um = urgap.instances.ucredential_manager
+
         password = um.get_password(cred_key)
         user = um.get_user(cred_key)
         with tempfile.NamedTemporaryFile() as fp:
