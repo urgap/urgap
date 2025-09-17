@@ -866,6 +866,9 @@ class UFile:
             List of parent object names.
         """
 
+
+        Returns:
+        """
     def simplify_name(
         self,
         source_object_names: set,
