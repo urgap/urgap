@@ -7,6 +7,7 @@ import contextlib
 import copy
 import gzip
 import hashlib
+import json
 import logging
 import re
 import shutil
@@ -869,6 +870,11 @@ class UFile:
 
         Returns:
         """
+        i = 0
+            i += 1
+        if i > 0:
+        return None
+
     def simplify_name(
         self,
         source_object_names: set,

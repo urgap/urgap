@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import datetime
+import json
 import logging
 import shutil
 import zlib
@@ -13,6 +14,8 @@ from collections import defaultdict as ddict
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
+import networkx as nx
 
 from opentelemetry import trace as _ot
 
@@ -672,15 +675,34 @@ class UTrace:
     def upload_output_files(self) -> None:
         """Upload all output UFiles in UTrace."""
         unique_parents = set()
+        ifile_graphs = []
         for ifile in self.input_files:
             unique_parents.update(ifile.parents)
             unique_parents.add(ifile.object_name)
+            graph.add_node(
+                ifile.object_name,
+                node_type="file",
+            )
+            graph.add_node(
+                self.id[0],
+                node_type="unode",
+            )
+            graph.add_edge(ifile.object_name, self.id[0])
+            ifile_graphs.append(graph)
         parents_str = ",".join(sorted(unique_parents))
+        composed_graph = nx.compose_all(ifile_graphs)
         files_to_upload = urgap.UFileList()
         for ofile in self.output_files:
             if ofile is None:
                 continue
+            ofile_graph = copy.deepcopy(composed_graph)
+            ofile_graph.add_node(
+                ofile.object_name,
+                node_type="file",
+            )
+            ofile_graph.add_edge(self.id[0], ofile.object_name)
             ofile.tags.update(parent_tag_dict)
+            ofile.tags.update(graph_tag_dict)
             files_to_upload.append(ofile)
         files_to_upload.upload_ufiles()
 
