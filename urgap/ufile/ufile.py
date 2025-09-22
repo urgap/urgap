@@ -866,6 +866,10 @@ class UFile:
         Returns:
             List of parent object names.
         """
+        parents_str = self._get_multi_part_tag(tag_name="parent")
+        if parents_str is None:
+            return []
+        return parents_str.split(",")
 
     @property
     def provenance(
@@ -874,10 +878,21 @@ class UFile:
         """Provenance of UFile as a directed graph.
 
         Returns:
+            None or provenance representation as NX DiGraph.
         """
+        dot_str = self._get_multi_part_tag(tag_name="dot_str")
+        if dot_str is None:
+            return None
+
+    def _get_multi_part_tag(self, tag_name: str) -> str | None:
+        """Decompress and decode a potentially multi-part tag."""
+        tag = ""
         i = 0
+        while self.tags.get(f"{tag_name}_{i}", None) is not None:
+            tag += self.tags[f"{tag_name}_{i}"]
             i += 1
         if i > 0:
+            return zlib.decompress(b64decode(tag)).decode()
         return None
 
     def simplify_name(

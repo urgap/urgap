@@ -691,6 +691,7 @@ class UTrace:
             graph.add_edge(ifile.object_name, self.id[0])
             ifile_graphs.append(graph)
         parents_str = ",".join(sorted(unique_parents))
+        parent_tag_dict = self._compose_tag_dict(data=parents_str, tag_name="parent")
         composed_graph = nx.compose_all(ifile_graphs)
         files_to_upload = urgap.UFileList()
         for ofile in self.output_files:
@@ -702,10 +703,22 @@ class UTrace:
                 node_type="file",
             )
             ofile_graph.add_edge(self.id[0], ofile.object_name)
+            graph_tag_dict = self._compose_tag_dict(data=dot_str, tag_name="dot_str")
             ofile.tags.update(parent_tag_dict)
             ofile.tags.update(graph_tag_dict)
             files_to_upload.append(ofile)
         files_to_upload.upload_ufiles()
+
+    def _compose_tag_dict(self, data: str, tag_name: str) -> dict:
+        """Compose a tag dictionary by compressing and encoding data."""
+        encoded_string = b64encode(
+            zlib.compress(data.encode()),
+        )
+        encoded_chunks = [
+            encoded_string[i : i + 1024].decode()
+            for i in range(0, len(encoded_string), 1024)
+        ]
+        return {f"{tag_name}_{n}": chunk for n, chunk in enumerate(encoded_chunks)}
 
     def save_umeta_information(self) -> None:
         """Save UMeta information for this trace."""
