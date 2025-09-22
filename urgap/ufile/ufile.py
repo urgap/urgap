@@ -867,6 +867,11 @@ class UFile:
             List of parent object names.
         """
 
+    @property
+    def provenance(
+        self,
+    ) -> None | nx.DiGraph:
+        """Provenance of UFile as a directed graph.
 
         Returns:
         """

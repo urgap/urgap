@@ -679,6 +679,7 @@ class UTrace:
         for ifile in self.input_files:
             unique_parents.update(ifile.parents)
             unique_parents.add(ifile.object_name)
+            graph = nx.DiGraph() if ifile.provenance is None else ifile.provenance
             graph.add_node(
                 ifile.object_name,
                 node_type="file",

@@ -1,3 +1,4 @@
+import networkx as nx
 
 
 def test_ufile_dot(tmp_dir):
@@ -35,3 +36,5 @@ def test_ufile_dot(tmp_dir):
     filter_node = urgap.init_unode("FilterTabularToParquet:1.0.0")
     filtered_parquet = filter_node.run(urun_dict=urun_dict, ufiles=filtered_csv)
     assert filtered_parquet[0].path.exists()
+    assert isinstance(filtered_parquet[0].provenance, nx.DiGraph)
+    assert ufiles[0].provenance is None
