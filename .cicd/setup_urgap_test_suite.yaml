@@ -3,6 +3,7 @@ steps:
     parameters:
       package: urgap
   - template: misc/setup_python.yaml@templates
+    parameters:
   - script: |
       pip install uv hatch versioningit
     displayName: Install uv
