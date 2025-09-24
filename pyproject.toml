@@ -46,6 +46,7 @@ dependencies = [
 cloud = [
     'azure-keyvault-secrets==4.10.0',
     'cloud-sql-python-connector~=1.0',
+    'google-apitools==0.5.35',
     'pg8000~=1.29',
     'pysmb==1.2.13',
     'pyvis==0.3.2',
@@ -68,6 +69,7 @@ legacy = [
 all = [
     'azure-keyvault-secrets==4.10.0',
     'cloud-sql-python-connector~=1.0',
+    'google-apitools==0.5.35',
     'pg8000~=1.29',
     'psycopg2-binary',
     'pymongo>=3.8.0,<5.0.0',
