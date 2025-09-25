@@ -280,8 +280,10 @@ class UCredentialManager:
         """
         try:
             c_key = self.ID_KEY.format(**cred_entry)
+        except KeyError as e:
             msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
             logger.warning(msg)
+            raise KeyError(msg) from e
         return c_key
 
     def read_credentials(self, json_path: str | os.PathLike | None = None) -> dict:
