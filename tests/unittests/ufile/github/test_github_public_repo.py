@@ -20,6 +20,17 @@ uf.io.repo = MagicMock()
 uf_io_object = uf.io
 
 
+def test_list_container_items_from_numpy():
+    ufile = urgap.UFile(
+    )
+    assert ufile.path.exists()
+    ufl = ufile.io.list_container_items()
+    assert all(
+        isinstance(item, str)
+        for item in ufl
+    )
+
+
 def test_github_public_repo():
     # Test the absence of file
     uf_io_object.repo.get_contents = MagicMock(
