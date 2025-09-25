@@ -6,6 +6,8 @@ import uuid
 
 from typing import ParamSpec
 
+import requests
+
 from github import Auth, Github, GithubException
 
 from urgap.ufile.io._base import UIOBase
@@ -30,8 +32,11 @@ class IOGithub(UIOBase):
 
         org_name = self.uuri.get_github_resource_name("org")
         repo_name = self.uuri.get_github_resource_name("repo")
+        self.repo_full_name = org_name + "/" + repo_name
+        self.branch_name = self.uuri.get_github_resource_name("branch")
         self.object_filepath = self.uuri.fragment
         try:
+            cred_key = f"{self.uuri.scheme}://{self.uuri.netloc}/{self.repo_full_name}"
             password = self.uuri.password
             if password is None:
                 # Can access only public repos
@@ -39,17 +44,21 @@ class IOGithub(UIOBase):
             else:
                 # Can access private repos too
                 self.github_io = Github(auth=Auth.Token(password))
+            self.repo = self.github_io.get_repo(self.repo_full_name)
         except GithubException as e:
             msg = f"Incorrect/no credentials found for {cred_key} - if needed, please supply!"
             logger.exception(msg)
             raise KeyError(msg) from e
 
         available_branches = [x.name for x in self.repo.get_branches()]
+        if self.branch_name not in available_branches:
             msg = (
+                f"Branch '{self.branch_name}' in not available on host {self.uuri.netloc}"
                 f". Available branches are: {sorted(available_branches)}"
             )
             raise OSError(msg)
 
+        self.source_branch = self.repo.get_branch(self.branch_name)
 
         self.target_branch_name = self.query_params.get(
             "target-branch",
@@ -221,6 +230,17 @@ class IOGithub(UIOBase):
         Returns:
             List of object names after filtering.
         """
+        url = f"https://api.github.com/repos/{self.repo_full_name}/git/trees/{self.branch_name}?recursive=1"
+        headers = (
+            {"Authorization": f"token {self.uuri.password}"}
+            if self.uuri.password is not None
+            else {}
+        )
+        resp = requests.get(url, headers=headers)
+        container_objects = [
+            for item in tree
+            if item["type"] == "blob"
+        ]
         if pattern is not None:
             container_objects = [
                 f for f in container_objects if re.search(pattern, f) is not None
