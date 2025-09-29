@@ -237,7 +237,19 @@ class IOGithub(UIOBase):
             else {}
         )
         resp = requests.get(url, headers=headers)
+        try:
+            resp.raise_for_status()
+        except requests.HTTPError as e:
+            msg = f"Error connecting to GitHub API: {resp.status_code} {resp.text}"
+            logger.exception(msg)
+            raise OSError(msg) from e
+        tree = resp.json().get("tree")
+        if tree is None:
+            msg = "Could not obtain 'tree' structure from repository."
+            logger.error(msg)
+            raise KeyError(msg)
         container_objects = [
+            f"{self.uuri.scheme}://{self.uuri.netloc}/{self.repo_full_name}/{self.branch_name}#{item['path']}"
             for item in tree
             if item["type"] == "blob"
         ]

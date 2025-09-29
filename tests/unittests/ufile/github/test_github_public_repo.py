@@ -31,6 +31,13 @@ def test_list_container_items_from_numpy():
     )
 
 
+def test_list_container_items_from_numpy_fails():
+    ufile = urgap.UFile(
+    )
+    with pytest.raises(OSError):
+        ufl = ufile.list_container_items()
+
+
 def test_github_public_repo():
     # Test the absence of file
     uf_io_object.repo.get_contents = MagicMock(
