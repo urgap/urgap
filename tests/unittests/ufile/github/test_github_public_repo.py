@@ -22,17 +22,21 @@ uf_io_object = uf.io
 
 def test_list_container_items_from_numpy():
     ufile = urgap.UFile(
+        uri="github://github.com/computational-ms/unify_idents/dev#README.rst",
     )
     assert ufile.path.exists()
     ufl = ufile.io.list_container_items()
+    assert len(ufl) == 89
     assert all(
         isinstance(item, str)
+        and item.startswith("github://github.com/computational-ms/unify_idents/dev#")
         for item in ufl
     )
 
 
 def test_list_container_items_from_numpy_fails():
     ufile = urgap.UFile(
+        uri="github://github.com/computational-ms/unify_idents/this/branch/does/not/exist#no_file",
     )
     with pytest.raises(OSError):
         ufl = ufile.list_container_items()
