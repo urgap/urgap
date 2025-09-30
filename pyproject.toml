@@ -40,6 +40,7 @@ dependencies = [
     'requests>=2.26,<2.33',
     'tqdm==4.67.1',
     'PyGithub==2.8.1',
+    'xlsxwriter==3.2.9'
 ]
 
 [project.optional-dependencies]
