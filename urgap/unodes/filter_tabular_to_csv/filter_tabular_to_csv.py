@@ -16,6 +16,7 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
         "versions": [
             {"version": "1.0.0", "exe_path": "FilterTabular/1_0_0/filter_tabular.py"},
+            {"version": "2.0.0", "exe_path": "FilterTabular/2_0_0/filter_tabular.py"},
         ],
         "parameters_not_triggering_rerun": [],
         "input_uftypes": {
@@ -41,6 +42,12 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
 
             {
                 "-q": "500 < `exp_mz` < 1000"
+            }
+            OR in version 2.0.0 and later:
+            -q: polars sql expression
+
+            {
+                "-q": "500 < exp_mz AND exp_mz < 1000"
             }
         """,
     }

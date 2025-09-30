@@ -36,6 +36,7 @@ dependencies = [
     'packaging==25.0',
     'pandas>=1.4.2,<2.4.0',
     'plotly',
+    'polars>=1.33.0',
     'requests>=2.26,<2.33',
     'tqdm==4.67.1',
     'PyGithub==2.8.1',
