@@ -34,6 +34,7 @@ DEFAULT_CREDENTIALS_SCHEME = {
         "secure": {"type": "boolean"},
         "secret_store": {"type": "string"},
         "cloud_host_pid": {"type": "string"},
+        "base_url": {"type": "string"},
     },
 }
 
@@ -280,6 +281,10 @@ class UCredentialManager:
         """
         try:
             c_key = self.ID_KEY.format(**cred_entry)
+            logger.warning(
+                "DeprecationWarning: 'scheme' + 'host' as identifier will be deprecated soon, "
+                "please provide 'base_url' in credentials_lookup instead.",
+            )
         except KeyError as e:
             msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
             logger.warning(msg)
