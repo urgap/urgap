@@ -43,6 +43,7 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
             {
                 "-q": "500 < `exp_mz` < 1000"
             }
+
             OR in version 2.0.0 and later:
             -q: polars sql expression
 

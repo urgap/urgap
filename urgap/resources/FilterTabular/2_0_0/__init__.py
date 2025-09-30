@@ -1,0 +1,1 @@
+"""Init FilterTabular 2_0_0 resource."""

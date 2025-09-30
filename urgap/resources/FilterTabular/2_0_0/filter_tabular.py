@@ -69,6 +69,7 @@ def read_lazy_frames(grouped_input_files: dict, sep: str) -> list:
         [
             pl.scan_parquet(parquet_file)
             for parquet_file in grouped_input_files.get("parquet", [])
+        ],
     )
     for xlsx_file in grouped_input_files.get("xlsx", []):
         xlsx_frame = pl.read_excel(xlsx_file)
