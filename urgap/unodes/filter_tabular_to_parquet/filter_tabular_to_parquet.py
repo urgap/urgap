@@ -36,6 +36,13 @@ class FilterTabularToParquet(urgap.unode.UNodeBase):
             {
                 "-q": "500 < `exp_mz` < 1000" #  Pandas query string
             }
+
+            OR in version 2.0.0 and later:
+            -q: polars sql expression
+
+            {
+                "-q": "500 < exp_mz AND exp_mz < 1000"
+            }
         """,
     }
 
