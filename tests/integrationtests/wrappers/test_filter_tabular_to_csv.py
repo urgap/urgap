@@ -5,9 +5,14 @@ import urgap
 
 
 @pytest.mark.parametrize(
+    "unode,query",
     [
+        ("FilterTabularToCSV:1.0.0", "3100 > spectrum_id > 3000"),
+        ("FilterTabularToCSV:2.0.0", "3100 > spectrum_id AND spectrum_id > 3000"),
+        ("FilterTabularToCSV:latest", "3100 > spectrum_id AND spectrum_id > 3000"),
     ],
 )
+def test_wrapper_filter_csv(tmp_dir, unode, query):
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
@@ -20,6 +25,7 @@ import urgap
         {
             "parameters": {
                 unode: {
+                    "-q": query,
                 },
             },
             "unode_parameters": {
@@ -38,6 +44,8 @@ import urgap
     filtered_csv = csv_filter_node.run(urun_dict=urun_dict, ufiles=ufiles)
     assert filtered_csv[0].path.exists()
     df = pd.read_csv(filtered_csv[0].path)
+    assert df.shape[0] == 1
+    assert df["Sequence Start"].sum() == 588
 
 
 @pytest.mark.parametrize(
