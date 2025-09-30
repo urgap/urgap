@@ -1,8 +1,11 @@
 import pandas as pd
+import pytest
 
 import urgap
 
 
+@pytest.mark.parametrize(
+    [
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.validator.PEPTIDEFOREST_CSV}"
                 f"#unified_csvs/demo.csv",
@@ -77,6 +80,7 @@ import urgap
     urun_dict = urgap.URunDict(
         {
             "parameters": {
+                    "-q": "spectrum_id > 3000",
                 },
             },
             "unode_parameters": {

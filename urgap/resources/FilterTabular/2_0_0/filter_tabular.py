@@ -131,6 +131,7 @@ def main(
     if not lazy_frames:
         logger.warning("No input files to process!")
         return
+    merged_lazy = pl.concat(lazy_frames, how="vertical_relaxed")
     merged_df = merged_lazy.collect()
     if query_string is not None:
         try:
