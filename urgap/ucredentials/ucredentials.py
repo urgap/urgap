@@ -279,6 +279,8 @@ class UCredentialManager:
         Returns:
             Lookup key string.
         """
+        if cred_entry.get("base_url") is not None:
+            return cred_entry["base_url"]
         try:
             c_key = self.ID_KEY.format(**cred_entry)
             logger.warning(
