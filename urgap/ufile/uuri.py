@@ -327,3 +327,11 @@ class UUri:
             case _:
                 msg = "Unknown param for github resource"
                 raise KeyError(msg)
+
+    @property
+    def mylabdata_url(self) -> str | None:
+        if self.scheme == "mylabdata":
+            return self.get_mylabdata_url()
+        return None
+
+    def get_mylabdata_url(self) -> str:

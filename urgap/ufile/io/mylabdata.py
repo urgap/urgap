@@ -143,6 +143,7 @@ class IOMyLabData(UIOBase):
         Raises:
             ValueError: If upload fails (not HTTP 200 or 409).
         """
+        url = self.uuri.mylabdata_url
         with self.scratch_path.open("rb") as file:
             response = requests.post(
                 url=url,
@@ -198,6 +199,7 @@ class IOMyLabData(UIOBase):
         Returns:
             The HTTP response from the file download request.
         """
+        url = self.uuri.mylabdata_url
         response = requests.get(
             url=url,
             verify=self._api_cert,
