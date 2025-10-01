@@ -335,3 +335,4 @@ class UUri:
         return None
 
     def get_mylabdata_url(self) -> str:
+        return f"{self.get_mylabdata_api_url_files()}{self.path}/{encoded_fragment}"
