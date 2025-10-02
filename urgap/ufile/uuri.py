@@ -6,6 +6,7 @@ import logging
 import re
 
 from pathlib import Path
+from urllib.parse import quote, urlparse
 
 import urgap
 
