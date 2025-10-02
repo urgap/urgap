@@ -335,4 +335,5 @@ class UUri:
         return None
 
     def get_mylabdata_url(self) -> str:
+        encoded_fragment = quote(self.fragment, safe="")
         return f"{self.get_mylabdata_api_url_files()}{self.path}/{encoded_fragment}"
