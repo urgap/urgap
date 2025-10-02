@@ -331,6 +331,7 @@ class UUri:
 
     @property
     def mylabdata_url(self) -> str | None:
+        """Get the mylabdata URL."""
         if self.scheme == "mylabdata":
             return self.get_mylabdata_url()
         return None
