@@ -73,9 +73,16 @@ class IOAzureBlobStorage(UIOBase):
         if (len(tags.keys()) > 100) or (sys.getsizeof(json.dumps(tags)) > 7000):
             msg = (
                 f"Too many keys for azure blob storage in {self.uuri.fragment}. "
+                f"Removing parent keys and dot_str from tags."
             )
             logger.warning(msg)
+            tags = {
+                k: v
+                for k, v in tags.items()
+                if not k.startswith(("parent_", "dot_str_"))
+            }
             tags["ParentsRemoved"] = "Yes"
+            tags["DotStrRemoved"] = "Yes"
 
         with self.scratch_path.open("rb") as data:
             self.blob.upload_blob(data, metadata=tags, overwrite=True)
