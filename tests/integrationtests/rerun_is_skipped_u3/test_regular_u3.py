@@ -65,7 +65,9 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
 
             print("Output node1:")
             pprint.pprint(return_file)
+            pac_id, wid = test_node1.utrace_history[-1]
             report = urgap.UReport(wid=wid)
+            assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
 
             print(
                 """
@@ -90,4 +92,5 @@ def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_test
             )
             print("Output:")
             pprint.pprint(second_run_return_file)
+            pac_id, wid = test_node1.utrace_history[-1]
             report = urgap.UReport(wid=wid)

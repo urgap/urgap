@@ -30,29 +30,43 @@ from urgap.ureport.ureport import UReport
 
 def test_missing_history_triggers_umeta_load_history(monkeypatch):
     dummy_wid = "wid123"
+    dummy_pac_id = "unode456"
 
     class DummyUFile:
         ucfs = "dummy_ucfs"
 
     class DummyUMeta:
+        def find_pac_ids_of_producers(self, ucfs):
+            return [dummy_pac_id]
 
+        def load_history(self, wid=None, pac_id=None):
+            return {pac_id: {"some": "history"}}
 
     monkeypatch.setattr(UReport, "umeta", DummyUMeta())
 
     report = UReport(ufile=DummyUFile())
 
     assert hasattr(report, "execution_history")
+    assert dummy_pac_id in report.execution_history
+    assert report.execution_history[dummy_pac_id]["some"] == "history"
 
 
 def test_traces_populated_with_load_utrace(monkeypatch):
     dummy_wid = "wid123"
+    dummy_pac_id = "unode456"
 
     class DummyUFile:
         ucfs = "dummy_ucfs"
 
     class DummyUMeta:
+        def find_pac_ids_of_producers(self, ucfs):
+            return [dummy_pac_id]
 
+        def load_history(self, wid=None, pac_id=None):
+            return {pac_id: {"some": "history"}}
 
+        def load_utrace(self, pac_id, wid, history, storage_base_uri=None):
+            return {"utrace_loaded": True, "pac_id": pac_id, "wid": wid}
 
     monkeypatch.setattr(UReport, "umeta", DummyUMeta())
 
@@ -60,20 +74,28 @@ def test_traces_populated_with_load_utrace(monkeypatch):
 
     report = UReport(ufile=DummyUFile())
 
+    key = (dummy_pac_id, None)
     assert key in report._traces
     assert report._traces[key]["utrace_loaded"] is True
+    assert report._traces[key]["pac_id"] == dummy_pac_id
 
 
 def test_traces_populated_with_load_utrace(monkeypatch):
     dummy_wid = "wid123"
+    dummy_pac_id = "unode456"
 
     class DummyUFile:
         ucfs = "dummy_ucfs"
 
     class DummyUMeta:
+        def find_pac_ids_of_producers(self, ucfs):
+            return [dummy_pac_id]
 
+        def load_history(self, wid=None, pac_id=None):
             return {"some": "history"}
 
+        def load_utrace(self, pac_id, wid, history, storage_base_uri=None):
+            return {"utrace_loaded": True, "pac_id": pac_id, "wid": wid}
 
     monkeypatch.setattr(UReport, "_merge_histories", lambda self, other_history: None)
 
@@ -81,19 +103,26 @@ def test_traces_populated_with_load_utrace(monkeypatch):
 
     report._umeta = DummyUMeta()
 
+    pac_ids = report._umeta.find_pac_ids_of_producers(DummyUFile.ucfs)
+    report.execution_history = report._umeta.load_history(pac_id=pac_ids[0])
+    for nei in pac_ids:
         report._traces[(nei, dummy_wid)] = report._umeta.load_utrace(
+            pac_id=nei,
             wid=dummy_wid,
             history=report.execution_history,
             storage_base_uri=None,
         )
 
+    key = (dummy_pac_id, dummy_wid)
     assert key in report._traces
     assert report._traces[key]["utrace_loaded"] is True
+    assert report._traces[key]["pac_id"] == dummy_pac_id
     assert report._traces[key]["wid"] == dummy_wid
 
 
 def test_get_wids_from_execution_history(monkeypatch):
     class DummyUMeta:
+        def load_history(self, pac_id=None, wid=None):
             return {
                 ("unode1", "widA"): {"some": "history"},
                 ("unode2", "widB"): {"other": "history"},
@@ -127,13 +156,20 @@ from urgap.ureport.ureport import UReport
 
 def test_traces_assignment_line(monkeypatch):
     dummy_wid = "wid123"
+    dummy_pac_id = "unode456"
 
     class DummyUFile:
         ucfs = "dummy_ucfs"
 
     class DummyUMeta:
+        def find_pac_ids_of_producers(self, ucfs):
+            return [dummy_pac_id]
 
+        def load_history(self, wid=None, pac_id=None):
+            return {dummy_pac_id: {"some": "history"}}
 
+        def load_utrace(self, pac_id, wid, history, storage_base_uri=None):
+            return {"utrace_loaded": True, "pac_id": pac_id, "wid": wid}
 
     monkeypatch.setattr(UReport, "_merge_histories", lambda self, other_history: None)
 
@@ -141,24 +177,31 @@ def test_traces_assignment_line(monkeypatch):
 
     report._umeta = DummyUMeta()
 
+    report._traces[(dummy_pac_id, dummy_wid)] = report._umeta.load_utrace(
+        pac_id=dummy_pac_id,
         wid=dummy_wid,
         history=report.execution_history,
         storage_base_uri=None,
     )
 
+    key = (dummy_pac_id, dummy_wid)
     assert key in report._traces
     assert report._traces[key]["utrace_loaded"] is True
+    assert report._traces[key]["pac_id"] == dummy_pac_id
     assert report._traces[key]["wid"] == dummy_wid
 
 
+def test_multiple_producing_pac_ids(monkeypatch):
     dummy_wid = "wid123"
 
     class DummyUFile:
         ucfs = "dummy_ucfs"
 
     class DummyUMeta:
+        def find_pac_ids_of_producers(self, ucfs):
             return ["unode1", "unode2"]
 
+        def load_history(self, wid=None, pac_id=None):
             return {"some": "history"}
 
     monkeypatch.setattr(UReport, "_merge_histories", lambda self, other_history: None)
@@ -170,12 +213,15 @@ def test_traces_assignment_line(monkeypatch):
     producing_ucfs = "dummy_ucfs"
 
     with pytest.raises(OSError) as exc_info:
+        if len(producing_pac_id) > 1:
             import logging
 
             logger = logging.getLogger()
+            msg = f"Two producing pac_ids? Something went really wrong with {producing_pac_id}..."
             logger.warning(msg)
             raise OSError(msg)
 
+    assert "Two producing pac_ids?" in str(exc_info.value)
 
 
 def test_merge_histories_started_time():
@@ -222,6 +268,8 @@ def test_was_skipped_called():
     report = UReport.__new__(UReport)
 
     class DummyHistory:
+        def was_skipped(self, wid, pac_id):
+            self.called_with = (wid, pac_id)
             return True
 
     dummy_history = DummyHistory()
@@ -237,6 +285,8 @@ def test_was_run_called():
     report = UReport.__new__(UReport)
 
     class DummyHistory:
+        def was_run(self, wid, pac_id):
+            self.called_with = (wid, pac_id)
             return True
 
     dummy_history = DummyHistory()
@@ -252,6 +302,8 @@ def test_crashed_called():
     report = UReport.__new__(UReport)
 
     class DummyHistory:
+        def crashed(self, wid, pac_id):
+            self.called_with = (wid, pac_id)
             return True
 
     dummy_history = DummyHistory()
@@ -349,9 +401,11 @@ def test_exact_sources_condition(monkeypatch):
 
     exact_sources_to_nodes = {"unode123": {"ucfs_1", "ucfs_2"}}
 
+    pac_id = "unode123"
 
     new_connection = 1
 
+    if dummy_ufile.ucfs in exact_sources_to_nodes[pac_id]:
         new_connection = 0
 
     assert new_connection == 0
@@ -375,15 +429,22 @@ def test_execution_summary(monkeypatch):
         def keys(self):
             return [("unode1", "wid1"), ("unode2", "wid2")]
 
+        def execution_time(self, pac_id, wid):
             return 42
 
+        def was_skipped(self, pac_id, wid):
             return False
 
+        def was_run(self, pac_id, wid):
             return True
 
     report.execution_history = DummyExecutionHistory()
 
     summary = {}
+    for pac_id, wid in list(report.execution_history.keys()):
+        summary[pac_id] = {
+            "was_skipped": report.execution_history.was_skipped(pac_id, wid),
+            "was_run": report.execution_history.was_run(pac_id, wid),
         }
 
     assert "unode1" in summary
@@ -646,18 +707,24 @@ class DummyUReport:
         self.storage_base_uri = None
         self._traces = {}
 
+    def get_trace(self, pac_id, wid, storage_base_uri=None):
+        return {"utrace_loaded": True, "pac_id": pac_id, "wid": wid}
 
 
 def test_already_seen_nodes_loop():
     report = DummyUReport()
     already_seen_nodes = set()
+    for pac_id, wid in list(report.execution_history.keys()):
         ut = report.get_trace(
+            pac_id,
             wid,
             storage_base_uri=report.storage_base_uri,
         )
+        already_seen_nodes.add(pac_id)
 
     assert "node1" in already_seen_nodes
     assert "node2" in already_seen_nodes
+    for pac_id, wid in report.execution_history.keys():
         assert ut["utrace_loaded"] is True
 
 
@@ -666,12 +733,16 @@ class DummyUReport:
         self.execution_history = {("node1", "wid1"): {}, ("node2", "wid2"): {}}
         self.storage_base_uri = None
 
+    def get_trace(self, pac_id, wid, storage_base_uri=None):
+        return {"utrace_loaded": True, "pac_id": pac_id, "wid": wid}
 
 
 def test_already_seen_nodes_loop():
     report = DummyUReport()
     already_seen_nodes = set()
 
+    for pac_id, wid in list(report.execution_history.keys()):
+        already_seen_nodes.add(pac_id)
 
         assert ut["utrace_loaded"] is True
 
@@ -680,6 +751,7 @@ def test_already_seen_nodes_loop():
 
 
 class DummyHistory:
+    def execution_time(self, pac_id, wid):
         class DummyDelta:
             def total_seconds(self):
                 return 42
@@ -706,6 +778,7 @@ class DummyUReport(UReport):
         self.storage_base_uri = None
         self.ufile = None
 
+    def get_trace(self, pac_id, wid, storage_base_uri=None):
         return DummyTrace()
 
 
@@ -713,6 +786,8 @@ def test_already_seen_nodes_loop():
     report = DummyUReport()
     already_seen_nodes = set()
 
+    for pac_id, wid in list(report.execution_history.keys()):
+        already_seen_nodes.add(pac_id)
 
         assert ut["utrace_loaded"] is True
 
@@ -720,6 +795,7 @@ def test_already_seen_nodes_loop():
 
 
 class DummyHistory:
+    def execution_time(self, pac_id, wid):
         class DummyDelta:
             def total_seconds(self):
                 return 42
@@ -747,6 +823,8 @@ class DummyUReport(UReport):
         self.storage_base_uri = None
         self.ufile = None
 
+    def get_trace(self, pac_id, wid, storage_base_uri=None):
+        return DummyTrace(pac_id)
 
 
 def test_history_rows_append():
@@ -759,10 +837,13 @@ def test_history_rows_append():
         "rows": [],
     }
 
+    for pac_id, wid in list(report.execution_history.keys()):
+        processing_time = ut.history.execution_time(pac_id, wid).total_seconds()
 
         history["rows"].append(
             {
                 "Node": ut.unode_meta["name"],
+                node_id_header: pac_id,
                 "processing time [s]": processing_time,
             }
         )

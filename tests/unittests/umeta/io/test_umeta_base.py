@@ -34,11 +34,17 @@ class TestUMetaIOBase(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.obj.find_wid_members("some_wid")
 
+    def test_find_pac_ids_not_implemented(self):
         with self.assertRaises(NotImplementedError):
+            self.obj.find_pac_ids("some_object")
 
+    def test_find_pac_ids_of_producers_not_implemented(self):
         with self.assertRaises(NotImplementedError):
+            self.obj.find_pac_ids_of_producers("some_object")
 
+    def test_find_pac_ids_of_consumers_not_implemented(self):
         with self.assertRaises(NotImplementedError):
+            self.obj.find_pac_ids_of_consumers("some_object")
 
     def test_retrieve_interface_statistics_not_implemented(self):
         with self.assertRaises(NotImplementedError):
@@ -48,4 +54,6 @@ class TestUMetaIOBase(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             self.obj.find_last_processed_files()
 
+    def test_find_pac_id_details_not_implemented(self):
         with self.assertRaises(NotImplementedError):
+            self.obj.find_pac_id_details("some_pac_id")

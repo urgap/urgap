@@ -35,6 +35,7 @@ def test_can_query_node_outputs_by_aliases(provide_clean_test_node_dirs):
     test_node9 = test_nodes["TestNode5:1.0.0"]
     results = test_node9.run(ufiles=ufiles, urun_dict=urun_dict)
 
+    pac_id, wid = test_node9.utrace_history[-1]
     report = urgap.UReport(wid=wid, storage_base_uri=results[0].as_storage_base_uri())
     report.draw_execution_dag()
     queried_results = report.query_node_outputs_by_aliases(nodes={0: []})
@@ -70,6 +71,7 @@ def test_provides_only_specified_uftype(provide_clean_test_node_dirs):
     test_node9 = test_nodes["TestNode5:1.0.0"]
     results = test_node9.run(ufiles=ufiles, urun_dict=urun_dict)
 
+    pac_id, wid = test_node9.utrace_history[-1]
     report = urgap.UReport(wid=wid, storage_base_uri=results[0].as_storage_base_uri())
     report.draw_execution_dag()
     queried_results = report.query_node_outputs_by_aliases(
@@ -116,6 +118,7 @@ def test_can_discriminate_aliases(provide_clean_node_dirs, tmp_dir):
     urun_dict.parameters["FilterTabularToCSV:1.0.0"]["-q"] = "`spectrum_id` < 3100"
     results_with_less = test_node.run(ufiles=results, urun_dict=urun_dict, force=True)
 
+    pac_id, wid = test_node.utrace_history[-1]
     report = urgap.UReport(
         wid=wid,
         storage_base_uri=results_with_less[0].as_storage_base_uri(),

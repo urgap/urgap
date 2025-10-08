@@ -22,6 +22,8 @@ class UMeta:
            as defined by UTrace.determine_output_files_stem().
         2. **History:** Primary key is (1) + wid.
         3. **Links:** UFile <-> UNode association, with columns: primary key (from 1), source, and target.
+            - {source: input_file, target: UNode, pac_id: 1._id }
+            - {source: UNode, target: output_file, pac_id: 1._id }
     """
 
     def __init__(self, io: str | None = None) -> None:
@@ -94,6 +96,7 @@ class UMeta:
 
     def load_utrace(
         self,
+        pac_id: str,
         wid: str,
         storage_base_uri: str,
         history: dict | None = None,
@@ -101,13 +104,18 @@ class UMeta:
         """Load a UTrace object using the IO backend.
 
         Args:
+            pac_id: Node execution ID to load the UTrace for.
             wid: Workflow ID (WID) to load the UTrace for.
+            history: If provided, load history for the given pac_id and wid.
             storage_base_uri: Storage base UUri for referenced UFiles.
 
         Returns:
             Loaded UTrace object.
         """
+        node_exe_details = self.load_node_exe_details(pac_id)
         if history is None:
+            history = self.load_history(pac_id=pac_id, wid=wid)
+        if ":" in pac_id:
             urd = urgap.URunDict(
                 {
                     "parameters": node_exe_details["parameters"],
@@ -150,30 +158,38 @@ class UMeta:
             history=history,
         )
 
+    def load_node_exe_details(self, pac_id: str) -> urgap.UTrace:
         """Load details for a given node execution ID.
 
         Args:
+            pac_id: Node execution ID to load details for.
 
         Returns:
             Node execution details object.
         """
+        return self.io.load_node_exe_details(pac_id)
 
     def load_history(
         self,
+        pac_id: str | None = None,
         wid: str | None = None,
     ) -> dict:
         """Load execution history using the IO backend.
 
         Args:
+            pac_id: Node execution ID to load history for.
             wid: Workflow ID to load history for.
 
         Returns:
             Loaded execution history.
 
         Raises:
+            OSError: If both pac_id and wid are None.
         """
+        if pac_id is None and wid is None:
             logger.warning("Will NOT extract complete UMeta DB! Use a DB browser ...")
             raise OSError
+        return self.io.load_history(pac_id=pac_id, wid=wid)
 
     def delete(self, reference_ufile: urgap.UFile) -> None:
         """Delete UMeta entries for a given reference file.
@@ -183,26 +199,38 @@ class UMeta:
         """
         self.io.delete(reference_ufile)
 
+    def find_pac_ids(self, ucfs: str) -> list:
+        """Find all pac_id values for a given object name.
 
         Args:
             ucfs: Object name to query.
 
         Returns:
+            List of pac_ids.
         """
+        return self.io.find_pac_ids(ucfs)
 
+    def find_pac_ids_of_producers(self, ucfs: str) -> list:
+        """Find all producer pac_ids for a given object name.
 
         Args:
             ucfs: Object name to query.
 
         Returns:
+            List of pac_ids that produced the object.
         """
+        return self.io.find_pac_ids_of_producers(ucfs)
 
+    def find_pac_ids_of_consumers(self, ucfs: str) -> list:
+        """Find all consumer pac_ids for a given object name.
 
         Args:
             ucfs: Object name to query.
 
         Returns:
+            List of pac_ids that consumed the object.
         """
+        return self.io.find_pac_ids_of_consumers(ucfs)
 
     def retrieve_interface_statistics(self) -> dict:
         """Retrieve statistics from the UMeta IO interface.
@@ -236,11 +264,16 @@ class UMeta:
         """
         return self.io.find_last_processed_files(unode, last=last)
 
+    def find_pac_id_details(self, pac_id: str) -> list:
+        """Find details for a given pac_id.
 
         Args:
+            pac_id: Node execution ID.
 
         Returns:
+            Details for the given pac_id.
         """
+        return self.io.find_pac_id_details(pac_id)
 
     def save_rebased_file_to_ucfs_storage_location(self, ufile: urgap.UFile) -> None:
         """Save rebased file information to UMeta.

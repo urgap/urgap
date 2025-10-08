@@ -33,7 +33,9 @@ def test_each_pipeline_run_creates_one_wid(
 
         counts = {"full_run": 0, "skipped_run": 0}
         for history_tuple in full_history:
+            pac_id, wid = history_tuple
             report = urgap.UReport(wid=wid)
+            history = report.get_trace(pac_id, wid).get_history()
             if "full_run" in history["timestamps"].keys():
                 counts["full_run"] += 1
             if "skipped_run" in history["timestamps"].keys():

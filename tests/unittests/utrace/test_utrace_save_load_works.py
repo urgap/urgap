@@ -32,8 +32,10 @@ def test_init_right_number_of_output_files(
     ut.set_start_time()
     ut.set_stop_time(skipped=False)
     ut.save_umeta_information()
+    pac_id, wid = ut.id
     storage_base_uri = ut.input_files[0].storage_base_uri
     ut2 = urgap.UTrace.load_from_umeta(
+        pac_id=pac_id,
         wid=wid,
         storage_base_uri=storage_base_uri,
         umeta_io=io,

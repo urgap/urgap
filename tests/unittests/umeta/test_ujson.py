@@ -39,13 +39,16 @@ def test_read_write_user_dict(check_if_meta_interface_backend_is_available):
     ut.duration_seconds = 1
     print(ut.urun_dict.user_dict, io, "<<<")
     ut.save_umeta_information()
+    pac_id, wid = ut.id
     storage_base_uri = ut.input_files[0].storage_base_uri
     ut2 = urgap.UTrace.load_from_umeta(
+        pac_id=pac_id,
         wid=wid,
         umeta_io=io,
         storage_base_uri=storage_base_uri,
     )
 
+    assert ut2.history[pac_id, wid]["user_dict"] == {
         "test": "u_fresh_cookies_stuff_young_bears",
     }
 

@@ -40,7 +40,9 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
     print("Output node1:")
     pprint.pprint(return_file)
 
+    pac_id, wid = test_node1.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
 
     urun_dict["parameters"]["TestNode1:1.0.0"]["triggers_nuttin"] = 200
     urun_dict.assign_wid()
@@ -48,4 +50,6 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
     pprint.pprint(urun_dict)
     print("Output:")
     pprint.pprint(second_run_return_file)
+    pac_id, wid = test_node1.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_skipped is True

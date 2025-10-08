@@ -112,7 +112,9 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
         for uftype, n in urun_dict.parameters["TestNode5:1.0.0"].items():
             assert n == return_file.number_of_uftypes().get(uftype, 0)
 
+        pac_id, wid = test_node9.utrace_history[-1]
         report = urgap.UReport(wid=wid)
+        assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
 
         second_run_return_file = test_node9.run(
             ufiles=ufiles,
@@ -121,8 +123,12 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
         for uftype, n in urun_dict.parameters["TestNode5:1.0.0"].items():
             assert n == second_run_return_file.number_of_uftypes().get(uftype, 0)
 
+        pac_id, wid = test_node9.utrace_history[-1]
         report = urgap.UReport(wid=wid)
+        assert report.get_trace(pac_id, wid, storage_base_uri).was_skipped is True
 
+        # ut2 = urgap.UTrace(wid=wid, pac_id=pac_id)
+        # assert report2.was_skipped(wid, pac_id) is True
 
         for output_file in second_run_return_file:
             test_node9.remove_output_folder(output_file=output_file)

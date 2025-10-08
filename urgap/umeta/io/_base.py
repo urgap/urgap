@@ -62,6 +62,7 @@ class UMetaIOBase:
         """
         raise NotImplementedError
 
+    def find_pac_ids(self, object_name: str) -> None:
         """Find all node execution IDs given an object name.
 
         Args:
@@ -69,6 +70,7 @@ class UMetaIOBase:
         """
         raise NotImplementedError
 
+    def find_pac_ids_of_producers(
         self,
         object_name: str,
     ) -> list:
@@ -82,6 +84,7 @@ class UMetaIOBase:
         """
         raise NotImplementedError
 
+    def find_pac_ids_of_consumers(
         self,
         object_name: str,
     ) -> list:
@@ -111,9 +114,11 @@ class UMetaIOBase:
         """
         raise NotImplementedError
 
+    def find_pac_id_details(self, pac_id: str) -> str:
         """Find details for a given node execution ID.
 
         Args:
+            pac_id: The node execution ID to search for.
 
         Returns:
             List of details for the given node execution ID.

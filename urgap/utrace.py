@@ -167,6 +167,7 @@ class UTrace:
         return {
             "wid": a[0].wid,
             "unode_full_identifier": a[0].unode_meta["unode_full_identifier"],
+            "pac_id": a[0].pac_id,
         }
 
     @utl_trace(
@@ -249,7 +250,9 @@ class UTrace:
         """Get the UTrace node exe id and wid.
 
         Returns:
+            Tuple of (pac_id, wid).
         """
+        return (self.pac_id, self.wid)
 
     @property
     def wid(self) -> str:
@@ -261,6 +264,7 @@ class UTrace:
         return self.urun_dict.wid
 
     @property
+    def pac_id(self) -> str:
         """Get the output files stem (node exe id).
 
         Returns:
@@ -731,6 +735,7 @@ class UTrace:
     @classmethod
     def load_from_umeta(
         cls,
+        pac_id: str,
         wid: str,
         storage_base_uri: str,
         umeta_io: str | None = None,
@@ -738,6 +743,7 @@ class UTrace:
         """Retrieve a UTrace from any given node and WID using the specified UMeta interface.
 
         Args:
+            pac_id: Node exe id to retrieve document.
             wid: Urgap WID to retrieve associated UTrace.
             storage_base_uri: Storage_base_uri to retrieve associated UTrace.
             umeta_io: UMeta interface to be used.
@@ -747,13 +753,16 @@ class UTrace:
         """
         umeta = urgap.UMeta(io=umeta_io)
         return umeta.load_utrace(
+            pac_id=pac_id,
             wid=wid,
             storage_base_uri=storage_base_uri,
         )
 
     def add_execution_record(self) -> None:
         """Add an execution record for this trace."""
+        pac_id, uwid = self.id
         self.umeta.io.add_execution_record(
+            upac_id=pac_id,
             uwid=uwid,
             start_time=self.start_time,
             duration=self.duration_seconds,

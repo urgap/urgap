@@ -39,7 +39,9 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs, tmp
         urun_dict=urun_dict,
         retain_uftype=retain_uftype,
     )
+    pac_id, wid = filter_csv.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
 
     urun_dict.reassign_wid()
 
@@ -49,6 +51,8 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs, tmp
         retain_uftype=retain_uftype,
     )
 
+    pac_id, wid = filter_csv.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_skipped is True
 
     assert len(second_run_return_file) == len(return_file)

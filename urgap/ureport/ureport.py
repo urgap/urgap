@@ -27,6 +27,7 @@ class UReport:
         ufile: urgap.UFile | None = None,
         ucfs: str | None = None,
         wid: str | None = None,
+        pac_id: str | None = None,
         storage_base_uri: str | None = None,
         umeta_io: str | None = None,
     ) -> None:
@@ -36,6 +37,7 @@ class UReport:
             ufile: UFile associated with report.
             ucfs: Object associated with report.
             wid: Workflow ID.
+            pac_id: Try to load existing umeta data via interface.
             storage_base_uri: Storage base UUri, where to find the referenced UFiles.
             umeta_io: Which umeta interface to use. Default defined in urgap.json.
         """
@@ -55,14 +57,19 @@ class UReport:
                 raise KeyError(msg)
             ucfs = ufile.ucfs
         if ucfs is not None:
+            pac_ids = self.umeta.find_pac_ids_of_producers(ucfs=ucfs)
+            if len(pac_ids) == 0:
                 # is first file
                 self._os.append(ucfs)
 
             self.execution_history = {}
+            for nei in pac_ids:
+                for key, history in self.umeta.load_history(pac_id=nei).items():
                     self.execution_history[key] = history
         else:
             self.execution_history = self.umeta.load_history(
                 wid=wid,
+                pac_id=pac_id,
             )
 
     @property
@@ -78,25 +85,34 @@ class UReport:
 
     def get_trace(
         self,
+        pac_id: str,
         wid: str,
         storage_base_uri: str,
     ) -> urgap.UTrace:
         """Get UTrace object for a specific node execution and workflow.
 
         Args:
+            pac_id: Node execution ID.
             wid: Workflow ID.
             storage_base_uri: Optionally override storage base UUri.
 
         Returns:
             UTrace object.
         """
+        if (pac_id, wid) not in self._traces:
+            if (pac_id, wid) not in self.execution_history:
                 missing_history = self.umeta.load_history(
                     wid=wid,
+                    pac_id=pac_id,
                 )
                 self._merge_histories(other_history=missing_history)
+            self._traces[(pac_id, wid)] = self.umeta.load_utrace(
+                pac_id=pac_id,
                 wid=wid,
+                history=self.execution_history[(pac_id, wid)],
                 storage_base_uri=storage_base_uri,
             )
+        return self._traces[(pac_id, wid)]
 
     def __repr__(self) -> str:
         """Return a user-friendly UReport overview string.
@@ -124,6 +140,8 @@ UMeta:
         return {w for n, w in self.execution_history}
 
     @property
+    def pac_ids(self) -> set:
+        """Get all pac_ids of currently loaded UTraces.
 
         Returns:
             Set of node execution IDs.
@@ -140,8 +158,11 @@ UMeta:
         graph = nx.DiGraph()
         for missing_node in self._os:
             graph.add_node(missing_node)
+        for pac_id, wid in list(self.execution_history.keys()):
+            if graph.has_node(pac_id):
                 continue
             graph = self.walk(
+                pac_id=pac_id,
                 wid=wid,
                 storage_base_uri=self.storage_base_uri,
                 graph=graph,
@@ -150,6 +171,7 @@ UMeta:
 
     def walk(
         self,
+        pac_id: str,
         wid: str,
         graph: nx.DiGraph,
         storage_base_uri: str | None = None,
@@ -157,6 +179,7 @@ UMeta:
         """Build up the execution graph recursively for all input/output files.
 
         Args:
+            pac_id: Node execution ID.
             wid: Workflow ID.
             graph: Existing graph object.
             storage_base_uri: Optionally override storage base UUri.
@@ -164,10 +187,14 @@ UMeta:
         Returns:
             Updated graph object.
         """
+        if graph.has_node(pac_id) is False:
+            graph.add_node(pac_id)
 
+            ut = self.get_trace(pac_id, wid, storage_base_uri=storage_base_uri)
 
             for ofile in ut.output_files:
                 graph.add_edge(
+                    pac_id,
                     ofile.ucfs,
                     weight=4.7,
                     arrow=True,
@@ -176,21 +203,28 @@ UMeta:
             for ifile in ut.input_files:
                 graph.add_edge(
                     ifile.ucfs,
+                    pac_id,
                     weight=4.7,
                     arrow=True,
                 )
 
+                producing_pac_id = self.umeta.find_pac_ids_of_producers(
                     ifile.ucfs,
                 )
+                if len(producing_pac_id) == 1:
                     hi2 = self.umeta.load_history(
+                        pac_id=producing_pac_id[0],
                     )
                     self._merge_histories(other_history=hi2)
                     exe_id, wid = next(iter(hi2))
                     graph = self.walk(
+                        pac_id=exe_id,
                         wid=wid,
                         graph=graph,
                         storage_base_uri=storage_base_uri,
                     )
+                elif len(producing_pac_id) > 1:
+                    msg = f"Two producing pac_ids? Something went really wrong with {producing_pac_id}..."
                     logger.warning(msg)
                     raise OSError(msg)
         return graph
@@ -215,41 +249,50 @@ UMeta:
     def was_skipped(
         self,
         wid: str,
+        pac_id: str,
     ) -> bool:
         """Check if a run was skipped.
 
         Args:
             wid: Workflow ID.
+            pac_id: Node execution ID.
 
         Returns:
             True if the trace was skipped, else False.
         """
+        return self.execution_history.was_skipped(wid, pac_id)
 
     def was_run(
         self,
         wid: str,
+        pac_id: str,
     ) -> bool:
         """Check if a run was executed.
 
         Args:
             wid: Workflow ID.
+            pac_id: Node execution ID.
 
         Returns:
             True if the trace was run, else False.
         """
+        return self.execution_history.was_run(wid, pac_id)
 
     def crashed(
         self,
         wid: str,
+        pac_id: str,
     ) -> bool:
         """Check if a run crashed.
 
         Args:
             wid: Workflow ID.
+            pac_id: Node execution ID.
 
         Returns:
             True if the trace crashed, else False.
         """
+        return self.execution_history.crashed(wid, pac_id)
 
     def data_exists(self) -> bool:
         """Check if file object exists in storage.
@@ -352,7 +395,9 @@ UMeta:
             Tuple containing list of nodes and dictionary of links.
         """
         non_root_ufiles = set()
+        for pac_id, wid in list(self.execution_history.keys()):
             ut = self.get_trace(
+                pac_id,
                 wid,
                 storage_base_uri=self.storage_base_uri,
             )
@@ -361,14 +406,20 @@ UMeta:
         nodes = []
         exact_sources_to_nodes = defaultdict(set)
         links = defaultdict(int)
+        for pac_id, wid in list(self.execution_history.keys()):
             ut = self.get_trace(
+                pac_id,
                 wid,
                 storage_base_uri=self.storage_base_uri,
             )
+            if pac_id not in nodes:
+                nodes.append(pac_id)
             for ufile in ut.input_files:
                 new_connection = 1
+                if ufile.ucfs in exact_sources_to_nodes[pac_id]:
                     new_connection = 0
                 else:
+                    exact_sources_to_nodes[pac_id].add(ufile.ucfs)
                 nodes, source = self._append_ufile_source(
                     ufile=ufile,
                     non_root_ufiles=non_root_ufiles,
@@ -401,6 +452,7 @@ UMeta:
         return nodes, source
 
     def query_node_outputs_by_aliases(self, nodes: dict[int, list]) -> urgap.UFileList:
+        """Find all output files for a pac_id alias.
 
         Args:
             nodes: Dictionary with node alias (int) as key and list of requested output uftypes as value.
@@ -413,10 +465,14 @@ UMeta:
         translated_aliases = {
             self.node_aliases[alias]: value for alias, value in nodes.items()
         }
+        for pac_id, wid in list(self.execution_history.keys()):
             ut = self.get_trace(
+                pac_id=pac_id,
                 wid=wid,
                 storage_base_uri=self.storage_base_uri,
             )
+            if pac_id in translated_aliases:
+                requested_uftypes = translated_aliases[pac_id]
                 if len(requested_uftypes) == 0:
                     query_results += ut.output_files
                 else:
@@ -435,9 +491,14 @@ UMeta:
         """
         summary = {}
 
+        for pac_id, wid in list(self.execution_history.keys()):
+            summary[pac_id] = {
                 "execution_time": self.execution_history.execution_time(
+                    pac_id,
                     wid,
                 ),
+                "was_skipped": self.execution_history.was_skipped(pac_id, wid),
+                "was_run": self.execution_history.was_run(pac_id, wid),
             }
         return summary
 
@@ -521,15 +582,19 @@ UMeta:
             "nodes": [],
         }
         already_seen_nodes = set()
+        for pac_id, wid in list(self.execution_history.keys()):
             ut = self.get_trace(
+                pac_id,
                 wid,
                 storage_base_uri=self.storage_base_uri,
             )
             processing_time = ut.history.execution_time(
+                pac_id,
                 wid,
             ).total_seconds()
             execution_graph["nodes"].append(
                 {
+                    "name": pac_id,
                     "id": "process",
                     "processing_time": processing_time,
                 },
@@ -537,11 +602,13 @@ UMeta:
             history["rows"].append(
                 {
                     "Node": ut.unode_meta["name"],
+                    node_id_header: pac_id,
                     "processing time [s]": processing_time,
                 },
             )
             urd_overview["rows"].append(
                 {
+                    node_id_header: pac_id,
                     "version": ut.urun_dict["version"],
                     "input_files": [x.ucfs for x in ut.input_files],
                     "output_files": [x.ucfs for x in ut.output_files],
@@ -552,6 +619,7 @@ UMeta:
                 execution_graph["links"].append(
                     {
                         "source": source,
+                        "target": pac_id,
                         "value": 1,
                         "type": "incoming",
                     },
@@ -563,6 +631,7 @@ UMeta:
                 target = ufile.ucfs
                 execution_graph["links"].append(
                     {
+                        "source": pac_id,
                         "target": target,
                         "value": 1,
                         "type": "outgoing",

@@ -37,6 +37,7 @@ def test_init_right_number_of_output_files(
     ut.start_time = datetime.now().astimezone()
     ut.duration_seconds = 42
     ut.save_umeta_information()
+    ut_pac_id, ut_wid = ut.id
 
     ut2 = urgap.UTrace(
         urun_dict=urd,
@@ -47,9 +48,11 @@ def test_init_right_number_of_output_files(
     ut2.start_time = datetime.now().astimezone()
     ut2.duration_seconds = 161
     ut2.save_umeta_information()
+    ut2_pac_id, ut2_wid = ut2.id
 
     ur = urgap.UReport(wid=wid, umeta_io=io)
     assert len(ur.execution_history) == 2
     assert {entry[0] for entry in ur.execution_history} == set(
+        [ut_pac_id, ut2_pac_id],
     )
     assert {entry[1] for entry in ur.execution_history} == set([wid])

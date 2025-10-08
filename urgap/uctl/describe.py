@@ -45,17 +45,27 @@ def describe_object_name(object_name: str) -> dict:
     """
     um = urgap.UMeta()
     return {
+        "producer": um.find_pac_ids_of_producers(object_name),
+        "consumers": um.find_pac_ids_of_consumers(object_name),
     }
 
 
 @click.command()
+@click.argument("pac_id")
+def describe_node_ex_id_click(pac_id: str) -> None:
+    """Retrieve UMeta information for a given pac_id (click wrapper)."""
+    logger.info(pprint.pformat(describe_node_ex_id(pac_id)))
 
 
+def describe_node_ex_id(pac_id: str) -> urgap.UReport | str:
+    """Retrieve report for a given pac_id.
 
     Returns a UReport or a not-found message.
     """
     try:
+        return urgap.UReport(pac_id=pac_id)
     except ValueError:
+        return f"No History found for given pac_id: {pac_id}"
 
 
 @click.command()
@@ -181,5 +191,6 @@ describe.add_command(meta_info, name="info")
 describe.add_command(meta_creds, name="credentials")
 describe.add_command(describe_wid_click, name="wid")
 describe.add_command(describe_object_name_click, name="object")
+describe.add_command(describe_node_ex_id_click, name="pac_id")
 describe.add_command(describe_last_runs_click, name="history")
 describe.add_command(describe_ucfs_click, name="ucfs")

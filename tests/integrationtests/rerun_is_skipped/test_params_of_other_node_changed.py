@@ -54,12 +54,18 @@ def test_node_workflow_rerun_is_skipped_if_parameter_of_other_node_change(
     print("Output node3 - first run:")
     pprint.pprint(return_file_node3_first_run)
 
+    pac_id, wid = test_node1.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
+    pac_id, wid = test_node3.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
 
     urun_dict["parameters"]["triggers_nuttin"] = 200
     urun_dict.assign_wid()
 
     pprint.pprint(return_file_node3_second_run)
 
+    pac_id, wid = test_node3.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_skipped is True

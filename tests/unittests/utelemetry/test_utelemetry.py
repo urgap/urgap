@@ -73,6 +73,7 @@ def test_utelemetry_generates_output():
     )
     assert '"name": "ufiles-uploaded"' in result.stdout
     assert '"name": "urgap_node_execution"' in result.stdout
+    assert '"pac_id": "FilterTabularToCSV_1.0.0_' in result.stdout
     assert (
         '"name": "|       #0 Not all expected output file of type .any.csv exist."'
         in result.stdout

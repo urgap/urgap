@@ -175,8 +175,11 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             Base.metadata.create_all(self._db)
         return self._db
 
+    def load_node_exe_details(self, pac_id: str) -> dict | None:
+        """Load pac_id details from the database.
 
         Args:
+            pac_id: Node execution ID to load information for.
 
         Returns:
             Dictionary with node execution configuration details, including parameters,
@@ -185,6 +188,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         with Session(self.db) as session:
             input_link_alias = aliased(ExecutionInputLink)
             stmt = select(ExecutionConfigurations).where(
+                ExecutionConfigurations.uunode_exe_id == pac_id,
                 exists(
                     select(1)
                     .select_from(input_link_alias)
@@ -196,6 +200,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             results = session.execute(stmt).one_or_none()
             if not results:
+                msg = f"No data found for {pac_id}"
                 raise ValueError(msg)
             results = results[0]
             input_ufile_list = [r.input_ucfs for r in results.input_ufiles]
@@ -208,15 +213,20 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             "output_ufiles": output_ufile_list,
         }
 
+    def load_links(self, pac_id: str) -> None:
+        """Load pac_id links from the database.
 
         Args:
+            pac_id: Node execution ID to load information for.
         """
         msg = "Not yet implemented."
         raise NotImplementedError(msg)
 
+    def get_execution_status(self, pac_id: str, uwid: str) -> float | None:
         """Get the duration in seconds for a given execution.
 
         Args:
+            pac_id: Node execution ID.
             uwid: Workflow ID.
 
         Returns:
@@ -226,6 +236,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             stmt = (
                 select(ExecutionHistory.duration_seconds)
                 .where(
+                    (ExecutionHistory.uunode_exe_id == pac_id)
                     & (ExecutionHistory.uwid == uwid),
                 )
                 .order_by(desc(ExecutionHistory.started_time))
@@ -233,6 +244,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             return session.execute(stmt).scalar_one_or_none()
 
+    def find_pac_ids_of_producers(self, ucfs: str) -> list:
+        """Find all producer pac_ids given a UCFS.
 
         Args:
             ucfs: UCFS string.
@@ -251,6 +264,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             return session.execute(stmt).scalars().all()
 
+    def find_pac_ids_of_consumers(self, ucfs: str) -> list:
+        """Find all consumer pac_ids given a UCFS.
 
         Args:
             ucfs: UCFS string.
@@ -269,6 +284,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             )
             return session.execute(stmt).scalars().all()
 
+    def find_pac_ids(self, ucfs: str) -> dict:
+        """Find all pac_ids given a UCFS.
 
         Args:
             ucfs: UCFS string.
@@ -277,16 +294,20 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             Dict with "consumers" and "producers" as lists of node execution IDs.
         """
         return {
+            "consumers": self.find_pac_ids_of_consumers(ucfs),
+            "producers": self.find_pac_ids_of_producers(ucfs),
         }
 
     def load_history(
         self,
+        pac_id: str | None = None,
         wid: str | None = None,
         limit: int | None = None,
     ) -> dict:
         """Load execution history from the database.
 
         Args:
+            pac_id: Node execution ID to load the history for.
             wid: Workflow ID to load the history for.
             limit: Optional maximum number of resulting history objects.
 
@@ -294,6 +315,8 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
             Dictionary of execution history entries.
         """
         query = []
+        if pac_id is not None:
+            query.append(ExecutionHistory.uunode_exe_id == pac_id)
         if wid is not None:
             query.append(ExecutionHistory.uwid == wid)
         with Session(self.db) as session:
@@ -341,7 +364,9 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         """Save UTrace information to the database.
 
         Args:
+            utrace: UTrace object for a given (pac_id, wid).
         """
+        pac_id, uwid = utrace.id
         with Session(self.db) as session:
             if not self.umeta_exists(utrace=utrace):
                 input_objs, output_objs = self._save_input_and_output_files(
@@ -350,6 +375,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 )
                 session.flush()
                 new_config = ExecutionConfigurations(
+                    uunode_exe_id=pac_id,
                     run_parameters=utrace.urun_dict.parameters,
                     command="".join(utrace.urun_dict.command_list),
                     unode=utrace.unode_meta["unode_full_identifier"],
@@ -358,6 +384,7 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
                 )
                 session.add(new_config)
             new_entry = ExecutionHistory(
+                uunode_exe_id=pac_id,
                 uwid=uwid,
                 started_time=utrace.start_time,
                 duration_seconds=utrace.duration_seconds,
@@ -428,8 +455,10 @@ class SQLAlchemyBaseUMeta(UMetaIOBase):
         Returns:
             Boolean indicating if the configuration already exists.
         """
+        pac_id, _ = utrace.id
         with Session(self.db) as session:
             stmt = select(
+                exists().where(ExecutionConfigurations.uunode_exe_id == pac_id),
             )
             return session.execute(stmt).scalar()
 

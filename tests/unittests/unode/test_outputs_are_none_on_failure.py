@@ -21,9 +21,11 @@ def test_node_fail_produces_none():
         crash_on_resource_crash=False,
     )
     assert None in result_8
+    pac_id, wid = test_node8.utrace_history[-1]
     report = urgap.UReport(wid=wid)
     storage_base_uri = ufiles[0].storage_base_uri
     crashed_trace = report.get_trace(
+        pac_id=pac_id,
         wid=wid,
         storage_base_uri=storage_base_uri,
     )

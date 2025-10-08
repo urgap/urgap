@@ -39,7 +39,9 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
     return_file = test_node1.run(ufiles=ufiles, urun_dict=urun_dict)
     print("Output node1:")
     pprint.pprint(return_file)
+    pac_id, wid = test_node1.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
 
     urun_dict.assign_wid()
     print("Input:")
@@ -48,4 +50,6 @@ def test_node_workflow_rerun_is_skipped_simple(provide_clean_test_node_dirs):
 
     print("Output:")
     pprint.pprint(second_run_return_file)
+    pac_id, wid = test_node1.utrace_history[-1]
     report = urgap.UReport(wid=wid)
+    assert report.get_trace(pac_id, wid, storage_base_uri).was_skipped is True
