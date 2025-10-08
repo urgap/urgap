@@ -425,6 +425,7 @@ UMeta:
                     non_root_ufiles=non_root_ufiles,
                     nodes=nodes,
                 )
+                links[(nodes.index(source), nodes.index(pac_id))] += new_connection
         return nodes, links
 
     def _append_ufile_source(

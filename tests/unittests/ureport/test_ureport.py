@@ -177,6 +177,7 @@ def test_traces_assignment_line(monkeypatch):
 
     report._umeta = DummyUMeta()
 
+    report.execution_history = report._umeta.load_history(pac_id=dummy_pac_id)
     report._traces[(dummy_pac_id, dummy_wid)] = report._umeta.load_utrace(
         pac_id=dummy_pac_id,
         wid=dummy_wid,
@@ -211,6 +212,7 @@ def test_multiple_producing_pac_ids(monkeypatch):
     report._os = []
 
     producing_ucfs = "dummy_ucfs"
+    producing_pac_id = report._umeta.find_pac_ids_of_producers(producing_ucfs)
 
     with pytest.raises(OSError) as exc_info:
         if len(producing_pac_id) > 1:
@@ -443,6 +445,7 @@ def test_execution_summary(monkeypatch):
     summary = {}
     for pac_id, wid in list(report.execution_history.keys()):
         summary[pac_id] = {
+            "execution_time": report.execution_history.execution_time(pac_id, wid),
             "was_skipped": report.execution_history.was_skipped(pac_id, wid),
             "was_run": report.execution_history.was_run(pac_id, wid),
         }
@@ -742,6 +745,7 @@ def test_already_seen_nodes_loop():
     already_seen_nodes = set()
 
     for pac_id, wid in list(report.execution_history.keys()):
+        ut = report.get_trace(pac_id, wid, storage_base_uri=report.storage_base_uri)
         already_seen_nodes.add(pac_id)
 
         assert ut["utrace_loaded"] is True
@@ -787,6 +791,7 @@ def test_already_seen_nodes_loop():
     already_seen_nodes = set()
 
     for pac_id, wid in list(report.execution_history.keys()):
+        ut = report.get_trace(pac_id, wid, storage_base_uri=report.storage_base_uri)
         already_seen_nodes.add(pac_id)
 
         assert ut["utrace_loaded"] is True
@@ -838,6 +843,7 @@ def test_history_rows_append():
     }
 
     for pac_id, wid in list(report.execution_history.keys()):
+        ut = report.get_trace(pac_id, wid, storage_base_uri=report.storage_base_uri)
         processing_time = ut.history.execution_time(pac_id, wid).total_seconds()
 
         history["rows"].append(

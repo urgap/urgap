@@ -95,3 +95,4 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
 
         pac_id, wid = basic_test_node.utrace_history[-1]
         report = urgap.UReport(wid=wid)
+        assert report.get_trace(pac_id, wid, storage_base_uri).was_skipped is False

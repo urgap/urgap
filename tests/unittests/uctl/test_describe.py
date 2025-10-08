@@ -80,4 +80,5 @@ def test_describe_wid_doesnt_exist_click(caplog):
 def test_describe_node_ex_id_doesnt_exist_click(caplog):
     runner.invoke(describe_node_ex_id_click, ["BasicFunctionTestNode:1.1.0"])
     assert (
+        "No History found for given pac_id: BasicFunctionTestNode:1.1.0" in caplog.text
     )
