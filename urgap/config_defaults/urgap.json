@@ -80,5 +80,17 @@
         "value": null,
         "description": "Open Telementry Exporter Type. Null will disable OTEL.",
         "options": [null, "OTPL", "AZ-Insights", "Console"]
+    },
+    "service_bus_topic": {
+        "value": "urgap_queue",
+        "description": "Topic for pulling work from Service Bus worker."
+    },
+    "service_bus_completion_topic": {
+        "value": "urgap_completed",
+        "description": "Optional topic to publish completion events to."
+    },
+    "service_bus_exit_after_first_message": {
+        "value": true,
+        "description": "If true, worker exits successfully after processing one message."
     }
 }

@@ -8,6 +8,7 @@ import os
 import pprint
 import signal
 import threading
+import time
 import traceback
 import webbrowser
 
@@ -235,6 +236,136 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
     return nodes_list
 
 
+def _ensure_service_bus_entities(
+    namespace: str,
+    credential: object,
+) -> None:
+    from azure.servicebus.management import (
+        ServiceBusAdministrationClient,
+        SqlRuleFilter,
+    )
+
+    admin = ServiceBusAdministrationClient(
+        fully_qualified_namespace=namespace,
+        credential=credential,
+    )
+            )
+
+
+def _publish_completion(
+    sender: object,
+    completion_topic: str | None,
+    event: dict,
+) -> None:
+    """Publish a completion event.
+
+    Args:
+        sender: Service Bus sender object.
+        completion_topic: Topic name if completion publishing enabled, else None.
+        event: Event payload dictionary to serialize.
+    """
+    if not completion_topic:
+        return
+    from azure.servicebus import ServiceBusMessage
+
+    sender.send_messages(
+        ServiceBusMessage(
+            json.dumps(event),
+        ),
+    )
+
+
+def _process_message(
+    try:
+        )
+
+
+    """Run a Service Bus worker for a specific unode.
+
+    Args:
+        cred_key: URI containing the namespace (azure-servicebus://<namespace>.servicebus.windows.net).
+        unode_identifier: Full unode identifier (e.g., Name:1.0.0).
+    """
+    from azure.identity import DefaultAzureCredential
+    from azure.servicebus import (
+        ServiceBusClient,
+        ServiceBusReceiveMode,
+    )
+
+    credential = DefaultAzureCredential()
+    topic_name = urgap.config["service_bus_topic"]
+    subscription_name = unode_identifier.replace(":", "__")
+    completion_topic = urgap.config["service_bus_completion_topic"]
+    exit_after_first = urgap.config["service_bus_exit_after_first_message"]
+    _ensure_service_bus_entities(
+        namespace_host,
+        credential,
+    )
+    with ServiceBusClient(
+        fully_qualified_namespace=namespace_host,
+        credential=credential,
+    ) as client:
+        receiver_ctx = client.get_subscription_receiver(
+            topic_name=topic_name,
+            subscription_name=subscription_name,
+            max_wait_time=5,
+            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+        )
+        completion_sender = (
+            client.get_topic_sender(topic_name=completion_topic)
+            else None
+        )
+        with receiver_ctx as receiver:
+            logger.info(
+                unode_identifier,
+                topic_name,
+                subscription_name,
+            )
+            _handle_service_bus_messages(
+                receiver=receiver,
+                completion_sender=completion_sender,
+                completion_topic=completion_topic if completion_sender else None,
+                exit_after_first=exit_after_first,
+                unode_identifier=unode_identifier,
+            )
+
+
+def _process_service_bus_message(
+    msg: object,
+    receiver: object,
+    completion_sender: object | None,
+    completion_topic: str | None,
+    unode_identifier: str,
+    exit_after_first: bool,
+    preview = json.loads(str(msg))
+    if ok:
+
+
+def _handle_service_bus_messages(
+    receiver: object,
+    completion_sender: object | None,
+    completion_topic: str | None,
+    exit_after_first: bool,
+    unode_identifier: str,
+) -> None:
+    while True:
+        messages = receiver.receive_messages(
+            max_wait_time=5,
+        )
+        if not messages:
+            continue
+        for msg in messages:
+                msg,
+                receiver,
+                completion_sender,
+                completion_topic,
+                unode_identifier,
+                exit_after_first,
+            )
+            if stop:
+                return
+
+
 @click.command()
 @click.option(
     "--nodes",
@@ -251,7 +382,18 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
     multiple=False,
     default=None,
 )
+@click.option(
+    "--via-servicebus",
+    help="Service Bus ucredentials key (azure-servicebus://<ns>.servicebus.windows.net) to run a subscription worker.",
+    required=False,
+)
+def upi_server(
+    mcp: bool | None,
+    via_servicebus: str | None,
+) -> None:
+    """Spawn servers for requested Urgap nodes and optional Service Bus worker.
 
+    If --via-servicebus is provided a worker process is started that listens on configured queues.
     """
     processes = []
     shutdown_event = multiprocessing.Event()
@@ -268,6 +410,12 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
         )
         processes.append(p)
         p.start()
+        if via_servicebus is not None:
+            sb_proc = multiprocessing.Process(
+                target=_service_bus_run_worker,
+            )
+            processes.append(sb_proc)
+            sb_proc.start()
 
     if mcp is not None:
         p = multiprocessing.Process(
@@ -284,6 +432,7 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
     def signal_handler(sig: int, _frame: FrameType | None) -> None:
         msg = f"Parent process received termination signal {sig}"
         logger.info(msg)
+        shutdown_event.set()
         for proc in processes:
             proc.terminate()
 
