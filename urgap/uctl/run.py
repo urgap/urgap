@@ -239,7 +239,9 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
 def _ensure_service_bus_entities(
     namespace: str,
     credential: object,
+    topic_subscription_filter_pairs: list,
 ) -> None:
+    from azure.core.exceptions import ResourceNotFoundError
     from azure.servicebus.management import (
         ServiceBusAdministrationClient,
         SqlRuleFilter,
@@ -249,8 +251,30 @@ def _ensure_service_bus_entities(
         fully_qualified_namespace=namespace,
         credential=credential,
     )
+    for (
+        topic,
+        subscription,
+        filter_value,
+    ) in topic_subscription_filter_pairs:  # renamed from filter (ruff A001)
+        newly_created_subscription = False
         try:
+            admin.get_topic(topic)
+        except ResourceNotFoundError:
+            admin.create_topic(topic_name=topic)
         try:
+            admin.get_subscription(topic, subscription)
+        except ResourceNotFoundError:
+            admin.create_subscription(topic_name=topic, subscription_name=subscription)
+            newly_created_subscription = True
+
+        if (filter_value is not None) and newly_created_subscription:
+            admin.delete_rule(topic, subscription, "$Default")
+            admin.create_rule(
+                topic_name=topic,
+                subscription_name=subscription,
+                rule_name="unode_filter",
+                filter=SqlRuleFilter(
+                ),
             )
 
 
@@ -278,8 +302,21 @@ def _publish_completion(
 
 
 def _process_message(
+    body: object,
+) -> tuple[bool, list[str] | None]:
+    """Process a Service Bus message using the strict minimal schema.
+
+    Required schema keys (all mandatory):
+
+    Returns (ok, output_uris).
+    On failure ok=False and output_uris=None.
+    """
     try:
+        output_uris = [o.as_uri() for o in output_files if o is not None]
+    except Exception:
+        logger.exception(
         )
+    return ok, output_uris
 
 
     """Run a Service Bus worker for a specific unode.
@@ -300,9 +337,15 @@ def _process_message(
     subscription_name = unode_identifier.replace(":", "__")
     completion_topic = urgap.config["service_bus_completion_topic"]
     exit_after_first = urgap.config["service_bus_exit_after_first_message"]
+    topic_subscription_filter_pairs = [
+        (topic_name, subscription_name, unode_identifier),
+    ]
+    if completion_topic is not None:
+        topic_subscription_filter_pairs += [(completion_topic, "Completed", None)]
     _ensure_service_bus_entities(
         namespace_host,
         credential,
+        topic_subscription_filter_pairs=topic_subscription_filter_pairs,
     )
     with ServiceBusClient(
         fully_qualified_namespace=namespace_host,
@@ -341,8 +384,34 @@ def _process_service_bus_message(
     completion_topic: str | None,
     unode_identifier: str,
     exit_after_first: bool,
+) -> bool:
+    """Handle a single Service Bus message.
+
+    Returns True if worker loop should stop; False otherwise.
+    """
     preview = json.loads(str(msg))
+    if target_unode != unode_identifier:
+        receiver.abandon_message(msg)
+        return False
+    ok, output_uris = _process_message(preview)
     if ok:
+        if completion_topic is not None:
+            event_payload = preview.copy()
+            _publish_completion(
+                completion_sender,
+                completion_topic,
+                event_payload,
+            )
+        receiver.complete_message(msg)
+        if exit_after_first:
+            logger.info(
+                "Configured to exit after first message; stopping worker for %s",
+                unode_identifier,
+            )
+            return True
+    else:
+        receiver.abandon_message(msg)
+    return False
 
 
 def _handle_service_bus_messages(
@@ -359,6 +428,7 @@ def _handle_service_bus_messages(
         if not messages:
             continue
         for msg in messages:
+            stop = _process_service_bus_message(
                 msg,
                 receiver,
                 completion_sender,
