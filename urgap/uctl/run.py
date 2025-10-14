@@ -249,6 +249,8 @@ def _ensure_service_bus_entities(
         fully_qualified_namespace=namespace,
         credential=credential,
     )
+        try:
+        try:
             )
 
 
@@ -292,6 +294,7 @@ def _process_message(
         ServiceBusReceiveMode,
     )
 
+    namespace_host = cred_key.split("://", 1)[-1].rstrip("/")
     credential = DefaultAzureCredential()
     topic_name = urgap.config["service_bus_topic"]
     subscription_name = unode_identifier.replace(":", "__")
@@ -313,6 +316,7 @@ def _process_message(
         )
         completion_sender = (
             client.get_topic_sender(topic_name=completion_topic)
+            if completion_topic
             else None
         )
         with receiver_ctx as receiver:
