@@ -127,6 +127,10 @@ def create_app(name: str) -> FastAPI:
     return app
 
 
+def run_server(
+    name: str,
+    port: int,
+) -> None:
     """Run uvicorn server in a background thread and listen for shutdown event.
 
     Args:
