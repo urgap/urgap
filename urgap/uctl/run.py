@@ -318,8 +318,11 @@ def _process_message(
     Returns (ok, output_uris).
     On failure ok=False and output_uris=None.
     """
+    ok = False
+    output_uris = None
     try:
         output_uris = [o.as_uri() for o in output_files if o is not None]
+        ok = True
     except Exception:
         logger.exception(
         )
