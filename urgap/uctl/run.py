@@ -334,6 +334,7 @@ def _process_message(
     """
     from azure.identity import DefaultAzureCredential
     from azure.servicebus import (
+        AutoLockRenewer,
         ServiceBusClient,
         ServiceBusReceiveMode,
     )
@@ -344,6 +345,7 @@ def _process_message(
     subscription_name = unode_identifier.replace(":", "__")
     completion_topic = urgap.config["service_bus_completion_topic"]
     exit_after_first = urgap.config["service_bus_exit_after_first_message"]
+    max_autorenew = urgap.config["service_bus_max_autorenewal_minutes"] * 60
     topic_subscription_filter_pairs = [
         (topic_name, subscription_name, unode_identifier),
     ]
@@ -369,11 +371,14 @@ def _process_message(
             if completion_topic
             else None
         )
+        renewer = AutoLockRenewer() if max_autorenew > 0 else None
         with receiver_ctx as receiver:
             logger.info(
+                "ServiceBus worker started for unode=%s topic=%s subscription=%s max_autorenew=%ss",
                 unode_identifier,
                 topic_name,
                 subscription_name,
+                max_autorenew,
             )
             _handle_service_bus_messages(
                 receiver=receiver,
@@ -381,7 +386,11 @@ def _process_message(
                 completion_topic=completion_topic if completion_sender else None,
                 exit_after_first=exit_after_first,
                 unode_identifier=unode_identifier,
+                lock_renewer=renewer,
+                max_autorenew=max_autorenew,
             )
+        if renewer:
+            renewer.close()
 
 
 def _process_service_bus_message(
@@ -427,6 +436,8 @@ def _handle_service_bus_messages(
     completion_topic: str | None,
     exit_after_first: bool,
     unode_identifier: str,
+    lock_renewer: object | None,
+    max_autorenew: float,
 ) -> None:
     while True:
         messages = receiver.receive_messages(
@@ -435,6 +446,12 @@ def _handle_service_bus_messages(
         if not messages:
             continue
         for msg in messages:
+            if lock_renewer and max_autorenew > 0:
+                lock_renewer.register(
+                    receiver,
+                    msg,
+                    max_lock_renewal_duration=max_autorenew,
+                )
             stop = _process_service_bus_message(
                 msg,
                 receiver,

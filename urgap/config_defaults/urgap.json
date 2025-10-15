@@ -92,5 +92,8 @@
     "service_bus_exit_after_first_message": {
         "value": true,
         "description": "If true, worker exits successfully after processing one message."
+    },
+    "service_bus_max_autorenewal_minutes": {
+        "value": 0,
     }
 }
