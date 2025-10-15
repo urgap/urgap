@@ -13,6 +13,7 @@ import traceback
 import webbrowser
 
 from concurrent.futures import ProcessPoolExecutor
+from multiprocessing.synchronize import Event as EventClass
 from pathlib import Path
 from types import FrameType
 
@@ -130,6 +131,7 @@ def create_app(name: str) -> FastAPI:
 def run_server(
     name: str,
     port: int,
+    shutdown_event: EventClass,
 ) -> None:
     """Run uvicorn server in a background thread and listen for shutdown event.
 
@@ -336,6 +338,7 @@ def _process_message(
 def _service_bus_run_worker(
     cred_key: str,
     unode_identifier: str,
+    shutdown_event: EventClass | None = None,
 ) -> None:
     """Run a Service Bus worker for a specific unode.
 
