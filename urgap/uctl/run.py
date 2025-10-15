@@ -307,6 +307,13 @@ def _process_message(
     """Process a Service Bus message using the strict minimal schema.
 
     Required schema keys (all mandatory):
+      - uuid
+      - wid
+      - unode_full_identifier
+      - urun_dict
+      - input_uris
+      - config
+      - ucredentials
 
     Returns (ok, output_uris).
     On failure ok=False and output_uris=None.
