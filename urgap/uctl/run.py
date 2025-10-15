@@ -327,10 +327,14 @@ def _process_message(
     ok = False
     output_uris = None
     try:
+        urd.unode_parameters["remote_url"] = None
+        urd["is_remote_run"] = False
+        output_files = node.run(ufiles=ufiles, urun_dict=urd)
         output_uris = [o.as_uri() for o in output_files if o is not None]
         ok = True
     except Exception:
         logger.exception(
+            "Failed to process message",
         )
     return ok, output_uris
 
@@ -456,6 +460,7 @@ def _handle_service_bus_messages(
     lock_renewer: object | None,
     max_autorenew: float,
 ) -> None:
+    empty_polls = 0
     while True:
         messages = receiver.receive_messages(
             max_wait_time=5,

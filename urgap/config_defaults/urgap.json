@@ -95,5 +95,6 @@
     },
     "service_bus_max_autorenewal_minutes": {
         "value": 0,
+        "description": "Maximum time after which to stop auto renewing lock on message. 0 disables this."
     }
 }
