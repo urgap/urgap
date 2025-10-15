@@ -511,6 +511,7 @@ def _handle_service_bus_messages(
     required=False,
 )
 def upi_server(
+    nodes: tuple | str,
     mcp: bool | None,
     via_servicebus: str | None,
 ) -> None:
