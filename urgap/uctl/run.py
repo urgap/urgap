@@ -329,11 +329,16 @@ def _process_message(
     return ok, output_uris
 
 
+def _service_bus_run_worker(
+    cred_key: str,
+    unode_identifier: str,
+) -> None:
     """Run a Service Bus worker for a specific unode.
 
     Args:
         cred_key: URI containing the namespace (azure-servicebus://<namespace>.servicebus.windows.net).
         unode_identifier: Full unode identifier (e.g., Name:1.0.0).
+        shutdown_event: Event to signal parent process to terminate.
     """
     from azure.identity import DefaultAzureCredential
     from azure.servicebus import (
@@ -394,6 +399,8 @@ def _process_message(
             )
         if renewer:
             renewer.close()
+    if exit_after_first and shutdown_event:
+        shutdown_event.set()
 
 
 def _process_service_bus_message(
@@ -514,6 +521,7 @@ def upi_server(
         if via_servicebus is not None:
             sb_proc = multiprocessing.Process(
                 target=_service_bus_run_worker,
+                args=(via_servicebus, unode, shutdown_event),
             )
             processes.append(sb_proc)
             sb_proc.start()
