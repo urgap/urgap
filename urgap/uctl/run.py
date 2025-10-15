@@ -461,6 +461,14 @@ def _handle_service_bus_messages(
             max_wait_time=5,
         )
         if not messages:
+            empty_polls += 1
+            if empty_polls >= 3:
+                logger.info(
+                    "No messages after %s consecutive polls exiting worker",
+                    empty_polls,
+                )
+                return
+            time.sleep(10)
             continue
         for msg in messages:
             if lock_renewer and max_autorenew > 0:
