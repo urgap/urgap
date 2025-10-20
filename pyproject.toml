@@ -48,6 +48,7 @@ dependencies = [
 cloud = [
     'azure-identity==1.25.1',
     'azure-keyvault-secrets==4.10.0',
+    'azure-storage-file-datalake==12.22.0',
     'cloud-sql-python-connector~=1.0',
     'google-apitools==0.5.35',
     'pg8000~=1.29',
@@ -72,6 +73,7 @@ legacy = [
 all = [
     'azure-identity==1.25.1',
     'azure-keyvault-secrets==4.10.0',
+    'azure-storage-file-datalake==12.22.0',
     'cloud-sql-python-connector~=1.0',
     'google-apitools==0.5.35',
     'pg8000~=1.29',
