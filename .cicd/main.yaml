@@ -64,7 +64,9 @@ stages:
         strategy:
           matrix:
             Python3.11:
+              pythonVersion: '3.11'
             Python3.12:
+              pythonVersion: '3.12'
         steps:
           - template: setup_urgap_test_suite.yaml
           - template: tests/setup_tests.yaml@templates
@@ -82,12 +84,14 @@ stages:
               envUrgapHome: $(Pipeline.Workspace)/.urgap
           - template: tests/coverage_report.yaml@templates
             parameters:
+              sonarqubePythonVersion: ${{ variables.DEFAULT_PYTHON }}
               coverageType: 'xml'
               flags: -o ../urgap/coverage.xml
           - template: code_quality/sonarqube.yaml@templates
             parameters:
               SonarQube: dso-sonarqube-urgap
               cliProjectKey: dso-urgap
+              sonarqubePythonVersion: ${{ variables.DEFAULT_PYTHON }}
               projectBaseDir: ../urgap
               sonarSources: ../urgap
               sonarExclusions: '**/tests/**,**/build/**,**/docs/**,**/utils/**,**/examples/**,**/ext/**,**/wrappers/**,**/urgap/resources/**,**/unodes/**'
