@@ -187,7 +187,15 @@ def test_retrieve_processed_uris_with_none():
     assert result == [None]  # just check the output
 
 
+def test_rebase_success(tmp_dir):
     from urgap.uhelpers.prefect import rebase
 
+    storage_base_uri = f"file://{tmp_dir}/bucket/base/"
+    result = rebase.fn(
+        uris=uris,
+        storage_base_uri=storage_base_uri,
+        ucredentials=CREDS,
+        config=CONFIG,
+    )
 
     assert result is True
