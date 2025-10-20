@@ -190,6 +190,9 @@ def test_retrieve_processed_uris_with_none():
 def test_rebase_success(tmp_dir):
     from urgap.uhelpers.prefect import rebase
 
+    uris = [
+        f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#unified_csvs/BSA1_xtandem_alanine_unified.csv"
+    ]
     storage_base_uri = f"file://{tmp_dir}/bucket/base/"
     result = rebase.fn(
         uris=uris,
