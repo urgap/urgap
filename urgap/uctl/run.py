@@ -303,6 +303,7 @@ def _publish_completion(
     sender.send_messages(
         ServiceBusMessage(
             json.dumps(event),
+            correlation_id=event.get("uuid"),
         ),
     )
 
@@ -327,6 +328,15 @@ def _process_message(
     ok = False
     output_uris = None
     try:
+        consumer_kwargs = body["consumer_kwargs"]
+        urgap.config.update(consumer_kwargs["config"])
+        urgap.instances.ucredential_manager.add_credentials(
+            consumer_kwargs["ucredentials"],
+        )
+        node = urgap.init_unode(consumer_kwargs["unode_full_identifier"])
+        ufiles = urgap.UFileList.from_uri_list(consumer_kwargs["input_uris"])
+        urd = urgap.URunDict(consumer_kwargs["urun_dict"])
+        urd.wid = consumer_kwargs["wid"]
         urd.unode_parameters["remote_url"] = None
         urd["is_remote_run"] = False
         output_files = node.run(ufiles=ufiles, urun_dict=urd)
@@ -427,6 +437,7 @@ def _process_service_bus_message(
     Returns True if worker loop should stop; False otherwise.
     """
     preview = json.loads(str(msg))
+    target_unode = preview.get("subscription_key")
     if target_unode != unode_identifier:
         receiver.abandon_message(msg)
         return False
@@ -434,6 +445,10 @@ def _process_service_bus_message(
     if ok:
         if completion_topic is not None:
             event_payload = preview.copy()
+            if "custom_message" in event_payload:
+                event_payload["custom_message"].update({"output_uris": output_uris})
+            else:
+                event_payload["custom_message"] = {"output_uris": output_uris}
             _publish_completion(
                 completion_sender,
                 completion_topic,
