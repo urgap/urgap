@@ -300,9 +300,11 @@ def _publish_completion(
         return
     from azure.servicebus import ServiceBusMessage
 
+    app_props = {"subscription_key": event.get("subscription_key")}
     sender.send_messages(
         ServiceBusMessage(
             json.dumps(event),
+            application_properties=app_props,
             correlation_id=event.get("uuid"),
         ),
     )
