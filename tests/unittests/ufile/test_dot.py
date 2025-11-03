@@ -1,5 +1,7 @@
 import networkx as nx
 
+import urgap
+
 
 def test_ufile_dot(tmp_dir):
     ufiles = urgap.UFileList(
