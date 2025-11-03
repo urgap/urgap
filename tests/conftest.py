@@ -76,6 +76,7 @@ def init_nodes(ufile_path_list=None, urun_dict=None, unodes=None):
             output_file.remove_remote_object()
     return unodes_dict, ufiles, urun_dict
 
+
 @pytest.fixture
 def provide_clean_test_node_dirs(request):
     unodes, ufiles, urun_dict = init_nodes(
