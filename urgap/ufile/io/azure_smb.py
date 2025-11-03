@@ -100,6 +100,12 @@ class IOAzureSMB(UIOBase):
         """
         if self.remote_object_exists():
             props = self.get_file_properties()
+            r_tags = {}
+            if props.get("metadata") is not None:
+            for k in ["creation_time", "last_modified"]:
+                if props.get(k) is not None:
+                    r_tags[k] = props.get(k).isoformat()
+            return r_tags
         return None
 
     def get_object(self) -> str | None:

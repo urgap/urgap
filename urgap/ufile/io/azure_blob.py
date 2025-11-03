@@ -53,12 +53,29 @@ class IOAzureBlobStorage(UIOBase):
         """
         return None
 
+    def get_file_properties(self) -> dict | None:
+        """Get properties associated with the referenced file.
+
+        Returns:
+            Dictionary with properties of the file, or None if not found.
+        """
+        return self.blob.get_blob_properties()
+
     def get_remote_tags(self) -> dict | None:
         """Get remote tags (metadata) for the referenced blob.
 
         Returns:
+            The dictionary of metadata tags, creation_time, last_modified if the object exists, otherwise None.
         """
         if self.remote_object_exists():
+            props = self.get_file_properties()
+            r_tags = {}
+            if props.get("metadata") is not None:
+                r_tags.update(props.get("metadata"))
+            for k in ["creation_time", "last_modified"]:
+                if props.get(k) is not None:
+                    r_tags[k] = props.get(k).isoformat()
+            return r_tags
         return None
 
     def upload(self, tags: dict | None = None) -> None:
