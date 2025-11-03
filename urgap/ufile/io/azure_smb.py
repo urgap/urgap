@@ -93,10 +93,13 @@ class IOAzureSMB(UIOBase):
         return self.file_client.get_file_properties()
 
     def get_remote_tags(self) -> dict | None:
+        """Get remote tags associated with the referenced file.
 
         Returns:
+            Dictionary of metadata, creation_time, last_modified, or None if not found.
         """
         if self.remote_object_exists():
+            props = self.get_file_properties()
         return None
 
     def get_object(self) -> str | None:
