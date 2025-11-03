@@ -10,6 +10,7 @@ steps:
     displayName: Install uv
   - script: |
       hatch build -t wheel
+      uv pip install $(find dist -type f -name "*.whl")["all"] --no-cache-dir --system
       uctl info version
       uctl info unodes
     displayName: Setup urgap
