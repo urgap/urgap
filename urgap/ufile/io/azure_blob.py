@@ -146,16 +146,32 @@ class IOAzureBlobStorage(UIOBase):
         self,
         pattern: str | None = None,
         full_string: bool = False,
+        start_date: str | None = None,
+        end_date: str | None = None,
     ) -> list:
         """List all objects in the Azure container, optionally filtering by regex pattern.
 
         Args:
             pattern: Regular expression pattern to filter blob names.
             full_string: Whether to return the list with full strings or just fragments.
+            start_date: ISO format datetime string to filter blobs modified after this date.
+            end_date: ISO format datetime string to filter blobs modified before this date.
 
         Returns:
             A list of blob names that match the pattern, or all blob names if pattern is None.
         """
+            blobs = self.container.list_blobs()
+            container_objects = []
+            for blob in blobs:
+        if full_string is True:
+            container_objects = self.add_storage_uri_to_container_items(
+                container_objects,
+            )
+        else:
+            logger.warning(
+                "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
+            )
+
         return container_objects
 
     def remote_object_exists(self) -> bool:

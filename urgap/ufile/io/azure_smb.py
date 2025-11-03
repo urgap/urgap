@@ -197,6 +197,8 @@ class IOAzureSMB(UIOBase):
         pattern: str | None = None,
         limit: int | None = None,
         full_string: bool = False,
+        start_date: str | None = None,
+        end_date: str | None = None,
     ) -> list:
         """Get all objects in a folder/'container', recursively, with optional regex filtering.
 
@@ -204,6 +206,8 @@ class IOAzureSMB(UIOBase):
             pattern: Optional regex pattern for filtering returned file names.
             limit: Optional limit for the number of objects returned.
             full_string: Whether to return the list with full strings or just fragments.
+            start_date: ISO format datetime string to filter blobs modified after this date.
+            end_date: ISO format datetime string to filter blobs modified before this date.
 
         Returns:
             List of object names matching the filter (or all if no filter/limit).
@@ -213,6 +217,8 @@ class IOAzureSMB(UIOBase):
                 self.list_all_files_with_paths(
                     self.object_directory_client,
                     limit=limit,
+                    start_date=start_date,
+                    end_date=end_date,
                 ),
             )
         else:
@@ -222,6 +228,8 @@ class IOAzureSMB(UIOBase):
             container_objects = self.list_all_files_with_paths(
                 self.object_directory_client,
                 limit=limit,
+                start_date=start_date,
+                end_date=end_date,
             )
         if pattern is not None:
             container_objects = [
@@ -234,6 +242,8 @@ class IOAzureSMB(UIOBase):
         directory_client: urgap.UFile.io,
         current_path: str | Path | None = None,
         limit: int | None = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
     ) -> list:
         """Recursively list all files in the given directory client, including their paths.
 
@@ -241,6 +251,8 @@ class IOAzureSMB(UIOBase):
             directory_client: The Azure directory client to list files from.
             current_path: The current path prefix for recursion (default: None).
             limit: Optional limit for the number of files returned.
+            start_date: ISO format datetime string to filter files modified after this date.
+            end_date: ISO format datetime string to filter files modified before this date.
 
         Returns:
             List of file paths as strings.
@@ -258,6 +270,8 @@ class IOAzureSMB(UIOBase):
                     subdir_client,
                     current_path=item_path,
                     limit=limit,
+                    start_date=start_date,
+                    end_date=end_date,
                 )
                 files_with_paths.extend(subdir_files)
                 files_with_paths.append(f"{item_path}")

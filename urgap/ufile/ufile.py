@@ -774,6 +774,8 @@ class UFile:
         pattern: str | None = None,
         limit: int = 1000,
         full_string: bool = False,
+        start_date: str | None = None,
+        end_date: str | None = None,
     ) -> list:
         """List all objects in the remote container.
 
@@ -789,6 +791,8 @@ class UFile:
             pattern=pattern,
             limit=limit,
             full_string=full_string,
+            start_date=start_date,
+            end_date=end_date,
         )
 
     def identify_lineage_root_files(self, use_umeta: bool = True) -> list:
