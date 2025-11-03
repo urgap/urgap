@@ -163,6 +163,7 @@ class IOAzureBlobStorage(UIOBase):
             blobs = self.container.list_blobs()
             container_objects = []
             for blob in blobs:
+                ):
         if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
                 container_objects,
