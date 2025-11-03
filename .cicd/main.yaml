@@ -67,6 +67,8 @@ stages:
               pythonVersion: '3.11'
             Python3.12:
               pythonVersion: '3.12'
+            Python3.13:
+              pythonVersion: '3.13'
         steps:
           - template: setup_urgap_test_suite.yaml
           - template: tests/setup_tests.yaml@templates
