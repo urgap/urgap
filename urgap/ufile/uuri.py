@@ -21,8 +21,18 @@ class UUri:
     It also extracts tags from queries and can handle different storage backends.
     """
 
+    def __init__(self, uri: str) -> None:
         self._user = None
         self._password = None
+        parsed = urlparse(uri)
+        self.uri_dict = {
+            "scheme": parsed.scheme,
+            "netloc": parsed.netloc,
+            "path": parsed.path,
+            "params": parsed.params,
+            "query": parsed.query,
+            "fragment": parsed.fragment,
+        }
         self.scheme = self.uri_dict["scheme"]
         self.netloc = self.uri_dict["netloc"]
         self.path = self.uri_dict["path"]
@@ -268,6 +278,7 @@ class UUri:
     @property
     def host(self) -> str | None:
         """Get the host."""
+        if self.scheme == "smb":
             return self.get_host()
         return None
 
@@ -280,6 +291,7 @@ class UUri:
     @property
     def port(self) -> str | None:
         """Get the port."""
+        if self.scheme == "smb":
             return self.get_port()
         return None
 
