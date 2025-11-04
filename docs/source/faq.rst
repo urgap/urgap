@@ -25,6 +25,7 @@ For other UFile schemata the definition is less explicit. For example, in the ca
 
     minio://k8s-server/<namespace>/<container>/<object_name>
 
+Thus determining what the container name is and what the object name is becomes difficult. The same holds true for  path file (python).
 
 Therefor, we decided to explicitly define the object name as a fragment in the uri.
 

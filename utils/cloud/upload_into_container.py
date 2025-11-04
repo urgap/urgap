@@ -12,6 +12,7 @@ def main(scheme: str, container_name: str, object_folder: str, input_file: str) 
     """Upload local file into cloud container.
 
     Args:
+        scheme (str): scheme for cloud storage provider. currently support: [gcs]
         container_name (str): container, same as bucket
         object_folder (str): folder within bucket
         input_file (str): Path to local file

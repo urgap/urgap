@@ -12,6 +12,7 @@ def main(url: str, container_name: str) -> None:
     content of google cloud storage container
 
     Args:
+        url (str): schema+netloc can be gcs
             (need host eg.g hdbsalx091:9010/urgap_dev)
         container_name (str): name of container
     """
