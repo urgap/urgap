@@ -32,6 +32,7 @@ def upload_folder_click(
         uctl upload folder ~/Download gcs://gcp-project-name/gcs-container-name subfolder/in/bucket
 
     This will create UFiles with UUris like:
+        gcs://gsk-rd-ngs-sbx/urgap_test#subfolder/<filename>
     """
     upload_folder(
         folder=folder,
@@ -46,6 +47,7 @@ def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> 
     Args:
         folder: Path to the folder with files to upload.
         bucket_structure: Prefix for object name in the bucket.
+        storage_base_uri: Target storage base UUri.
     """
     base_folder = Path(folder)
     all_files = urgap.UFileList.from_folder(base_folder)
