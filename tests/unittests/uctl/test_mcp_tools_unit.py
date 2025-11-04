@@ -57,6 +57,7 @@ def test_list_container_times_calls_ufile(monkeypatch):
 
     monkeypatch.setattr(urgap, "UFile", DummyUfile)
 
+    out = list_container_times("file://p/b", regex_pattern_string=r".*\.csv$", limit=10)
     assert out == ["file://x#one", "file://x#two"]
     assert calls["uri"].endswith("#dummy.txt")
     assert calls["pattern"] == r".*\.csv$"
