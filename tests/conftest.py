@@ -31,6 +31,11 @@ def ping(host):
     return subprocess.call(command) == 0
 
 
+    """
+    Stub function to validate that a UFile object can be tested.
+    """
+
+
 @pytest.fixture
 def check_if_ufilelist_can_be_tested(request):
     for u in request.param:
