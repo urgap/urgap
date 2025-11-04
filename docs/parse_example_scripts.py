@@ -17,6 +17,8 @@ def source_sphinx(inc, path_to_inc):
 .. autofunction:: {inc.replace(".inc", "")}.main
     :noindex:
 
+.. include:: {Path(str(path_to_inc).removeprefix("source/"))}
+
     """
 
 
