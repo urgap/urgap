@@ -16,6 +16,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ServiceRequestError,
 )
+from azure.storage.fileshare import DirectoryProperties, ShareServiceClient
 
 import urgap
 
@@ -275,7 +276,38 @@ class IOAzureSMB(UIOBase):
                     end_date=end_date,
                 )
                 files_with_paths.extend(subdir_files)
+            elif (not any([start_date, end_date])) or (
+                self.is_within_date_range(
+                    directory_client=directory_client,
+                    item=item,
+                    start_date=start_date,
+                    end_date=end_date,
+                )
+            ):
                 files_with_paths.append(f"{item_path}")
             if limit is not None and len(files_with_paths) >= limit:
                 break
         return files_with_paths
+
+    def is_within_date_range(
+        self,
+        directory_client: urgap.UFile.io,
+        item: DirectoryProperties,
+        start_date: str,
+        end_date: str,
+    ) -> bool:
+        """Check if the item's last modified date is within the specified date range.
+
+        Args:
+            directory_client: The Azure directory client.
+            item: The directory item to check.
+            start_date: ISO format datetime string for the start date filter.
+            end_date: ISO format datetime string for the end date filter.
+
+        Returns:
+            True if the item's last modified date is within the range, False otherwise.
+        """
+        file_client = directory_client.get_file_client(item.name)
+        props = file_client.get_file_properties()
+        last_modified_iso = props.last_modified.isoformat()
+        return (last_modified_iso <= end_date) and (last_modified_iso >= start_date)

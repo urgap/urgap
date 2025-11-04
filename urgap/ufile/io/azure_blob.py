@@ -160,10 +160,18 @@ class IOAzureBlobStorage(UIOBase):
         Returns:
             A list of blob names that match the pattern, or all blob names if pattern is None.
         """
+        if not any([start_date, end_date]):
+            container_objects = list(self.container.list_blob_names())
+        else:
             blobs = self.container.list_blobs()
             container_objects = []
             for blob in blobs:
+                if self.is_within_date_range(
+                    blob=blob,
+                    start_date=start_date,
+                    end_date=end_date,
                 ):
+                    container_objects.append(blob.name)
         if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
                 container_objects,
@@ -174,6 +182,25 @@ class IOAzureBlobStorage(UIOBase):
             )
 
         return container_objects
+
+    def is_within_date_range(
+        self,
+        blob: object,
+        start_date: str,
+        end_date: str,
+    ) -> bool:
+        """Check if the item's last modified date is within the specified date range.
+
+        Args:
+            blob: The azure blob to check.
+            start_date: ISO format datetime string for the start date filter.
+            end_date: ISO format datetime string for the end date filter.
+
+        Returns:
+            True if the item's last modified date is within the range, False otherwise.
+        """
+        last_modified_iso = blob.last_modified.isoformat()
+        return (last_modified_iso <= end_date) and (last_modified_iso >= start_date)
 
     def remote_object_exists(self) -> bool:
         """Check if the blob exists in the container.
