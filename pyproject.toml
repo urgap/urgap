@@ -50,6 +50,7 @@ dependencies = [
 cloud = [
     'azure-identity==1.25.1',
     'azure-keyvault-secrets==4.10.0',
+    'azure-servicebus==7.14.3',
     'azure-storage-file-datalake==12.22.0',
     'azure-storage-file-share==12.23.1',
     'cloud-sql-python-connector~=1.0',
@@ -76,6 +77,7 @@ legacy = [
 all = [
     'azure-identity==1.25.1',
     'azure-keyvault-secrets==4.10.0',
+    'azure-servicebus==7.14.3',
     'azure-storage-file-datalake==12.22.0',
     'azure-storage-file-share==12.23.1',
     'cloud-sql-python-connector~=1.0',
