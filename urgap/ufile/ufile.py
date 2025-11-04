@@ -783,6 +783,8 @@ class UFile:
             pattern: Regex pattern for filtering object names.
             limit: Maximum number of files to request in one query.
             full_string: Whether to return the list with full strings or just fragments.
+            start_date: ISO format datetime string to filter files modified after this date.
+            end_date: ISO format datetime string to filter files modified before this date.
 
         Returns:
             List of object names.
