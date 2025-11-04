@@ -37,6 +37,8 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
             },
         )
         test_node1 = urgap.init_node("TestNode1:1.0.0")
+
+        print("\n------- First run -------\n")
         print("Input:")
         pprint.pprint(urun_dict)
         print(ufiles)
@@ -48,7 +50,9 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
             test_node1.remove_output_folder(output_file)
             assert output_file.remote_object_exists() is False
 
+        print("\n------- Second run -------\n")
         urun_dict.assign_wid()
+        test_node1.run(ufiles=ufiles, urun_dict=urun_dict)
 
         pac_id, wid = test_node1.utrace_history[-1]
         report = urgap.UReport(wid=wid)
