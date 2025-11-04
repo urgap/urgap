@@ -50,6 +50,11 @@ async def run():
             "bucket": "folder/to/files",
         },
     )
+    print(
+        {
+            "call": "gcp_urgap_storage_pattern",
+        }
+    )
 
     await _session_context.__aexit__(None, None, None)
     await _streams_context.__aexit__(None, None, None)
