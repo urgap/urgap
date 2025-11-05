@@ -50,6 +50,7 @@
             "file:///Users/Shared/urgap_resources",
             "file:///fs/shared/software/urgap_resources/",
             "https://raw.githubusercontent.com/computational-ms/demo_files/main/urgap_resources"
+        ]
     },
     "mode": {
         "value": "dev",

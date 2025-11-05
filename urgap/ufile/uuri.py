@@ -22,6 +22,13 @@ class UUri:
     """
 
     def __init__(self, uri: str) -> None:
+        """Initialize a UUri instance from a full UUri string.
+
+            uri: A full UUri string to be parsed.
+
+        Raises:
+            ValueError: If the URI scheme is not supported or the URI is malformed.
+        """
         self._user = None
         self._password = None
         parsed = urlparse(uri)
