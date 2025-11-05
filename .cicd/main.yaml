@@ -63,6 +63,8 @@ stages:
         displayName: 'Tests across Python versions'
         strategy:
           matrix:
+            Python3.10:
+              pythonVersion: '3.10'
             Python3.11:
               pythonVersion: '3.11'
             Python3.12:
