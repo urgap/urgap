@@ -12,7 +12,11 @@ import urgap
         urgap.UFileList(
             [
                 urgap.UFile(
+                    uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
+                    f"test_node_data/test.txt",
+                ),
             ],
+        )
     ],
     indirect=["check_if_ufilelist_can_be_tested"],
 )
@@ -45,6 +49,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
         rerun_test_node = urgap.init_node("TestNode1:1.0.0")
         basic_test_node = urgap.init_node("BasicFunctionTestNode:1.3.0")
 
+        # executing first time
         print(
             """
         ------- First run -------
@@ -62,6 +67,7 @@ def test_node_workflow_rerun_is_skipped_changed_not_triggering_rerun(
         )
         print("Output node3 - first run:")
         pprint.pprint(return_file_node3_first_run)
+        # report3_1 = urgap.UReport(ufile=return_file_node3_first_run[0])
         print(
             """
 

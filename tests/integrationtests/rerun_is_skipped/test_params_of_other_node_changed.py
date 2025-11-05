@@ -10,6 +10,8 @@ import urgap
     [
         (
             urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
+                f"test_node_data/test.txt",
             ),
             urgap.URunDict(
                 {
@@ -25,6 +27,8 @@ import urgap
                             "triggers_rerun_-3": 100,
                         },
                     },
+                    "unode_parameters": {
+                        "record_skipped_runs": True,
                     },
                 },
             ),
@@ -40,6 +44,12 @@ def test_node_workflow_rerun_is_skipped_if_parameter_of_other_node_change(
     storage_base_uri = ufiles[0].storage_base_uri
     test_node1 = test_nodes["TestNode1:1.0.0"]
     test_node3 = test_nodes["TestNode3:1.0.0"]
+    # executing first time
+    print(
+        """
+    ------- First run -------
+    """,
+    )
     print("Input:")
     pprint.pprint(urun_dict)
     print("UFiles:")
@@ -61,9 +71,27 @@ def test_node_workflow_rerun_is_skipped_if_parameter_of_other_node_change(
     report = urgap.UReport(wid=wid)
     assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
 
+    print(
+        """
+    --- executing second time should not trigger rerun of node3 as parameter does not map
+    thus not rerun is triggered ---
+    """,
+    )
     urun_dict["parameters"]["triggers_nuttin"] = 200
+    # urun_dict["parameters"]["triggers_rerun"] = 200
+    print(
+        """
+    ------- Second run -------
+    """,
+    )
     urun_dict.assign_wid()
 
+    print("Input:", urun_dict)
+    return_file_node3_second_run = test_node3.run(
+        ufiles=ufiles,
+        urun_dict=urun_dict,
+    )
+    print("Output node3 - Second run:")
     pprint.pprint(return_file_node3_second_run)
 
     pac_id, wid = test_node3.utrace_history[-1]
