@@ -24,6 +24,7 @@ class UUri:
     def __init__(self, uri: str) -> None:
         """Initialize a UUri instance from a full UUri string.
 
+        Arguments:
             uri: A full UUri string to be parsed.
 
         Raises:
