@@ -31,9 +31,13 @@ def ping(host):
     return subprocess.call(command) == 0
 
 
+def check_ufile_can_be_tested(ufile):
     """
     Stub function to validate that a UFile object can be tested.
+    Replace this logic with actual validation if needed.
     """
+    if not isinstance(ufile, urgap.UFile):
+        raise TypeError(f"Expected UFile, got {type(ufile)}")
 
 
 @pytest.fixture
