@@ -12,8 +12,11 @@ import urgap
         urgap.UFileList(
             [
                 urgap.UFile(
+                    uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
+                    f"test_node_data/test.txt",
                 ),
             ],
+        )
     ],
     indirect=["check_if_ufilelist_can_be_tested"],
 )
@@ -38,6 +41,7 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
         )
         test_node1 = urgap.init_node("TestNode1:1.0.0")
 
+        # executing first time
         print(
             """
         ------- First run -------
@@ -57,6 +61,7 @@ def test_node_workflow_rerun_is_skipped_simple(check_if_ufilelist_can_be_tested)
             Removing output file but not json - should trigger second run!
             """,
         )
+        # removing output
         for output_file in return_file:
             test_node1.remove_output_folder(output_file)
 

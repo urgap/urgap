@@ -12,6 +12,7 @@ def test_setting_tags(tmp_scratch_disk):
 
     uf.tags.update(
         {"lo": "12"},
+    )  # drüberbügeln  what function would raise warning ? add_tags?
     assert uf.tags.get("lo", None) == "12"
 
 
@@ -22,6 +23,7 @@ def test_updating_tags(tmp_scratch_disk):
 
     uf.tags.update(
         {"lo": "12"},
+    )  # drüberbügeln  what function would raise warning ? add_tags?
     assert uf.tags.get("lo", None) == "12"
     uf.tags.update({"asdf": "123"})
     assert uf.tags.get("lo", None) == "12"
@@ -32,12 +34,16 @@ def test_updating_tags(tmp_scratch_disk):
     "provide_clean_scratch_and_remote",
     [
         urgap.UFile(
+            uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}&qc=good&file=yea#"
+            f"test_node_data/test_FILE.txt",
         ),
     ],
     indirect=["provide_clean_scratch_and_remote"],
 )
 def test_tags_are_set_via_uri(provide_clean_scratch_and_remote):
     ufile = provide_clean_scratch_and_remote
+    if ufile.io.driver is None:
+        pytest.skip()
     uftype_tag = ufile.tags.get("uftype", None)
     qc_tag = ufile.tags.get("qc", None)
     ufile.purge_local()
@@ -49,7 +55,9 @@ def test_tags_are_set_via_uri(provide_clean_scratch_and_remote):
     "provide_clean_scratch_and_remote",
     [
         urgap.UFile(
+            uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}&qc=good&file=yea#"
             f"test_node_data/test_FILE.txt",
+        )
     ],
     indirect=["provide_clean_scratch_and_remote"],
 )
@@ -66,6 +74,7 @@ def test_tags_are_read_remotely(provide_clean_scratch_and_remote, tmpdir):
     with open(ufile.path, "w") as o:
         print("Soon gone", file=o)
     ufile.upload()
+    # should sync tags
     ufile.purge_local()
     del ufile
     ufile_2 = urgap.UFile(uri=ufile_uri_without_query)

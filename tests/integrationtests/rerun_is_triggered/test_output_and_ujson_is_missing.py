@@ -12,8 +12,11 @@ import urgap
         urgap.UFileList(
             [
                 urgap.UFile(
+                    uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
+                    f"test_node_data/test.txt",
                 ),
             ],
+        )
     ],
     indirect=["check_if_ufilelist_can_be_tested"],
 )
