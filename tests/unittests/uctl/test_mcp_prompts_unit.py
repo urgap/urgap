@@ -81,3 +81,10 @@ async def test_mylabdata_prompt_variants():
     register_prompts(srv)
 
     text = _first_text(p)
+
+
+@pytest.mark.asyncio
+    srv = DummyServer()
+    register_prompts(srv)
+
+    text = _first_text(p)

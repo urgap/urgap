@@ -7,6 +7,7 @@ import urgap
 
 from urgap.uctl.mcp.tools import (
     calculate_nana,
+    gcp_urgap_storage_pattern,
     generate_workflow_id,
     list_container_times,
     mylabdata_urgap_storage_pattern,
@@ -27,6 +28,11 @@ def test_storage_pattern_helpers():
         mylabdata_urgap_storage_pattern("354557", "24-1-C4")
         == "mylabdata://mylabdata-files.uat.corpnet2.com/354557/24-1-C4"
     )
+
+
+def test_gcp_urgap_storage_pattern():
+    uri = gcp_urgap_storage_pattern("my-project", "my-bucket")
+    assert uri == "gcs://my-project/my-bucket"
 
 
 def test_calculate_nana():
