@@ -88,6 +88,44 @@ def register_prompts(server: FastMCP) -> None:
         )
 
     @server.prompt()
+    async def google_bucket_urgap_storage_base_uri_pattern(
+        project_id: str,
+        bucket: str,
+    ) -> Prompt:
+        """Google bucket urgap storage base uri pattern.
+
+        Args:
+            project_id (str): Google Project ID
+            bucket (str): Gcs Bucket name
+
+        Returns:
+            Prompt: Pattern of the goolge urgap storage pattern
+        """
+        return Prompt(
+            name="google_bucket_urgap_storage_base_uri_pattern",
+            messages=[
+                base.AssistantMessage(
+                    content={
+                        "type": "text",
+                        "text": f"gcs://{project_id}/{bucket}",
+                    },
+                ),
+            ],
+            arguments=[
+                {
+                    "name": "project_id",
+                    "description": "Google project id",
+                    "required": True,
+                },
+                {
+                    "name": "bucket",
+                    "description": "Google bucket name",
+                    "required": True,
+                },
+            ],
+        )
+
+    @server.prompt()
     async def urun_default_dict() -> Prompt:
         """Provide default urgap URun Dict used for urgap node execution."""
         tool_docs = """
@@ -103,6 +141,7 @@ def register_prompts(server: FastMCP) -> None:
                     },
                     "unode_parameters": {
                         "storage_base_uri": str|None,   // Optional: Storage base URI for output files
+                                                        // Example: 'gcs://{project_id}/{bucket}'
                                                         // this can be handled by tools that generate urgap storage uri.
 
                         "force": bool,                  // Optional: Whether execution is forced (default: false)
@@ -124,6 +163,7 @@ def register_prompts(server: FastMCP) -> None:
                     },
                     "unode_parameters": {
                         "force": true,
+                        "storage_base_uri": "gcs://<my-project-id>/<my-container>",
                     }
                 }
             """
@@ -155,6 +195,7 @@ def register_prompts(server: FastMCP) -> None:
                                                 // Pre-checks include 3rd party installation verification
 
                 "storage_base_uri": str|None,   // Optional: Storage base URI for output files
+                                                // Example: "gcs://<project>/<bucket>"
 
                 "record_skipped_runs": bool,    // Deprecated: All execution info will be stored (default: false)
 

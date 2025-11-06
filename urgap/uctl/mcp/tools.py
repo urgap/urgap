@@ -76,6 +76,20 @@ def generate_workflow_id() -> str:
     return urgap.uwid_obj.generate_wid()
 
 
+def gcp_urgap_storage_pattern(project_id: str, bucket: str) -> str:
+    """Generate urgap_storage_base_uri for google buckets.
+
+    Args:
+        project_id (str): gcp project
+        bucket (str): gcp bucket
+
+    Returns:
+        str: urgap_storage_base_uri that can be used to, e.g. list_container_items or as
+         part of the urgap processing node input ufile list.
+    """
+    return f"gcs://{project_id}/{bucket}"
+
+
 def mylabdata_urgap_storage_pattern(equipment_id: str, task_id: str) -> str:
     """Generate urgap_storage_base_uri for mylabdata in UAT.
 
@@ -100,6 +114,10 @@ def register_tools(server: FastMCP, nodes_list: list) -> None:
     tools = [
         {"function": list_container_times, "tool_name": "list_container_times"},
         {"function": generate_workflow_id, "tool_name": "generate_workflow_id"},
+        {
+            "function": gcp_urgap_storage_pattern,
+            "tool_name": "gcp_urgap_storage_pattern",
+        },
         {
             "function": mylabdata_urgap_storage_pattern,
             "tool_name": "mylabdata_urgap_storage_pattern",

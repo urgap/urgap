@@ -94,3 +94,24 @@ def register_resources(server: FastMCP) -> None:
             str: urgap uri storage base
         """
         return f"mylabdata://mylabdata-files.uat.corpnet2.com/{equipment_id}/{task_id}"
+
+    @server.resource(
+        "gcp-storage-base://{project_id}/{bucket}",
+        name="urgap storage base for google cloud",
+        description="Urgap uri representation storage base for google cloud.",
+        mime_type="text/plain",
+    )
+    def generate_gcp_storage_base(project_id: str, bucket: str) -> str:
+        """Generate urgap storage base uri for gcp.
+
+        Args:
+            project_id (str): Google project name
+            bucket (str): Google bucket name
+
+        Will be called for example like:
+        - "please give me a gcp storage base uri for project id gsk-rd-dso-gcp-uat and bucket agentic-ai-demo"
+
+        Returns:
+            str: urgap uri storage base
+        """
+        return f"gcs://{project_id}/{bucket}"

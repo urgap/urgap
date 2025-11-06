@@ -12,6 +12,86 @@ from urgap.ucredentials.io._base import IOBaseCreds
 from urgap.ucredentials.io.gcp import IOGCPCreds
 
 
+def test_reading_basic_json(tmp_scratch_disk):
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+    us = urgap.UCredentialManager(json_path=c_json)
+    assert len(us.ingested_credentials) == 2
+
+
+def test_reading_basic_json_writing(tmp_scratch_disk):
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+    o_json = tmp_scratch_disk / "tmp.json"
+    us = urgap.UCredentialManager(json_path=c_json)
+    us.write_credentials(json_path=o_json)
+
+    us2 = urgap.UCredentialManager(json_path=o_json)
+    o_json.unlink()
+
+    assert len(us.ingested_credentials) == len(us2.ingested_credentials)
+
+
+def test_crash(tmp_scratch_disk):
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+    o_json = tmp_scratch_disk / "tmp.json"
+    us = urgap.UCredentialManager(json_path=c_json)
+    us.write_credentials(json_path=o_json)
+
+    with pytest.raises(KeyError):
+        us.extract_credentials("whatshappening")
+
+
+def test_adding_new_lookup_json_works(tmp_scratch_disk):
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+    o_json = tmp_scratch_disk / "tmp.json"
+
+
+
+
+def test_adding_duplicate_is_overwriting_old(tmp_scratch_disk):
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+
+    standard_lookup = [
+        {
+            "description": "Demo1",
+            "host": "localhost:9000",
+            "user": "LOCAL_USER",
+            "password": "LOCAL_PASSWORD",
+            "secure": True,
+            "secret_store": "env",
+        },
+    ]
+
+    os.environ["LOCAL_USER"] = "Mitsurugi"
+    os.environ["LOCAL_PASSWORD"] = "+==|----->"
+
+    us = urgap.UCredentialManager(json_path=c_json)
+
+
+    os.environ["LOCAL_USER"] = "Horst"
+    os.environ["LOCAL_PASSWORD"] = "Walter"
+
+    us.add_credentials(standard_lookup)
+
+
+
+def test_env_extraction_works(tmp_scratch_disk):
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+    standard_lookup = [
+        {
+            "description": "Demo1",
+            "user": "M_USER",
+            "password": "M_PASSWORD",
+            "secure": True,
+            "secret_store": "env",
+        },
+    ]
+    os.environ["M_USER"] = "Horst"
+    os.environ["M_PASSWORD"] = "Walter"
+    del os.environ["M_USER"]
+    del os.environ["M_PASSWORD"]
+
+
+
 def test_echo_init_works():
     us = urgap.UCredentialManager()
     us.init_io_class(secret_store="echo", secret_id="MITSURUGI")
@@ -97,6 +177,21 @@ def format_cred_key(self, cred_entry: dict) -> str:
         c_key = self.ID_KEY.format(**cred_entry)
     except KeyError:
         msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
+
+
+def test_null_user_works():
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+    standard_lookup = [
+        {
+            "description": "Demo1",
+            "user": None,
+            "password": "M_PASSWORD",
+            "secure": True,
+            "secret_store": "env",
+        },
+    ]
+    os.environ["M_PASSWORD"] = "Walter"
+    del os.environ["M_PASSWORD"]
 
 
 def test_io_base_creds_get_secret_raises():
@@ -221,6 +316,43 @@ def test_read_credentials_warns_for_missing_file(tmp_path, caplog):
             pass
 
     assert f"{fake_path} does not exist!" in caplog.text
+
+
+def test_gcp_credential_with_pid(monkeypatch):
+    import types
+
+    c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+
+    credential_with_pid = {
+        "description": "GCP Demo",
+        "scheme": "gcp-demo",
+        "host": "localhost",
+        "user": "G_USER",
+        "password": "G_PASS",
+        "secure": True,
+        "secret_store": "gcp",
+        "cloud_host_pid": "project123",
+    }
+
+    us = urgap.UCredentialManager(json_path=c_json)
+    us.add_credentials([credential_with_pid])
+
+    class DummyGCPClass:
+        def __init__(self, secret_id, project_id, version_id):
+            self.secret_id = secret_id
+            self.project_id = project_id
+            self.version_id = version_id
+
+        def get_secret(self):
+            return self.secret_id
+
+    dummy_module = types.SimpleNamespace(IOGCPCreds=DummyGCPClass)
+    monkeypatch.setitem(us.available_io_classes, "gcp", dummy_module)
+
+    secrets = us.extract_credentials("gcp-demo://localhost")
+
+    assert secrets["user"] == "G_USER"
+    assert secrets["password"] == "G_PASS"
 
 
 def test_get_secret_initialization(monkeypatch):

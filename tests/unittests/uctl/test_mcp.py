@@ -15,6 +15,7 @@ from mcp.client.sse import sse_client
 async def test_run_mcp(capfd, provide_uctl_server):
     await run()
     assert (
+        "{'call': 'gcp_urgap_storage_pattern', 'result': 'gcs://some_gcp_bucket/folder/to/files'}"
         in capfd.readouterr().out
     )
 
