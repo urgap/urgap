@@ -1,0 +1,26 @@
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm
+
+RUN addgroup --system nonroot && \
+    adduser --system \
+      --ingroup nonroot \
+      --home /home/nonroot \
+      nonroot
+
+RUN mkdir -p "/home/urgap" && \
+    chown -R nonroot:nonroot /home/urgap
+
+ENV HOME=/home/nonroot
+USER nonroot
+
+# Add Urgap repo
+WORKDIR /home/urgap
+COPY dist/urgap-*.whl /tmp/
+
+# Install dependencies using uv
+RUN uv venv urgap
+ENV PATH="/home/urgap/urgap/bin:$PATH"
+RUN uv pip install $(find /tmp -name 'urgap-*.whl')"[all]" --no-cache-dir
+
+# Run checks
+RUN python -c "import urgap; print(urgap.config)"
+RUN uctl info version

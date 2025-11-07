@@ -1,0 +1,5 @@
+include urgap/version.txt
+include urgap/config_defaults/*.json
+include urgap/citation.txt
+include urgap/uctl/server
+include LICENSE.txt README.rst pyproject.toml

@@ -1,0 +1,1 @@
+"""Init arc+independent resources."""

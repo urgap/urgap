@@ -1,0 +1,154 @@
+import pprint
+import tempfile
+
+import pytest
+
+import urgap
+
+
+@pytest.mark.parametrize(
+    "check_if_ufilelist_can_be_tested",
+    [
+        (
+            urgap.UFile(
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.test.TEST_FILE1}#"
+                f"test_node_data/test.txt",
+            ),
+        ),
+        # (
+        #     urgap.UFile(
+        #         uri=f"gcs-libcloud://urgap_test"
+        #         f"test_node_data/test.txt?uftype={urgap.uftypes.test.TEST_FILE1}",
+        #     ),
+        #     urgap.URunDict(
+        #         {
+        #             "parameters": {
+        #                 "triggers_nuttin": 100,
+        #                 "triggers_rerun": 100,
+        #                 "triggers_rerun_-3": 100,
+        #             },
+        #             "unode_parameters": {
+        #                 "record_skipped_runs": True,
+        #             },
+        #         }
+        #     ),
+        #     ["TestNode1:1.0.0"],
+        # ),
+        # (
+        #     urgap.UFile(
+        #         uri=f"local-libcloud://{urgap._test_folder}/data#"
+        #         f"test_node_data/test.txt?uftype={urgap.uftypes.test.TEST_FILE1}",
+        #     ),
+        #     urgap.URunDict(
+        #         {
+        #             "parameters": {
+        #                 "triggers_nuttin": 100,
+        #                 "triggers_rerun": 100,
+        #                 "triggers_rerun_-3": 100,
+        #             },
+        #             "unode_parameters": {
+        #                 "record_skipped_runs": True,
+        #             },
+        #         }
+        #     ),
+        #     ["TestNode1:1.0.0"],
+        # ),
+        # (
+        #     urgap.UFile(
+        #         uri=f"minio-libcloud://localhost:9000/data#"
+        #         f"test_node_data/test.txt?uftype={urgap.uftypes.test.TEST_FILE1}",
+        #     ),
+        #     urgap.URunDict(
+        #         {
+        #             "parameters": {
+        #                 "triggers_nuttin": 100,
+        #                 "triggers_rerun": 100,
+        #                 "triggers_rerun_-3": 100,
+        #             },
+        #             "unode_parameters": {
+        #                 "record_skipped_runs": True,
+        #             },
+        #         }
+        #     ),
+        #     ["TestNode1:1.0.0"],
+        # ),
+    ],
+    indirect=["check_if_ufilelist_can_be_tested"],
+)
+def test_node_workflow_rerun_is_skipped_simple_u3(check_if_ufilelist_can_be_tested):
+    ufiles = check_if_ufilelist_can_be_tested
+    for unode_version in ["1.3.0", "latest"]:
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            storage_base_uri = f"file://{tmpdirname}"
+            urun_dict = urgap.URunDict(
+                {
+                    "parameters": {
+                        f"BasicFunctionTestNode:{unode_version}": {
+                            "triggers_nuttin": 100,
+                            "triggers_rerun": 100,
+                            "triggers_rerun_-3": 100,
+                        },
+                    },
+                    "unode_parameters": {
+                        "record_skipped_runs": True,
+                        # "remote_url": "http://localhost",
+                        "storage_base_uri": storage_base_uri,
+                    },
+                },
+            )
+            test_node1 = urgap.init_unode(f"BasicFunctionTestNode:{unode_version}")
+            if unode_version == "latest":
+                urun_dict["unode_parameters"]["latest_exe_paths"][
+                    test_node1.META_INFO["unode_full_identifier"]
+                ] = (
+                    urgap.home
+                    / "resources"
+                    / "TestNodes"
+                    / "BasicFunctionTestNode"
+                    / "1_3_0"
+                    / "basic_function.py"
+                )
+
+            print(
+                """
+            ------- First run -------
+            """,
+            )
+            print("Input:")
+            pprint.pprint(urun_dict)
+            print("UFiles:")
+            print(ufiles)
+            return_file = test_node1.run(ufiles=ufiles, urun_dict=urun_dict)
+
+            print("Output node1:")
+            pprint.pprint(return_file)
+            pac_id, wid = test_node1.utrace_history[-1]
+            report = urgap.UReport(wid=wid)
+            assert report.get_trace(pac_id, wid, storage_base_uri).was_run is True
+
+            print(
+                """
+            ------- Second run -------
+
+            executing second time should not trigger rerun although params are changed
+            since param would not trigger rerun.
+            """,
+            )
+            urun_dict.assign_wid()
+            urun_dict["parameters"][f"BasicFunctionTestNode:{unode_version}"]["cpu"] = (
+                12
+            )
+            # executing second time should not trigger rerun
+            print("Input:")
+            pprint.pprint(urun_dict)
+            pprint.pprint(ufiles)
+
+            second_run_return_file = test_node1.run(
+                ufiles=ufiles,
+                urun_dict=urun_dict,
+            )
+            print("Output:")
+            pprint.pprint(second_run_return_file)
+            pac_id, wid = test_node1.utrace_history[-1]
+            report = urgap.UReport(wid=wid)
+            assert report.get_trace(pac_id, wid, storage_base_uri).was_skipped is True

@@ -1,0 +1,1 @@
+"""Init Compressor 1_0_0 resource."""
