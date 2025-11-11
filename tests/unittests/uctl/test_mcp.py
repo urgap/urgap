@@ -54,6 +54,7 @@ async def run():
     print(
         {
             "call": "gcp_urgap_storage_pattern",
+            "result": result.content[0].text,
         }
     )
 

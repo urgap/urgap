@@ -65,13 +65,21 @@ def test_adding_duplicate_is_overwriting_old(tmp_scratch_disk):
     os.environ["LOCAL_PASSWORD"] = "+==|----->"
 
     us = urgap.UCredentialManager(json_path=c_json)
+    us.add_credentials(standard_lookup)
 
+    key = standard_lookup[0]["base_url"]
+
+    assert us.get_user(key) == "Mitsurugi"
+    initial_count = len(us.ingested_credentials)
+    assert initial_count >= 1
 
     os.environ["LOCAL_USER"] = "Horst"
     os.environ["LOCAL_PASSWORD"] = "Walter"
 
     us.add_credentials(standard_lookup)
 
+    assert us.get_user(key) == "Horst"
+    assert len(us.ingested_credentials) == initial_count
 
 
 def test_env_extraction_works(tmp_scratch_disk):

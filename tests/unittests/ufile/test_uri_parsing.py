@@ -33,6 +33,7 @@ def test_uuri_is_set_properly_case_query1():
 
 
 def test_query_is_in_wrong_position_in_uri():
+    # pytest.raises checks that ValueError is raised when the query is in the wrong position
     with pytest.raises(ValueError):
         urgap.UFile(
             uri=f"azure://{urgap._test_folder}/data#bridge/console4.io?test=True",

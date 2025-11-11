@@ -77,14 +77,25 @@ async def test_mylabdata_prompt_variants():
 
 
 @pytest.mark.asyncio
+async def test_google_bucket_prompt():
     srv = DummyServer()
     register_prompts(srv)
+    fn = srv.prompts["google_bucket_urgap_storage_base_uri_pattern"]
 
+    p = await fn(project_id="my-project", bucket="my-bucket")
     text = _first_text(p)
+    assert text == "gcs://my-project/my-bucket"
 
 
 @pytest.mark.asyncio
+async def test_urun_default_dict_prompt_contains_key_sections():
     srv = DummyServer()
     register_prompts(srv)
+    fn = srv.prompts["urun_default_dict"]
 
+    p = await fn()
     text = _first_text(p)
+
+    assert "The urgap configuration dictionary" in text
+    assert '"parameters": {' in text
+    assert '"unode_parameters": {' in text
