@@ -42,9 +42,31 @@ def test_crash(tmp_scratch_disk):
 
 def test_adding_new_lookup_json_works(tmp_scratch_disk):
     c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+
     o_json = tmp_scratch_disk / "tmp.json"
 
+    cred_manager = urgap.UCredentialManager(json_path=c_json)
 
+    new_cred = [
+        {
+            "description": "Demo1",
+            "host": "localhost:9000",
+            "user": "LOCAL_USER",
+            "password": "LOCAL_PASSWORD",
+            "secure": True,
+            "secret_store": "env",
+        },
+    ]
+    cred_manager.add_credentials(new_cred)
+
+    cred_manager.write_credentials(json_path=o_json)
+
+    cred_manager2 = urgap.UCredentialManager(json_path=o_json)
+
+    o_json.unlink(missing_ok=True)
+
+    assert len(cred_manager2.ingested_credentials) == len(
+    )
 
 
 def test_adding_duplicate_is_overwriting_old(tmp_scratch_disk):
@@ -84,20 +106,31 @@ def test_adding_duplicate_is_overwriting_old(tmp_scratch_disk):
 
 def test_env_extraction_works(tmp_scratch_disk):
     c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+
     standard_lookup = [
         {
             "description": "Demo1",
+            "host": "localhost:9000",
             "user": "M_USER",
             "password": "M_PASSWORD",
             "secure": True,
             "secret_store": "env",
         },
     ]
+
     os.environ["M_USER"] = "Horst"
     os.environ["M_PASSWORD"] = "Walter"
+
+    cred_manager = urgap.UCredentialManager(json_path=c_json)
+    cred_manager.add_credentials(standard_lookup)
+
+    assert cred_manager.get_user(standard_lookup[0]) == "Horst"
+    assert cred_manager.get_password(standard_lookup[0]) == "Walter"
     del os.environ["M_USER"]
     del os.environ["M_PASSWORD"]
 
+    cred_id = cred_manager.ID_KEY.format(**standard_lookup[0])
+    assert cred_manager.get_user(cred_id) == "Horst"
 
 
 def test_echo_init_works():
@@ -189,17 +222,30 @@ def format_cred_key(self, cred_entry: dict) -> str:
 
 def test_null_user_works():
     c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
+
     standard_lookup = [
         {
             "description": "Demo1",
+            "host": "localhost:9000",
             "user": None,
             "password": "M_PASSWORD",
             "secure": True,
             "secret_store": "env",
         },
     ]
+
     os.environ["M_PASSWORD"] = "Walter"
+
+    cred_manager = urgap.UCredentialManager(json_path=c_json)
+    cred_manager.add_credentials(standard_lookup)
+
+    assert cred_manager.get_user(standard_lookup[0]) is None
+    assert cred_manager.get_password(standard_lookup[0]) == "Walter"
+
     del os.environ["M_PASSWORD"]
+
+    cred_id = cred_manager.ID_KEY.format(**standard_lookup[0])
+    assert cred_manager.get_user(cred_id) is None
 
 
 def test_io_base_creds_get_secret_raises():
