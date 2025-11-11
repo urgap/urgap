@@ -310,9 +310,13 @@ exp_design.output.TEST_METADATA_JSON = ".test_metadata.json"
 
 # TCS Parser===================================================================
 tcsparser = types.SimpleNamespace()
+tcsparser.metadata = types.SimpleNamespace()
 tcsparser.input = types.SimpleNamespace()
 tcsparser.input.ANY = "tcsparser.input.ANY"
 tcsparser.input.QUANTSTUDIO_TXT = ".quantstudio.txt"
+tcsparser.input.VICELL_TXT = ".vicell.txt"
+tcsparser.input.CEDEX_TXT = ".cedex.txt"
+tcsparser.input.ENVISION_CSV = ".envision.csv"
 tcsparser.output = types.SimpleNamespace()
 
 # Urgap internal===============================================================
