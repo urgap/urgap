@@ -50,7 +50,9 @@ def test_adding_new_lookup_json_works(tmp_scratch_disk):
     new_cred = [
         {
             "description": "Demo1",
+            "scheme": "smb",
             "host": "localhost:9000",
+            "base_url": "smb://localhost:9000",
             "user": "LOCAL_USER",
             "password": "LOCAL_PASSWORD",
             "secure": True,
@@ -75,7 +77,9 @@ def test_adding_duplicate_is_overwriting_old(tmp_scratch_disk):
     standard_lookup = [
         {
             "description": "Demo1",
+            "scheme": "smb",
             "host": "localhost:9000",
+            "base_url": "smb://localhost:9000",
             "user": "LOCAL_USER",
             "password": "LOCAL_PASSWORD",
             "secure": True,
@@ -110,7 +114,9 @@ def test_env_extraction_works(tmp_scratch_disk):
     standard_lookup = [
         {
             "description": "Demo1",
+            "scheme": "smb",
             "host": "localhost:9000",
+            "base_url": "smb://localhost:9000",
             "user": "M_USER",
             "password": "M_PASSWORD",
             "secure": True,
@@ -226,7 +232,9 @@ def test_null_user_works():
     standard_lookup = [
         {
             "description": "Demo1",
+            "scheme": "smb",
             "host": "localhost:9000",
+            "base_url": "smb://localhost:9000",
             "user": None,
             "password": "M_PASSWORD",
             "secure": True,
