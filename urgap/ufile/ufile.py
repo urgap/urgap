@@ -56,6 +56,33 @@ class UFile:
         )
         self._io = None
         self._ucfs = None
+        self.check_uri_scheme_exists()
+
+    def check_uri_scheme_exists(self) -> None:
+        """Check if the URI scheme is supported.
+
+        Returns:
+            True if the URI scheme is supported.
+
+        Raises:
+            ValueError: If the scheme is not in the supported list.
+        """
+        scheme = self.uuri.scheme
+        if scheme not in (
+            "azure",
+            "az-dl",
+            "az-smb",
+            "file",
+            "ftp",
+            "gcs",
+            "github",
+            "https",
+            "mylabdata",
+            "omiq",
+            "smb",
+        ):
+            msg = f"Scheme {scheme} not supported"
+            raise ValueError(msg)
 
     def format_uri(self) -> None:
         """Format the URI if storage_base_uri and ucfs combination was used to construct uri."""
@@ -497,6 +524,7 @@ class UFile:
                 "dependencies or unsupported scheme."
             )
             raise ImportError(msg)
+        return available_io_classes[scheme](uuri=self.uuri)
 
     def get_object(self) -> Path | None:
         """Get a local object from remote storage if it exists.

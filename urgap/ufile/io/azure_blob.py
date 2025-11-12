@@ -30,6 +30,21 @@ class IOAzureBlobStorage(UIOBase):
             kwargs: Passed to UIOBase. Requires "uri" for connection setup.
         """
         super().__init__(**kwargs)
+        if "blob.core.windows.net" in self.uuri.netloc:
+            self.client = BlobServiceClient(
+                account_url=f"https://{self.uuri.netloc}",
+                credential=self.uuri.password,
+            )
+        else:
+            logger.warning(
+                "DeprecationWarning: Provide explicit netloc "
+                "like so: 'azure://<storage_account>.blob.core.windows.net/' - "
+                "Formatting automatically is deprecated and will be removed soon.",
+            )
+            self.client = BlobServiceClient(
+                account_url=f"https://{self.uuri.user}.blob.core.windows.net",
+                credential=self.uuri.password,
+            )
         self.container = self.client.get_container_client(
             container=self.uuri.get_container_name(),
         )
