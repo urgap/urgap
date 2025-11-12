@@ -12,6 +12,7 @@ def dummy_uuri(tmp_path):
         user = "dummyuser"
         password = "dummypass"
         fragment = "test_blob"
+        netloc = "dummystorageaccount.blob.core.windows.net"
 
         def get_container_name(self):
             return "test-container"
