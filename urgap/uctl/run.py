@@ -280,6 +280,7 @@ def _ensure_service_bus_entities(
                 subscription_name=subscription,
                 rule_name="unode_filter",
                 filter=SqlRuleFilter(
+                    f"subscription_key = '{filter_value}'",
                 ),
             )
 
