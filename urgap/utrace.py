@@ -577,6 +577,7 @@ class UTrace:
             for uftype in self.unode_meta["output_uftypes"]:
                 uftype_escaped = uftype.replace(".", r"\.")
                 for remote_file in _ufile.io.list_container_items(
+                    pattern=rf"^[\w\:\/\.\?\=\&\+\-]+#{self.pac_id}_[0-9]*_of_[0-9]*{uftype_escaped}$",
                     full_string=True,
                 ):
                     if remote_file.endswith(".tag"):

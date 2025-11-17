@@ -195,6 +195,12 @@ class IOAzureBlobStorage(UIOBase):
             logger.warning(
                 "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
             )
+        if pattern is not None:
+            container_objects = [
+                blob
+                for blob in container_objects
+                if re.search(pattern, blob) is not None
+            ]
 
         return container_objects
 
