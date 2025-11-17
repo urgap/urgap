@@ -159,6 +159,8 @@ def run_server(
 
 
 def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
+    try:
+    except OSError as e:
 
 
 def run_mcp_server(
