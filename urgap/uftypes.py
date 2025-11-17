@@ -318,6 +318,8 @@ tcsparser.input.VICELL_TXT = ".vicell.txt"
 tcsparser.input.CEDEX_TXT = ".cedex.txt"
 tcsparser.input.ENVISION_CSV = ".envision.csv"
 tcsparser.output = types.SimpleNamespace()
+tcsparser.output.PARSER_PARQUET = ".tcs_parser_output.parquet"
+tcsparser.output.RESULT_PARQUET = ".tcs_result_output.parquet"
 
 # Urgap internal===============================================================
 test = types.SimpleNamespace()
