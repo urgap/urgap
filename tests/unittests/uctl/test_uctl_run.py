@@ -1,3 +1,5 @@
+import logging
+import signal
 
 import urgap
 
@@ -8,6 +10,7 @@ from urgap.uctl.run import (
     dashboard_uri_click,
     get_all_relevant_nodes,
     run_unode_in_loop,
+    send_signal_to_pid,
 )
 from urgap.umeta.io.gcpsql import UMeta
 
@@ -125,3 +128,26 @@ def test_umeta_generate_connection_string(monkeypatch):
     conn_string = umeta.generate_connection_string()
     expected = "postgresql+pg8000://testuser:testpass@host:5432/urgap"
     assert conn_string == expected
+
+
+
+    send_signal_to_pid(signal.SIGINT)
+
+
+
+    """Test that send_signal_to_pid can send different signals."""
+
+    send_signal_to_pid(signal.SIGTERM)
+
+
+
+@patch("urgap.uctl.run.os.kill")
+
+    with caplog.at_level(logging.WARNING):
+        send_signal_to_pid(signal.SIGINT)
+
+
+
+    """Test that send_signal_to_pid uses SIGINT as default signal."""
+
+    send_signal_to_pid()
