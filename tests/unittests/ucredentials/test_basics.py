@@ -68,6 +68,7 @@ def test_adding_new_lookup_json_works(tmp_scratch_disk):
     o_json.unlink(missing_ok=True)
 
     assert len(cred_manager2.ingested_credentials) == len(
+        cred_manager.ingested_credentials,
     )
 
 
@@ -650,3 +651,20 @@ def test_get_secret_crc32c(monkeypatch, caplog):
 
     assert "Secret dummy payload is corrupted." in caplog.text
     assert secret == "bad_secret"
+
+
+    us = urgap.UCredentialManager()
+    us.add_credentials(
+        [
+            {
+                "scheme": "gcs",
+                "host": "test",
+                "user": None,
+                "secure": True,
+                "description": "",
+                "secret_store": "echo",
+                "cloud_host_pid": "EMPTY",
+            },
+        ],
+    )
+    assert us.get_user("gcs://test") is None
