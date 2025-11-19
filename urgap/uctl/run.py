@@ -160,7 +160,22 @@ def run_server(
 
 def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
     try:
+        pgid = os.getpgrp()
+        os.killpg(pgid, sig)
+        logger.info(
+            "Sent signal %s to process group %s (includes all worker processes)",
+            sig,
+            pgid,
+        )
     except OSError as e:
+        logger.warning("Failed to send signal to process group %s: %s", pgid, e)
+        try:
+            logger.info(
+                "Sent signal %s to current process %s (fallback)",
+                sig,
+            )
+        except OSError as e2:
+            logger.warning("Failed to send signal to current process: %s", e2)
 
 
 def run_mcp_server(
