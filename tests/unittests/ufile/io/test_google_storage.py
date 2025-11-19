@@ -1,5 +1,6 @@
 import re
 
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -33,6 +34,7 @@ def test_upload_calls_blob_upload_from_filename(mock_io_gcs):
     io_gcs.blob.upload_from_filename = MagicMock()
     io_gcs.upload(tags={"key": "value"})
     io_gcs.blob.upload_from_filename.assert_called_once_with(
+        filename=io_gcs.scratch_path,
     )
 
 
@@ -108,3 +110,64 @@ def test_list_container_objects_no_pattern(mock_storage):
 def test_list_container_objects_with_pattern(mock_storage):
     result = mock_storage.list_container_objects(pattern=r"\.txt$")
     assert result == ["file1.txt"]
+
+
+    mock_uuri = MagicMock()
+    mock_uuri.netloc = "test-project"
+    mock_uuri.get_container_name.return_value = "test-bucket"
+    mock_uuri.get_object_name.return_value = "test-object"
+
+    # Mock dict password (service account JSON)
+
+    mock_kwargs = {"uuri": mock_uuri, "scratch_path": tmp_path / "test_file"}
+
+    with (
+        patch(
+            "urgap.ufile.io.google_storage.service_account.Credentials",
+        ) as mock_creds_class,
+        patch("urgap.ufile.io.google_storage.storage.Client") as mock_client_class,
+    ):
+        mock_credentials = MagicMock()
+        mock_creds_class.from_service_account_info.return_value = mock_credentials
+        mock_client = MagicMock()
+        mock_client_class.return_value = mock_client
+
+        io_gcs = IOGoogleCloudStorage(**mock_kwargs)
+
+        # Verify service account credentials were created from dict
+        mock_creds_class.from_service_account_info.assert_called_once_with(
+        )
+
+        # Verify client was created with credentials and project
+        mock_client_class.assert_called_once_with(
+            credentials=mock_credentials,
+            project="test-project",
+        )
+
+
+def test_init_with_string_password_creates_client_without_credentials(tmp_path):
+    """Test that non-dict password creates default client."""
+    mock_uuri = MagicMock()
+    mock_uuri.netloc = "test-project"
+    mock_uuri.get_container_name.return_value = "test-bucket"
+    mock_uuri.get_object_name.return_value = "test-object"
+
+    # Mock string password (or None)
+
+    mock_kwargs = {"uuri": mock_uuri, "scratch_path": tmp_path / "test_file"}
+
+    with (
+        patch(
+            "urgap.ufile.io.google_storage.service_account.Credentials",
+        ) as mock_creds_class,
+        patch("urgap.ufile.io.google_storage.storage.Client") as mock_client_class,
+    ):
+        mock_client = MagicMock()
+        mock_client_class.return_value = mock_client
+
+        io_gcs = IOGoogleCloudStorage(**mock_kwargs)
+
+        # Verify service account credentials were NOT created
+        mock_creds_class.from_service_account_info.assert_not_called()
+
+        # Verify client was created with only project (no credentials)
