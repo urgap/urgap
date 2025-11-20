@@ -225,6 +225,7 @@ def format_cred_key(self, cred_entry: dict) -> str:
         c_key = self.ID_KEY.format(**cred_entry)
     except KeyError:
         msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
+        logger.warning(msg)
 
 
 def test_null_user_works():
@@ -364,6 +365,7 @@ def format_cred_key(self, cred_entry: dict) -> str | None:
         c_key = self.ID_KEY.format(**cred_entry)
     except KeyError:
         msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
+        logger.warning(msg)
         return None
     return c_key
 
