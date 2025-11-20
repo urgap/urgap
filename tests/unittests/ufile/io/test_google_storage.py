@@ -171,3 +171,5 @@ def test_init_with_string_password_creates_client_without_credentials(tmp_path):
         mock_creds_class.from_service_account_info.assert_not_called()
 
         # Verify client was created with only project (no credentials)
+        mock_client_class.assert_called_once_with(
+        )
