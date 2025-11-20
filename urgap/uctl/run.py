@@ -159,6 +159,12 @@ def run_server(
 
 
 def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
+    """Send the specified signal to the entire process group.
+    This ensures that when running with multiple workers (e.g., uvicorn with --workers > 1),
+    all worker processes receive the signal, not just the parent process.
+    Args:
+        sig: Signal to send (default: SIGINT for graceful shutdown)
+    """
     try:
         pgid = os.getpgrp()
         os.killpg(pgid, sig)
