@@ -1,6 +1,11 @@
 import logging
 import signal
 
+from unittest.mock import patch
+
+from click.testing import CliRunner
+from fastapi.testclient import TestClient
+
 import urgap
 
 from urgap.uctl import run as run_module
