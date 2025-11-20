@@ -708,6 +708,7 @@ class UTrace:
                 node_type="file",
             )
             ofile_graph.add_edge(self.id[0], ofile.object_name)
+            dot_str = json.dumps(nx.node_link_data(ofile_graph, edges="links"))
             graph_tag_dict = self._compose_tag_dict(data=dot_str, tag_name="dot_str")
             ofile.tags.update(parent_tag_dict)
             ofile.tags.update(graph_tag_dict)
