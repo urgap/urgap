@@ -130,24 +130,75 @@ def test_umeta_generate_connection_string(monkeypatch):
     assert conn_string == expected
 
 
+@patch("urgap.uctl.run.os.getpgrp")
+@patch("urgap.uctl.run.os.killpg")
+def test_send_signal_to_pid_success(mock_os_killpg, mock_os_getpgrp):
+    """Test that send_signal_to_pid sends the correct signal to the process group."""
+    mock_os_getpgrp.return_value = 12345
 
     send_signal_to_pid(signal.SIGINT)
 
+    mock_os_killpg.assert_called_once_with(12345, signal.SIGINT)
+    mock_os_getpgrp.assert_called_once()
 
 
+@patch("urgap.uctl.run.os.getpgrp")
+@patch("urgap.uctl.run.os.killpg")
+def test_send_signal_to_pid_with_sigterm(mock_os_killpg, mock_os_getpgrp):
     """Test that send_signal_to_pid can send different signals."""
+    mock_os_getpgrp.return_value = 54321
 
     send_signal_to_pid(signal.SIGTERM)
 
+    mock_os_killpg.assert_called_once_with(54321, signal.SIGTERM)
 
 
 @patch("urgap.uctl.run.os.kill")
+@patch("urgap.uctl.run.os.getpgrp")
+@patch("urgap.uctl.run.os.killpg")
+def test_send_signal_to_pid_handles_oserror_with_fallback(
+    mock_os_killpg, mock_os_getpgrp, mock_os_kill, mock_os_getpid, caplog
+):
+    """Test that send_signal_to_pid falls back to current process on OSError."""
+    mock_os_getpgrp.return_value = 12345
+    mock_os_killpg.side_effect = OSError("Process group not found")
+    mock_os_getpid.return_value = 67890
 
     with caplog.at_level(logging.WARNING):
         send_signal_to_pid(signal.SIGINT)
 
+    mock_os_killpg.assert_called_once_with(12345, signal.SIGINT)
+    mock_os_kill.assert_called_once_with(67890, signal.SIGINT)
+    assert "Failed to send signal to process group 12345" in caplog.text
 
 
+@patch("urgap.uctl.run.os.getpgrp")
+@patch("urgap.uctl.run.os.killpg")
+def test_send_signal_to_pid_default_signal(mock_os_killpg, mock_os_getpgrp):
     """Test that send_signal_to_pid uses SIGINT as default signal."""
+    mock_os_getpgrp.return_value = 99999
 
     send_signal_to_pid()
+
+    mock_os_killpg.assert_called_once_with(99999, signal.SIGINT)
+
+
+@patch("urgap.uctl.run.os.kill")
+@patch("urgap.uctl.run.os.getpgrp")
+@patch("urgap.uctl.run.os.killpg")
+def test_send_signal_to_pid_both_fail(
+    mock_os_killpg, mock_os_getpgrp, mock_os_kill, mock_os_getpid, caplog
+):
+    """Test that send_signal_to_pid handles both process group and fallback failures."""
+    mock_os_getpgrp.return_value = 12345
+    mock_os_killpg.side_effect = OSError("Process group not found")
+    mock_os_getpid.return_value = 67890
+    mock_os_kill.side_effect = OSError("Process not found")
+
+    with caplog.at_level(logging.WARNING):
+        send_signal_to_pid(signal.SIGINT)
+
+    mock_os_killpg.assert_called_once_with(12345, signal.SIGINT)
+    mock_os_kill.assert_called_once_with(67890, signal.SIGINT)
+    assert "Failed to send signal to process group" in caplog.text
+    assert "Failed to send signal to current process" in caplog.text
