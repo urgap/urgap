@@ -25,3 +25,4 @@ def test_upload_folder_click(tmp_dir, caplog):
         "Processing file demo.csv:",
     ]
     for expected in expected_tqdm_output:
+        assert expected in (result.stdout + result.stderr)
