@@ -29,8 +29,13 @@ class IOGoogleCloudStorage(UIOBase):
             **kwargs: Passed to UIOBase. Must contain UUri and relevant parsed attributes.
         """
         super().__init__(**kwargs)
+        client_credentials = None
             client_credentials = service_account.Credentials.from_service_account_info(
             )
+        self.client = storage.Client(
+            credentials=client_credentials,
+            project=self.uuri.netloc,
+        )
         self.bucket = self.client.bucket(bucket_name=self.uuri.get_container_name())
         self.blob = self.bucket.blob(self.uuri.get_object_name())
 
