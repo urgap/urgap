@@ -181,3 +181,19 @@ def test_init_with_string_password_creates_client_without_credentials(tmp_path):
             credentials=None,
             project="test-project",
         )
+
+
+def test_init_with_invalid_json_password_raises_error(tmp_path):
+    """Test that invalid JSON string password raises RuntimeError."""
+    mock_uuri = MagicMock()
+    mock_uuri.netloc = "test-project"
+    mock_uuri.get_container_name.return_value = "test-bucket"
+    mock_uuri.get_object_name.return_value = "test-object"
+
+    # Mock invalid JSON string
+    mock_uuri.password = "not-valid-json{{"
+
+    mock_kwargs = {"uuri": mock_uuri, "scratch_path": tmp_path / "test_file"}
+
+    with pytest.raises(RuntimeError, match="Password is not valid JSON"):
+        IOGoogleCloudStorage(**mock_kwargs)
