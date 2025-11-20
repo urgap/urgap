@@ -160,8 +160,10 @@ def run_server(
 
 def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
     """Send the specified signal to the entire process group.
+
     This ensures that when running with multiple workers (e.g., uvicorn with --workers > 1),
     all worker processes receive the signal, not just the parent process.
+
     Args:
         sig: Signal to send (default: SIGINT for graceful shutdown)
     """
@@ -176,9 +178,12 @@ def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
     except OSError as e:
         logger.warning("Failed to send signal to process group %s: %s", pgid, e)
         try:
+            pid = os.getppid()
+            os.kill(pid, sig)
             logger.info(
                 "Sent signal %s to current process %s (fallback)",
                 sig,
+                pid,
             )
         except OSError as e2:
             logger.warning("Failed to send signal to current process: %s", e2)

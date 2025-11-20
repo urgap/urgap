@@ -153,6 +153,7 @@ def test_send_signal_to_pid_with_sigterm(mock_os_killpg, mock_os_getpgrp):
     mock_os_killpg.assert_called_once_with(54321, signal.SIGTERM)
 
 
+@patch("urgap.uctl.run.os.getppid")
 @patch("urgap.uctl.run.os.kill")
 @patch("urgap.uctl.run.os.getpgrp")
 @patch("urgap.uctl.run.os.killpg")
@@ -183,6 +184,7 @@ def test_send_signal_to_pid_default_signal(mock_os_killpg, mock_os_getpgrp):
     mock_os_killpg.assert_called_once_with(99999, signal.SIGINT)
 
 
+@patch("urgap.uctl.run.os.getppid")
 @patch("urgap.uctl.run.os.kill")
 @patch("urgap.uctl.run.os.getpgrp")
 @patch("urgap.uctl.run.os.killpg")
