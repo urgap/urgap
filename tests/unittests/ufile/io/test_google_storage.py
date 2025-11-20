@@ -115,6 +115,7 @@ def test_list_container_objects_with_pattern(mock_storage):
 
 
 def test_init_with_stringify_json_password_creates_client_with_credentials(tmp_path):
+    """Test that stringified JSON password creates service account credentials."""
     mock_uuri = MagicMock()
     mock_uuri.netloc = "test-project"
     mock_uuri.get_container_name.return_value = "test-bucket"
