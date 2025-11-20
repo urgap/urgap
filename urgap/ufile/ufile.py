@@ -920,6 +920,9 @@ class UFile:
         if dot_str is None:
             return None
 
+        data = json.loads(dot_str)
+        return nx.node_link_graph(data, edges="links")
+
     def _get_multi_part_tag(self, tag_name: str) -> str | None:
         """Decompress and decode a potentially multi-part tag."""
         tag = ""
