@@ -31,6 +31,7 @@ DEFAULT_CREDENTIALS_SCHEME = {
         "scheme": {"type": "string"},
         "host": {"type": "string"},
         "user": {"type": ["string", "null"]},
+        "password": {"type": "string"},
         "secure": {"type": "boolean"},
         "secret_store": {"type": "string"},
         "cloud_host_pid": {"type": "string"},

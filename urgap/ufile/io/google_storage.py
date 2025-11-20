@@ -1,5 +1,6 @@
 """Google Storage scheme subclass of urgap2's UIO submodule."""
 
+import json
 import logging
 import re
 
@@ -30,8 +31,18 @@ class IOGoogleCloudStorage(UIOBase):
         """
         super().__init__(**kwargs)
         client_credentials = None
+        if self.uuri.password:
+            password = None
+            try:
+                password = json.loads(self.uuri.password)
+            except json.JSONDecodeError as e:
+                msg = "Password is not valid JSON. Please stringify json before passing it as a password."
+                raise RuntimeError(msg) from e
             client_credentials = service_account.Credentials.from_service_account_info(
+                password,
             )
+        else:
+            logging.info("No password provided, using default credentials.")
         self.client = storage.Client(
             credentials=client_credentials,
             project=self.uuri.netloc,

@@ -655,6 +655,7 @@ def test_get_secret_crc32c(monkeypatch, caplog):
     assert secret == "bad_secret"
 
 
+def test_null_user_and_stringify_json_password():
     us = urgap.UCredentialManager()
     us.add_credentials(
         [
@@ -662,6 +663,7 @@ def test_get_secret_crc32c(monkeypatch, caplog):
                 "scheme": "gcs",
                 "host": "test",
                 "user": None,
+                "password": '{"hello": "world", "cat": "dog"}',
                 "secure": True,
                 "description": "",
                 "secret_store": "echo",
@@ -670,3 +672,4 @@ def test_get_secret_crc32c(monkeypatch, caplog):
         ],
     )
     assert us.get_user("gcs://test") is None
+    assert us.get_password("gcs://test") == '{"hello": "world", "cat": "dog"}'

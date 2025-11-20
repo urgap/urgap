@@ -1,3 +1,4 @@
+import json
 import re
 
 from unittest.mock import MagicMock, patch
@@ -13,6 +14,7 @@ def mock_io_gcs(tmp_path):
     mock_uuri.netloc = "mock-project"
     mock_uuri.get_container_name.return_value = "mock-bucket"
     mock_uuri.get_object_name.return_value = "mock-object"
+    mock_uuri.password = None
 
     mock_kwargs = {"uuri": mock_uuri, "scratch_path": tmp_path / "mock_file"}
 
@@ -112,12 +114,14 @@ def test_list_container_objects_with_pattern(mock_storage):
     assert result == ["file1.txt"]
 
 
+def test_init_with_stringify_json_password_creates_client_with_credentials(tmp_path):
     mock_uuri = MagicMock()
     mock_uuri.netloc = "test-project"
     mock_uuri.get_container_name.return_value = "test-bucket"
     mock_uuri.get_object_name.return_value = "test-object"
 
     # Mock dict password (service account JSON)
+    mock_uuri.password = '{"hello": "world"}'
 
     mock_kwargs = {"uuri": mock_uuri, "scratch_path": tmp_path / "test_file"}
 
@@ -136,6 +140,7 @@ def test_list_container_objects_with_pattern(mock_storage):
 
         # Verify service account credentials were created from dict
         mock_creds_class.from_service_account_info.assert_called_once_with(
+            json.loads(mock_uuri.password),
         )
 
         # Verify client was created with credentials and project
@@ -153,6 +158,7 @@ def test_init_with_string_password_creates_client_without_credentials(tmp_path):
     mock_uuri.get_object_name.return_value = "test-object"
 
     # Mock string password (or None)
+    mock_uuri.password = None
 
     mock_kwargs = {"uuri": mock_uuri, "scratch_path": tmp_path / "test_file"}
 
@@ -172,4 +178,6 @@ def test_init_with_string_password_creates_client_without_credentials(tmp_path):
 
         # Verify client was created with only project (no credentials)
         mock_client_class.assert_called_once_with(
+            credentials=None,
+            project="test-project",
         )
