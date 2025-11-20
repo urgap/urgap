@@ -311,6 +311,8 @@ exp_design.output.TEST_METADATA_JSON = ".test_metadata.json"
 # TCS Parser===================================================================
 tcsparser = types.SimpleNamespace()
 tcsparser.metadata = types.SimpleNamespace()
+tcsparser.metadata.ANY = "tcsparser.metadata.ANY"
+tcsparser.metadata.JSON = ".metadata.json"
 tcsparser.input = types.SimpleNamespace()
 tcsparser.input.ANY = "tcsparser.input.ANY"
 tcsparser.input.QUANTSTUDIO_TXT = ".quantstudio.txt"
