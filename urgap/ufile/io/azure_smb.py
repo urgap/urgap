@@ -75,6 +75,12 @@ class IOAzureSMB(UIOBase):
         )
 
     def __del__(self) -> None:
+        for attr in (
+            "file_client",
+            "directory_client",
+        ):
+            if hasattr(self, attr):
+                delattr(self, attr)
 
     @property
     def remote_path(self) -> str | None:

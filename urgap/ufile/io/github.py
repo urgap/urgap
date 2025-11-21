@@ -67,6 +67,12 @@ class IOGithub(UIOBase):
 
     def __del__(self) -> None:
         """Close Github IO connection on object deletion."""
+        if hasattr(self, "github_io") and self.github_io:
+            self.github_io.close()
+
+        for attr in ("source_branch", "target_branch_name", "repo", "github_io"):
+            if hasattr(self, attr):
+                delattr(self, attr)
 
     @property
     def remote_path(self) -> str | None:
