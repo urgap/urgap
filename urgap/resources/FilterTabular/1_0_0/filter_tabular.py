@@ -70,6 +70,7 @@ def read_dfs(grouped_input_files: dict, sep: str | None) -> list:
     for file_type, file_list in grouped_input_files.items():
         if file_type == "csv":
             dfs.extend(
+                pd_functions[file_type]["function"](file, sep=sep, engine="python")
                 for file in file_list
             )
         else:
