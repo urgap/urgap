@@ -75,9 +75,12 @@ class IOAzureSMB(UIOBase):
         )
 
     def __del__(self) -> None:
+        """Close SMB connection and associated clients when object is deleted."""
         for attr in (
             "file_client",
             "directory_client",
+            "share_client",
+            "share_service_client",
         ):
             if hasattr(self, attr):
                 delattr(self, attr)

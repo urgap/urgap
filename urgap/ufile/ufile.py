@@ -715,6 +715,8 @@ class UFile:
                     self._unpack_gz(gz_output=gz_output, encoding="ISO-8859-1")
             case "tar":
                 with tarfile.open(self.path, mode="r:") as tfile:
+                    tfile.extractall(
+                    )
             case "split_tar":
                 urgap.UFileList.from_folder(
                     self.uuri.path,
