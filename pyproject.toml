@@ -163,3 +163,7 @@ force-single-line = false
 known-first-party = ["urgap"]
 combine-as-imports = true
 lines-between-types = 1
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+]
