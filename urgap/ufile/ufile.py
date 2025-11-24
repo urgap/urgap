@@ -716,6 +716,8 @@ class UFile:
             case "tar":
                 with tarfile.open(self.path, mode="r:") as tfile:
                     tfile.extractall(
+                        path=temp_folder,
+                        filter=lambda tarinfo, _: tarinfo,
                     )
             case "split_tar":
                 urgap.UFileList.from_folder(
