@@ -143,6 +143,7 @@ def _log_cred_entry(cred_entry: dict) -> None:
 @click.option("--password", "-p", "password", default=None, help="Set password id")
 @click.option(
     "--store",
+    "-b",
     "secret_store",
     default=None,
     help="Set secret store backend",
