@@ -70,6 +70,7 @@ def read_dfs(grouped_input_files: dict, sep: str | None) -> list:
     for file_type, file_list in grouped_input_files.items():
         if file_type == "csv":
             dfs.extend(
+                for file in file_list
             )
         else:
             dfs.extend(pd_functions[file_type]["function"](file) for file in file_list)
@@ -176,6 +177,7 @@ def main(
                 concatenated_df = concatenated_df.query(query_string)
             except (pd.errors.UndefinedVariableError, SyntaxError, ValueError) as e:
                 msg = f"Query string {query_string} is invalid"
+                f"Dataframe columns: {list(concatenated_df.columns)}"
                 logger.warning(msg)
                 raise RuntimeError(msg) from e
 
