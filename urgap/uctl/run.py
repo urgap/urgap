@@ -510,6 +510,7 @@ def _handle_service_bus_messages(
     while True:
         messages = receiver.receive_messages(
             max_wait_time=5,
+            max_message_count=1,
         )
         if not messages:
             empty_polls += 1
