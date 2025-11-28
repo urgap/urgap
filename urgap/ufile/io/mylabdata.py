@@ -224,6 +224,7 @@ class IOMyLabData(UIOBase):
         pattern: str | None = None,
         limit: int = 1000,
         full_string: bool = False,
+        with_hashes: bool = False,
     ) -> list:
         """Get objects in the folder/container, optionally filtered by a regex pattern.
 
