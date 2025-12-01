@@ -232,6 +232,7 @@ class IOMyLabData(UIOBase):
             pattern: Regex pattern for filtering object names.
             limit: Maximum number of files to request in one query.
             full_string: Whether to return the list with full strings or just fragments.
+            with_hashes: Whether to set checksum tag in uri.
 
         Returns:
             List of object names matching the filter.
@@ -261,6 +262,12 @@ class IOMyLabData(UIOBase):
                 urgap.config.get("requests_timeout_read", None),
             ),
         )
+        container_objects = self.append_container_objects(
+            full_string=full_string,
+            with_hashes=with_hashes,
+            container_objects=[],
+            files=response.json()["data"]["files"],
+        )
         while len(response.json()["data"].get("nextPage", "")) != 0:
             response = requests.get(
                 url=self.uuri.get_mylabdata_api_url()
@@ -272,6 +279,13 @@ class IOMyLabData(UIOBase):
                     urgap.config.get("requests_timeout_read", None),
                 ),
             )
+            container_objects = self.append_container_objects(
+                full_string=full_string,
+                with_hashes=with_hashes,
+                container_objects=container_objects,
+                files=response.json()["data"]["files"],
+            )
+        if pattern is not None:
         return container_objects
 
     def remote_object_exists(self) -> bool:
@@ -281,3 +295,25 @@ class IOMyLabData(UIOBase):
             True if the object exists, False otherwise.
         """
         return self.uuri.fragment in self.list_container_items()
+
+    def append_container_objects(
+        self,
+        full_string: bool,
+        with_hashes: bool,
+        files: list,
+        container_objects: None | list = None,
+    ) -> list:
+        """Append items to container_objects.
+
+        Args:
+            container_objects: Final list with all URIs.
+            files: URIs to append to final list.
+            with_hashes: Whether to set checksum tag in URI.
+            full_string: Whether to return the list with full strings or just fragments.
+
+        Returns:
+            List of container_objects.
+        """
+        if container_objects is None:
+            container_objects = []
+        return container_objects
