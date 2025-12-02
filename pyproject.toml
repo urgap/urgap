@@ -45,6 +45,7 @@ dependencies = [
     'requests>=2.26,<2.33',
     'tqdm==4.67.1',
     'PyGithub==2.8.1',
+    'mcp==1.23.1',
     'xlsxwriter==3.2.9'
 ]
 
@@ -61,6 +62,7 @@ cloud = [
     'pg8000~=1.29',
     'pysmb==1.2.13',
     'pyvis==0.3.2',
+    'mcp==1.23.1',
 ]
 databases = [
     'pymongo>=3.8.0,<5.0.0',
@@ -90,6 +92,7 @@ all = [
     'pymongo>=3.8.0,<5.0.0',
     'pysmb==1.2.13',
     'pyvis==0.3.2',
+    'mcp==1.23.1',
 ]
 
 [project.scripts]
