@@ -316,4 +316,12 @@ class IOMyLabData(UIOBase):
         """
         if container_objects is None:
             container_objects = []
+        if full_string is False:
+            logger.warning(
+                "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
+            )
+        for file in files:
+            if full_string is True and with_hashes is True:
+            else:
+            container_objects.append(uri)
         return container_objects

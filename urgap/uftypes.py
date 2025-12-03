@@ -317,6 +317,7 @@ tcsparser.input = types.SimpleNamespace()
 tcsparser.input.ANY = "tcsparser.input.ANY"
 tcsparser.input.QUANTSTUDIO_TXT = ".quantstudio.txt"
 tcsparser.input.VICELL_TXT = ".vicell.txt"
+tcsparser.input.VICELL_CSV = ".vicell.csv"
 tcsparser.input.CEDEX_TXT = ".cedex.txt"
 tcsparser.input.ENVISION_CSV = ".envision.csv"
 tcsparser.output = types.SimpleNamespace()
