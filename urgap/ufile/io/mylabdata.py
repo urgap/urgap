@@ -286,6 +286,11 @@ class IOMyLabData(UIOBase):
                 files=response.json()["data"]["files"],
             )
         if pattern is not None:
+            container_objects = [
+                name
+                for name in container_objects
+                if re.search(pattern, name) is not None
+            ]
         return container_objects
 
     def remote_object_exists(self) -> bool:
