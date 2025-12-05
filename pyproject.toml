@@ -31,6 +31,7 @@ classifiers = [
 ]
 dependencies = [
     'click==8.3.1',
+    'fastapi==0.123.9',
     'fastexcel==0.18.0',
     'flask==3.1.2',
     'flask-wtf==1.2.2',
