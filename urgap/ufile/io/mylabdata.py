@@ -6,6 +6,7 @@ import re
 
 from collections.abc import Callable
 from typing import ParamSpec
+from urllib.parse import unquote, urlencode, urlparse
 
 import requests
 
@@ -326,7 +327,13 @@ class IOMyLabData(UIOBase):
                 "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
             )
         for file in files:
+            download_url_path = urlparse(file["downloadUrl"]).path
+            download_fragment = "/".join(unquote(download_url_path).split("/")[4:])
             if full_string is True and with_hashes is True:
+                uri = f"{self.uuri.storage_uri}?checksum={file['checksum']}#{download_fragment}"
+            elif full_string is True:
+                uri = f"{self.uuri.storage_uri}#{download_fragment}"
             else:
+                uri = download_fragment
             container_objects.append(uri)
         return container_objects
