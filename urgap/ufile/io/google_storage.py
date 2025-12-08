@@ -149,6 +149,7 @@ class IOGoogleCloudStorage(UIOBase):
             ]
         if full_string is True:
             container_objects = self.add_storage_uri_to_container_items(
+                container_objects,
             )
         else:
             logger.warning(
