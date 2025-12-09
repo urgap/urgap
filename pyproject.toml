@@ -45,6 +45,7 @@ dependencies = [
     'plotly',
     'polars>=1.33.0',
     'requests>=2.26,<2.33',
+    'sqlalchemy==2.0.45',
     'tqdm==4.67.1',
     'PyGithub==2.8.1',
     'mcp==1.23.1',
