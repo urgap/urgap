@@ -28,6 +28,7 @@ class IOGithub(UIOBase):
         github://<github_host>/<org_name>/<repo_name>/<branch>#path/to/dir/<object_name>
         """
         super().__init__(**kwargs)
+
         self.query_params = self.uuri.query
 
         org_name = self.uuri.get_github_resource_name("org")
