@@ -38,7 +38,7 @@ class UUri:
         self.uri_dict = urlparse(uri)._asdict()
         self.scheme = self.uri_dict["scheme"]
         self.netloc = self.uri_dict["netloc"]
-        self.path = self.uri_dict["path"]
+        self.path = urllib.request.url2pathname(self.uri_dict["path"])
         self.params = self.uri_dict["params"]
         self.original_query = self.uri_dict["query"]
         self.fragment = self.uri_dict["fragment"]
