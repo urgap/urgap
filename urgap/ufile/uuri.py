@@ -375,7 +375,7 @@ class UUri:
     def get_github_resource_name(self, resource: str = "repo") -> str:
         """Get the github resource name."""
         path = self.path.lstrip(os.sep).rstrip(os.sep)
-        segments = re.findall(rf"[^{os.sep}]+", path)
+        segments = re.findall(rf"[^{re.escape(os.sep)}]+", path)
         match resource:
             case "org":
                 return segments[0]
