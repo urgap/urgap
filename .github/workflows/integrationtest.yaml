@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install uv
-          uv pip install pytest
-          uv pip install .["all"]
+          uv pip install pytest --system
+          uv pip install .["all"] --system
       - name: Run unit tests
         run: |
           pytest tests/unittests
@@ -41,8 +41,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install uv
-          uv pip install pytest
-          uv pip install .["all"]
+          uv pip install pytest --system
+          uv pip install .["all"] --system
       - name: Run unit tests
         run: |
           pytest tests/unittests
