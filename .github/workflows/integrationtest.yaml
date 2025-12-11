@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install uv
-          uv pip install pytest --system
+          uv pip install pytest pytest-asyncio --system
           uv pip install .["all"] --system
       - name: Run unit tests
         run: |
@@ -41,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install uv
-          uv pip install pytest --system
+          uv pip install pytest pytest-asyncio --system
           uv pip install .["all"] --system
       - name: Run unit tests
         run: |
