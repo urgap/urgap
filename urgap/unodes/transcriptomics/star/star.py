@@ -81,6 +81,8 @@ class Star(urgap.unode.UNodeBase):
         utrace.urun_dict.command_list.append(
             str(utrace.output_files[0].path.parent) + "/",
         )
+            utrace.urun_dict.command_list.extend(
+            )
         for k, v in utrace.urun_dict.items():
             utrace.urun_dict.command_list.extend([k, v])
 

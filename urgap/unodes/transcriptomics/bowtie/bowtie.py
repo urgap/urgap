@@ -95,6 +95,8 @@ class Bowtie(urgap.unode.UNodeBase):
                 utrace.extend_output_files_by_uftype(
                     urgap.uftypes.transcriptomics.reads.FASTQ_GZ,
                 )
+                utrace.urun_dict.command_list.extend(
+                )
                 continue
             utrace.urun_dict.command_list.extend([k, v])
         utrace.urun_dict.command_list.append(str(utrace.output_files[0].path))

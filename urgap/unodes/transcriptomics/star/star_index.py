@@ -72,6 +72,8 @@ class StarIndex(urgap.unode.UNodeBase):
         if len(gtf_file) == 1:
             utrace.urun_dict.command_list.append("--sjdbGTFfile")
             utrace.urun_dict.command_list.append(str(gtf_file[0]))
+            utrace.urun_dict.command_list.extend(
+            )
         for k, v in utrace.urun_dict.items():
             utrace.urun_dict.command_list.extend([k, v])
         return utrace
