@@ -104,14 +104,18 @@ class RpCodonMetrics(urgap.unode.UNodeBase):
         """Postflight routine for RpCodonMetrics wrapper.
 
         Args:
+            utrace: Combination of urun_dict, ufile_list and unode.meta.        Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
         output_file_groups = utrace.output_files.get_path_object_groups_by_uftypes()
         analysis_feather = output_file_groups[
             urgap.uftypes.transcriptomics.RIBOSOME_PROFILING_FEATHER
         ][0]
+        (analysis_feather.parent / "analysis.feather").rename(
+            analysis_feather,
         )
         html_file = output_file_groups[
             urgap.uftypes.transcriptomics.CODON_METRICS_PLOT_HTML
         ][0]
+        (html_file.parent / "plots.html").rename(html_file)
         return utrace

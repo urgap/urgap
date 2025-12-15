@@ -2,6 +2,8 @@
 
 import os
 
+from pathlib import Path
+
 import urgap
 
 
@@ -113,6 +115,7 @@ class KallistoIndex(urgap.unode.UNodeBase):
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
         utrace = self.create_command_list(utrace=utrace)
+        self._old_wd = Path.cwd()
         os.chdir(utrace.output_files[0].path.parent)
         return utrace
 

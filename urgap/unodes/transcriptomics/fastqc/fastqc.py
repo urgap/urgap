@@ -84,6 +84,7 @@ class FastQC(urgap.unode.UNodeBase):
         utrace.urun_dict.command_list = [
             str(self.exe_path),
         ]
+        if "-t" not in utrace.urun_dict:
             utrace.urun_dict.command_list.extend(["-t", str(mp.cpu_count() - 1)])
         for k, v in utrace.urun_dict.items():
             utrace.urun_dict.command_list.extend([k, v])
@@ -130,7 +131,12 @@ class FastQC(urgap.unode.UNodeBase):
         input_file_name = utrace.input_files[0].object_name.split("/")[-1]
         for suffix in (".gz", ".fastq", ".sam", ".bam"):
             input_file_name = input_file_name.removesuffix(suffix)
+            output_file_base_name = ".".join(input_file_name.split(".")) + "_fastqc"
         for (
             opath,
+        ) in utrace.output_files.get_path_object_groups_by_uftypes().values():
+            (
                 utrace.output_files[0].path.parent
+                / f"{output_file_base_name}{opath[0].suffix}"
+            ).rename(opath[0])
         return utrace

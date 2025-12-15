@@ -3,6 +3,7 @@
 import multiprocessing as mp
 import zipfile
 
+from pathlib import Path
 from zipfile import ZipFile
 
 import urgap
@@ -72,7 +73,9 @@ class StarIndex(urgap.unode.UNodeBase):
         if len(gtf_file) == 1:
             utrace.urun_dict.command_list.append("--sjdbGTFfile")
             utrace.urun_dict.command_list.append(str(gtf_file[0]))
+        if "--runThreadN" not in utrace.urun_dict:
             utrace.urun_dict.command_list.extend(
+                ["--runThreadN", str(mp.cpu_count() - 1)],
             )
         for k, v in utrace.urun_dict.items():
             utrace.urun_dict.command_list.extend([k, v])
@@ -116,6 +119,7 @@ class StarIndex(urgap.unode.UNodeBase):
         )
         for i, index_file in enumerate(index_files):
             new_name = str(output_index_files[i])
+            Path(index_file).rename(new_name)
 
         # Zip the meta info files
         meta_info_files = list(outputs.glob("*.txt")) + list(outputs.glob("*.tab"))

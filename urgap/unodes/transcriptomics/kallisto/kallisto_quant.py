@@ -125,6 +125,7 @@ class KallistoQuant(urgap.unode.UNodeBase):
         Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
+        (utrace.output_files[0].path.parent / "abundance.tsv").rename(
             utrace.output_files[0].path,
         )
         return utrace

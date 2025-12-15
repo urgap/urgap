@@ -56,6 +56,7 @@ class CutAdapt(urgap.unode.UNodeBase):
             "python",
             str(self.exe_path),
         ]
+        if "--cores" not in utrace.urun_dict:
             utrace.urun_dict.command_list.extend(["--cores", str(mp.cpu_count() - 1)])
         for k, v in utrace.urun_dict.items():
             utrace.urun_dict.command_list.extend([k, v])

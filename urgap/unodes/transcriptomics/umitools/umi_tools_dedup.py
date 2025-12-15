@@ -90,6 +90,7 @@ class UmiToolsDedup(urgap.unode.UNodeBase):
         bam_index = utrace.input_files.get_path_objects_by_uftype(
             urgap.uftypes.transcriptomics.BAM_INDEX,
         )[0]
+        bam.with_suffix(".bam.bai").symlink_to(bam_index)
         return self.create_command_list(utrace=utrace)
 
     def postflight(

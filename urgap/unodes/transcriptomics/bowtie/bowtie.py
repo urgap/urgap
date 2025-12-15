@@ -5,6 +5,8 @@ import logging
 import multiprocessing as mp
 import os
 
+from pathlib import Path
+
 import urgap
 
 
@@ -41,6 +43,7 @@ class Bowtie(urgap.unode.UNodeBase):
         """,
     }
 
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize Bowtie class."""
         super().__init__(*args, **kwargs)
 
@@ -89,6 +92,7 @@ class Bowtie(urgap.unode.UNodeBase):
             fastq_files += str(file) + ","
         fastq_files = fastq_files.rstrip(",")
         utrace.urun_dict.command_list.append(str(self.exe_path))
+        if "--threads" not in utrace.urun_dict:
             utrace.urun_dict.command_list.extend(["--threads", str(mp.cpu_count() - 1)])
         for k, v in utrace.urun_dict.items():
             if k == "--un":
@@ -96,9 +100,11 @@ class Bowtie(urgap.unode.UNodeBase):
                     urgap.uftypes.transcriptomics.reads.FASTQ_GZ,
                 )
                 utrace.urun_dict.command_list.extend(
+                    [k, str(utrace.output_files[-1].path)],
                 )
                 continue
             utrace.urun_dict.command_list.extend([k, v])
+            utrace.urun_dict.command_list.append(fastq_files)
         utrace.urun_dict.command_list.append(str(utrace.output_files[0].path))
 
         return utrace
@@ -123,6 +129,7 @@ class Bowtie(urgap.unode.UNodeBase):
             urgap.uftypes.transcriptomics.BOWTIE_1_INDEX_MAPPING,
         )[0]
         # Create the symlinks since file names have to be static
+        with index_file.open() as mapping_file:
             index_mapping = json.load(mapping_file)
 
         # Unlink existing index files (for sanity)
@@ -132,8 +139,10 @@ class Bowtie(urgap.unode.UNodeBase):
         for index_file in utrace.input_files.get_path_objects_by_uftype(
             urgap.uftypes.transcriptomics.BOWTIE_1_INDEX,
         ):
+            (index_file.parent / index_mapping[index_file.name]).symlink_to(index_file)
         os.environ["BOWTIE_INDEXES"] = str(index_file.parent)
         utrace = self.create_command_list(utrace=utrace)
+        return utrace  # noqa: RET504
 
     def postflight(
         self,
@@ -150,6 +159,9 @@ class Bowtie(urgap.unode.UNodeBase):
             logging.warning(
                 "Fastq with unaligned reads not created by bowtie. Creating empty file.",
             )
+            with utrace.output_files[-1].path.open("w"):
                 pass
             fastq_gz = utrace.output_files[-1].compress(compression_format="gz").path
+            Path(fastq_gz).replace(utrace.output_files[-1].path)
+        return utrace
         return utrace

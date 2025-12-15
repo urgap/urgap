@@ -81,7 +81,9 @@ class Star(urgap.unode.UNodeBase):
         utrace.urun_dict.command_list.append(
             str(utrace.output_files[0].path.parent) + "/",
         )
+        if "--runThreadN" not in utrace.urun_dict:
             utrace.urun_dict.command_list.extend(
+                ["--runThreadN", str(mp.cpu_count() - 1)],
             )
         for k, v in utrace.urun_dict.items():
             utrace.urun_dict.command_list.extend([k, v])
@@ -116,6 +118,8 @@ class Star(urgap.unode.UNodeBase):
             legacy_file = index_file.parent / legacy_name
             if legacy_file.exists():
                 logging.info("Removing symbolic links from previous run")
+                legacy_file.unlink()
+            index_file.symlink_to(legacy_file)
 
         meta_zip = utrace.input_files.get_path_objects_by_uftype(
             urgap.uftypes.transcriptomics.STAR_2_INDEX_META_ZIP,
@@ -136,6 +140,7 @@ class Star(urgap.unode.UNodeBase):
         Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
+        (utrace.output_files[0].path.parent / "Aligned.out.sam").rename(
             utrace.output_files[0].path,
         )
         quant_tab = utrace.output_files[0].path.parent / "SJ.out.tab"
@@ -143,4 +148,5 @@ class Star(urgap.unode.UNodeBase):
             utrace.extend_output_files_by_uftype(
                 uftype=urgap.uftypes.transcriptomics.STAR_2_QUANT_TSV,
             )
+            quant_tab.rename(utrace.output_files[-1].path)
         return utrace

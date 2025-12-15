@@ -140,6 +140,11 @@ class BowtieBuild(urgap.unode.UNodeBase):
             strict=False,
         ):
             index_mapping[target_file.name] = old_file.name
+            old_file.rename(target_file)
 
+        mapping_file = utrace.output_files.get_path_objects_by_uftype(
+            urgap.uftypes.transcriptomics.BOWTIE_1_INDEX_MAPPING,
+        )[0]
+        with mapping_file.open("w") as mapping_json:
             json.dump(index_mapping, mapping_json, indent=4)
         return utrace
