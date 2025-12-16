@@ -55,6 +55,7 @@ dependencies = [
 [project.optional-dependencies]
 # E.g. pip install "urgap[cloud]"
 cloud = [
+    'apache_beam==2.70.0',
     'azure-identity==1.25.1',
     'azure-keyvault-secrets==4.10.0',
     'azure-monitor-opentelemetry==1.8.3',
@@ -86,6 +87,7 @@ legacy = [
 ]
 
 all = [
+    'apache_beam==2.70.0',
     'azure-identity==1.25.1',
     'azure-keyvault-secrets==4.10.0',
     'azure-monitor-opentelemetry==1.8.3',
