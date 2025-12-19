@@ -807,35 +807,36 @@ class UNodeBase:
         """Generate basic node-specific data visualization structure.
 
         Note: For example::
-            data = [
-                {
-                    "section_title": "",
-                    "section_text": "",
-                    "networks": [
-                        {
-                            "title": "",
-                            "links": "",
-                            "caption" :"".
-                        }
-                    ]
-                    "figures": [
-                        {
-                            "title": "",
-                            "data": "",
-                            "_type": "html|img",
-                            "caption": "",
-                        }
-                    ],
-                    "tables": [
-                        {
-                            "title": "",
-                            "headers": "",
-                            "rows": [],
-                            "caption":""
-                        }
-                    ],
-                }
-            ]
+
+          data = [
+              {
+                  "section_title": "",
+                  "section_text": "",
+                  "networks": [
+                      {
+                          "title": "",
+                          "links": "",
+                          "caption" :"".
+                      }
+                  ]
+                  "figures": [
+                      {
+                          "title": "",
+                          "data": "",
+                          "_type": "html|img",
+                          "caption": "",
+                      }
+                  ],
+                  "tables": [
+                      {
+                          "title": "",
+                          "headers": "",
+                          "rows": [],
+                          "caption":""
+                      }
+                  ],
+              }
+          ]
 
         Args:
             ufile: Urgap resource package file.

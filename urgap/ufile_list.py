@@ -278,22 +278,22 @@ class UFileList(UserList):
         Note:
             Input_uftypes in META_INFO dict of each wrapper has the following structure::
 
-            META_INFO = {
-                "input_uftypes": {
-                    urgap.uftypes.test.TEST_FILE1: {  # < Defining the required data type
-                        "min": 2,                # < minimum number of UFiles
-                        "max": 4,                # < maximum number of UFiles
-                    },
-                }
-            }
-            Additional Filters can be passed during node.run() execution, enables more
-            granular filtering on UFile tag bases, e.g. QC=bad, which has to be set on UFile
-            level beforehand, e.g. manually::
-                {
-                    urgap.uftypes.test.TEST_FILE1: {  # < Defining the required data type
-                            "tags": {"QC": "good"}, # < dict with tags the UFiles are checked against
-                        }
-                }
+              META_INFO = {
+                  "input_uftypes": {
+                      urgap.uftypes.test.TEST_FILE1: {  # < Defining the required data type
+                          "min": 2,                # < minimum number of UFiles
+                          "max": 4,                # < maximum number of UFiles
+                      },
+                  }
+              }
+              Additional Filters can be passed during node.run() execution, enables more
+              granular filtering on UFile tag bases, e.g. QC=bad, which has to be set on UFile
+              level beforehand, e.g. manually::
+                  {
+                      urgap.uftypes.test.TEST_FILE1: {  # < Defining the required data type
+                              "tags": {"QC": "good"}, # < dict with tags the UFiles are checked against
+                          }
+                  }
 
         Args:
             input_uftypes: Dictionary specifying required datatypes and file counts.

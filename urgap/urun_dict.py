@@ -25,8 +25,8 @@ class URunDict(UserDict):
 
     Ultimately a URunDict is passed into the wrapper. URunDict can only be
     initialized with a dict containing:
-      - Parameters for wrapper execution.
-      - unode_parameters for high level unode base class execution.
+    - Parameters for wrapper execution.
+    - unode_parameters for high level unode base class execution.
 
     As part of the initialization, a workflow id (wid) is issued.
 
@@ -34,13 +34,13 @@ class URunDict(UserDict):
     accessors to ensure data consistency.
 
     Main properties:
-      - parameters
-      - unode_parameters
-      - unode_rinfo
-      - input_files
-      - output_files
-      - command_list
-      - wid
+    - parameters
+    - unode_parameters
+    - unode_rinfo
+    - input_files
+    - output_files
+    - command_list
+    - wid
 
     See class docstring for expected internal structure and available fields.
     """

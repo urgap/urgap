@@ -14,7 +14,7 @@ import sys
 from importlib.metadata import version
 from pathlib import Path
 
-sys.path.insert(0, os.path.abspath("../"))
+sys.path.insert(0, os.path.abspath("../../"))
 for example_file in Path("../../example_scripts").glob("**/*.py"):
     sys.path.insert(0, str(example_file.parent.resolve()))
 

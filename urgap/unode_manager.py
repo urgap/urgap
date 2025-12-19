@@ -68,28 +68,34 @@ class UNodeManager(UserDict):
         Tracks availability of 3rd party installations, such as dotnet, java, mono, etc.
         Also tracks python and R package dependencies.
 
-        Note:
-            For example::
-                {
-                    "java": {
-                        "command": ["java", "-version"],
-                        "regex_pattern": None,
+        The external_resource_test_dict parameter maps tool names to test commands.
+        For example::
+
+            {
+                "java": {
+                    "command": ["java", "-version"],
+                    "regex_pattern": None,
+                },
+                "dotnet5": {
+                    "command": ["dotnet", "--list-sdks"],
+                    "regex_pattern": r"^5\.[0-9]*\.[0-9]* ",
+                }
+            }
+
+        The key is used as lookup. Wrappers can specify their requirements in META_INFO,
+        for example::
+
+            {
+                "requires": {
+                    "other_uftypes": {
+                        "other_dependencies": ("java",),
+                        "python_packages": ["pymzml", "pyqms"]
                     },
-                    "dotnet5": {
-                        "command": ["dotnet", "--list-sdks"],
-                        "regex_pattern": r"^5\.[0-9]*\.[0-9]* ",
-                    }
                 }
-            The key is used as lookup. Wrappers can specify their requirements in META_INFO, e.g::
-                {
-                    "requires": {
-                        "other_uftypes": {
-                            "other_dependencies": ("java",),
-                            "python_packages: ["pymzml", "pyqms"]
-                        },
-                }
-            The requirements are tracked based on specific input_file uftypes or for all other
-            uftypes under `other_uftypes`.
+            }
+
+        The requirements are tracked based on specific input_file uftypes or for all other
+        uftypes under `other_uftypes`.
 
         Args:
             external_resource_test_dict: Dictionary mapping external tools to commands and regexes.
