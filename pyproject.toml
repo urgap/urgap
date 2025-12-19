@@ -1,6 +1,3 @@
-[dev-dependencies]
-black = { version = "^18.3-alpha.0", python = "^3.10" }
-
 [build-system]
 requires = ["hatchling", "versioningit"]
 build-backend = "hatchling.build"
@@ -9,6 +6,7 @@ build-backend = "hatchling.build"
 name = "urgap"
 readme = "README.rst"
 dynamic = ["version"]
+requires-python = ">=3.10,<3.12"
 urls = { Source = "https://mygithub.gsk.com/gsk-tech/urgap" }
 classifiers = [
     'Development Status :: 4 - Beta',
@@ -85,6 +83,12 @@ docs = [
     'sphinx',
     'sphinx-rtd-theme',
 ]
+dev = [
+    'pytest>=7.0.0',
+    'pytest-asyncio>=0.21.0',
+    'black>=23.0.0',
+    'ruff>=0.1.0',
+]
 legacy = [
     'unimod-mapper~=0.6.4',
     'uparma~=1.0.1',
@@ -149,7 +153,7 @@ dirty = "{next_version}.dev{distance}"
 distance-dirty = "{next_version}.dev{distance}"
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py310"
 line-length = 88
 indent-width = 4
 exclude = [
