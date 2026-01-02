@@ -32,7 +32,10 @@ author = "Urgap2 Team"
 #     urgap_version = version_file.read().strip()
 
 # The full version, including alpha/beta/rc tags.
-release = version("urgap")
+# release = version("urgap")
+# @TODO@MKoesters: Could not build docs with above code, creating git tag did not help
+# Need to get this working
+release = "1.0.0"
 # # for example take major/minor
 version = ".".join(release.split(".")[:2])
 

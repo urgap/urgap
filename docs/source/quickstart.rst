@@ -10,13 +10,13 @@ If you have installed from source / github, then you can test your installation 
 
 .. code-block:: bash
 
-    tox -e py39
+    uv run pytest
 
-If you need a fresh installation of all requirements, run
+If you need a fresh installation of all requirements including a fresh virtual environment, run
 
 .. code-block:: bash
 
-    tox -r -e py39
+    rm -rf .venv && uv sync --extra docs --extra dev --extra all
 
 
 Using UFiles, the data abstraction layer
