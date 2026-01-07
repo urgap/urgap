@@ -32,7 +32,7 @@ jobs:
           yamlfmt -lint ./**/*.yaml
       - name: Run prettier
         run: |
-          prettier --tab-width 4 --check **/*.json"
+          prettier --tab-width 4 --check **/*.json
       - name: Check for .yml files (should use .yaml)
         run: |
           echo "Searching for .yml files in the repository"
