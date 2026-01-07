@@ -1,0 +1,86 @@
+name: Run tests
+on:
+  push:
+    branches:
+      - dev
+      - main
+  pull_request:
+    branches:
+      - dev
+      - main
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Install ruff
+        run: |
+          pip install ruff
+      - name: Install prettier and yamlfmt
+        run: |
+          npm install -g prettier yamlfmt
+      - name: Run ruff
+        run: |
+          ruff check . --exclude urgap/wrappers,urgap/ext,urgap/uftypes.py,tests,docs,urgap/uctl/mcp
+      - name: Run yamlfmt
+        run: |
+          yamlfmt -lint .
+      - name: Run prettier
+        run: |
+          prettier --tab-width 4 --check **/*.json"
+      - name: Check for .yml files (should use .yaml)
+        run: |
+          echo "Searching for .yml files in the repository"
+          yml_files=$(find . -type f -name "*.yml")
+          if [ -n "$yml_files" ]; then
+            echo "Error: .yml files found. Please use .yaml extension instead:"
+            echo "$yml_files"
+            exit 1
+          else
+            echo "No .yml files found. All YAML files use .yaml extension."
+          fi
+  test-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          pip install uv
+          uv pip install pytest pytest-asyncio --system
+          uv pip install .["all"] --system
+      - name: Run unit tests
+        run: |
+          pytest tests/unittests
+      - name: Run integration tests
+        run: |
+          pytest tests/integrationtests
+#  test-windows:
+#    runs-on: windows-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#      - name: Set up Python
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: "3.13"
+#      - name: Install dependencies
+#        run: |
+#          pip install uv
+#          uv pip install pytest pytest-asyncio --system
+#          uv pip install .["all"] --system
+#      - name: Run unit tests
+#        run: |
+#          pytest tests/unittests
+#      - name: Run integration tests
+#        run: |
+#          pytest tests/integrationtests

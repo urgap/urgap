@@ -3,8 +3,9 @@
 import ast
 import getpass
 import logging
-import re
 import os
+import re
+
 from pathlib import Path
 from urllib.parse import quote, urlparse
 from urllib.request import url2pathname
@@ -382,7 +383,7 @@ class UUri:
             case "repo":
                 return segments[1]
             case "branch":
-                return os.sep.join(segments[2:])
+                return str(Path(*segments[2:]))
             case _:
                 msg = "Unknown param for github resource"
                 raise KeyError(msg)
