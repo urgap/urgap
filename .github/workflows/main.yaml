@@ -18,18 +18,17 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
-      - name: Install ruff
+      - name: Install tools
         run: |
           pip install ruff
-      - name: Install prettier and yamlfmt
-        run: |
-          npm install -g prettier yamlfmt
+          npm install -g prettier
+          go install github.com/google/yamlfmt/cmd/yamlfmt@latest
       - name: Run ruff
         run: |
           ruff check . --exclude urgap/wrappers,urgap/ext,urgap/uftypes.py,tests,docs,urgap/uctl/mcp
       - name: Run yamlfmt
         run: |
-          yamlfmt -lint .
+          yamlfmt -lint ./**/*.yaml
       - name: Run prettier
         run: |
           prettier --tab-width 4 --check **/*.json"
