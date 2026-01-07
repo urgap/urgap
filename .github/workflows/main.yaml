@@ -28,6 +28,7 @@ jobs:
           ruff check . --exclude urgap/wrappers,urgap/ext,urgap/uftypes.py,tests,docs,urgap/uctl/mcp
       - name: Run yamlfmt
         run: |
+          export PATH="$HOME/go/bin:$PATH"
           yamlfmt -lint ./**/*.yaml
       - name: Run prettier
         run: |
@@ -45,6 +46,7 @@ jobs:
           fi
   test-ubuntu:
     runs-on: ubuntu-latest
+    needs: code-quality
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
