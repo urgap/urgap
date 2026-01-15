@@ -8,6 +8,7 @@ build-backend = "hatchling.build"
 [project]
 name = "urgap"
 readme = "README.rst"
+requires-python = ">=3.10"
 dynamic = ["version"]
 urls = { Source = "https://mygithub.gsk.com/gsk-tech/urgap" }
 classifiers = [
