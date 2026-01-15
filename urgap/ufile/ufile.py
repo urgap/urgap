@@ -714,7 +714,7 @@ class UFile:
                     self._unpack_gz(gz_output=gz_output, encoding="ISO-8859-1")
             case "tar":
                 with tarfile.open(self.path, mode="r:") as tfile:
-                    tfile.extractall(path=temp_folder)
+                    tfile.extractall(path=temp_folder, filter="data")
             case "split_tar":
                 urgap.UFileList.from_folder(
                     self.uuri.path,
@@ -913,7 +913,7 @@ class UFile:
         dot_str = self._get_multi_part_tag(tag_name="dot_str")
         if dot_str is None:
             return None
-        return nx.node_link_graph(json.loads(dot_str))
+        return nx.node_link_graph(json.loads(dot_str), edges="links")
 
     def _get_multi_part_tag(self, tag_name: str) -> str | None:
         """Decompress and decode a potentially multi-part tag."""
