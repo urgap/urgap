@@ -21,8 +21,6 @@ msgfplus_2021_03_22
         Kim, S., Mischerikow, N., Bandeira, N., Navarro, J. D., Wich, L., Mohammed, S., Heck, A. J. R., & Pevzner, P. A. (2010). The Generating Function of CID, ETD, and CID/ETD Pairs of Tandem Mass Spectra: Applications to Database Search.
         In Molecular Cellular Proteomics (Vol. 9, Issue 12, pp. 2840-2852). Elsevier BV. https://doi.org/10.1074/mcp.m110.003731
         
-pyiohat_1_7_1
- * Urgap team (2021)
 xtandem_alanine
  * 
         Craig, R., & Beavis, R. C. (2004). TANDEM: matching proteins with tandem mass spectra.

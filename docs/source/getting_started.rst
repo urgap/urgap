@@ -17,7 +17,7 @@ Installation from github
 
 TODO
     #. Clone github 
-    #. Checkout master
+    #. Checkout main 
     #. install following dev description below
     #. enjoy latest pypi release 
 
@@ -43,7 +43,7 @@ Installation from source
    https://github.com/urgap/urgap
 
 .. _urgap zip file:
-   https://github.com/urgap/urgap/archive/master.zip
+   https://github.com/urgap/urgap/archive/main.zip
 
 2. Next, navigate into the urgap folder and install the requirements. Use virtualenv for maximum convenience.
 
