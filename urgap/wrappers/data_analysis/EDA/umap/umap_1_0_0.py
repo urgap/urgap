@@ -59,7 +59,7 @@ class umap_1_0_0(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize umap_1_0_0 class."""
         super().__init__(*args, **kwargs)
 

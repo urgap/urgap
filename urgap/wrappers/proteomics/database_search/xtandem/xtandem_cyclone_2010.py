@@ -83,6 +83,6 @@ class xtandem_cyclone_2010(xtandem):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize xtandem_cyclone_2010 class."""
         super().__init__(*args, **kwargs)

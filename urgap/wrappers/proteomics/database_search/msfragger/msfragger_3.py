@@ -1,18 +1,15 @@
 """Urgap msfragger_3 wrapper."""
 
+import contextlib
 import logging
 import os
 
 from collections import defaultdict as ddict
 
-try:
+with contextlib.suppress(BaseException):
     from chemical_composition import ChemicalComposition, chemical_composition_kb
-except:
-    pass
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -68,7 +65,7 @@ class msfragger_3(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize msfragger_3 class."""
         super().__init__(*args, **kwargs)
 
@@ -112,8 +109,9 @@ class msfragger_3(urgap.unode.UNodeBase):
                     print(f"{translated_key:30} = {min_mz} {max_mz}", file=fh)
                 elif param_key == "decoy_tag":
                     if "#" in param_value["translated_value"]:
+                        msg = "MSFragger does not accept fasta files containing # as decoy tag"
                         raise ValueError(
-                            "MSFragger does not accept fasta files containing # as decoy tag",
+                            msg,
                         )
                 elif param_key == "enzyme":
                     search_enzyme_name = param_value["original_value"]
@@ -243,13 +241,16 @@ class msfragger_3(urgap.unode.UNodeBase):
             elif mod_dict["position"] == "any":
                 pass
             else:
-                raise ValueError(
+                msg = (
                     """
                 Unknown positional argument for given modification:
                 {}
                 MSFragger cannot deal with this, please use one of the follwing:
                 any, Prot-N-term, Prot-C-term, N-term, C-term
-                """.format(mod_dict["org"]),
+                """.format(mod_dict["org"])
+                )
+                raise ValueError(
+                    msg,
                 )
             if pos_modifier is not None:
                 aa_to_append = f"{pos_modifier}{aa_to_append}"
@@ -279,7 +280,7 @@ class msfragger_3(urgap.unode.UNodeBase):
             formatted_mods[mod_key] = mod_dict["mass"]
         return formatted_mods
 
-    def format_diagnostic_fragments(self, param_value: dict):
+    def format_diagnostic_fragments(self, param_value: dict) -> str:
         """Format the user provided diagnostic fragments into msfragger suitable format.
 
         Args:
@@ -482,7 +483,7 @@ class msfragger_3(urgap.unode.UNodeBase):
         return utrace
 
 
-def calculate_mz(mass, charge):
+def calculate_mz(mass: float, charge: int) -> float:
     """Calculate m/z function.
 
     Args:
@@ -494,5 +495,4 @@ def calculate_mz(mass, charge):
     """
     mass = float(mass)
     charge = int(charge)
-    calc_mz = (mass + (charge * chemical_composition_kb.PROTON)) / charge
-    return calc_mz
+    return (mass + (charge * chemical_composition_kb.PROTON)) / charge

@@ -42,7 +42,7 @@ class filter_parquet_1_0_0(urgap.unode.UNodeBase):
         "citation": "Urgap team (2024)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize filter_parquet_1_0_0 class."""
         super().__init__(*args, **kwargs)
 

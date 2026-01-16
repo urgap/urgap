@@ -83,6 +83,6 @@ class xtandem_sledgehammer(xtandem):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize xtandem_sledgehammer class."""
         super().__init__(*args, **kwargs)

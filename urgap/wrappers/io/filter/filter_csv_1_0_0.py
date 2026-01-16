@@ -44,7 +44,7 @@ class filter_csv_1_0_0(urgap.unode.UNodeBase):
         "citation": "Urgap team (2021)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize filter_csv_1_0_0 class."""
         super().__init__(*args, **kwargs)
 
@@ -86,7 +86,7 @@ class filter_csv_1_0_0(urgap.unode.UNodeBase):
         """Generate basic nodes specific data visualization.
 
         Args:
-            ufile (urgap.UFile):
+            ufile (urgap.UFile): UFile object containing node execution data.
 
         Returns:
             list of urgap.<TBD_VIS_LIST_CLASS>: _description_

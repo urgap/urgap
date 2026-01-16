@@ -3,7 +3,7 @@
 import urgap
 
 
-class reporter_extract_1_0_2(urgap.unode.UNodeBase):  # noqa
+class reporter_extract_1_0_2(urgap.unode.UNodeBase):
     """reporter_extract_1_0_2 Urgap Node."""
 
     META_INFO = {
@@ -88,9 +88,9 @@ class reporter_extract_1_0_2(urgap.unode.UNodeBase):  # noqa
         ]
 
         # append additional node params
-        for _urgap_name, param_dict in utrace.urun_dict.translations[
+        for param_dict in utrace.urun_dict.translations[
             "all_params"
-        ].items():
+        ].values():
             utrace.urun_dict.command_list.extend(
                 [param_dict["translated_key"], str(param_dict["translated_value"])],
             )

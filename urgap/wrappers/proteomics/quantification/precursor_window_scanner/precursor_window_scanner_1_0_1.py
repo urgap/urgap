@@ -3,7 +3,7 @@
 import urgap
 
 
-class precursor_window_scanner_1_0_1(urgap.unode.UNodeBase):  # noqa
+class precursor_window_scanner_1_0_1(urgap.unode.UNodeBase):
     """precursor_scanner_1_0_1 Urgap Node."""
 
     META_INFO = {
@@ -48,7 +48,7 @@ class precursor_window_scanner_1_0_1(urgap.unode.UNodeBase):  # noqa
         "citation": "Mathieson T. and Sweetman, G. (2021)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize precursor_window_scanner_1_0_1 class."""
         super().__init__(*args, **kwargs)
 
@@ -97,9 +97,9 @@ class precursor_window_scanner_1_0_1(urgap.unode.UNodeBase):  # noqa
             str(output_file),
         ]
         # append additional node params
-        for _urgap_name, param_dict in utrace.urun_dict.translations[
+        for param_dict in utrace.urun_dict.translations[
             "all_params"
-        ].items():
+        ].values():
             utrace.urun_dict.command_list.extend(
                 [param_dict["translated_key"], str(param_dict["translated_value"])],
             )

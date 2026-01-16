@@ -62,7 +62,7 @@ class spectrum_meta_data_0_0_3(urgap.unode.UNodeBase):
         "citation": "Urgap team (2021)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize spectrum_meta_data_0_0_3 class."""
         super().__init__(*args, **kwargs)
 

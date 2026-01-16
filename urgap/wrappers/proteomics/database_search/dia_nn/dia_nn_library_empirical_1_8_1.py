@@ -84,7 +84,7 @@ class dia_nn_library_empirical_1_8_1(dia_nn_base):
         "citation": "DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput Nature Methods, 2020",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialise the wrapper."""
         super().__init__(*args, **kwargs)
 
@@ -98,10 +98,10 @@ class dia_nn_library_empirical_1_8_1(dia_nn_base):
         """Generate command line arguments for DIA-NN.
 
         Args:
-            translations
-            outlib_speclib_filename
-            data_filenames
-            speclib_filenames
+            translations (str): Command line translation arguments.
+            outlib_speclib_filename (str): Output spectral library filename.
+            data_filenames (list): List of data file paths.
+            speclib_filenames (list): List of spectral library file paths.
 
         Returns:
             List of command line argument strings.
@@ -111,7 +111,8 @@ class dia_nn_library_empirical_1_8_1(dia_nn_base):
         REQUIRED_ARGS = ["--use-quant", "--gen-spec-lib"]
         for required_arg in REQUIRED_ARGS:
             if not any(arg.startswith(required_arg) for arg in args):
-                raise ValueError(f"missing argument {required_arg}")
+                msg = f"missing argument {required_arg}"
+                raise ValueError(msg)
 
         args += [f"--f {file}" for file in data_filenames]
         args += [f"--lib {file}" for file in speclib_filenames]
@@ -219,7 +220,7 @@ class dia_nn_library_empirical_1_8_1(dia_nn_base):
         This is used to produce a view into the data from the dashboard.
 
         Args:
-            ufile (urgap.UFile):
+            ufile (urgap.UFile): UFile object containing node execution data.
 
         Returns:
             list of urgap.<TBD_VIS_LIST_CLASS>: _description_

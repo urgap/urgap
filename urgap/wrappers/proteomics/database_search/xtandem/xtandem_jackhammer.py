@@ -83,6 +83,6 @@ class xtandem_jackhammer(xtandem):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize xtandem_jackhammer class."""
         super().__init__(*args, **kwargs)

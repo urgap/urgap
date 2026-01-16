@@ -7,7 +7,7 @@ from urgap.wrappers.ms_data_extraction.extract_scans.extract_scans_1_0_0 import 
 )
 
 
-class extract_scans_2_0_0(xscans):  # noqa
+class extract_scans_2_0_0(xscans):
     """Urgap wrapper for the extract_scans_2_0_0 resource.
 
     This wrapper calls the main resource to extract peak information from an input
@@ -45,7 +45,7 @@ class extract_scans_2_0_0(xscans):  # noqa
         "citation": "Urgap team (2021)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize extract_scans_2_0_0 class."""
         super().__init__(*args, **kwargs)
 

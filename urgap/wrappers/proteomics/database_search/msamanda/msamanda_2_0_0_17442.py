@@ -1,14 +1,13 @@
 """Urgap msamanda_2_0_0_17442 wrapper."""
 
+import contextlib
 import copy
 import logging
 import os
 import time
 
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper.unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -90,7 +89,7 @@ class msamanda_2_0_0_17442(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize msamanda_2_0_0_17442 class."""
         super().__init__(*args, **kwargs)
 
@@ -172,13 +171,6 @@ class msamanda_2_0_0_17442(urgap.unode.UNodeBase):
             "translated_value": _msamanda_precursor_error,
         }
 
-        print(
-            """
-            [ WARNING ] precursor_mass_tolerance_plus and precursor_mass_tolerance_minus
-            [ WARNING ] need to be combined for MS Amanda (use of symmetric tolerance window).
-            [ WARNING ] The arithmetic mean is used.
-            """,
-        )
 
         considered_charges = []
         for charge in range(
@@ -202,7 +194,7 @@ class msamanda_2_0_0_17442(urgap.unode.UNodeBase):
     def write_templates(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Write templates - param files required by msamanda search engine.
 
         Args:
@@ -295,7 +287,7 @@ class msamanda_2_0_0_17442(urgap.unode.UNodeBase):
         Returns:
             Dict containing msmamanda param files with respective content.
         """
-        templates = {
+        return {
             "_settings.xml": """<?xml version="1.0" encoding="utf-8" ?>
 <settings>
 <search_settings>
@@ -352,7 +344,6 @@ class msamanda_2_0_0_17442(urgap.unode.UNodeBase):
 </enzyme>
     </enzymes>""".format(**utrace.urun_dict.translations["formatted_params"]),
         }
-        return templates
 
     def format_mods(self) -> dict:
         """Format mods into proper style, which is printed into the params template and used by the msamanda search.
@@ -392,15 +383,6 @@ class msamanda_2_0_0_17442(urgap.unode.UNodeBase):
                 n_term = "false"
                 c_term = "false"
                 if ">" in mod["name"]:
-                    print(
-                        """
-                        [ WARNING ] MS Amanda cannot deal with '>'
-                        [ WARNING ] in the modification name
-                        [ WARNING ] Continue without modification {} """.format(
-                            mod,
-                            **mod,
-                        ),
-                    )
                     continue
                 if "Prot" in mod["position"]:
                     protein = "true"

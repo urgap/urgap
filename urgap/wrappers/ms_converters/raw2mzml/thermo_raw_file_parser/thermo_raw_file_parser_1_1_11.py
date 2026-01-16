@@ -60,7 +60,7 @@ class thermo_raw_file_parser_1_1_11(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize thermo_raw_file_parser_1_1_11 class."""
         super().__init__(*args, **kwargs)
 

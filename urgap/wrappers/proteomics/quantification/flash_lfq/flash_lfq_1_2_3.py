@@ -97,6 +97,6 @@ class flash_lfq_1_2_3(flash_lfq):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize flash_lfq_1_2_3 class."""
         super().__init__(*args, **kwargs)

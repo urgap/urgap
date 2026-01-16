@@ -48,7 +48,7 @@ class GenerateExperimentalDesign_1_0_0(urgap.unode.UNodeBase):
         "citation": "Urgap team (2023)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize generate_experimental_design_1_0_0 class."""
         super().__init__(*args, **kwargs)
 

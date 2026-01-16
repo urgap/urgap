@@ -1,14 +1,13 @@
 """Urgap msgfplus_2021_03_22 wrapper."""
 
+import contextlib
 import os
 import sys
 
 from pathlib import Path
 
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -67,14 +66,14 @@ class msgfplus_2021_03_22(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize msgfplus_2021_03_22 class."""
         super().__init__(*args, **kwargs)
 
     def write_mod_file(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Write mod file to be injested into the msgfplus search.
 
         Args:
@@ -128,7 +127,7 @@ class msgfplus_2021_03_22(urgap.unode.UNodeBase):
     def reformat_mgf_input(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Reformat the mgf input file, to be injested into the msgfplus search.
 
         Args:
@@ -221,12 +220,6 @@ class msgfplus_2021_03_22(urgap.unode.UNodeBase):
             elif len(translated_dict) == 4 or "was_translated" in translated_dict:
                 clist.extend((translated_dict_key, translated_dict_value))
             else:
-                print(
-                    "The translated key ",
-                    translated_dict_key,
-                    " maps on more than one ukey, but no special rules have been defined",
-                )
-                print(translated_dict_value)
                 sys.exit(1)
 
         mgf_file = utrace.input_files.get_path_objects_by_uftype(

@@ -38,7 +38,7 @@ class pymzml2idxgz_2_5_2(urgap.unode.UNodeBase):
         "input_extensions": [".mzML"],
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize pymzml2idxgz_2_5_2 class."""
         super().__init__(*args, **kwargs)
 

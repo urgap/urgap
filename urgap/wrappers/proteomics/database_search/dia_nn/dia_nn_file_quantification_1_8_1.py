@@ -80,7 +80,7 @@ class dia_nn_file_quantification_1_8_1(dia_nn_base):
         "citation": "DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput Nature Methods, 2020",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialise the wrapper."""
         super().__init__(*args, **kwargs)
 
@@ -94,10 +94,10 @@ class dia_nn_file_quantification_1_8_1(dia_nn_base):
         """Generate command line arguments for DIA-NN.
 
         Args:
-            translations
-            data_folders
-            speclib_files
-            fasta_files
+            translations (str): Command line translation arguments.
+            data_folders (list): List of data folder paths.
+            speclib_files (list): List of spectral library file paths.
+            fasta_files (list): List of FASTA file paths.
 
         Returns:
             List of command line argument strings.
@@ -209,7 +209,7 @@ class dia_nn_file_quantification_1_8_1(dia_nn_base):
         This is used to produce a view into the data from the dashboard.
 
         Args:
-            ufile (urgap.UFile):
+            ufile (urgap.UFile): UFile object containing node execution data.
 
         Returns:
             list of urgap.<TBD_VIS_LIST_CLASS>: _description_

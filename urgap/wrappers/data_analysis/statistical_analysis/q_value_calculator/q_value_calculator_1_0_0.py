@@ -41,7 +41,7 @@ class q_value_calculator_1_0_0(urgap.unode.UNodeBase):
         "citation": "Urgap team (2022)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize q_value_calculator_1_0_0 class."""
         super().__init__(*args, **kwargs)
 

@@ -89,7 +89,7 @@ class bowtie_1_3_1(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize bowtie_1_3_1 class."""
         super().__init__(*args, **kwargs)
 
@@ -192,8 +192,7 @@ class bowtie_1_3_1(urgap.unode.UNodeBase):
         ):
             os.symlink(index_file, index_file.parent / index_mapping[index_file.name])
         os.environ["BOWTIE_INDEXES"] = str(index_file.parent)
-        utrace = self.create_command_list(utrace=utrace)
-        return utrace
+        return self.create_command_list(utrace=utrace)
 
     def postflight(
         self,

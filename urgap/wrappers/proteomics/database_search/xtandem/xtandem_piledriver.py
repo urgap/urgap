@@ -81,6 +81,6 @@ class xtandem_piledriver(xtandem):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize xtandem_piledriver class."""
         super().__init__(*args, **kwargs)

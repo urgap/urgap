@@ -1,5 +1,6 @@
 """Urgap omssa_2_1_9 wrapper."""
 
+import contextlib
 import logging
 import os
 import subprocess
@@ -10,10 +11,8 @@ from pathlib import Path
 
 import pandas as pd
 
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -145,7 +144,7 @@ class omssa_2_1_9(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize omssa_2_1_9 class."""
         super().__init__(*args, **kwargs)
 
@@ -163,11 +162,10 @@ class omssa_2_1_9(urgap.unode.UNodeBase):
         """
         omssa_mod_mapper = {}
 
-        def _create_empty_tmp():
-            tmp = {
+        def _create_empty_tmp() -> dict[str, list]:
+            return {
                 "aa_targets": [],
             }
-            return tmp
 
         tmp = _create_empty_tmp()
         xml_paths = utrace.input_files.get_path_objects_by_uftype(
@@ -240,7 +238,7 @@ class omssa_2_1_9(urgap.unode.UNodeBase):
     def make_blastdb(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Generate helper files based on input fasta file, which are required by omssa.
 
         Args:
@@ -274,14 +272,14 @@ class omssa_2_1_9(urgap.unode.UNodeBase):
                 command,
                 stdout=subprocess.PIPE,
             )
-            for line in proc.stdout:
-                print(line.strip().decode("utf"))
+            for _line in proc.stdout:
+                pass
 
     def write_usermods(
         self,
         omssa_usermods_xml: os.PathLike,
         mapped_mods: dict,
-    ):
+    ) -> None:
         """Write usermods into the omssa usermods xml file.
 
         Args:
@@ -506,7 +504,7 @@ class omssa_2_1_9(urgap.unode.UNodeBase):
             urgap.uftypes.proteomics.dbsearch.OMSSA_CSV,
         )[0]
 
-        for _translated_key, translated_dict in tcparams.items():
+        for translated_dict in tcparams.values():
             translated_dict_key = translated_dict["translated_key"]
             translated_dict_value = translated_dict["translated_value"]
             if translated_dict_key == ["-oc", "-ox"]:
@@ -585,13 +583,6 @@ class omssa_2_1_9(urgap.unode.UNodeBase):
             elif len(translated_dict) == 4 or "was_translated" in translated_dict:
                 clist.extend((translated_dict_key, translated_dict_value))
             else:
-                print(
-                    "The translated key ",
-                    translated_dict_key,
-                    " maps on more than one ukey, but no special rules have been "
-                    "defined",
-                )
-                print(translated_dict_value)
                 sys.exit(1)
 
         # Format the cmd list
@@ -619,22 +610,19 @@ class omssa_2_1_9(urgap.unode.UNodeBase):
             + float(tcparams["precursor_mass_tolerance_plus"]["translated_value"])
         ) / 2.0
         clist.extend(("-te", _omssa_precursor_error))
-        print(
-            """
-            [ WARNING ] precursor_mass_tolerance_plus and precursor_mass_tolerance_minus
-            [ WARNING ] need to be combined for pyQms (use of symmetric tolerance window).
-            [ WARNING ] The arithmetic mean is used.
-            """,
-        )
 
         if mgf_file.exists() is False:
-            raise OSError(
+            msg = (
                 """
                            OMSSA requires .mgf input (which should have been generated
-                           automatically ...)""",
+                           automatically ...)"""
+            )
+            raise OSError(
+                msg,
             )
         if fasta_file.exists() is False:
-            raise OSError("""OMSSA requires a fasta database""")
+            msg = """OMSSA requires a fasta database"""
+            raise OSError(msg)
         return utrace
 
     def preflight(

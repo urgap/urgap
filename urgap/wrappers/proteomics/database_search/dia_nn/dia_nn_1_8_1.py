@@ -2,13 +2,12 @@
 
 # !/usr/bin/env python
 
+import contextlib
 import multiprocessing as mp
 import os
 
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -86,7 +85,7 @@ class dia_nn_1_8_1(urgap.unode.UNodeBase):
         "citation": "DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput Nature Methods, 2020",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialise the wrapper."""
         super().__init__(*args, **kwargs)
 
@@ -101,11 +100,11 @@ class dia_nn_1_8_1(urgap.unode.UNodeBase):
         """Generate command line arguments for DIA-NN.
 
         Args:
-            translations
-            fasta_filenames
-            data_filenames
-            report_filename
-            empirical_speclib_filename
+            translations (str): Command line translation arguments.
+            fasta_filenames (list): List of FASTA file paths.
+            data_filenames (list): List of data file paths.
+            report_filename (str): Output report filename.
+            empirical_speclib_filename (os.PathLike): Empirical spectral library filename.
 
         Returns:
             List of command line argument strings.
@@ -135,12 +134,12 @@ class dia_nn_1_8_1(urgap.unode.UNodeBase):
             elif mod["position"] == "N-term":
                 site = "n"
             else:
-                raise ValueError(f"Unparsable position {mod['position']}")
+                msg = f"Unparsable position {mod['position']}"
+                raise ValueError(msg)
         else:
             site = mod["aa"]
         mass = mod["mass"]
-        arg_value = f"{name},{mass},{site}"
-        return arg_value
+        return f"{name},{mass},{site}"
 
     def format_fixed_modifications(self) -> list:
         """Convert uparma to DIAN-NN fixed modifications."""
@@ -150,7 +149,7 @@ class dia_nn_1_8_1(urgap.unode.UNodeBase):
             arg_key = "--fixed-mod"
             for mod in mods:
                 arg_value = self.format_modification(mod)
-                arguments.append(" ".join([arg_key, arg_value]).strip())
+                arguments.append(f"{arg_key} {arg_value}".strip())
         return arguments
 
     def format_variable_modifications(self) -> list:
@@ -161,7 +160,7 @@ class dia_nn_1_8_1(urgap.unode.UNodeBase):
             arg_key = "--var-mod"
             for mod in mods:
                 arg_value = self.format_modification(mod)
-                arguments.append(" ".join([arg_key, arg_value]).strip())
+                arguments.append(f"{arg_key} {arg_value}".strip())
         return arguments
 
     def fix_translations(
@@ -217,7 +216,7 @@ class dia_nn_1_8_1(urgap.unode.UNodeBase):
     def add_modifications(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Add modifications to urun_dict."""
         # Add unimod parsing
         self.mod_mapper = UnimodMapper(
@@ -309,7 +308,7 @@ class dia_nn_1_8_1(urgap.unode.UNodeBase):
         This is used to produce a view into the data from the dashboard.
 
         Args:
-            ufile (urgap.UFile):
+            ufile (urgap.UFile): UFile object containing node execution data.
 
         Returns:
             list of urgap.<TBD_VIS_LIST_CLASS>: _description_

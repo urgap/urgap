@@ -1,16 +1,13 @@
 """Urgap comet_2020_01_4 wrapper."""
 
+import contextlib
 import copy
 import logging
 
-try:
+with contextlib.suppress(BaseException):
     from chemical_composition import chemical_composition_kb as cckb
-except:
-    pass
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -101,7 +98,7 @@ class comet_2020_01_4(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize comet_2020_01_4 class."""
         super().__init__(*args, **kwargs)
 
@@ -142,13 +139,6 @@ class comet_2020_01_4(urgap.unode.UNodeBase):
             "translated_value": _comet_precursor_error,
         }
 
-        print(
-            """
-            [ WARNING ] precursor_mass_tolerance_plus and precursor_mass_tolerance_minus
-            [ WARNING ] need to be combined for Comet (use of symmetric tolerance window).
-            [ WARNING ] The arithmetic mean is used.
-            """,
-        )
 
         # Format the charge range
         min_charge = int(ftcparams["precursor_min_charge"]["translated_value"])
@@ -300,7 +290,8 @@ class comet_2020_01_4(urgap.unode.UNodeBase):
             elif mod["aa"] == "*":
                 pass
             else:
-                raise SyntaxError("Expected '*' or valid aa in one letter code!")
+                msg = "Expected '*' or valid aa in one letter code!"
+                raise SyntaxError(msg)
 
             if mod["position"] == "Prot-N-term":
                 pos_02 = "n" + pos_02
@@ -375,7 +366,7 @@ class comet_2020_01_4(urgap.unode.UNodeBase):
         Returns:
             Template string.
         """
-        template = """
+        return """
 # comet_version 2020.01 rev. 4
 # Comet MS/MS search engine parameters file.
 # Everything following the '#' symbol is treated as a comment.
@@ -510,12 +501,11 @@ clear_mz_range = {frag_clear_mz_range[translated_value]}               # for iTR
 10. Chymotrypsin           1      FWYL        P
 
         """.format(**utrace.urun_dict.translations["formatted_params"])
-        return template
 
     def write_param_file(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Write out the param file used by the search engine.
 
         Args:

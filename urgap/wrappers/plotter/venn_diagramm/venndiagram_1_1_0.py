@@ -58,7 +58,7 @@ class venndiagram_1_1_0(urgap.unode.UNodeBase):
         "citation": "Kremer, L. P. M., Leufken, J., Oyunchimeg, P., Schulze, S. & Fufezan, C. (2016) Proteome res. 15, 788-794",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize VennDiagram_1_1_0 class."""
         super().__init__(*args, **kwargs)
 
@@ -112,7 +112,7 @@ class venndiagram_1_1_0(urgap.unode.UNodeBase):
             )
 
         df = pd.concat(data, axis=1, keys=[s.name for s in data])
-        df.fillna(False, inplace=True)
+        df = df.fillna(False)
         df.to_csv(
             utrace.output_files.get_path_objects_by_uftype(
                 urgap.uftypes.plotter.VENN_RESULTS_CSV,

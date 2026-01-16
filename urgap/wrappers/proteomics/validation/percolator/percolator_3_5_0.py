@@ -1,18 +1,18 @@
 """Urgap percolator_3_5_0 wrapper."""
 
+import contextlib
 import os
 import shutil
 
+from collections.abc import Callable
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-try:
+with contextlib.suppress(BaseException):
     from chemical_composition.chemical_composition_kb import PROTON
-except:
-    pass
 
 import urgap
 
@@ -94,7 +94,7 @@ class percolator_3_5_0(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize percolator_3_5_0 class."""
         super().__init__(*args, **kwargs)
 
@@ -136,8 +136,7 @@ class percolator_3_5_0(urgap.unode.UNodeBase):
             "--decoy-results-psms",
             self.decoy_psms,
         ]
-        utrace = self.create_command_list(utrace)
-        return utrace
+        return self.create_command_list(utrace)
 
     def postflight(
         self,
@@ -399,9 +398,9 @@ class percolator_3_5_0(urgap.unode.UNodeBase):
         if len(df["search_engine"].unique()) == 1:
             se = df["search_engine"].iloc[0]
         else:
-            print(df["search_engine"].unique())
+            msg = "Multiple engines detected in dataframe. Percolator can only handle one search engine at a time."
             raise Exception(
-                "Multiple engines detected in dataframe. Percolator can only handle one search engine at a time.",
+                msg,
             )
         bigger_scores_better = utrace.urun_dict.translations["all_params"][
             "bigger_scores_better"
@@ -416,7 +415,7 @@ class percolator_3_5_0(urgap.unode.UNodeBase):
         df["sp"] = df["score"].rank(method="max")
         df["lnrsp"] = np.log(df["sp"])
 
-        def apply_parallel(df_grouped, func, threads=-1):
+        def apply_parallel(df_grouped: pd.DataFrame, func: Callable, threads: int = -1) -> pd.DataFrame:
             """Execute a task in a parallel manner.
 
             Args:
@@ -491,11 +490,11 @@ class percolator_3_5_0(urgap.unode.UNodeBase):
         df[_new].reset_index().to_csv(self.merged_frame, index=False)
         return fname
 
-    def remove_quotes(self, file: os.PathLike):
+    def remove_quotes(self, file: os.PathLike) -> None:
         """Remove quotes from each line within the input file.
 
         Args:
-            Path to file.
+            file: Path to file.
         """
         no_quotes = file.parent / "no_quotes.txt"
         with open(file) as fin, open(no_quotes, "w") as fout:
@@ -508,7 +507,7 @@ class percolator_3_5_0(urgap.unode.UNodeBase):
         """Calculate the delta score.
 
         Args:
-            Input dataframe.
+            grp: Input dataframe.
 
         Returns:
             Input dataframe + delta score columns.

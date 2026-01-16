@@ -102,7 +102,7 @@ class flash_lfq_1_2_0(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize flash_lfq_1_2_0 class."""
         super().__init__(*args, **kwargs)
 
@@ -452,8 +452,9 @@ class flash_lfq_1_2_0(urgap.unode.UNodeBase):
                 or object_name in lookup
                 or object_name in lookup.values()
             ):
+                msg = f"Name collision detected: {object_name} or {simple_name} already in lookup"
                 raise Exception(
-                    f"Name collision detected: {object_name} or {simple_name} already in lookup",
+                    msg,
                 )
             lookup[object_name] = simple_name
             lookup[simple_name] = object_name

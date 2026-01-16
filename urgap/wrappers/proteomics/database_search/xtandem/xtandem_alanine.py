@@ -1,12 +1,11 @@
 """Urgap xtandem_alanine wrapper."""
 
+import contextlib
 import copy
 import logging
 
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -92,7 +91,7 @@ class xtandem_alanine(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize xtandem_alanine class."""
         super().__init__(*args, **kwargs)
 
@@ -165,26 +164,11 @@ class xtandem_alanine(urgap.unode.UNodeBase):
                 if mod["position"] == term:
                     if mod["aa"] == "*":
                         if formatted_mods[term]["translated_value"] != 0:
-                            print(
-                                """
-            [ WARNING ] X!Tandem does not allow two mods on the same position {1}
-            [ WARNING ] Continue without modification {0} """.format(mod, term, **mod),
-                            )
                             continue
                         formatted_mods[term]["translated_value"] = mod["mass"]
                     else:
-                        print(
-                            """
-            [ WARNING ] X!Tandem does not support specific aminoacids for terminal modifications
-            [ WARNING ] Continue without modification {} """.format(mod, **mod),
-                        )
                         continue
             if mod["aa"] in potentially_modified_aa:
-                print(
-                    """
-            [ WARNING ] X!Tandem does not allow two potential mods on the same aminoacid!
-            [ WARNING ] Continue without modification {} """.format(mod, **mod),
-                )
                 continue
             if self.META_INFO["version"] in ["vengeance", "alanine"]:
                 forbidden_cterm_list = utrace.urun_dict.parameters.get(
@@ -225,12 +209,7 @@ class xtandem_alanine(urgap.unode.UNodeBase):
             if pyro_glu == 2:
                 formatted_mods["pyro_glu"]["translated_value"] = "yes"
             if pyro_glu == 1:
-                print(
-                    """
-        [ WARNING ] X!Tandem looks for Gln->pyro-Glu and Glu->pyro-Glu
-        [ WARNING ] at the same time, please include both or none
-        [ WARNING ] Continue without modification {} """.format(mod, **mod),
-                )
+                pass
 
         formatted_mods["fixed_modifications"] = {
             "translated_key": "residue, modification mass",
@@ -287,7 +266,7 @@ class xtandem_alanine(urgap.unode.UNodeBase):
     def write_xml_templates(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Write templates - param files required by xtandem search engine.
 
         Args:
@@ -435,7 +414,7 @@ class xtandem_alanine(urgap.unode.UNodeBase):
         Returns:
             Dict containing xtandem param files with respective content.
         """
-        templates = {
+        return {
             "15N-masses": """\
 <?xml version="1.0"?>
     <bioml title="peptide residue molecular mass values for an all 15N organisms">
@@ -591,4 +570,3 @@ class xtandem_alanine(urgap.unode.UNodeBase):
     <note type="input" label="output, mzid">{output_file_type[translated_value]}</note>
         </bioml>""".format(**utrace.urun_dict.translations["formatted_params"]),
         }
-        return templates

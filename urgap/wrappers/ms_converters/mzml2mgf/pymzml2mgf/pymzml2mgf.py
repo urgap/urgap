@@ -38,7 +38,7 @@ class pymzml2mgf_2_5(urgap.unode.UNodeBase):
         "input_extensions": [".mzML", ".mzML.gz", ".idx.gz"],
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize pymzml2mgf_2_5 class."""
         super().__init__(*args, **kwargs)
 
@@ -57,9 +57,9 @@ class pymzml2mgf_2_5(urgap.unode.UNodeBase):
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
         kwargs = {}
-        for _urgap_key, translation_dict in utrace.urun_dict.translations[
+        for translation_dict in utrace.urun_dict.translations[
             "all_params"
-        ].items():
+        ].values():
             kwargs[translation_dict["translated_key"]] = translation_dict[
                 "translated_value"
             ]

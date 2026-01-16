@@ -83,6 +83,6 @@ class xtandem_vengeance(xtandem):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize xtandem_vengeance class."""
         super().__init__(*args, **kwargs)

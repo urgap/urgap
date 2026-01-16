@@ -76,7 +76,7 @@ class dia_nn_library_prediction_1_8_1(dia_nn_base):
         "citation": "DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput Nature Methods, 2020",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialise the wrapper."""
         super().__init__(*args, **kwargs)
 
@@ -89,16 +89,17 @@ class dia_nn_library_prediction_1_8_1(dia_nn_base):
         """Generate command line arguments for DIA-NN.
 
         Args:
-            translations
-            fasta_files
-            out_lib_filename
+            translations (str): Command line translation arguments.
+            fasta_files (list): List of FASTA file paths.
+            out_lib_filename (str): Output library filename.
 
         Returns:
             List of command line argument strings.
         """
         args = translations
         if not any(arg.startswith("--gen-spec-lib") for arg in args):
-            raise ValueError("--gen-spec-lib is a required argument")
+            msg = "--gen-spec-lib is a required argument"
+            raise ValueError(msg)
 
         args += [f"--fasta {file}" for file in fasta_files]
         args += [f"--out-lib {out_lib_filename}"]
@@ -190,7 +191,7 @@ class dia_nn_library_prediction_1_8_1(dia_nn_base):
         This is used to produce a view into the data from the dashboard.
 
         Args:
-            ufile (urgap.UFile):
+            ufile (urgap.UFile): UFile object containing node execution data.
 
         Returns:
             list of urgap.<TBD_VIS_LIST_CLASS>: _description_

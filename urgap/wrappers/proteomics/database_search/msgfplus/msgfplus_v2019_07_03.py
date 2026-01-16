@@ -56,6 +56,6 @@ class msgfplus_v2019_07_03(msgfplus):
             """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize msgfplus_v2019_07_03 class."""
         super().__init__(*args, **kwargs)

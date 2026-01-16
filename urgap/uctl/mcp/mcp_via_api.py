@@ -1,15 +1,20 @@
-from collections.abc import Callable
-import requests, json
-from openai import AsyncAzureOpenAI
+"""MCP via API integration module for Chainlit chat interface."""
+
+import json
 import os
+
+from collections.abc import Callable
+
 import chainlit as cl
+import requests
+
 from mcp import ClientSession
 from mcp.client.sse import sse_client
+from openai import AsyncAzureOpenAI
 
 
 class CredentialsReaderKong:
-    """
-    A class to read credentials for Kong from Azure Key Vault.
+    """A class to read credentials for Kong from Azure Key Vault.
 
     Methods
     -------
@@ -19,8 +24,7 @@ class CredentialsReaderKong:
 
     @staticmethod
     def token_provider(client_id: str, client_secret: str) -> Callable[[], str]:
-        """
-        Retrieves token for the specific instance.
+        """Retrieve token for the specific instance.
 
         Parameters
         ----------
@@ -50,7 +54,8 @@ class CredentialsReaderKong:
             )
 
             if not response.ok:
-                raise Exception(f"Error: {response.status_code}, {response.text}")
+                msg = f"Error: {response.status_code}, {response.text}"
+                raise Exception(msg)
 
             return json.loads(response.text).get("access_token")
 
@@ -58,7 +63,8 @@ class CredentialsReaderKong:
 
 
 @cl.on_chat_start
-async def start():
+async def start() -> None:
+    """Initialize chat session with MCP server connection and OpenAI client."""
     # Initialize session variables
     cl.user_session.set("conversation_state", "normal")
     cl.user_session.set("pending_tool_call", None)
@@ -68,14 +74,14 @@ async def start():
         {
             "role": "system",
             "content": """You are a helpful assistant with access to several tools. You MUST make separate tool calls for each distinct request or piece of information asked for.""",
-        }
+        },
     ]
     cl.user_session.set("conversation_history", conversation_history)
     cl.user_session.set("message_history", conversation_history.copy())
 
     # Initialize Azure OpenAI client and store in session
     token_provider = CredentialsReaderKong.token_provider(
-        os.getenv("CLIENT_ID"), os.getenv("KONG_SECRET")
+        os.getenv("CLIENT_ID"), os.getenv("KONG_SECRET"),
     )
     aoi_client = AsyncAzureOpenAI(
         azure_endpoint="https://dev.api.gsk.com/co/rd/cmc/us6",
@@ -126,14 +132,14 @@ async def start():
 
 
 @cl.on_message
-async def main(message: cl.Message):
-    """Handle incoming messages with OpenAI chat completions"""
+async def main(message: cl.Message) -> None:
+    """Handle incoming messages with OpenAI chat completions."""
     # Get session data with proper defaults
     aoi_client = cl.user_session.get("aoi_client")
     message_history = cl.user_session.get("message_history")
     server_params = cl.user_session.get("server_params")
     openai_tools = cl.user_session.get("openai_tools")
-    mcp_tools = cl.user_session.get("mcp_tools")
+    cl.user_session.get("mcp_tools")
 
     # Initialize message_history if it's None
     if message_history is None:
@@ -141,7 +147,7 @@ async def main(message: cl.Message):
             {
                 "role": "system",
                 "content": """You are a helpful assistant with access to several tools. You MUST make separate tool calls for each distinct request or piece of information asked for.""",
-            }
+            },
         ]
         cl.user_session.set("message_history", message_history)
 
@@ -179,7 +185,7 @@ async def main(message: cl.Message):
                 for tool_call in delta.tool_calls:
                     if len(tool_calls) <= tool_call.index:
                         tool_calls.append(
-                            {"id": "", "function": {"name": "", "arguments": ""}}
+                            {"id": "", "function": {"name": "", "arguments": ""}},
                         )
 
                     if tool_call.id:
@@ -212,7 +218,7 @@ async def main(message: cl.Message):
                     }
                     for tc in tool_calls
                 ],
-            }
+            },
         )
 
         # Execute tools via MCP
@@ -233,10 +239,8 @@ async def main(message: cl.Message):
                             {
                                 "role": "tool",
                                 "tool_call_id": tool_call["id"],
-                                "content": json.dumps(result.content)
-                                if hasattr(result, "content")
-                                else str(result),
-                            }
+                                "content": json.dumps(result.content) if hasattr(result, "content") else str(result),
+                            },
                         )
 
         # Get final response with tool results
@@ -244,7 +248,7 @@ async def main(message: cl.Message):
         await final_msg.send()
 
         final_response = await aoi_client.chat.completions.create(
-            model="gpt-4", messages=message_history, stream=True
+            model="gpt-4", messages=message_history, stream=True,
         )
 
         final_content = ""

@@ -68,14 +68,14 @@ class novor_1_05(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize novor_1_05 class."""
         super().__init__(*args, **kwargs)
 
     def write_params_file(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Write novor parameter file.
 
         Args:
@@ -86,7 +86,7 @@ class novor_1_05(urgap.unode.UNodeBase):
         params2write = set()
         tcparams = utrace.urun_dict.translations["all_params"]
         special_cases_dict = {}
-        for _urgap_key, translated_dict in tcparams.items():
+        for translated_dict in tcparams.values():
             translated_dict_key = translated_dict["translated_key"]
             translated_dict_value = translated_dict["translated_value"]
 
@@ -148,14 +148,7 @@ class novor_1_05(urgap.unode.UNodeBase):
                         )
 
                     for mod in not_available_mods:
-                        print(
-                            """
-                    [ WARNING ] Novor does not support your given modification
-                    [ WARNING ] Continue without modification {} ({})""".format(
-                                mod,
-                                "".join(sorted(not_available_mods[mod])),
-                            ),
-                        )
+                        pass
 
                 params2write.add(
                     f"variableModifications = {','.join(collected_mods['opt'])}",
@@ -169,13 +162,6 @@ class novor_1_05(urgap.unode.UNodeBase):
 
         for translated_dict_key, translated_dict_value in special_cases_dict.items():
             if "precursorErrorTol" in translated_dict_key:
-                print(
-                    """
-                    [ WARNING ] precursor_mass_tolerance_plus and precursor_mass_tolerance_minus
-                    [ WARNING ] need to be combined for Novor (use of symmetric tolerance window).
-                    [ WARNING ] The arithmetic mean is used.
-                    """,
-                )
                 precursor_mass_tolerance = (
                     float(special_cases_dict["precursorErrorTol_part1"])
                     + float(special_cases_dict["precursorErrorTol_part2"])
@@ -230,7 +216,7 @@ class novor_1_05(urgap.unode.UNodeBase):
     def preflight(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Preflight routine for novor_1_05 wrapper.
 
         During preflight,

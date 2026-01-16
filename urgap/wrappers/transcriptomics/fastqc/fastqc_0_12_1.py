@@ -150,10 +150,7 @@ class fastqc_0_12_1(urgap.unode.UNodeBase):
         for suffix in (".gz", ".fastq", ".sam", ".bam"):
             input_file_name = input_file_name.removesuffix(suffix)
         output_file_base_name = ".".join(input_file_name.split(".")) + "_fastqc"
-        for (
-            _output_uftype,
-            opath,
-        ) in utrace.output_files.get_path_object_groups_by_uftypes().items():
+        for opath in utrace.output_files.get_path_object_groups_by_uftypes().values():
             os.rename(
                 utrace.output_files[0].path.parent
                 / f"{output_file_base_name}{opath[0].suffix}",

@@ -50,7 +50,7 @@ class peptide_forest_3(urgap.unode.UNodeBase):
         "citation": "Urgap team (2021)",
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize peptide_forest_3 class."""
         super().__init__(*args, **kwargs)
 

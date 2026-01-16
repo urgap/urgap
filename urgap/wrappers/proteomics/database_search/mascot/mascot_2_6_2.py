@@ -1,15 +1,14 @@
 """Urgap mascot_2_6_2 wrapper."""
 
+import contextlib
 import copy
 import logging
 import subprocess
 
 from datetime import datetime
 
-try:
+with contextlib.suppress(BaseException):
     from unimod_mapper import UnimodMapper
-except:
-    pass
 
 import urgap
 
@@ -55,14 +54,14 @@ class mascot_2_6_2(urgap.unode.UNodeBase):
         """,
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize mascot_2_6_2 class."""
         super().__init__(*args, **kwargs)
 
     def write_mimefile(
         self,
         utrace: urgap.UTrace,
-    ):
+    ) -> None:
         """Write mime file used by the mascot search engine.
 
         Args:
@@ -72,7 +71,7 @@ class mascot_2_6_2(urgap.unode.UNodeBase):
         ftcparams = utrace.urun_dict.translations["formatted_all_params"]
         self.mimepath = str(self.input_file.with_suffix(".asc"))
         with open(self.mimepath, "w") as mimefile:
-            for _key, dict in ftcparams.items():
+            for dict in ftcparams.values():
                 translated_dict_key = dict["translated_key"]
                 translated_dict_value = dict["translated_value"]
                 if (
@@ -94,12 +93,7 @@ class mascot_2_6_2(urgap.unode.UNodeBase):
                     )
                     mimefile.write(f"{translated_dict_value}\n")
                 else:
-                    print(
-                        "The translated key ",
-                        translated_dict_key,
-                        " maps on more than one ukey, but no special rules have been "
-                        "defined",
-                    )
+                    pass
             mimefile.write(f"--{boundary}\n")
             mimefile.write(
                 f'Content-Disposition: form-data; name="FILE"; filename="{self.input_file}"\n\n',
@@ -166,11 +160,14 @@ class mascot_2_6_2(urgap.unode.UNodeBase):
         # included a check so execution breaks down if username or host was not
         # provided!
         if any(elem is None for elem in [self.user, self.host]):
-            raise OSError(
+            msg = (
                 """
                     You have to provide a login_name and host to login to the
                     mascot server!
-                """,
+                """
+            )
+            raise OSError(
+                msg,
             )  # not sure about logic here ....
 
         self.execute_command_list(
@@ -361,7 +358,7 @@ class mascot_2_6_2(urgap.unode.UNodeBase):
     def execute_command_list(
         self,
         command_list: list | None = None,
-    ):
+    ) -> None:
         """Execute any command list provided using subprocess.
 
         Args:
