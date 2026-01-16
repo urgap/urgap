@@ -102,8 +102,8 @@ async def start():
                         "function": {
                             "name": tool.name,
                             "description": tool.description,
-                            "parameters": tool.inputSchema
-                        }
+                            "parameters": tool.inputSchema,
+                        },
                     }
                     openai_tools.append(openai_tool)
 
@@ -112,10 +112,14 @@ async def start():
                 cl.user_session.set("mcp_tools", mcp_tools)
                 cl.user_session.set("server_params", ("http://localhost:3000/sse",))
 
-                await cl.Message(f"Hello! I'm your assistant with access to {len(mcp_tools)} tools. How can I help you today?").send()
+                await cl.Message(
+                    f"Hello! I'm your assistant with access to {len(mcp_tools)} tools. How can I help you today?"
+                ).send()
 
     except Exception as e:
-        await cl.Message(f"Warning: Could not connect to MCP server: {e}. I'll work without tools for now.").send()
+        await cl.Message(
+            f"Warning: Could not connect to MCP server: {e}. I'll work without tools for now."
+        ).send()
         cl.user_session.set("openai_tools", [])
         cl.user_session.set("mcp_tools", [])
         cl.user_session.set("server_params", None)
@@ -229,7 +233,9 @@ async def main(message: cl.Message):
                             {
                                 "role": "tool",
                                 "tool_call_id": tool_call["id"],
-                                "content": json.dumps(result.content) if hasattr(result, 'content') else str(result),
+                                "content": json.dumps(result.content)
+                                if hasattr(result, "content")
+                                else str(result),
                             }
                         )
 

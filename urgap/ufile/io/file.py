@@ -80,6 +80,8 @@ class IOPython(UIOBase):
                     self.uuri.get_file_remote_tag_path().open("w") as remote_tag_file,
                 ):
                     json.dump(tags, remote_tag_file)
+        except shutil.SameFileError:
+            pass
         except OSError as e:
             msg = f"Could not copy file {self.scratch_path} due to {e}"
             logger.warning(msg)

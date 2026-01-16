@@ -3,10 +3,12 @@
 import ast
 import getpass
 import logging
+import os
 import re
 
 from pathlib import Path
 from urllib.parse import quote, urlparse
+from urllib.request import url2pathname
 
 import urgap
 
@@ -38,7 +40,7 @@ class UUri:
         self.uri_dict = urlparse(uri)._asdict()
         self.scheme = self.uri_dict["scheme"]
         self.netloc = self.uri_dict["netloc"]
-        self.path = self.uri_dict["path"]
+        self.path = url2pathname(self.uri_dict["path"])
         self.params = self.uri_dict["params"]
         self.original_query = self.uri_dict["query"]
         self.fragment = self.uri_dict["fragment"]
@@ -373,15 +375,15 @@ class UUri:
 
     def get_github_resource_name(self, resource: str = "repo") -> str:
         """Get the github resource name."""
-        path = self.path.lstrip("/").rstrip("/")
-        segments = re.findall(r"[^/]+", path)
+        path = self.path.lstrip(os.sep).rstrip(os.sep)
+        segments = re.findall(rf"[^{re.escape(os.sep)}]+", path)
         match resource:
             case "org":
                 return segments[0]
             case "repo":
                 return segments[1]
             case "branch":
-                return "/".join(segments[2:])
+                return str(Path(*segments[2:]))
             case _:
                 msg = "Unknown param for github resource"
                 raise KeyError(msg)

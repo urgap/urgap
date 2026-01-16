@@ -56,7 +56,7 @@ def test_filter_int():
 
 
 def test_filter_int_input_twice():
-    filter_csv = urgap.init_node("filter_csv_1_0_0")
+    filter_csv = urgap.init_node("FilterTabularToCSV:1.0.0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
@@ -65,8 +65,9 @@ def test_filter_int_input_twice():
     input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
     output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
-        csvs=[input_file, input_file],
+        input_files=[input_file, input_file],
         output=output_file,
+        mode="csv",
         query_string="`spectrum_id` > 3000",
     )
     df = pd.read_csv(output_file)
@@ -75,7 +76,7 @@ def test_filter_int_input_twice():
 
 
 def test_filter_float():
-    filter_csv = urgap.init_node("filter_csv_1_0_0")
+    filter_csv = urgap.init_node("FilterTabularToCSV:1.0.0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
@@ -84,8 +85,9 @@ def test_filter_float():
     input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
     output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
-        csvs=[input_file],
+        input_files=[input_file],
         output=output_file,
+        mode="csv",
         query_string="2050 < `Retention Time (s)` < 2100",
     )
     df = pd.read_csv(output_file)
@@ -94,7 +96,7 @@ def test_filter_float():
 
 
 def test_filter_str():
-    filter_csv = urgap.init_node("filter_csv_1_0_0")
+    filter_csv = urgap.init_node("FilterTabularToCSV:1.0.0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
@@ -103,8 +105,9 @@ def test_filter_str():
     input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
     output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
-        csvs=[input_file],
+        input_files=[input_file],
         output=output_file,
+        mode="csv",
         query_string="`Raw data location`.str.contains('R2')",
     )
     df = pd.read_csv(output_file)
@@ -113,7 +116,7 @@ def test_filter_str():
 
 
 def test_filter_combined_str_and_float():
-    filter_csv = urgap.init_node("filter_csv_1_0_0")
+    filter_csv = urgap.init_node("FilterTabularToCSV:1.0.0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
@@ -122,8 +125,9 @@ def test_filter_combined_str_and_float():
     input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
     output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
     main(
-        csvs=[input_file],
+        input_files=[input_file],
         output=output_file,
+        mode="csv",
         query_string="`Raw data location`.str.contains('R2') and `Exp m/z` > 400",
     )
     df = pd.read_csv(output_file)
@@ -132,7 +136,7 @@ def test_filter_combined_str_and_float():
 
 
 def test_query_string_wrong_format():
-    filter_csv = urgap.init_node("filter_csv_1_0_0")
+    filter_csv = urgap.init_node("FilterTabularToCSV:1.0.0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
@@ -142,14 +146,15 @@ def test_query_string_wrong_format():
         input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
         output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
         main(
-            csvs=[input_file],
+            input_files=[input_file],
             output=output_file,
+            mode="csv",
             query_string="`Raw data location` yada yada",
         )
 
 
 def test_query_string_missing_column():
-    filter_csv = urgap.init_node("filter_csv_1_0_0")
+    filter_csv = urgap.init_node("FilterTabularToCSV:1.0.0")
     main = import_engine_as_python_function(
         name=filter_csv.META_INFO["name"],
         path=filter_csv.construct_exe_path(),
@@ -159,7 +164,8 @@ def test_query_string_missing_column():
         input_file = urgap._test_folder / "data" / "unified_csvs" / "demo.csv"
         output_file = urgap._test_folder / "data" / "unified_csvs" / "test.csv"
         main(
-            csvs=[input_file],
+            input_files=[input_file],
             output=output_file,
+            mode="csv",
             query_string="`Not Existing Column` == 1",
         )
