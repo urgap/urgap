@@ -316,6 +316,7 @@ tcsparser.metadata.JSON = ".metadata.json"
 tcsparser.config = types.SimpleNamespace()
 tcsparser.config.ANY = "tcsparser.config.ANY"
 tcsparser.config.CONFIG = ".config.config"
+tcsparser.config.ASM_CONFIG = ".asmconfig.config"
 tcsparser.mapping = types.SimpleNamespace()
 tcsparser.mapping.ANY = "tcsparser.mapping.ANY"
 tcsparser.mapping.YAML = ".mapping.yaml"
