@@ -9,8 +9,6 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from types import SimpleNamespace
 
-import urgap.ext
-
 # Urgap imports
 import urgap.uconvert
 import urgap.ucore

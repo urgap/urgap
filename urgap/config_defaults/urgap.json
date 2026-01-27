@@ -26,10 +26,6 @@
         "value": null,
         "description": "Number of CPU cores to use for parallel processing."
     },
-    "umeta-mongodb-url": {
-        "value": "mongodb://localhost:27017",
-        "description": "url for mongo instance, used if umeta is set to mongopdb. Login and password are extracted via ENV or alternative secret store defined in credentials_lookup.json"
-    },
     "umeta-postgresql-url": {
         "value": "postgresql://localhost:5432",
         "description": "url for postgresql instance, used if umeta is set to postgresql. Login and password are extracted via ENV or alternative secret store defined in credentials_lookup.json"
@@ -39,18 +35,11 @@
         "description": "url for sqlite3 db file, used if umeta is set to sqlite. Should start with file:///"
     },
     "umeta-gcpsql-url": {
-        "value": "postgresql+pg8000://10.138.0.5:5432"
+        "value": null
     },
     "scratch_disk": {
         "value": null,
         "description": "Temporary urgap processing disk"
-    },
-    "resource_urls": {
-        "value": [
-            "file:///Users/Shared/urgap_resources",
-            "file:///fs/shared/software/urgap_resources/",
-            "https://raw.githubusercontent.com/computational-ms/demo_files/main/urgap_resources"
-        ]
     },
     "mode": {
         "value": "dev",
