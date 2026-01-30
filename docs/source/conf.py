@@ -14,7 +14,7 @@ import sys
 from importlib.metadata import version
 from pathlib import Path
 
-sys.path.insert(0, os.path.abspath("../"))
+sys.path.insert(0, os.path.abspath("../../"))
 for example_file in Path("../../example_scripts").glob("**/*.py"):
     sys.path.insert(0, str(example_file.parent.resolve()))
 
@@ -33,6 +33,9 @@ author = "Urgap2 Team"
 
 # The full version, including alpha/beta/rc tags.
 release = version("urgap")
+# @TODO@MKoesters: Could not build docs with above code, creating git tag did not help
+# Need to get this working
+# release = "1.0.0"
 # # for example take major/minor
 version = ".".join(release.split(".")[:2])
 
