@@ -18,6 +18,7 @@ Documentation
 
    getting_started
    quickstart
+   concepts
    faq
    third_party
    example_scripts
