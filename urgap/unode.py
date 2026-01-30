@@ -619,7 +619,7 @@ class UNodeBase:
             exe_path = self.latest_exe_paths
         return Path(exe_path)
 
-    def _construct_exe_path_u3(self) -> os.PathLike | None:
+    def _construct_exe_path_u3(self) -> os.PathLike:
         """Construct the path to the executable for a specific tagged version.
 
         Returns:
@@ -629,7 +629,6 @@ class UNodeBase:
             RuntimeError: If version or exe_path information is missing.
         """
         base_path = Path(urgap.home) / "resources"
-        tagged_exe_path = None
         version_info = None
         for v in self.META_INFO["versions"]:
             if v["version"] == self.META_INFO["unode_version"]:
@@ -647,13 +646,11 @@ class UNodeBase:
             path_to_system_resource = shutil.which(version_info["exe_path"].lstrip("$"))
             if path_to_system_resource is not None:
                 tagged_exe_path = Path(path_to_system_resource)
+            else:
+                tagged_exe_path = base_path / version_info["exe_path"]
         else:
             tagged_exe_path = base_path / Path(version_info["exe_path"])
-            if tagged_exe_path.exists() is False:
-                tagged_exe_path = None
-        if tagged_exe_path is not None:
-            return tagged_exe_path
-        return None
+        return tagged_exe_path
 
     @property
     def resource_subfolder(self) -> str:
