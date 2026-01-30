@@ -758,62 +758,6 @@ Transcriptomics File Types
 
          CellRanger script file.
 
-Beacon Imaging File Types
---------------------------
-
-.. py:data:: beacon
-   :type: types.SimpleNamespace
-
-   Namespace for Beacon imaging file types.
-
-   .. py:attribute:: IMAGE_TIFF
-      :type: str
-      :value: ".image.tiff"
-
-      Image TIFF file.
-
-   .. py:attribute:: ESSAY_XML
-      :type: str
-      :value: ".essay.xml"
-
-      Essay XML file.
-
-   .. py:attribute:: OPTOSELECT_XML
-      :type: str
-      :value: ".optoselect.xml"
-
-      OptoSelect XML file.
-
-   .. py:attribute:: MLSUMMARY_PARQUET
-      :type: str
-      :value: ".mlsummary.parquet"
-
-      Machine learning summary Parquet.
-
-   .. py:attribute:: MLRAW_PARQUET
-      :type: str
-      :value: ".mlraw.parquet"
-
-      Machine learning raw Parquet.
-
-   .. py:attribute:: SUMMARY_PARQUET
-      :type: str
-      :value: ".summary.parquet"
-
-      Summary Parquet.
-
-   .. py:attribute:: BRIGHTFIELD_SUMMARY_PARQUET
-      :type: str
-      :value: ".brightfield_summary.parquet"
-
-      Brightfield summary Parquet.
-
-   .. py:attribute:: RESULT_PNG
-      :type: str
-      :value: ".result.png"
-
-      Result PNG image.
-
 Molecular Structure File Types
 -------------------------------
 
@@ -839,55 +783,6 @@ Molecular Structure File Types
       :value: ".polysacc.yaml"
 
       Polysaccharide YAML format.
-
-Interdock File Types
----------------------
-
-.. py:data:: interdock
-   :type: types.SimpleNamespace
-
-   Namespace for Interdock molecular docking file types.
-
-   .. py:attribute:: LOG
-      :type: str
-      :value: ".interdock.log"
-
-      Interdock log file.
-
-   .. py:attribute:: CONFIG
-      :type: str
-      :value: ".interdock.config"
-
-      Interdock config file (mock, file has no extension).
-
-   .. py:attribute:: OUT
-      :type: str
-      :value: ".interdock.out"
-
-      Interdock output file.
-
-   .. py:data:: model
-      :type: types.SimpleNamespace
-
-      Interdock model formats.
-
-      .. py:attribute:: ANY
-         :type: str
-         :value: "interdock.model.ANY"
-
-         Any model format.
-
-      .. py:attribute:: PDBQT
-         :type: str
-         :value: ".model_pdbqt.pdbqt"
-
-         Model PDBQT format.
-
-      .. py:attribute:: PDB
-         :type: str
-         :value: ".model_pdb.pdb"
-
-         Model PDB format.
 
 Mass Spectrometry File Types
 -----------------------------
