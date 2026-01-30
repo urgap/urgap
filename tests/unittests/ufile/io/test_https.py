@@ -1,8 +1,4 @@
-import urllib.error
-
-from pathlib import Path
-from unittest.mock import MagicMock, patch
-from urllib.error import HTTPError
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -21,13 +17,7 @@ def test_iohttps_get_object():
     assert obj == "https://example.com/file.txt"
 
 
-import urllib.error
-
-from pathlib import Path
-from unittest.mock import MagicMock, patch
-
-
-def test_iohttps_download_urlerror():
+def test_iohttps_download_success():
     class DummyUURI:
         def get_https_remote_path(self):
             return "https://example.com/file.txt"
@@ -35,21 +25,38 @@ def test_iohttps_download_urlerror():
     iohttps = IOHTTPS.__new__(IOHTTPS)
     iohttps.uuri = DummyUURI()
 
-    def scratch_path_prop(self):
-        return Path("/tmp/scratch_file.txt")
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.content = b"file content"
 
-    with patch.object(type(iohttps), "scratch_path", new=property(scratch_path_prop)):
-        with patch(
-            "urllib.request.urlretrieve", side_effect=urllib.error.URLError("fail")
-        ):
-            with patch("urgap.ufile.io.https.logger") as mock_logger:
-                iohttps.download()
-                mock_logger.warning.assert_called()
+    with patch.object(
+        type(iohttps), "scratch_path", new_callable=PropertyMock
+    ) as mock_scratch:
+        mock_file = MagicMock()
+        mock_scratch.return_value.open.return_value.__enter__.return_value = mock_file
+        with patch("urgap.ufile.io.https.requests.get", return_value=mock_response):
+            iohttps.download()
+            mock_scratch.return_value.open.assert_called_once_with("wb")
+            mock_file.write.assert_called_once_with(b"file content")
 
 
-import pytest
+def test_iohttps_download_failure():
+    class DummyUURI:
+        def get_https_remote_path(self):
+            return "https://example.com/file.txt"
 
-from urgap.ufile.io.https import IOHTTPS
+    iohttps = IOHTTPS.__new__(IOHTTPS)
+    iohttps.uuri = DummyUURI()
+
+    mock_response = MagicMock()
+    mock_response.status_code = 404
+
+    with patch.object(
+        type(iohttps), "scratch_path", new_callable=PropertyMock
+    ) as mock_scratch:
+        with patch("urgap.ufile.io.https.requests.get", return_value=mock_response):
+            iohttps.download()
+            mock_scratch.return_value.unlink.assert_called_once()
 
 
 def test_iohttps_upload_not_implemented():
@@ -60,10 +67,6 @@ def test_iohttps_upload_not_implemented():
     iohttps = IOHTTPS.__new__(IOHTTPS)
     iohttps.uuri = DummyUURI()
 
-    import logging
-
-    from unittest.mock import patch
-
     with patch("urgap.ufile.io.https.logger") as mock_logger:
         with pytest.raises(NotImplementedError) as exc_info:
             iohttps.upload(tags=None)
@@ -71,15 +74,6 @@ def test_iohttps_upload_not_implemented():
         mock_logger.warning.assert_called_with("No tags provided, skipping upload.")
 
         assert str(exc_info.value) == "Cannot upload via https!"
-
-
-from pathlib import Path
-from unittest.mock import PropertyMock, patch
-from urllib.error import HTTPError
-
-import pytest
-
-from urgap.ufile.io.https import IOHTTPS
 
 
 def test_iohttps_remote_object_exists_true():
@@ -90,15 +84,17 @@ def test_iohttps_remote_object_exists_true():
     iohttps = IOHTTPS.__new__(IOHTTPS)
     iohttps.uuri = DummyUURI()
 
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.content = b"file content"
+
     with patch.object(
         type(iohttps), "scratch_path", new_callable=PropertyMock
     ) as mock_scratch:
-        mock_scratch.return_value = Path("/tmp/scratch_file.txt")
-        with patch("urllib.request.urlretrieve") as mock_urlretrieve:
+        mock_file = MagicMock()
+        mock_scratch.return_value.open.return_value.__enter__.return_value = mock_file
+        with patch("urgap.ufile.io.https.requests.get", return_value=mock_response):
             exists = iohttps.remote_object_exists()
-            mock_urlretrieve.assert_called_once_with(
-                "https://example.com/file.txt", filename=Path("/tmp/scratch_file.txt")
-            )
             assert exists is True
 
 
@@ -110,50 +106,9 @@ def test_iohttps_remote_object_exists_false():
     iohttps = IOHTTPS.__new__(IOHTTPS)
     iohttps.uuri = DummyUURI()
 
-    with patch.object(
-        type(iohttps), "scratch_path", new_callable=PropertyMock
-    ) as mock_scratch:
-        mock_scratch.return_value = Path("/tmp/scratch_file.txt")
-        with patch(
-            "urllib.request.urlretrieve",
-            side_effect=HTTPError(url="", code=404, msg="", hdrs=None, fp=None),
-        ):
-            exists = iohttps.remote_object_exists()
-            assert exists is False
+    mock_response = MagicMock()
+    mock_response.status_code = 404
 
-
-def test_remote_object_exists_true():
-    iohttps = IOHTTPS.__new__(IOHTTPS)
-    iohttps.uuri = type(
-        "DummyUURI",
-        (),
-        {"get_https_remote_path": lambda self: "https://example.com/file.txt"},
-    )()
-
-    with patch.object(
-        type(iohttps), "scratch_path", new_callable=PropertyMock
-    ) as mock_scratch:
-        mock_scratch.return_value = Path("/tmp/scratch_file.txt")
-        with patch("urllib.request.urlretrieve") as mock_urlretrieve:
-            exists = iohttps.remote_object_exists()
-            assert exists is True
-
-
-def test_remote_object_exists_false():
-    iohttps = IOHTTPS.__new__(IOHTTPS)
-    iohttps.uuri = type(
-        "DummyUURI",
-        (),
-        {"get_https_remote_path": lambda self: "https://example.com/file.txt"},
-    )()
-
-    with patch.object(
-        type(iohttps), "scratch_path", new_callable=PropertyMock
-    ) as mock_scratch:
-        mock_scratch.return_value = Path("/tmp/scratch_file.txt")
-        with patch(
-            "urllib.request.urlretrieve",
-            side_effect=HTTPError(url="", code=404, msg="", hdrs=None, fp=None),
-        ):
-            exists = iohttps.remote_object_exists()
-            assert exists is False
+    with patch("urgap.ufile.io.https.requests.get", return_value=mock_response):
+        exists = iohttps.remote_object_exists()
+        assert exists is False

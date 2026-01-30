@@ -2,7 +2,6 @@
 
 import json
 import logging
-import urllib
 
 from typing import ParamSpec
 
@@ -66,19 +65,17 @@ class IOHTTPS(UIOBase):
         Writes the remote object to the local scratch path.
         If download fails, removes the partially downloaded file.
         """
-        try:
-            with self.scratch_path.open("wb"):
-                urllib.request.urlretrieve(
-                    self.uuri.get_https_remote_path(),
-                    filename=self.scratch_path,
-                )
-
-        except urllib.error.URLError:
-            msg = (
-                f"[ - HTTP - ] WARNING! Could not download {self.uuri.get_https_remote_path()} Check your internet connection!",
-                "[ - HTTP - ] For OSX, make sure that certificates are installed (/Applications/Python 3.x/Install Certificates.command)",
-            )
-            logger.warning(msg)
+        response = requests.get(
+            self.uuri.get_https_remote_path(),
+            timeout=(
+                urgap.config.get("requests_timeout_connect", None),
+                urgap.config.get("requests_timeout_read", None),
+            ),
+        )
+        if response.status_code == 200:
+            with self.scratch_path.open("wb") as f:
+                f.write(response.content)
+        else:
             self.scratch_path.unlink()
 
     def upload(self, tags: dict | None = None) -> None:
@@ -101,12 +98,17 @@ class IOHTTPS(UIOBase):
         Returns:
             True if the remote object exists, otherwise False.
         """
-        try:
-            urllib.request.urlretrieve(
-                self.uuri.get_https_remote_path(),
-                filename=self.scratch_path,
-            )
+        response = requests.get(
+            self.uuri.get_https_remote_path(),
+            timeout=(
+                urgap.config.get("requests_timeout_connect", None),
+                urgap.config.get("requests_timeout_read", None),
+            ),
+        )
+        if response.status_code == 200:
+            with self.scratch_path.open("wb") as f:
+                f.write(response.content)
             exists = True
-        except urllib.error.HTTPError:
+        else:
             exists = False
         return exists

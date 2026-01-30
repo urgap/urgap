@@ -164,4 +164,3 @@ class Bowtie(urgap.unode.UNodeBase):
             fastq_gz = utrace.output_files[-1].compress(compression_format="gz").path
             Path(fastq_gz).replace(utrace.output_files[-1].path)
         return utrace
-
