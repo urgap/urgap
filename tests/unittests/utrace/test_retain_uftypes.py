@@ -31,7 +31,7 @@ def test_retain_uftype_all_same_not_set():
     ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
-        unode_meta=urgap.init_node("filter_csv_1_0_0").META_INFO,
+        unode_meta=urgap.init_node("FilterTabularToCSV:1.0.0").META_INFO,
     )
     assert ut.output_files[0].tags.get("uftype", None) == ".any.csv"
 
@@ -62,7 +62,7 @@ def test_retain_uftype_all_same():
     ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
-        unode_meta=urgap.init_node("filter_csv_1_0_0").META_INFO,
+        unode_meta=urgap.init_node("FilterTabularToCSV:1.0.0").META_INFO,
     )
 
     # First check the scans_file
@@ -98,6 +98,6 @@ def test_retain_uftype_different():
     ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
-        unode_meta=urgap.init_node("filter_csv_1_0_0").META_INFO,
+        unode_meta=urgap.init_node("FilterTabularToCSV:1.0.0").META_INFO,
     )
     assert ut.output_files[0].tags.get("uftype", None) == ".any.csv"

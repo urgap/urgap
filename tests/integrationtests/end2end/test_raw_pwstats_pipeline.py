@@ -17,7 +17,7 @@ def test_raw_to_pwstats_pipeline():
     msgfplus = urgap.init_node("msgfplus_2021_03_22")
     pyiohat_csv = urgap.init_node("pyiohat_1_7_1")
     peptide_forest = urgap.init_node("peptide_forest_3")
-    filter_node = urgap.init_node("filter_csv_1_0_0")
+    filter_node = urgap.init_node("FilterTabularToCSV:1.0.0")
     urgap.init_node("flash_lfq_1_2_0")
     urgap.init_node("pw_stats_1_0_0")
 
