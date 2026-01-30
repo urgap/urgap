@@ -25,7 +25,7 @@ migration, and lays the groundwork for a data cataloging, file mesh and
 discovery layer that exceeds traditional storage boundaries.
 
 Provenance as Code (PaC)
---------------
+----------------------------
 
 Provenance, lineage, and reproducibility sit at the core of modern workflows.
 We adopt Provenance as Code (PaC), a paradigm where lineage is embedded directly
@@ -68,3 +68,30 @@ automatically during and after execution, tracking e.g. execution times and
 user-defined metrics. For end-to-end visibility, urgap also exports traces using
 the OpenTelemetry standard.
 
+Unode
+----------
+
+The :class:`urgap.unode` class is the heart of our processing abstraction. 
+It turns standalone tools into standardized nodes and those into containerized microservices. 
+By encapsulating tools with an urgap unode, developers can rely on robust and established data I/O, 
+secret handling, metadata plumbing and thus they can focus on the data engineering logic.
+
+Since development starts with a containerized tool, a lightweight :class:`urgap.unode` wrapper in addition 
+to the urgap runtime converts any container with a tool into a standardized microservice that can be 
+used in the same standardized way as all tools and across ecosystems. The result is a set of encapsulated 
+units with consistent interfaces, easy to deploy, orchestrate, and monitor in any environment.
+
+Frameworks live or die by low adoption friction. In `urgap`, that's the role of the `unode`, a thin 
+layer that bridges a resource and the framework. A :class:`urgap.unode` adapts inputs, outputs and 
+assembles the tool's command line, removing the need to write glue code.
+
+Ufiles
+----------
+
+
+Uctl
+----------
+
+
+Re-run logic
+----------
