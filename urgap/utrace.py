@@ -17,7 +17,13 @@ from typing import TYPE_CHECKING, Any
 
 import networkx as nx
 
-from opentelemetry import trace as _ot
+try:
+    from opentelemetry import trace as _ot
+
+    _OPENTELEMETRY_AVAILABLE = True
+except ImportError:
+    _ot = None
+    _OPENTELEMETRY_AVAILABLE = False
 
 import urgap
 
@@ -216,7 +222,7 @@ class UTrace:
 
     def _attach_to_span(self, time_str: str, log_message: str) -> None:
         """Attach log details to the current tracing span."""
-        span = _ot.get_current_span()
+        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
         if span is not None and span.is_recording():
             span.set_attribute("time", time_str)
             for line in log_message.split("\n"):

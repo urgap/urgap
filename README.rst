@@ -17,6 +17,73 @@ an interface thus can be plugged into any existing processes and finally global 
    :alt: ADO CI status
 
 
+How to Setup
+------------
+
+Prerequisites
+~~~~~~~~~~~~~
+
+We recommend using a virtual environment for Python projects. This guide uses `uv` for dependency management.
+
+Installation
+~~~~~~~~~~~~
+
+**Basic Installation** (local file system access only):
+
+.. code-block:: bash
+
+    uv pip install -e .
+
+**With Cloud Storage Support:**
+
+.. code-block:: bash
+
+    uv pip install -e ".[cloud]"
+
+**With All Optional Dependencies:**
+
+.. code-block:: bash
+
+    uv pip install -e ".[all]"
+
+Available extras include:
+
+* ``cloud``: Azure and Google Cloud storage backends
+* ``all``: All optional dependencies
+
+Running Tests
+~~~~~~~~~~~~~
+
+Install test dependencies:
+
+.. code-block:: bash
+
+    uv pip install pytest
+
+Run the test suite:
+
+.. code-block:: bash
+
+    pytest tests
+
+Quickstart: Writing Your First Pipeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The best way to learn urgap is through a complete example. Check out the end-to-end filter CSV pipeline:
+
+* **Location:** `tests/integrationtests/end2end/test_filter_csv_pipeline.py`
+* **What it demonstrates:** Complete pipeline setup, node configuration, and execution
+* **Requirements:** Everything needed to run this example is included in the repository
+
+This example can be run entirely on your local machine without any external dependencies.
+
+To run the example:
+
+.. code-block:: bash
+
+    pytest tests/integrationtests/end2end/test_filter_csv_pipeline.py
+
+
 Documentation
 --------------
 

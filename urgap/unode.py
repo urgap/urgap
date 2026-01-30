@@ -23,8 +23,16 @@ from typing import Any, ParamSpec
 
 import requests
 
-from opentelemetry import trace as _ot
-from opentelemetry.trace import SpanKind, StatusCode
+try:
+    from opentelemetry import trace as _ot
+    from opentelemetry.trace import SpanKind, StatusCode
+
+    _OPENTELEMETRY_AVAILABLE = True
+except ImportError:
+    _ot = None
+    SpanKind = None
+    StatusCode = None
+    _OPENTELEMETRY_AVAILABLE = False
 
 import urgap
 
@@ -270,7 +278,7 @@ class UNodeBase:
 
         urun_dict["is_remote_run"] = True
 
-        span = _ot.get_current_span()
+        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
         span_rec = span is not None and span.is_recording()
         if span_rec:
             span.set_attribute("http.method", "POST")
@@ -326,7 +334,7 @@ class UNodeBase:
             "wid": kw["urun_dict"].wid
             if "urun_dict" in kw and kw["urun_dict"] is not None
             else None,
-            "span.kind": str(SpanKind.INTERNAL),
+            "span.kind": str(SpanKind.INTERNAL) if SpanKind is not None else "INTERNAL",
         },
     )
     def _run_locally(
@@ -362,7 +370,7 @@ class UNodeBase:
         )
         ut.input_files = ut.filter_input_files(ut.input_files)
 
-        span = _ot.get_current_span()
+        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
         if span is not None and span.is_recording():
             span.set_attribute("utrace.output_files_stem", ut.output_files_stem)
             span.set_attribute(
@@ -418,7 +426,7 @@ class UNodeBase:
             urun_dict (urgap.URunDict): Runtime configuration for the current run.
             utrace (urgap.UTrace): Execution context for this run.
         """
-        span = _ot.get_current_span()
+        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
         if span is not None and span.is_recording():
             span.set_attribute("wid", urun_dict.wid)
             span.set_attribute(
@@ -430,7 +438,7 @@ class UNodeBase:
 
     @staticmethod
     def _add_rerun_events(reasons: list) -> None:
-        span = _ot.get_current_span()
+        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
         if span is None or not span.is_recording():
             return
         if len(reasons) == 0:
@@ -611,7 +619,7 @@ class UNodeBase:
             exe_path = self.latest_exe_paths
         return Path(exe_path)
 
-    def _construct_exe_path_u3(self) -> os.PathLike | None:
+    def _construct_exe_path_u3(self) -> os.PathLike:
         """Construct the path to the executable for a specific tagged version.
 
         Returns:
@@ -621,7 +629,6 @@ class UNodeBase:
             RuntimeError: If version or exe_path information is missing.
         """
         base_path = Path(urgap.home) / "resources"
-        tagged_exe_path = None
         version_info = None
         for v in self.META_INFO["versions"]:
             if v["version"] == self.META_INFO["unode_version"]:
@@ -639,13 +646,11 @@ class UNodeBase:
             path_to_system_resource = shutil.which(version_info["exe_path"].lstrip("$"))
             if path_to_system_resource is not None:
                 tagged_exe_path = Path(path_to_system_resource)
+            else:
+                tagged_exe_path = base_path / version_info["exe_path"]
         else:
             tagged_exe_path = base_path / Path(version_info["exe_path"])
-            if tagged_exe_path.exists() is False:
-                tagged_exe_path = None
-        if tagged_exe_path is not None:
-            return tagged_exe_path
-        return None
+        return tagged_exe_path
 
     @property
     def resource_subfolder(self) -> str:
@@ -918,7 +923,7 @@ class UNodeBase:
         cmd_msg = f"Executing command list: {' '.join(utrace.urun_dict.command_list)}"
         logger.info(cmd_msg)
 
-        span = _ot.get_current_span()
+        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
         if span is not None and span.is_recording():
             span.set_attribute("unode.command", " ".join(utrace.urun_dict.command_list))
             span.add_event(cmd_msg)

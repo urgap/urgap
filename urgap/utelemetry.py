@@ -1,41 +1,61 @@
 """Urgap Opentelemetry class."""
 
+from __future__ import annotations
+
 import asyncio
 import functools
 import inspect
 import logging
 
 from collections.abc import Callable, Mapping
-from typing import Any
-
-from azure.monitor.opentelemetry.exporter import (
-    AzureMonitorMetricExporter,
-    AzureMonitorTraceExporter,
-)
-from opentelemetry import metrics, trace
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
-    OTLPSpanExporter,
-)
-from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import (
-    ConsoleMetricExporter,
-    PeriodicExportingMetricReader,
-)
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-from opentelemetry.trace import SpanKind
-from opentelemetry.trace.status import Status, StatusCode
+from typing import TYPE_CHECKING, Any
 
 import urgap
 
-logging.getLogger("azure.monitor").setLevel(logging.WARNING)
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.WARNING,
-)
-logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
+_OPENTELEMETRY_AVAILABLE = False
+if TYPE_CHECKING:
+    from opentelemetry import metrics, trace
+    from opentelemetry.trace import SpanKind
+    from opentelemetry.trace.status import Status, StatusCode
+
+try:
+    from azure.monitor.opentelemetry.exporter import (
+        AzureMonitorMetricExporter,
+        AzureMonitorTraceExporter,
+    )
+    from opentelemetry import metrics, trace
+    from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+        OTLPMetricExporter,
+    )
+    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+        OTLPSpanExporter,
+    )
+    from opentelemetry.sdk.metrics import MeterProvider
+    from opentelemetry.sdk.metrics.export import (
+        ConsoleMetricExporter,
+        PeriodicExportingMetricReader,
+    )
+    from opentelemetry.sdk.resources import Resource
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+    from opentelemetry.trace import SpanKind
+    from opentelemetry.trace.status import Status, StatusCode
+
+    _OPENTELEMETRY_AVAILABLE = True
+except ImportError:
+    metrics = None
+    trace = None
+    SpanKind = None
+    Status = None
+    StatusCode = None
+
 logger = logging.getLogger(__name__)
+if _OPENTELEMETRY_AVAILABLE:
+    logging.getLogger("azure.monitor").setLevel(logging.WARNING)
+    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
+        logging.WARNING,
+    )
+    logging.getLogger("urllib3.connectionpool").setLevel(logging.INFO)
 
 
 class UTelemetry:
@@ -81,9 +101,9 @@ class UTelemetry:
         """Check if tracing is enabled.
 
         Returns:
-            True if tracing is enabled via config, else False.
+            True if tracing is enabled via config and opentelemetry is installed, else False.
         """
-        return self.otlp_type is not None
+        return _OPENTELEMETRY_AVAILABLE and self.otlp_type is not None
 
     @property
     def meter(self) -> metrics.Meter | None:
@@ -111,6 +131,9 @@ class UTelemetry:
     def shutdown() -> None:
         """Shutdown UTelemetry and close all OpenTelemetry connections."""
         if UTelemetry.is_shutdown:
+            return
+        if not _OPENTELEMETRY_AVAILABLE:
+            UTelemetry.is_shutdown = True
             return
         tracer_provider = trace.get_tracer_provider()
         if hasattr(tracer_provider, "shutdown"):

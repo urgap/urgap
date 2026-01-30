@@ -24,7 +24,7 @@ def test_rerun_reason_by_force():
     ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
-        unode_meta=urgap.init_node("filter_csv_1_0_0").META_INFO,
+        unode_meta=urgap.init_node("FilterTabularToCSV:1.0.0").META_INFO,
     )
     assert len(ut.evaluate_if_rerun_is_required()) == 1
     assert "Force" in ut.rerun_reasons[0]
@@ -50,7 +50,7 @@ def test_rerun_reason_output_files_are_missing():
     ut = urgap.UTrace(
         urun_dict=urd,
         input_files=input_files,
-        unode_meta=urgap.init_node("filter_csv_1_0_0").META_INFO,
+        unode_meta=urgap.init_node("FilterTabularToCSV:1.0.0").META_INFO,
     )
     assert len(ut.evaluate_if_rerun_is_required()) == 1
 
