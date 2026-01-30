@@ -17,7 +17,7 @@ Installation from github
 
 TODO
     #. Clone github 
-    #. Checkout master
+    #. Checkout main 
     #. install following dev description below
     #. enjoy latest pypi release 
 
@@ -35,28 +35,34 @@ Installation from source
 
 .. code-block:: bash
 
-    user@localhost:~$ git clone https://github.com/fu/urgap2.git
+    user@localhost:~$ git clone https://github.com/urgap/urgap.git
 
 * ZIP version: Alternatively, download and extract the `urgap zip file`_
 
 .. _GitHub:
-   https://github.com/fu/urgap2
+   https://github.com/urgap/urgap
 
 .. _urgap zip file:
-   https://github.com/fu/urgap2/archive/master.zip
+   https://github.com/urgap/urgap/archive/main.zip
 
-2. Next, navigate into the Urgap2 folder and install the requirements. Use virtualenv for maximum convenience.
+2. Next, navigate into the urgap folder and install the requirements. Use virtualenv for maximum convenience.
 
 .. code-block:: bash
 
-    user@localhost:~$ cd urgap2
-    user@localhost:~/urgap$ pip install -r requirements.txt
+    user@localhost:~$ cd urgap
+    # base version
+    user@localhost:~/urgap$ uv sync
+    # with doc dependencies
+    user@localhost:~/urgap$ uv sync --extra docs
+    # with all extras
+    user@localhost:~/urgap$ uv sync --all-extras
+    
 
-
-You might need administrator privileges to write in the Python site-package folder.
-On Linux or OS X, use ``"sudo python3 -m pip install ."`` or write into a user folder
-by using this command ``"python3 -m pip install . --user"``. On Windows, you have to
-start the command line with administrator privileges.
+.. @MKoesters sounds like something you should *not* do to me ...
+.. You might need administrator privileges to write in the Python site-package folder.
+.. On Linux or OS X, use ``"sudo python3 -m pip install ."`` or write into a user folder
+.. by using this command ``"python3 -m pip install . --user"``. On Windows, you have to
+.. start the command line with administrator privileges.
 
 Setting up mongoDB and/or minio
 -------------------------------

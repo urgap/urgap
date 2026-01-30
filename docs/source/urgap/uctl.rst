@@ -3,17 +3,8 @@
 UCtl
 ####
 
-.. automodule:: urgap.uctl.config
+.. automodule:: urgap.uctl.run
    :members:
-
-
-.. automodule:: urgap.uctl.credentials
-   :members:
-
-
-.. automodule:: urgap.uctl.dashboard
-   :members:
-
 
 .. automodule:: urgap.uctl.describe
    :members:
@@ -28,4 +19,10 @@ UCtl
 
 
 .. automodule:: urgap.uctl.upload
+   :members:
+
+.. automodule:: urgap.uctl.set
+   :members:
+
+.. automodule:: urgap.uctl.show
    :members:

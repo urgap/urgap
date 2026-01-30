@@ -25,7 +25,7 @@ For other UFile schemata the definition is less explicit. For example, in the ca
 
     minio://k8s-server/<namespace>/<container>/<object_name>
 
-Thus determining what the container name is and what the object name is becomes difficult. The same holds true for  path file (python).
+Thus determining what the container name is and what the object name is becomes difficult. The same holds true for  path (libcloud) or file (python).
 
 Therefor, we decided to explicitly define the object name as a fragment in the uri.
 
@@ -40,3 +40,5 @@ Therefor, we decided to explicitly define the object name as a fragment in the u
 *Why do I get a workflow ID (WID) for each executed node?*
 
 WIDs are created during init of a URunDict, so the problem could be that you initalize a new URunDict for each unode.run()?. 
+
+

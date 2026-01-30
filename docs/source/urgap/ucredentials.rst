@@ -17,7 +17,7 @@ UCredentials IO Classes
 
    .. automethod:: __init__
 
-.. autoclass:: urgap.ucredentials.io.azure.IOAzureCreds
+.. autoclass:: urgap.ucredentials.io.akv.IOAzureCreds
    :members:
 
    .. automethod:: __init__
