@@ -162,7 +162,7 @@ def provide_clean_scratch_and_remote(request):
 def provide_standard_TestNode1_setup_and_set_umeta_interface(request):
     if str(request.param[0]) == "mongodb":
         print(urgap.config)
-        parsed_url = urlparse(urgap.config["umeta-mongodb-url"])
+        parsed_url = urlparse("mongodb://localhost:27017")
         host, port = parsed_url.netloc.split(":")
         try:
             urllib3.util.connection.create_connection((host, port))
