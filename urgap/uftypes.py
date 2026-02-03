@@ -347,4 +347,37 @@ test.rumpel.ANY = ".test.rumpel.ANY"
 test.rumpel.MORE = ".test.more"
 test.rumpel.EVENMORE = ".test.evenmore"
 
+# Genomics=====================================================================
+genomics = types.SimpleNamespace()
+genomics.ANY = "genomics.ANY"
+
+# Generic variant formats
+genomics.VCF = ".genomics.vcf"
+genomics.VCF_GZ = ".genomics.vcf.gz"
+genomics.BCF = ".genomics.bcf"
+
+# PLINK tool-specific formats and outputs
+genomics.plink = types.SimpleNamespace()
+genomics.plink.ANY = "genomics.plink.ANY"
+
+# PLINK 1.x binary format (.bed/.bim/.fam)
+genomics.plink.BED = ".plink.bed"
+genomics.plink.BIM = ".plink.bim"
+genomics.plink.FAM = ".plink.fam"
+
+# PLINK 2 format (.pgen/.pvar/.psam)
+genomics.plink.PGEN = ".plink2.pgen"
+genomics.plink.PVAR = ".plink2.pvar"
+genomics.plink.PSAM = ".plink2.psam"
+
+# PLINK output files
+genomics.plink.FREQ = ".plink.afreq"
+genomics.plink.FREQ_COUNTS = ".plink.acount"
+genomics.plink.HWE = ".plink.hardy"
+genomics.plink.MISSING = ".plink.vmiss"
+genomics.plink.SAMPLE_MISSING = ".plink.smiss"
+genomics.plink.HET = ".plink.het"
+genomics.plink.ASSOC = ".plink.assoc"
+genomics.plink.LOG = ".plink.log"
+
 # # Generalized ends
