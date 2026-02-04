@@ -83,7 +83,6 @@ To run the example:
 
     pytest tests/integrationtests/end2end/test_filter_csv_pipeline.py
 
-
 Documentation
 --------------
 
