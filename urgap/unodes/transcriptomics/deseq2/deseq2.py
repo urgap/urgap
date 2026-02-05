@@ -15,17 +15,29 @@ class DESeq2(urgap.unode.UNodeBase):
         "name": "DESeq2",
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
         "versions": [
-            {"version": "1.0.0", "exe_path": "DESeq2/1_0_0/deseq2.py"},
+            {"version": "1.0.0", "exe_path": "DESeq2/1_0_0/deseq2.R"},
         ],
         "parameters_not_triggering_rerun": [],
         "input_uftypes": {
-            urgap.uftypes.any.CSV: {
-                "min": 2,
-                "max": 2,
+            urgap.uftypes.transcriptomics.COUNT_TABLE_CSV: {
+                "min": 1,
+                "max": 1,
+            },
+            urgap.uftypes.transcriptomics.METADATA_CSV: {
+                "min": 1,
+                "max": 1,
             },
         },
         "output_uftypes": {
-            urgap.uftypes.any.CSV: {
+            urgap.uftypes.transcriptomics.DESEQ2_CSV: {
+                "min": 1,
+                "max": 1,
+            },
+            urgap.uftypes.plotter.PCA_PDF: {
+                "min": 1,
+                "max": 1,
+            },
+            urgap.uftypes.plotter.MA_PDF: {
                 "min": 1,
                 "max": 1,
             },
@@ -35,12 +47,12 @@ class DESeq2(urgap.unode.UNodeBase):
         "citation": "Urgap team (2021)",
         "parameter_examples": """
 
-            -q: Use pandas query string
+            -q: Use R logical expression
 
             For example:
 
             {
-                "-q": "`padj` < 0.05"
+                "-q": "padj < 0.05 & abs(log2FoldChange) > 1"
             }
 
         """,
@@ -62,16 +74,12 @@ class DESeq2(urgap.unode.UNodeBase):
         Returns:
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
-        utrace.urun_dict.command_list = ["python", str(self.exe_path)]
+        utrace.urun_dict.command_list = ["Rscript", str(self.exe_path)]
         for file in utrace.input_files:
             utrace.urun_dict.command_list.extend(["-i", str(file.path)])
+        for file in utrace.output_files:
+            utrace.urun_dict.command_list.extend(["-o", str(file.path)])
 
-        utrace.urun_dict.command_list.extend(
-            [
-                "-o",
-                str(utrace.output_files[0].path),
-            ],
-        )
         for parameter_key, parameter_value in utrace.urun_dict.parameters[
             f"{self.META_INFO['unode_full_identifier']}"
         ].items():
