@@ -19,9 +19,9 @@ an interface thus can be plugged into any existing processes and finally global 
 Learn More
 ----------
 
-Watch our introduction talk to get a comprehensive overview of urgap's design and capabilities:
+Watch our introduction talk `urgap - unified resource governance and data provenance by Christian Fufezan` to get a comprehensive overview of urgap's design and capabilities:
 
-* `urgap - unified resource governance and data provenance <https://youtu.be/63pYK1xZPx8?si=Y3PGi1HfW0ax0iJI>`_ by [Christian Fufezan]
+[![Watch the video](https://img.youtube.com/vi/63pYK1xZPx8/0.jpg)](https://www.youtube.com/watch?v=63pYK1xZPx8)
 
 How to Setup
 ------------
