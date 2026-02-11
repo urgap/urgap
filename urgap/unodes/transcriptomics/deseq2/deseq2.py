@@ -50,9 +50,43 @@ class DESeq2(urgap.unode.UNodeBase):
             -q: Use R logical expression
 
             For example:
-
             {
                 "-q": "padj < 0.05 & abs(log2FoldChange) > 1"
+            }
+
+            -d: Design of the experiment in DESeq2
+
+            For example:
+            {
+            "-d": "~rep + condition",
+            }
+
+            -r: Reference group
+
+            For example:
+            {
+            "-r": "WT",
+            }
+
+            --alpha: FDR threshold used for p-value adjustment and significance labeling
+
+            For example:
+            {
+            "--alpha": 0.05,
+            }
+
+            --plotPCA_intgroup: interaction group for PCA plot
+
+            For example:
+            {
+            "--plotPCA_intgroup": 'c("condition", "rep")',
+            }
+
+            --plotMA_ylim: Y-axis limits for MA plot
+
+            For example:
+            {
+            "--plotMA_ylim": "c(-5,5)"
             }
 
         """,
