@@ -353,7 +353,7 @@ genomics.ANY = "genomics.ANY"
 
 # Generic variant formats
 genomics.VCF = ".genomics.vcf"
-genomics.VCF_GZ = ".genomics.vcf.gz"
+genomics.VCF_GZ = ".genomics_vcf.gz"
 genomics.BCF = ".genomics.bcf"
 
 # PLINK tool-specific formats and outputs
