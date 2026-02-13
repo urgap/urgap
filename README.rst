@@ -16,6 +16,15 @@ an interface thus can be plugged into any existing processes and finally global 
    :target: https://dev.azure.com/DevOps-RD/RD-DSO/_build?definitionId=13513
    :alt: ADO CI status
 
+Learn More
+----------
+
+Watch our introduction talk **urgap - unified resource governance and data provenance** by Christian Fufezan to get a comprehensive overview of urgap's design and capabilities:
+
+.. image:: https://img.youtube.com/vi/63pYK1xZPx8/0.jpg
+   :target: https://www.youtube.com/watch?v=63pYK1xZPx8
+   :alt: Watch the video
+   :width: 560
 
 How to Setup
 ------------
