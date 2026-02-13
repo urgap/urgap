@@ -53,7 +53,7 @@ def show_config_click(output: str) -> None:
 
 def show_config(output: str) -> None:
     """Display current configuration."""
-    if output not in ["json"]:
+    if output != "json":
         output = "pprint"
     with URGAP_HOME_JSON.open() as config_json:
         config = json.load(config_json)

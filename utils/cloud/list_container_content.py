@@ -19,7 +19,7 @@ def main(url: str, container_name: str) -> None:
     ufile = urgap.UFile(f"{url}/{container_name}/#might_not_even_exists/not_sure.txt")
     driver = ufile.io.driver
     if "/" in container_name:
-        container_name = container_name.split("/")[-1]
+        container_name = container_name.rsplit("/", maxsplit=1)[-1]
     available_containers = [x.name for x in driver.list_containers()]
     for _x in available_containers:
         pass
