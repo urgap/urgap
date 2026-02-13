@@ -26,7 +26,7 @@ class PlinkFreq(urgap.unode.UNodeBase):
         },
         "engine": None,
         "engine_type": ("gwas",),
-        "citation": """TBA""",
+        "citation": """Christopher C Chang, Carson C Chow, Laurent CAM Tellier, Shashaank Vattikuti, Shaun M Purcell, James J Lee, Second-generation PLINK: rising to the challenge of larger and richer datasets, GigaScience, Volume 4, Issue 1, December 2015, s13742–015–0047–8, https://doi.org/10.1186/s13742-015-0047-8""",
     }
 
     def __init__(self) -> None:
