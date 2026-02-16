@@ -1,7 +1,5 @@
 """Urgap DESeq2 wrapper."""
 
-import pandas as pd
-
 import urgap
 
 
