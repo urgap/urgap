@@ -89,6 +89,20 @@ class DESeq2(urgap.unode.UNodeBase):
             "--plotMA_ylim": "c(-5,5)"
             }
 
+            --plotMA_ylab: Y-axis label for MA plot
+
+            For example:
+            {
+            "--plotMA_ylab": "Log2 fold change"
+            }
+
+            --plotMA_xlab: X-axis label for MA plot
+
+            For example:
+            {
+            "--plotMA_xlab": "Mean expression"
+            }
+
         """,
     }
 
