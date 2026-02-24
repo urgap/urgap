@@ -89,6 +89,8 @@ plotter.UMAP_PDF = ".umap.pdf"
 plotter.VENN_RESULTS_CSV = ".venn_results.csv"
 plotter.VENN_RESULTS_SVG = ".venn_results.svg"
 plotter.UMAP_PDF = ".umap.pdf"
+plotter.PCA_PDF = ".pca.pdf"
+plotter.MA_PDF = ".ma.pdf"
 
 # Filetype =======================================================================
 any = types.SimpleNamespace()
@@ -160,6 +162,9 @@ transcriptomics.cellranger.FEATUREREF_MULTI_CSV = ".cellranger_featureref_multi.
 transcriptomics.cellranger.MULTI_OUTPUT_TAR = ".cellranger_multi_output.tar"
 transcriptomics.cellranger.FILTERED_OUTPUT_TAR = ".cellranger_filtered_output.tar"
 transcriptomics.cellranger.SCRIPT = ".SCRIPT.sh"
+transcriptomics.COUNT_TABLE_CSV = ".count_table.csv"
+transcriptomics.METADATA_CSV = ".metadata.csv"
+transcriptomics.DESEQ2_CSV = ".deseq2.csv"
 
 # Imaging=======================================================================
 
