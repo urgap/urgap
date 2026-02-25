@@ -22,6 +22,7 @@ Documentation
    faq
    third_party
    example_scripts
+   resource_wrapping
 
 .. toctree::
    :glob:
