@@ -163,32 +163,6 @@ transcriptomics.cellranger.SCRIPT = ".SCRIPT.sh"
 
 # Imaging=======================================================================
 
-# Beacon========================================================================
-beacon = types.SimpleNamespace()
-beacon.IMAGE_TIFF = ".image.tiff"
-beacon.ESSAY_XML = ".essay.xml"
-beacon.OPTOSELECT_XML = ".optoselect.xml"
-beacon.MLSUMMARY_PARQUET = ".mlsummary.parquet"
-beacon.MLRAW_PARQUET = ".mlraw.parquet"
-beacon.SUMMARY_PARQUET = ".summary.parquet"
-beacon.BRIGHTFIELD_SUMMARY_PARQUET = ".brightfield_summary.parquet"
-beacon.RESULT_PNG = ".result.png"
-
-# Interdock=====================================================================
-molecular_structure = types.SimpleNamespace()
-molecular_structure.ANY = "molecular_structure.ANY"
-molecular_structure.PROTEIN = ".protein.ctf"
-molecular_structure.POLYSACC = ".polysacc.yaml"
-
-interdock = types.SimpleNamespace()
-interdock.model = types.SimpleNamespace()
-interdock.model.ANY = "interdock.model.ANY"
-interdock.model.PDBQT = ".model_pdbqt.pdbqt"
-interdock.model.PDB = ".model_pdb.pdb"
-interdock.LOG = ".interdock.log"
-interdock.CONFIG = ".interdock.config"  # is a mock, file has no extension
-interdock.OUT = ".interdock.out"
-
 # Mass Spec=====================================================================
 ms = types.SimpleNamespace()
 ms.RUN_META_CSV = ".run_meta.csv"
@@ -346,5 +320,38 @@ test.rumpel = types.SimpleNamespace()
 test.rumpel.ANY = ".test.rumpel.ANY"
 test.rumpel.MORE = ".test.more"
 test.rumpel.EVENMORE = ".test.evenmore"
+
+# Genomics=====================================================================
+genomics = types.SimpleNamespace()
+genomics.ANY = "genomics.ANY"
+
+# Generic variant formats
+genomics.VCF = ".genomics.vcf"
+genomics.VCF_GZ = ".genomics_vcf.gz"
+genomics.BCF = ".genomics.bcf"
+
+# PLINK tool-specific formats and outputs
+genomics.plink = types.SimpleNamespace()
+genomics.plink.ANY = "genomics.plink.ANY"
+
+# PLINK 1.x binary format (.bed/.bim/.fam)
+genomics.plink.BED = ".plink.bed"
+genomics.plink.BIM = ".plink.bim"
+genomics.plink.FAM = ".plink.fam"
+
+# PLINK 2 format (.pgen/.pvar/.psam)
+genomics.plink.PGEN = ".plink2.pgen"
+genomics.plink.PVAR = ".plink2.pvar"
+genomics.plink.PSAM = ".plink2.psam"
+
+# PLINK output files
+genomics.plink.FREQ = ".plink.afreq"
+genomics.plink.FREQ_COUNTS = ".plink.acount"
+genomics.plink.HWE = ".plink.hardy"
+genomics.plink.MISSING = ".plink.vmiss"
+genomics.plink.SAMPLE_MISSING = ".plink.smiss"
+genomics.plink.HET = ".plink.het"
+genomics.plink.ASSOC = ".plink.assoc"
+genomics.plink.LOG = ".plink.log"
 
 # # Generalized ends
