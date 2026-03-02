@@ -19,6 +19,7 @@ Documentation
    getting_started
    quickstart
    concepts
+   advanced_topics
    faq
    third_party
    example_scripts

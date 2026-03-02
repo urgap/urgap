@@ -1,7 +1,7 @@
 .. _getting_started:
 
 Concepts
-==========
+========
 
 File Identity
 -------------
