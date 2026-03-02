@@ -161,15 +161,15 @@ Standardizing common pipeline patterns then makes workflow authoring straightfor
          # command line arguments for each processing node 
       },
       unode_parameters={
-         "remote_url": "http://t2.eastus2.azmk8s.io:27900",
-         # Remote_url is used to rebase after processing steps.
+         "remote_url": "http://t2.eastus2.azmk8s.io",
+         # Remote_url used as remote for microservice execution.
       },
    )
 
    ft_node = urgap.init_unode("FilterTabularToCSV:1.0.0")
-   # FilterTabularNodeToCSV is initialized
+   # FilterTabularToCSV is initialized
    fltrd_csv = ft_node.run(urun_dict=urun_dict, ufiles=ufiles)
-   # FilterTabularNodeToCSV is executed with urun_dict and ufiles
+   # FilterTabularToCSV is executed with urun_dict and ufiles
    # unode.run returns list of URIs
 
    ct_node = urgap.init_unode("CompressToTar:1.0.0")

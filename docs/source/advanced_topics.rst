@@ -67,7 +67,7 @@ Accessing the remote urgap server is as simple as adding a unode_parameter point
       },
       unode_parameters={
          "remote_url": "http://t2.eastus2.azmk8s.io",
-         # Remote_url is the location of the microserice server..
+         # Remote_url is the location of the microservice ...
       },
    )
 
@@ -78,7 +78,7 @@ Starting a server exposing the UNodes as mcp server as well
 
 .. code-block:: bash
 
-   $ uctl run upi-server -n FilterTabularToCSV:1.0.0 --mcp <port_on_which_to_server_sse>
+   $ uctl run upi-server -n FilterTabularToCSV:1.0.0 --mcp <port_on_which_sse_is_served>
 
 
 NOTE: we will be switching to streamable http soon.
@@ -87,7 +87,7 @@ NOTE: we will be switching to streamable http soon.
 How to use Urgap with different orchestration tools
 ---------------------------------------------------
 
-Since urgap nodes require a URunDict, which can be serialized a json and list of uri string, any orchestration tool can be used. Sometimes, the Nodes need to be wrapped with a tiny layer of gluecode that turns the orchestration tool communciations into urgap node calls. E.g. Using ariflow, one would need to use XCOM to extract the output from the prior node as inputs for the next node and turn these then into a valid json and uri list. HEre you find some helper classes we wrote.
+Since urgap nodes require a URunDict, which can be serialized a json and list of uri string, any orchestration tool can be used. Sometimes, the Nodes need to be wrapped with a tiny layer of gluecode that turns the orchestration tool communciations into urgap node calls. E.g. Using ariflow, one would need to use XCOM to extract the output from the prior node as inputs for the next node and turn these then into a valid json and uri list. Here you find some helper classes we wrote.
 
 Using urgap in Prefect
 ^^^^^^^^^^^^^^^^^^^^^^
