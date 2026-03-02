@@ -1,4 +1,4 @@
-"""UTreeQuerier module of urgap2."""
+"""UTreeQuerier module of urgap."""
 
 import types
 

@@ -3,7 +3,7 @@
 Third party tools
 #################
 
-Here is a list of all tools that are integrated into Urgap2 with proper citations:
+Here is a list of all tools that are integrated into urgap with proper citations:
 
 dia_nn_1_8_1
  * DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput Nature Methods, 2020

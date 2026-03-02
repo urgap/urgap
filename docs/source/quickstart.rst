@@ -6,48 +6,17 @@ Quickstart
 Running pytest
 --------------
 
-If you have installed from source / github, then you can test your installation by invoking tox, e.g.
+If you have installed from source / github, then you can test your installation by invoking pytest, e.g.
 
 .. code-block:: bash
 
-    uv run pytest
+    pytest tests
 
 If you need a fresh installation of all requirements including a fresh virtual environment, run
 
 .. code-block:: bash
 
-    rm -rf .venv && uv sync --extra docs --extra dev --extra all
-
-
-Using UFiles, the data abstraction layer
-----------------------------------------
-
-.. code-block:: python
-
-    import urgap
-    uri = "https://www.tagesschau.de/multimedia/bilder#ukraine436~_v-gross20x9.jpg"
-    ufile = urgap.UFile(uri=uri)
-    # initalizes UFile with remote location
-    print(ufile.path)
-    # Accessing the path attribute automatically downloads the file
-    
-    ufile.tags.update({"source": "tagesschau.de"})
-    # Update tags locally
-
-    from pathlib import Path
-
-    ufile.rebase(f"file://{Path.home()}/Desktop/")
-    # changing ufile schema to file (Python) and location to ~/Desktop
-
-    ufile.upload()
-    # uploads scratch file to new rebased destination 
-
-.. note::
-
-    Please refer to :ref:`ufile` for more details on, e.g.
-    
-    #. Why is there a # in uri?
-    #. How are tags handled 
+    rm -rf .venv && pip install -e ".[all]"
 
 
 

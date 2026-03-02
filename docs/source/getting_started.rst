@@ -10,7 +10,7 @@ Installation from pypi
 
 .. code-block:: bash
 
-    user@localhost:~$ pip install urgap2
+    user@localhost:~$ pip install urgap
 
 Installation from github
 ^^^^^^^^^^^^^^^^^^^^^^^^

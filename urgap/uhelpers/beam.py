@@ -1,4 +1,4 @@
-"""UHelper.beam module of urgap2."""
+"""UHelper.beam module of urgap."""
 
 import argparse
 import copy

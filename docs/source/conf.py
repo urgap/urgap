@@ -20,9 +20,9 @@ for example_file in Path("../../example_scripts").glob("**/*.py"):
 
 # -- Project information -----------------------------------------------------
 
-project = "Urgap2"
-copyright = "2021, Urgap2 Team"
-author = "Urgap2 Team"
+project = "urgap"
+copyright = "2021, urgap Team"
+author = "urgap Team"
 
 # The full version, including alpha/beta/rc tags stored in version.txt
 # version_path = os.path.join(

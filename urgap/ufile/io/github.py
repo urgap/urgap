@@ -1,4 +1,4 @@
-"""Github subclass of urgap2's UIO submodule."""
+"""Github subclass of urgap's UIO submodule."""
 
 import logging
 import re

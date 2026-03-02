@@ -1,4 +1,4 @@
-"""Azure DataLake subclass of urgap2's UIO submodule."""
+"""Azure DataLake subclass of urgap's UIO submodule."""
 
 import contextlib
 import logging

@@ -1,4 +1,4 @@
-"""UCredentials module of urgap2."""
+"""UCredentials module of urgap."""
 
 import contextlib
 import importlib

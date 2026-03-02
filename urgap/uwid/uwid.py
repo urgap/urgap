@@ -1,4 +1,4 @@
-"""UWIDGenerator class of urgap2."""
+"""UWIDGenerator class of urgap."""
 
 import secrets
 

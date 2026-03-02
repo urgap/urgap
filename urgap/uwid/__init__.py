@@ -1,4 +1,4 @@
-"""UWID submodule of urgap2."""
+"""UWID submodule of urgap."""
 
 from .uwid import UWIDGenerator
 

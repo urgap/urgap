@@ -1,4 +1,4 @@
-"""UFileIOManager module of urgap2."""
+"""UFileIOManager module of urgap."""
 
 import contextlib
 import importlib

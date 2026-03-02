@@ -1,6 +1,6 @@
-.. Urgap2
+.. urgap
 
-Welcome to Urgap2
+Welcome to urgap
 ==================
 
 

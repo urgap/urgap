@@ -1,4 +1,4 @@
-"""IOCreds submodule of urgap2."""
+"""IOCreds submodule of urgap."""
 
 from typing import ParamSpec
 

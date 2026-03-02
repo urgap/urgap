@@ -1,4 +1,4 @@
-"""UConvert module of urgap2."""
+"""UConvert module of urgap."""
 
 from .json import JSONDecoder, JSONEncoder
 

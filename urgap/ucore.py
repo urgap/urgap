@@ -1,4 +1,4 @@
-"""Core utility functions for the urgap2 package."""
+"""Core utility functions for the urgap package."""
 
 import contextlib
 import hashlib

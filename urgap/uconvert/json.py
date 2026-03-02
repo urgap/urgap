@@ -15,7 +15,7 @@ P = ParamSpec("P")
 
 
 class JSONEncoder(json.JSONEncoder):
-    """Custom JSONEncoder class for urgap2 objects."""
+    """Custom JSONEncoder class for urgap objects."""
 
     def default(
         self,
@@ -64,7 +64,7 @@ class JSONEncoder(json.JSONEncoder):
 
 
 class JSONDecoder(json.JSONDecoder):
-    """Custom JSONDecoder class for urgap2 objects."""
+    """Custom JSONDecoder class for urgap objects."""
 
     def __init__(self, *args: str, **kwargs: P.kwargs) -> None:
         """Initialize with object_hook for urgap types."""

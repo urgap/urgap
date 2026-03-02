@@ -12,11 +12,11 @@ def test_simple_python():
 def test_simple_python_with_missing():
     um = urgap.UNodeManager()
     is_available = um.check_requirements(
-        requirements={"python_packages": ["urgap", "urgap2_31231"]},
+        requirements={"python_packages": ["urgap", "urgap_31231"]},
     )
     assert is_available is False
     assert um.availability["python_packages"]["urgap"] is True
-    assert um.availability["python_packages"]["urgap2_31231"] is False
+    assert um.availability["python_packages"]["urgap_31231"] is False
 
 
 def test_external_resource_test_dict_points_to_unavailable_for_req3():

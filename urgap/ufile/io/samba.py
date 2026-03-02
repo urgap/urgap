@@ -1,4 +1,4 @@
-"""FTP scheme subclass of urgap2's UIO submodule."""
+"""FTP scheme subclass of urgap's UIO submodule."""
 
 import json
 import logging

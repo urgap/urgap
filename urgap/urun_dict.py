@@ -1,4 +1,4 @@
-"""URunDict module of urgap2."""
+"""URunDict module of urgap."""
 
 from __future__ import annotations
 
