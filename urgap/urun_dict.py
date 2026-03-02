@@ -73,8 +73,6 @@ class URunDict(UserDict):
                                         #   }
                                         # }
 
-                "dry_run": False,       # Whether execution is skipped - not implemented yet
-
                 "force": False,         # Whether execution is forced
 
                 "override_folder_creation": False,   # Whether folder creation should be skipped
