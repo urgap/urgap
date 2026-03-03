@@ -3,26 +3,41 @@
 Third party tools
 #################
 
-Here is a list of all tools that are integrated into urgap with proper citations:
+Overview
+********
 
-dia_nn_1_8_1
- * DIA-NN: neural networks and interference correction enable deep proteome coverage in high throughput Nature Methods, 2020
-extract_scans_1_0_0
- * Urgap team (2021)
-flash_lfq_1_2_0
- * 
-        Millikin, R. J., Solntsev, S. K., Shortreed, M. R., & Smith, L. M. (2017). Ultrafast Peptide Label-Free Quantification with FlashLFQ.
-        In Journal of Proteome Research (Vol. 17, Issue 1, pp. 386-391). American Chemical Society (ACS). https://doi.org/10.1021/acs.jproteome.7b00608
-        
-generate_experimental_design_1_0_0
- * Urgap team (2023)
-msgfplus_2021_03_22
- * 
-        Kim, S., Mischerikow, N., Bandeira, N., Navarro, J. D., Wich, L., Mohammed, S., Heck, A. J. R., & Pevzner, P. A. (2010). The Generating Function of CID, ETD, and CID/ETD Pairs of Tandem Mass Spectra: Applications to Database Search.
-        In Molecular Cellular Proteomics (Vol. 9, Issue 12, pp. 2840-2852). Elsevier BV. https://doi.org/10.1074/mcp.m110.003731
-        
-xtandem_alanine
- * 
-        Craig, R., & Beavis, R. C. (2004). TANDEM: matching proteins with tandem mass spectra.
-        In Bioinformatics (Vol. 20, Issue 9, pp. 1466-1467). Oxford University Press (OUP). https://doi.org/10.1093/bioinformatics/bth092
-        
+When integrating third-party tools with urgap, we recommend leveraging the container-hub repository, or your own container-hub style repository to streamline your workflow.
+
+Container-Hub Repository
+************************
+
+The concept of the container-hub repository is to provide a convenient way to build and maintain customized containers that include your third-party software alongside urgap.
+
+**Repository:** https://github.com/urgap/container-hub
+
+Key Features
+
+The container-hub repository offers the following benefits:
+
+* **Automated Builds**: Containers are automatically built whenever a new urgap release is published
+* **Version Tagging**: Your custom containers are automatically tagged with the corresponding urgap version
+* **Latest Tag Support**: Optionally tag containers as ``latest`` to ensure changes are reflected immediately
+
+.. important::
+    When your orchestration platform references container images with the ``latest`` tag, it will pull the newest image associated with that tag whenever a deployment occurs.
+
+    As a result, your deployments will always run the most recently built **urgap** version without manual version management. This is particularly beneficial in development and UAT environments.
+
+Getting Started
+***************
+
+To create your own customized container:
+
+1. Visit the container-hub repository
+2. Follow the instructions to build your container with your required third-party software
+3. Configure automatic builds to stay synchronized with urgap releases
+
+This approach ensures your third-party tools remain compatible with the latest urgap versions while maintaining a clean, reproducible build process.
+
+.. note::
+    You can fork this repo and build your own container-hub if you like or contribute to the urgap-community.

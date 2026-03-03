@@ -87,6 +87,8 @@ databases = [
 docs = [
     'sphinx',
     'sphinx-rtd-theme',
+    'nbsphinx',
+    'ipython',
 ]
 legacy = [
     'unimod-mapper~=0.6.4',

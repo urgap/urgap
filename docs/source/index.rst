@@ -1,11 +1,9 @@
 .. urgap
 
 Welcome to urgap
-==================
 
 
-Urgap is node wrapping framework, containing abstraction layers for data and meta data, extensive
-re-run skipping logic and data versioning. Urgap can be incorporated with any scheduling/pipelining tool making pipeline development independent from business logic and data storage, while offering standardized logging and execution, which makes monitoring and debugging easy.
+urgap is a node wrapping framework, containing abstraction layers for data and meta data, extensive re-run skipping logic and data versioning. urgap can be incorporated with any scheduling/pipelining tool making pipeline development independent from business logic and data storage, while offering standardized logging and execution, which makes monitoring and debugging easy.
 
 
 Documentation
