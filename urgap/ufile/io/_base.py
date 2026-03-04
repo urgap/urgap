@@ -1,4 +1,4 @@
-"""UIO submodule of urgap2."""
+"""UIO submodule of urgap."""
 
 from pathlib import Path
 from typing import ParamSpec

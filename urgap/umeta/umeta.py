@@ -1,4 +1,4 @@
-"""UFile module of urgap2."""
+"""UFile module of urgap."""
 
 from __future__ import annotations
 

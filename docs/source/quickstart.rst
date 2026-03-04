@@ -6,7 +6,7 @@ Quickstart
 Minimal pipeline: download a CSV and filter it
 ----------------------------------------------
 
-This section walks through the smallest useful urgap pipeline:
+If you have installed from source / github, then you can test your installation by invoking pytest, e.g.
 
 #. Describe an input dataset with a UFile (here: a CSV hosted over HTTP).
 #. Configure a node run with a URunDict.

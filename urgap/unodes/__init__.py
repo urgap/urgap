@@ -1,1 +1,1 @@
-"""urgap2's UNodes submodule."""
+"""urgap's UNodes submodule."""

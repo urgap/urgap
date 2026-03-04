@@ -16,7 +16,6 @@ The concept of the container-hub repository is to provide a convenient way to bu
 **Repository:** https://github.com/urgap/container-hub
 
 Key Features
-============
 
 The container-hub repository offers the following benefits:
 

@@ -1,7 +1,6 @@
 .. urgap
 
-Welcome to urgap - unified resource governance and data provenance
-==================================================================
+Welcome to urgap
 
 
 urgap is a node wrapping framework, containing abstraction layers for data and meta data, extensive re-run skipping logic and data versioning. urgap can be incorporated with any scheduling/pipelining tool making pipeline development independent from business logic and data storage, while offering standardized logging and execution, which makes monitoring and debugging easy.
@@ -18,6 +17,7 @@ Documentation
    getting_started
    quickstart
    concepts
+   advanced_topics
    faq
    third_party
    example_scripts

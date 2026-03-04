@@ -1,4 +1,4 @@
-"""Azure file SMB Share subclass of urgap2's UIO submodule."""
+"""Azure file SMB Share subclass of urgap's UIO submodule."""
 
 import contextlib
 import logging

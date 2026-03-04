@@ -1,4 +1,4 @@
-"""Prompts for MCP module of urgap2."""
+"""Prompts for MCP module of urgap."""
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.fastmcp.prompts import base

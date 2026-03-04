@@ -1,4 +1,4 @@
-"""Google Storage scheme subclass of urgap2's UIO submodule."""
+"""Google Storage scheme subclass of urgap's UIO submodule."""
 
 import json
 import logging

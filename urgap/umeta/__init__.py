@@ -1,1 +1,1 @@
-"""urgap2's UMeta submodule."""
+"""urgap's UMeta submodule."""

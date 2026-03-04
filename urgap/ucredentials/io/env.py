@@ -1,4 +1,4 @@
-"""Env credentials subclass of urgap2's IOCreds submodule."""
+"""Env credentials subclass of urgap's IOCreds submodule."""
 
 import os
 
