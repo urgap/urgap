@@ -1,14 +1,9 @@
-Urgap2 - node wrapping framework
-=================================
+Urgap - node wrapping framework
+===============================
 
-Urgap is a node wrapping framework, containing abstraction layers for data and meta data, extensive
-re-run skipping logic and data versioning. Urgap can be incorporated with any scheduling/pipelining
-tool making pipeline development independent from business logic and data storage, while offering 
-standardized logging and execution, which makes monitoring and debugging easy.
+Urgap is a cloud-native framework for file-based data engineering, containing abstraction layers for data and meta data, extensive re-run skipping logic and data versioning. Urgap can be incorporated with any scheduling/pipelining tool making pipeline development independent from business logic and data storage, while offering standardized logging and execution, which makes monitoring and debugging easy.
 
-Urgap gives us the governance constraints required for a decentralized data domain autonomy as
-Urgap will enforce shared common data IO for storage, a common meta data capturing process in form of
-an interface thus can be plugged into any existing processes and finally global data lineages. 
+Urgap gives us the governance constraints required for a decentralized data domain autonomy as Urgap will enforce shared common data IO for storage, a common meta data capturing process in form of an interface thus can be plugged into any existing processes and finally global data lineages. 
 
 |build-status-azure|
 

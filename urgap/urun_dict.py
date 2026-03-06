@@ -1,4 +1,4 @@
-"""URunDict module of urgap2."""
+"""URunDict module of urgap."""
 
 from __future__ import annotations
 
@@ -43,6 +43,121 @@ class URunDict(UserDict):
       - wid
 
     See class docstring for expected internal structure and available fields.
+
+    Structure of the URunDict is:
+
+    .. code-block:: python
+
+        {
+            "parameters": dict(),      # <-- parameters specific to the wrappers
+                                        #     or wrapped executables. These will be
+                                        #     translated and stored under `translations`
+
+
+            "user_dict": dict(),       # <-- can be used to store user metadata,
+                                        #     which can later be found in the umeta DB,
+                                        #     using, e.g. the workflow id (WID)
+
+
+            "unode_parameters": {      # <-- parameter specific to the UNode
+
+                "additional_filters": None,     # additional filters to be used during
+                                                # filtering of the input file. These filters
+                                                # must have the same format as input_uftypes on
+                                                # UFiles, e.g.
+                                        # {
+                                        #   ursgal.uftypes.test.TEST_FILE1: {
+                                        #      #  ^--- Defining the data type
+                                        #       "tags": {"QC": "good"},
+                                        #      #  ^--- dict with tags the UFiles are checked against
+                                        #   }
+                                        # }
+
+                "force": False,         # Whether execution is forced
+
+                "override_folder_creation": False,   # Whether folder creation should be skipped
+                                                    # Not sure if still used ...
+
+                "prefix": None,         # If all objectname should get an additional prefix, e.g.
+                                        # prefix  = "ROS1_" would yield object names such as
+                # test_node_v1_<re_run_param_md5>/ROS1_<input_file_ids_md5>_0.test_file2
+
+                "run_folder_name": None,        # overwrite folder name creation, normally
+                                                # by node name and re-run param md5 so
+                                                # object name would look like
+                # <run_folder_name>_<re_run_param_md5>/<input_file_ids_md5>_0.test_file2
+
+                "skip_data_versioning": False,  # overwrite folder name creation, normally
+                                                # by node name and re-run param md5 so
+                                                # object name would look like
+                # test_node_v1/<input_file_ids_md5>_0.test_file2
+
+                "skip_pre_checks": False,       # whether pre_checks are done or not
+                                                # before node execution, e.g. if all
+                                                # 3rd party installations are done
+
+                "storage_base_uri": None,       # Storage base uri can be used to redefine
+                                                # where the output files should be uploaded to
+                                                # e.g. gcs://bucket_X
+
+                "record_skipped_runs": False,   # deprecated - we will store all execution info
+
+                "remove_temporary_files": False,   # whether temporary files produced by the wrapper
+                                                    # will be deleted
+                "retain_uftypes": False,   # whether output file uftypes should be retained regardless
+                                           # wrapper definition
+
+                "file_io_timeout": None    # In seconds, after which the ufile list will be re-initialized.
+                                           # This is helpful if the IO backend will time out during
+                                           # long processing of a unode. None will skip re-init.
+
+                "remote_url": None,        # remote execution url, e.g. localhost. This requires
+                                           # uctl upi_server (API) to be started on the remote host via
+                                           # uctl upi_server.
+                                           # Only wrappers that have api_port in UMETA can be executed remotely.
+                                           # We introduce this mainly to bring resources from different
+                                           # containers into localhost network, e.g. in a pod in k8s
+                                           # None means execution is done in the unode module.
+
+                "remote_execution_timeout": 7200, # How long should the run wait for
+                                                  # remote excute to finish (in seconds)
+                                                  # default 2h
+
+
+                                                                               },
+
+            # Additionally, the following entries will be created during runtime and cannot
+            # be directly provided by the user
+
+            "wid" : ursgal.wid.UWIDGenerator().generate_wid()
+                                            # Workflow ID
+                                            # Available via ursgal.uwid_obj.generate_wid()
+                                            # format u_<adjective>-<noun>-<verb>-<adjective>-<noun>
+
+            "input_files": None,           # Although unode.run is taking urun_dict and ufiles
+                                            # as input, for the sake of convenience both are
+                                            # combined and passed to the wrapper
+
+            "output_files": None,          # Autogenerated based on unode_rinfo,
+                                            # input files and parameters
+
+            "unode_rinfo": {               # UNode run info dict,
+
+                "command_list": [],        # build during wrapper execution
+
+                "rerun_reasons": [],       # Reason why re-run was re-triggered
+
+                "meta_info": {             # Partial copy of wrapper.UMETA_INFO
+                                            # will be set by `self.register_unode_meta_info`
+                                            # e.g.:
+
+                    "utranslation_style": "ursgal_style_1"
+
+                },
+            }
+
+            "translations": dict(),         # Translation of `parameters` using UParama lib
+        }
     """
 
     def __init__(self, *args: dict, **kwargs: P.kwargs) -> None:

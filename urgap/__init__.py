@@ -1,4 +1,4 @@
-"""urgap2."""
+"""urgap."""
 
 import atexit
 import logging
@@ -61,9 +61,10 @@ except PackageNotFoundError:
 __version_str__ = str(__version__)
 package_dir = Path(__file__).parent
 if not hasattr(sys, "version_info") or sys.version_info < (3, 10):
-    msg = "Urgap2 requires Python 3.10 or later."
+    msg = "Urgap requires Python 3.10 or later."
     raise RuntimeError(msg)
 
+urgap.uinit.configure_logger()
 logger = logging.getLogger(__name__)
 uwid_obj = urgap.UWIDGenerator()
 
@@ -96,7 +97,6 @@ urgap.uinit.copy_resources_if_needed(
     target_dir=urgap.home,
     force=urgap.config.get("update_resources", False),
 )
-
 # Instances
 urgap.instances = SimpleNamespace()
 urgap.instances.unode_manager = urgap.UNodeManager()

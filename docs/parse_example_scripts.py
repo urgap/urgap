@@ -82,10 +82,57 @@ def main():
 Example Scripts
 ###############
 
+The following Jupyter notebooks and example scripts demonstrate the core capabilities of urgap.
+Each notebook is self-contained and can be run interactively — start with the credential manager
+to understand how urgap handles secrets, then proceed through file handling, reporting, telemetry,
+and finally a full pipeline execution. The notebooks are located in the ``docs/tutorial/``
+directory of the repository.
+
+Tutorial Notebooks
+==================
+
+.. toctree::
+   :maxdepth: 1
+
+   tutorial/01_credential_manager
+   tutorial/02_ufiles
+   tutorial/03_ureport
+   tutorial/04_utelemetry
+   tutorial/05_pipeline
+
+**01 — Credential Manager**
+    Shows how urgap abstracts different secret stores (Azure Key Vault, GCP Secret Manager, ENV
+    variables) behind a uniform ``UCredentialManager`` interface. Demonstrates adding credentials
+    dynamically and resolving usernames and passwords from a URI.
+
+**02 — UFile and UFileList**
+    Introduces the urgap URI scheme and the separation of file *identity* (fragment ``#object``)
+    from file *location* (scheme + netloc). Covers initialising ``UFile`` objects, listing files
+    with ``UFileList``, and resolving paths across local, cloud, and network backends.
+
+**03 — UReport**
+    Demonstrates how to investigate pipeline executions after the fact using ``UReport``.
+    Covers listing execution IDs (``wid``, ``node_exe_id``), retrieving execution traces
+    (``UTrace``), drawing the execution DAG, and querying output files by node alias.
+
+**04 — UTelemetry**
+    Explains urgap's OpenTelemetry integration (``urgap.utl``). Shows how to instrument code
+    with counters and nested spans without changing exporter configuration in application code,
+    and includes a reference docker-compose setup for a local Jaeger + Prometheus stack.
+
+**05 — Pipeline**
+    End-to-end example of initialising ``UFile`` / ``UFileList`` and ``URunDict``, then chaining
+    two urgap nodes (``FilterTabularToCSV`` → ``CompressToTar``) into a minimal pipeline.
+    Illustrates how urgap's re-run skipping and output versioning work in practice.
+
 """,
             file=e,
         )
-        plot(current_level=1, current_dict=rst_data, file=e)
+        if rst_data:
+            print("Additional Example Scripts", file=e)
+            print("==========================", file=e)
+            print("", file=e)
+            plot(current_level=1, current_dict=rst_data, file=e)
 
 
 if __name__ == "__main__":

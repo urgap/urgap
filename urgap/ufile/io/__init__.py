@@ -1,1 +1,1 @@
-"""UIO submodule of urgap2."""
+"""UIO submodule of urgap."""

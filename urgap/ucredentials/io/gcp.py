@@ -1,4 +1,4 @@
-"""GCP credentials subclass of urgap2's IOCreds submodule."""
+"""GCP credentials subclass of urgap's IOCreds submodule."""
 
 import logging
 

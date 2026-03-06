@@ -3,52 +3,84 @@
 Quickstart
 ==========
 
-Running pytest
---------------
+Minimal pipeline: download a CSV and filter it
+----------------------------------------------
 
-If you have installed from source / github, then you can test your installation by invoking tox, e.g.
+If you have installed from source / github, then you can test your installation by invoking pytest, e.g.
 
-.. code-block:: bash
+#. Describe an input dataset with a UFile (here: a CSV hosted over HTTP).
+#. Configure a node run with a URunDict.
+#. Execute a node (here: :code:`FilterTabularToCSV`) to produce a new output file.
 
-    uv run pytest
-
-If you need a fresh installation of all requirements including a fresh virtual environment, run
-
-.. code-block:: bash
-
-    rm -rf .venv && uv sync --extra docs --extra dev --extra all
-
-
-Using UFiles, the data abstraction layer
-----------------------------------------
+The same principles are used for larger pipelines.
 
 .. code-block:: python
 
+    import pandas as pd
+
     import urgap
-    uri = "https://www.tagesschau.de/multimedia/bilder#ukraine436~_v-gross20x9.jpg"
-    ufile = urgap.UFile(uri=uri)
-    # initalizes UFile with remote location
-    print(ufile.path)
-    # Accessing the path attribute automatically downloads the file
-    
-    ufile.tags.update({"source": "tagesschau.de"})
-    # Update tags locally
 
-    from pathlib import Path
+    # 1) Define a remote input file
+    #
+    # UFile is Urgap's data abstraction: it stores “where” the data lives (URI),
+    # *plus* metadata (uftype, tags, hashes, …).
+    #
+    # When a node needs the local path (or when you access `ufile.path` yourself),
+    # Urgap downloads the data into a local scratch area automatically.
+    csv = urgap.UFile(
+        uri=(
+            "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
+            f"?uftype={urgap.uftypes.any.CSV}"
+        )
+    )
 
-    ufile.rebase(f"file://{Path.home()}/Desktop/")
-    # changing ufile schema to file (Python) and location to ~/Desktop
+    out_dir = "/some/local/path_where_you_want_the_results"
 
-    ufile.upload()
-    # uploads scratch file to new rebased destination 
+    # 3) Configure and run a node
+    #
+    # A URunDict holds *execution parameters*.
+    # - `parameters` are node-specific CLI parameters.
+    # - `unode_parameters.storage_base_uri` is the common output base location.
+    #
+    # FilterTabularToCSV:1.0.0 uses a pandas query string.
+    urun_dict = urgap.URunDict(
+        {
+            "parameters": {
+                "FilterTabularToCSV:1.0.0": {
+                    "-q": "`species` == 'setosa'",
+                },
+            },
+            "unode_parameters": {
+                "storage_base_uri": f"file://{out_dir}",
+            },
+        }
+    )
+
+    filter_node = urgap.init_unode("FilterTabularToCSV:1.0.0")
+    filtered = filter_node.run(ufiles=urgap.UFileList([csv]), urun_dict=urun_dict)
+
+    # 4) Inspect the result
+    #
+    # `filtered` is a UFileList. The output file is again represented as a UFile.
+    print(filtered)
+    print("Output path:", filtered[0].path)
+
+    df = pd.read_csv(filtered[0].path)
+    print(df.head())
+
 
 .. note::
 
-    Please refer to :ref:`ufile` for more details on, e.g.
-    
-    #. Why is there a # in uri?
-    #. How are tags handled 
+    *What exactly happened?*
 
+    - The input UFile points at an HTTP URL. When the node runs, it resolves
+      :code:`UFile.path`, which triggers a download into a local scratch file.
+
+    - The node writes its result under :code:`storage_base_uri`. In this example that’s a
+      local :code:`file://...` URI, but the same pattern works for other backends.
+
+    - The :code:`-q` parameter is interpreted by the node executable. In
+      :code:`FilterTabularToCSV:1.0.0` it’s a pandas query string.
 
 
 Executing example scripts

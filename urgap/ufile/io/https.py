@@ -1,4 +1,4 @@
-"""HTTPS scheme subclass of urgap2's UIO submodule."""
+"""HTTPS scheme subclass of urgap's UIO submodule."""
 
 import json
 import logging

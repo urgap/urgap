@@ -1,4 +1,4 @@
-"""UHelpers for prefect of urgap2."""
+"""UHelpers for prefect of urgap."""
 
 import json
 import logging

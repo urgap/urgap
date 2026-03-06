@@ -1,4 +1,4 @@
-"""Uinit module of urgap2."""
+"""Uinit module of urgap."""
 
 import json
 import logging
@@ -66,7 +66,7 @@ def configure_logger() -> None:
         "%(asctime)s - %(filename)s - %(lineno)d - %(levelname)s - %(message)s",
     )
     sh.setFormatter(formatter)
-    logger = logging.getLogger()
+    logger = logging.getLogger(__name__)
 
     for handler in logger.handlers[:]:
         logger.removeHandler(handler)
@@ -76,6 +76,7 @@ def configure_logger() -> None:
         logging.getLogger().setLevel(level="INFO")
     else:
         logging.getLogger().setLevel(level="DEBUG")
+        # so bad to have it hard-coded
 
 
 def create_home_folder(home_dir_parent: str | os.PathLike) -> None:

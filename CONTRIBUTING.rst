@@ -16,7 +16,7 @@ Drop a line to one of the developers if you want to get included (and of course
 you actually contributed something)
 
 .. _README:
-   https://github.com/fu/urgap2/blob/master/README.rst
+   https://github.com/urgap/urgap/blob/master/README.rst
 
 Commit messages
 ***************

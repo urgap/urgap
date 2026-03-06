@@ -5,7 +5,7 @@ F.A.Q
 
 *What does urgap mean?*
 
-It is mongolian and means little stream
+urgap stands for unified resource governance and data provenance. The goal is to use urgap as an open-source foundation for file-based data engineering that facilitates standardized data provenance, aligns with FAIR principles, and addresses the increasingly distributed nature of data generation and consumption in rapidly developing environments.
 
 
 

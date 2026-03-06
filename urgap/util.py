@@ -1,4 +1,4 @@
-"""Util module of urgap2."""
+"""Util module of urgap."""
 
 import binascii
 import concurrent.futures

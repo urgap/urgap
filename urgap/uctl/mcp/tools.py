@@ -1,4 +1,4 @@
-"""MCP Tools module of urgap2."""
+"""MCP Tools module of urgap."""
 
 import logging
 

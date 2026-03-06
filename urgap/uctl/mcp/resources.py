@@ -1,4 +1,4 @@
-"""Resources for MCP module of urgap2."""
+"""Resources for MCP module of urgap."""
 
 import urllib.parse
 
