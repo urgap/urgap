@@ -405,7 +405,7 @@ class UFile:
             self.purge_local_file()
 
     @property
-    def io(self) -> urgap.io:
+    def io(self):
         """IO property to access the Urgap IO backend for this file.
 
         Returns:
@@ -507,7 +507,7 @@ class UFile:
         """
         return f"{self.uuri.scheme}://{self.uuri.netloc}{self.uuri.path}"
 
-    def init_io_class(self) -> urgap.UFile.io:
+    def init_io_class(self):
         """Initialize the IO backend for this file, based on the UUri scheme.
 
         Returns:

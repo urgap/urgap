@@ -39,7 +39,7 @@ class UMeta:
         self._io_id = io
 
     @property
-    def io(self) -> urgap.UMeta:
+    def io(self):
         """IO Property, enabling on-demand initialization of the IO class.
 
         Notes:
@@ -53,7 +53,7 @@ class UMeta:
             self._io = self.init_io_class()
         return self._io
 
-    def init_io_class(self) -> urgap.UMeta:
+    def init_io_class(self):
         """Initialize the appropriate IO class for UMeta.
 
         Raises:
