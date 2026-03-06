@@ -70,6 +70,7 @@ class UNodeManager(UserDict):
 
         Note:
             For example::
+
                 {
                     "java": {
                         "command": ["java", "-version"],
@@ -80,14 +81,18 @@ class UNodeManager(UserDict):
                         "regex_pattern": r"^5\.[0-9]*\.[0-9]* ",
                     }
                 }
-            The key is used as lookup. Wrappers can specify their requirements in META_INFO, e.g::
+
+            The key is used as lookup. Wrappers can specify their requirements in META_INFO, e.g.::
+
                 {
                     "requires": {
                         "other_uftypes": {
                             "other_dependencies": ("java",),
-                            "python_packages: ["pymzml", "pyqms"]
+                            "python_packages": ["pymzml", "pyqms"]
                         },
+                    }
                 }
+
             The requirements are tracked based on specific input_file uftypes or for all other
             uftypes under `other_uftypes`.
 
