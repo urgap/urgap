@@ -29,8 +29,8 @@ The same principles are used for larger pipelines.
     # Urgap downloads the data into a local scratch area automatically.
     csv = urgap.UFile(
         uri=(
-            "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv"
-            f"?uftype={urgap.uftypes.any.CSV}"
+            "https://raw.githubusercontent.com/mwaskom/seaborn-data/master"
+            f"?uftype={urgap.uftypes.any.CSV}#iris.csv"
         )
     )
 
