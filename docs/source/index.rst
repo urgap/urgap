@@ -11,6 +11,17 @@ Documentation
 
 .. toctree::
    :glob:
+   :maxdepth: 1
+   :caption: Tutorials:
+
+   tutorial/01_credential_manager
+   tutorial/02_ufiles
+   tutorial/03_ureport
+   tutorial/04_utelemetry
+   tutorial/05_pipeline
+
+.. toctree::
+   :glob:
    :maxdepth: 2
    :caption: Main:
 
