@@ -27,3 +27,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PROD_PYPI }}
+          attestations: false
