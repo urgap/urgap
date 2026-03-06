@@ -294,7 +294,7 @@ class UNodeManager(UserDict):
         )
         return None
 
-    def import_class(self, unode: str) -> urgap.unode:
+    def import_class(self, unode: str) -> type:
         """Import and return the class for a given wrapper/unode.
 
         Updates self.data and checks dependencies via self.check_unode_dependencies.

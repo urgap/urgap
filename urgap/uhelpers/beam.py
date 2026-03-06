@@ -224,7 +224,7 @@ class UrgapNodeExecutor(beam.DoFn):
         """Teardown DoFn (e.g., close DB connection)."""
 
 
-def generate_pyvis_network(pipeline: beam) -> Network:
+def generate_pyvis_network(pipeline: beam.Pipeline) -> Network:
     """Generate pyvis Network visualization from a Beam pipeline.
 
     Note:
