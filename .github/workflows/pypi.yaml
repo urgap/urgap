@@ -11,6 +11,9 @@ jobs:
         name: pypi
         url: https://pypi.org/p/urgap
       steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
