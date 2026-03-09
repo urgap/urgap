@@ -29,13 +29,6 @@ classifiers = [
     'Topic :: Scientific/Engineering :: Bio-Informatics',
     'Topic :: Scientific/Engineering :: Chemistry',
 ]
-[project.urls]
-Homepage = "https://github.com/urgap/urgap"
-Documentation = "https://urgap.github.io/urgap/"
-Repository = "https://github.com/urgap/urgap.git"
-Issues = "https://github.com/urgap/urgap/issues"
-Changelog = "https://github.com/urgap/urgap/blob/main/CHANGELOG.md"
-
 dependencies = [
     'click==8.3.1',
     'fastapi==0.123.9',
@@ -130,6 +123,12 @@ all = [
     'pyvis==0.3.2',
     'mcp==1.23.1',
 ]
+[project.urls]
+Homepage = "https://github.com/urgap/urgap"
+Documentation = "https://urgap.github.io/urgap/"
+Repository = "https://github.com/urgap/urgap.git"
+Issues = "https://github.com/urgap/urgap/issues"
+Changelog = "https://github.com/urgap/urgap/blob/main/CHANGELOG.md"
 
 [project.scripts]
 uctl = "urgap.uctl.uctl:cli"
