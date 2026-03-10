@@ -9,7 +9,6 @@ build-backend = "hatchling.build"
 name = "urgap"
 readme = "README.rst"
 dynamic = ["version"]
-urls = { Source = "https://github.com/urgap/urgap" }
 classifiers = [
     'Development Status :: 4 - Beta',
     'Environment :: Console',
@@ -96,7 +95,6 @@ legacy = [
     'chemical-composition~=1.0.6',
     'FlowKit',
 ]
-
 all = [
     'apache_beam==2.70.0',
     'azure-identity==1.25.1',
@@ -123,6 +121,7 @@ all = [
     'pyvis==0.3.2',
     'mcp==1.23.1',
 ]
+
 [project.urls]
 Homepage = "https://github.com/urgap/urgap"
 Documentation = "https://urgap.github.io/urgap/"
