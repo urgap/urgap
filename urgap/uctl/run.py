@@ -190,32 +190,37 @@ def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
 
 
 def run_mcp_server(
-    nodes: list,
     mcp_port: int,
     shutdown_event: multiprocessing.Event,
+    nodes: list | None = None,
     google_adk_style: bool = True,
 ) -> None:
-    """Expose urgap nodes as MCP Server tools.
+    """Start an MCP server. If nodes are provided, expose those as MCP tools. If no nodes are provided, spawn urgap default tools as MCP.
 
     Args:
-        nodes (list): List of ursgal nodes
-        mcp_port (int): port for the mcp sse server
-        shutdown_event (multiprocessing.Event): ...
-        google_adk_style (bool, optional): If resources and prompts should not be exposed. Defaults to True.
+        mcp_port: Port for the MCP SSE server.
+        shutdown_event: Event to signal server shutdown.
+        nodes: Optional list of urgap nodes to expose. If None, exposes default urgap tools.
+        google_adk_style: If True, resources and prompts are not exposed. Defaults to True.
     """
-    name = f"urgap mcp server for {', '.join(nodes)}"
-    server = FastMCP(name)
+    if nodes is None:
+        name = "urgap tools mcp server"
+        server = FastMCP(name)
+        from urgap.uctl.mcp.register_helpers import register_tools
 
-    from urgap.uctl.mcp.tools import register_tools
+        register_tools(server)
+        if not google_adk_style:
+            from urgap.uctl.mcp.prompts import register_prompts
+            from urgap.uctl.mcp.resources import register_resources
 
-    register_tools(server, nodes)
+            register_resources(server)
+            register_prompts(server)
+    else:
+        name = f"urgap mcp server for {', '.join(nodes)}"
+        server = FastMCP(name)
+        from urgap.uctl.mcp.register_helpers import register_unodes
 
-    if google_adk_style is False:
-        from urgap.uctl.mcp.prompts import register_prompts
-        from urgap.uctl.mcp.resources import register_resources
-
-        register_resources(server)
-        register_prompts(server)
+        register_unodes(server, nodes)
 
     config = uvicorn.Config(
         server.sse_app(),
@@ -550,7 +555,7 @@ def _handle_service_bus_messages(
     multiple=True,
 )
 @click.option(
-    "--mcp",
+    "--mcp-port",
     "-m",
     help="Expose Nodes as model context protocol tools given port.",
     required=False,
@@ -564,7 +569,7 @@ def _handle_service_bus_messages(
 )
 def upi_server(
     nodes: tuple | str,
-    mcp: bool | None,
+    mcp_port: int | None,
     via_servicebus: str | None,
 ) -> None:
     """Spawn servers for requested Urgap nodes and optional Service Bus worker.
@@ -594,17 +599,8 @@ def upi_server(
             processes.append(sb_proc)
             sb_proc.start()
 
-    if mcp is not None:
-        p = multiprocessing.Process(
-            target=run_mcp_server,
-            args=(
-                nodes_list,
-                mcp,
-                shutdown_event,
-            ),
-        )
-        processes.append(p)
-        p.start()
+    if mcp_port is not None:
+        spawn_mcp_server(port=mcp_port, nodes_list=nodes_list)
 
     def signal_handler(sig: int, _frame: FrameType | None) -> None:
         msg = f"Parent process received termination signal {sig}"
@@ -618,6 +614,71 @@ def upi_server(
 
     for process in processes:
         process.join()
+
+
+def spawn_mcp_server(
+    port: int,
+    nodes_list: list | None = None,
+) -> None:
+    """Spawn MCP server for urgap tools.
+
+    This function can be imported and called directly from other modules.
+
+    Args:
+        port: Port number to expose the MCP server on.
+        nodes_list: Optional list of specific urgap nodes to expose as tools.
+
+    Example:
+        >>> from urgap.uctl.run import spawn_mcp_server
+        >>> spawn_mcp_server(port=8080)
+        >>> spawn_mcp_server(port=8080, nodes_list=['FilterTabularToCSV:1.0.0'])
+    """
+    processes = []
+    shutdown_event = multiprocessing.Event()
+
+    p = multiprocessing.Process(
+        target=run_mcp_server,
+        kwargs={
+            "nodes": nodes_list,
+            "mcp_port": port,
+            "shutdown_event": shutdown_event,
+        },
+    )
+    processes.append(p)
+    p.start()
+
+    def signal_handler(sig: int, _frame: FrameType | None) -> None:
+        msg = f"Parent process received termination signal {sig}"
+        logger.info(msg)
+        shutdown_event.set()
+        for proc in processes:
+            proc.terminate()
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    for process in processes:
+        process.join()
+
+
+@click.command()
+@click.option(
+    "--port",
+    "-p",
+    help="Expose urgap mcp tools via server on given port.",
+    required=False,
+    multiple=False,
+    default=None,
+)
+def mcp_server(
+    port: int | None,
+) -> None:
+    """Spawn MCP server for urgap tools (CLI wrapper).
+
+    If --port is provided, the MCP server will be exposed on that port.
+    """
+    if port is not None:
+        spawn_mcp_server(port=port)
 
 
 """Dashboard submodule of urgap.uctl."""
@@ -711,4 +772,5 @@ def run() -> None:
 
 
 run.add_command(upi_server)
+run.add_command(mcp_server)
 run.add_command(dashboard)

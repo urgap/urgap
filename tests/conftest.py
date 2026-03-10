@@ -228,7 +228,7 @@ def provide_uctl_server(request):
     else:
         for param in request.param:
             if isinstance(param, int):
-                call.extend(["--mcp", str(param)])
+                call.extend(["--mcp-port", str(param)])
                 continue
             call.extend(["-n", param])
             required_ports.append(
@@ -242,6 +242,26 @@ def provide_uctl_server(request):
             )
             == 0
             for port in required_ports
+        ):
+            break
+        time.sleep(1)
+    yield None
+    proc.terminate()
+
+
+@pytest.fixture
+def provide_mcp_server(request):
+    call = ["uctl", "run", "mcp-server"]
+    port = request.param
+    call.extend(["-p", str(port)])
+    proc = subprocess.Popen(call)
+    for _ in range(30):
+        if all(
+            socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect_ex(
+                ("127.0.0.1", p),
+            )
+            == 0
+            for p in [port]
         ):
             break
         time.sleep(1)
