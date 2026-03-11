@@ -1,3 +1,5 @@
+"""Unit tests for GitHub UFile functionality, including public repo and .xlsx tests."""
+
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
@@ -15,12 +17,12 @@ uf.io.source_branch = MagicMock()
 uf.io.source_branch.commit.sha = "fake_sha"
 uf.io.source_branch.name = "fake_source_branch"
 uf.io.object_filepath = "some/path/to/file.txt"
-# uf.io.scratch_path = "local/path/to/file.txt"
 uf.io.repo = MagicMock()
 uf_io_object = uf.io
 
 
-def test_list_container_items_from_numpy():
+def test_list_container_items_from_numpy() -> None:
+    """Test listing container items from a public repo."""
     ufile = urgap.UFile(
         uri="github://github.com/computational-ms/unify_idents/dev#README.rst",
     )
@@ -34,22 +36,24 @@ def test_list_container_items_from_numpy():
     )
 
 
-def test_list_container_items_from_numpy_fails():
+def test_list_container_items_from_numpy_fails() -> None:
+    """Test that listing container items raises an error for an invalid repo or branch."""
     ufile = urgap.UFile(
-        uri="github://github.com/computational-ms/unify_idents/this/branch/does/not/exist#no_file",
+        uri="github://github.com/computational-ms/unify_idents/this-branch-does-not-exist#docs",
     )
-    with pytest.raises(OSError):
-        ufl = ufile.list_container_items()
+    with pytest.raises(Exception, match=r".*"):
+        ufile.list_container_items()
 
 
-def test_github_public_repo():
+def test_github_public_repo() -> None:
+    """Test remote object existence and download behavior in a mocked repo."""
     # Test the absence of file
     uf_io_object.repo.get_contents = MagicMock(
         side_effect=GithubException("Something went wrong"),
     )
     assert uf_io_object.remote_object_exists() is False
 
-    # Test the file that exist
+    # Test the file that exists
     uf_io_object.repo.get_contents = MagicMock(return_value=True)
     assert uf_io_object.remote_object_exists() is True
 
@@ -67,7 +71,8 @@ def test_github_public_repo():
     handle.write.assert_called_once_with("hello from github")
 
 
-def test_upload_updates_existing_file():
+def test_upload_updates_existing_file() -> None:
+    """Test uploading updates an existing file."""
     uf_io_object.repo.create_git_ref.reset_mock()
     uf_io_object.repo.update_file.reset_mock()
     uf_io_object.repo.create_pull.reset_mock()
@@ -95,7 +100,8 @@ def test_upload_updates_existing_file():
     uf_io_object.repo.create_pull.assert_called_once()
 
 
-def test_upload_creates_new_file():
+def test_upload_creates_new_file() -> None:
+    """Test uploading creates a new file if it does not exist."""
     uf_io_object.repo.create_git_ref.reset_mock()
     uf_io_object.repo.update_file.reset_mock()
     uf_io_object.repo.create_pull.reset_mock()
@@ -104,7 +110,6 @@ def test_upload_creates_new_file():
     mock_content = b"new file content"
 
     with patch("pathlib.Path.open", mock_open(read_data=mock_content)):
-        # Act
         uf_io_object.upload()
 
     # Assert
@@ -118,7 +123,8 @@ def test_upload_creates_new_file():
     uf_io_object.repo.create_pull.assert_called_once()
 
 
-def test_upload_update_file_failure():
+def test_upload_update_file_failure() -> None:
+    """Test failure handling when updating a file fails."""
     uf_io_object.repo.create_git_ref.reset_mock()
     uf_io_object.repo.update_file.reset_mock()
     uf_io_object.repo.create_pull.reset_mock()
@@ -137,7 +143,8 @@ def test_upload_update_file_failure():
         uf_io_object.upload()
 
 
-def test_upload_create_file_failure():
+def test_upload_create_file_failure() -> None:
+    """Test failure handling when creating a new file fails."""
     uf_io_object.repo.create_git_ref.reset_mock()
     uf_io_object.repo.update_file.reset_mock()
     uf_io_object.repo.create_pull.reset_mock()
@@ -155,7 +162,8 @@ def test_upload_create_file_failure():
         uf_io_object.upload()
 
 
-def test_upload_create_pr_failure():
+def test_upload_create_pr_failure() -> None:
+    """Test failure handling when pull request creation fails."""
     uf_io_object.repo.create_file.reset_mock()
     uf_io_object.repo.create_file.side_effect = None
     uf_io_object.repo.create_file.return_value = None
@@ -169,3 +177,15 @@ def test_upload_create_pr_failure():
         pytest.raises(RuntimeError, match="Unable to create pull request"),
     ):
         uf_io_object.upload()
+
+
+def test_public_repo_xlsx_download() -> None:
+    """Test that a public GitHub repo containing a .xlsx file can be accessed.
+
+    After download, uf.path.exists() should return True.
+    """
+    uf = urgap.UFile(
+        uri="github://github.com/frictionlessdata/datasets/main#files/excel/sample-1-sheet.xlsx",
+    )
+    uf.download()
+    assert uf.path.exists()

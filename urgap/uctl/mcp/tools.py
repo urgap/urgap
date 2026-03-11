@@ -2,8 +2,6 @@
 
 import logging
 
-from mcp.server.fastmcp import FastMCP
-
 import urgap
 
 logger = logging.getLogger(__name__)
@@ -102,79 +100,6 @@ def mylabdata_urgap_storage_pattern(equipment_id: str, task_id: str) -> str:
          part of the urgap processing node input ufile list.
     """
     return f"mylabdata://mylabdata-files.uat.corpnet2.com/{equipment_id}/{task_id}"
-
-
-def register_tools(server: FastMCP, nodes_list: list) -> None:
-    """Register tools to the FastMCP server.
-
-    Args:
-        server (FastMCP): mcp fastmcp instance
-        nodes_list (list): list of urgap nodes to register tools for.
-    """
-    tools = [
-        {"function": list_container_times, "tool_name": "list_container_times"},
-        {"function": generate_workflow_id, "tool_name": "generate_workflow_id"},
-        {
-            "function": gcp_urgap_storage_pattern,
-            "tool_name": "gcp_urgap_storage_pattern",
-        },
-        {
-            "function": mylabdata_urgap_storage_pattern,
-            "tool_name": "mylabdata_urgap_storage_pattern",
-        },
-    ]
-    _to_be_implemented = [
-        {"function": calculate_nana, "tool_name": "nana_index"},
-        {
-            "function": "extend_uri_list_with_uftype",
-            "tool_name": "extend_uri_list_with_uftype",
-        },
-        {
-            "function": "understand_urgap_node_parameters",
-            "tool_name": "understand_urgap_node_parameters",
-        },
-    ]
-
-    for tool_item in tools:
-        msg = "Registering {tool_name}".format(**tool_item)
-        logger.info(msg)
-
-        server.add_tool(
-            tool_item["function"],
-            tool_item["tool_name"],
-            tool_item["function"].__doc__,
-        )
-
-    _all_ufile_schemas = [
-        x
-        for x in urgap.instances.ufile_io_manager.available_io_classes
-        if x.startswith("_") is False
-    ]
-    for unode in nodes_list:
-        if "latest" in unode:
-            continue
-        un = urgap.init_unode(unode)
-        if un.META_INFO.get("parameter_examples", None) is None:
-            msg = f"\n\nCannot use {unode} as mcp tools, because `parameter_example` are missing in META_INFO!\n"
-            logger.warning(msg)
-            continue
-
-        unode_name = unode.replace(":", "_").replace(".", "_")
-        server.add_tool(
-            un.run_node_as_mcp_tool,
-            f"{unode_name}",
-            f"""{unode_name}:
-
-    {un.run_node_as_mcp_tool.__doc__}
-
-    This is an example of the parameters for {unode_name}:
-        {un.META_INFO["parameter_examples"]}
-
-    Input file types (uftypes) are:
-        {un.META_INFO["input_uftypes"]}
-
-            """,
-        )
 
 
 """

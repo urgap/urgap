@@ -18,7 +18,7 @@ def dummy_uuri():
     """Create a dummy UUri object with required attributes."""
 
     class DummyUUri:
-        query = "user"
+        user = "user"
         password = "password"
         fragment = "test_folder/test.txt"
 
@@ -44,7 +44,7 @@ def test_iosmb_init_super_and_conn_object(dummy_uuri):
         smb_io = IOSMB(uuri=dummy_uuri)
 
         mock_conn.assert_called_once_with(
-            dummy_uuri.query,
+            dummy_uuri.user,
             dummy_uuri.password,
             "Urgap-UFile-SMB-IO",
             "Target",
@@ -64,7 +64,7 @@ def test_iosmb_validate_share_name_error():
     """Test that _validate_share_name raises ValueError if share name contains '/'."""
 
     class DummyUUriWithSlash:
-        query = "user"
+        user = "user"
         password = "password"
         fragment = "test_folder/test.txt"
 

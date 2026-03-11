@@ -806,3 +806,36 @@ class UFileList(UserList):
                 logger.info("Tar extraction completed successfully")
         finally:
             os.chdir(workdir)
+
+    def relocate_fragment_to_path(
+        self,
+        steps: int = 1,
+        upload: bool = False,
+    ) -> None:
+        """Call relocate_fragment_to_path on each UFile in the list.
+
+        Moves the fragment component into the path or vice versa by relocating the # separator
+        for each UFile in this UFileList.
+
+        Args:
+            steps: Number of path segments to move.
+                   Positive values move fragment segments into the path (fragment → path).
+                   Example: steps=2 converts 'path#a/b/c' to 'path/a/b#c'
+                   Negative values move path segments into the fragment (path → fragment).
+                   Example: steps=-2 converts 'path/a/b#c' to 'path#a/b/c'
+            upload: If True, upload the file after rebasing.
+        """
+        for uf in self:
+            uf.relocate_fragment_to_path(
+                steps=steps,
+                upload=upload,
+            )
+
+    def assign_uftype_to_ufiles(self, uftype: str) -> None:
+        """Add an uftype tag to all UFiles in the list.
+
+        Args:
+            uftype: The uftype to add.
+        """
+        for uf in self:
+            uf.tags["uftype"] = uftype

@@ -7,12 +7,12 @@ from mcp.client.sse import sse_client
 
 
 @pytest.mark.parametrize(
-    "provide_uctl_server",
-    [("FilterTabularToCSV:1.0.0", "CompressToTar:1.0.0", "VennDiagram:2.0.0", 41999)],
-    indirect=["provide_uctl_server"],
+    "provide_mcp_server",
+    [41999],
+    indirect=["provide_mcp_server"],
 )
 @pytest.mark.asyncio
-async def test_run_mcp(capfd, provide_uctl_server):
+async def test_run_mcp(capfd, provide_mcp_server):
     await run()
     assert (
         "{'call': 'gcp_urgap_storage_pattern', 'result': 'gcs://some_gcp_bucket/folder/to/files'}"
