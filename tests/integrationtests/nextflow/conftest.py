@@ -23,15 +23,6 @@ import urgap
 @pytest.fixture(autouse=True)
 def cleanup_nextflow_dirs(tmp_path):
     """Remove Nextflow work directories after each test.
-
-    Nextflow creates ``work/``, ``.nextflow/``, and ``.nextflow.log*`` under
-    ``cwd`` (which defaults to ``tmp_path`` in our tests).  The smart-rerun
-    test also creates a ``run2/`` sub-directory as a second ``cwd``.
-
-    These directories can be several hundred MB and are not needed once the
-    test finishes.  Removing them keeps the pytest temp tree small and makes
-    the urgap storage output (``urgap_output/``) easier to inspect when a
-    test fails.
     """
     yield  # let the test run first so outputs are available for inspection
 
