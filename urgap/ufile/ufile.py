@@ -288,14 +288,20 @@ class UFile:
         """
         hash_algorithm = urgap.config["hash_algorithm"]
         if hash_algorithm not in self.tags:
-            self.tags.update(
-                {
-                    hash_algorithm: urgap.ucore.calculate_file_hash(
-                        input_file=self.path,
-                        hash_algorithm=hash_algorithm,
-                    ),
-                },
+            scratch = self.io.scratch_path
+            file_path = self.path
+            computed = urgap.ucore.calculate_file_hash(
+                input_file=file_path,
+                hash_algorithm=hash_algorithm,
             )
+            logger.debug(
+                "[UFile.hash] object_name=%s scratch_path=%s remote_path=%s hash=%s",
+                self.object_name,
+                scratch,
+                self.uuri.get_file_remote_path() if self.uuri.scheme == "file" else "n/a",
+                computed,
+            )
+            self.tags.update({hash_algorithm: computed})
         return self.tags[hash_algorithm]
 
     @property
