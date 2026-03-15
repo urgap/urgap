@@ -302,7 +302,6 @@ def run_unode(
         * ``1`` — unrecoverable error (exception raised).
         * ``2`` — no valid input URIs; output file written empty.
     """
-    ret_val = 0
     try:
         urd, ucredentials, config = parse_config(config_path)
         setup_urgap(ucredentials=ucredentials, config=config)
@@ -312,18 +311,17 @@ def run_unode(
         if not uris:
             logger.warning(INCOMPLETE_WARNING)
             write_uri_file([], output_uri_file)
-            ret_val = 2
+            return 2
 
         node = urgap.init_unode(unode)
         result = node.run(ufiles=uris, urun_dict=urd, **kwargs)
         output_uris = [uf.as_uri() if uf is not None else None for uf in result]
         write_uri_file(output_uris, output_uri_file)
-        ret_val = 0
+        return 0
 
     except Exception:
         logger.exception("run_unode failed for unode=%s", unode)
         return 1
-    return ret_val
 
 
 # =============================================================================
