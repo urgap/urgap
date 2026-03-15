@@ -412,6 +412,7 @@ def main(argv: list[str] | None = None) -> int:
     if log_level is None:
         try:
             import json as _json
+
             _cfg_data = _json.loads(Path(args.config).read_text(encoding="utf-8"))
             log_level = _cfg_data.get("config", {}).get("logging_level", "INFO")
         except Exception:
