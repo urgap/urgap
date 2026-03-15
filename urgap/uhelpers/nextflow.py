@@ -270,8 +270,7 @@ def run_unode(
     config_path: str | Path,
     **kwargs: P.kwargs,
 ) -> int:
-    """Execute an urgap UNode, reading input URIs from files and writing
-    output URIs to a file.
+    """Execute an urgap UNode, reading input URIs from files and writing output URIs to a file.
 
     This is the primary entry point for Nextflow process execution.
 
@@ -303,6 +302,7 @@ def run_unode(
         * ``1`` — unrecoverable error (exception raised).
         * ``2`` — no valid input URIs; output file written empty.
     """
+    ret_val = 0
     try:
         urd, ucredentials, config = parse_config(config_path)
         setup_urgap(ucredentials=ucredentials, config=config)
@@ -312,17 +312,18 @@ def run_unode(
         if not uris:
             logger.warning(INCOMPLETE_WARNING)
             write_uri_file([], output_uri_file)
-            return 2
+            ret_val = 2
 
         node = urgap.init_unode(unode)
         result = node.run(ufiles=uris, urun_dict=urd, **kwargs)
         output_uris = [uf.as_uri() if uf is not None else None for uf in result]
         write_uri_file(output_uris, output_uri_file)
-        return 0
+        ret_val = 0
 
     except Exception:
         logger.exception("run_unode failed for unode=%s", unode)
         return 1
+    return ret_val
 
 
 # =============================================================================
@@ -416,7 +417,7 @@ def main(argv: list[str] | None = None) -> int:
 
             _cfg_data = _json.loads(Path(args.config).read_text(encoding="utf-8"))
             log_level = _cfg_data.get("config", {}).get("logging_level", "INFO")
-        except Exception:
+        except Exception: # noqa: BLE001
             log_level = "INFO"
 
     logging.basicConfig(
