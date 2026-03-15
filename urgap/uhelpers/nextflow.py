@@ -208,7 +208,7 @@ def parse_config(
     default_config_json_path = data.get("default_pipeline_config_json")
     if default_config_json_path is not None:
         default_data = json.loads(
-            Path(default_config_json_path).read_text(encoding="utf-8")
+            Path(default_config_json_path).read_text(encoding="utf-8"),
         )
         default_urun_dict = default_data.get("urun_dict", {})
     else:
