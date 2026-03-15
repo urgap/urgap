@@ -12,14 +12,6 @@ Pipeline under test
          |
     CompressToZip:1.0.0  -------  1 x .zip
 
-Why FilterTabularToCSV for the merge step?
-------------------------------------------
-FilterTabularToCSV:1.0.0 already supports multiple input files -- it
-concatenates them internally (``pd.concat``) before applying the query.
-Using it for the fan-in step avoids introducing a dedicated ConcatCSVs node
-while still exercising Nextflow's ``groupTuple()`` fan-in pattern.
-Re-applying ``"value > 5"`` to data that is already filtered is idempotent.
-
 Expected intermediate results (toy data, query "value > 5")::
 
     toy_a.csv  ->  2 rows   (values 10, 8)
