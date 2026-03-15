@@ -1,4 +1,4 @@
-"""UHelper.nextflow — urgap integration for Nextflow DSL2 pipelines.
+r"""UHelper.nextflow — urgap integration for Nextflow DSL2 pipelines.
 
 Provides CLI entry points that Nextflow processes invoke as subprocesses.
 Data flows between processes via plain text files containing urgap URI strings
@@ -141,7 +141,8 @@ def read_uri_files(paths: list[str | Path]) -> list[str]:
         FileNotFoundError: If any file in *paths* does not exist.
     """
     if not paths:
-        raise ValueError("paths must not be empty")
+        msg = "paths must not be empty"
+        raise ValueError(msg)
     seen: dict[str, None] = {}  # ordered set via dict keys
     for p in paths:
         for uri in read_uri_file(p):
