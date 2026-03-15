@@ -173,19 +173,14 @@ class UFileList(UserList):
         Returns:
             A hash string representing the combined UFiles.
         """
-        flat = sorted(self.create_flat_and_non_redundant_list())
-        hashable_iterable = [uf.ucfs.encode("utf-8") for uf in flat]
-        result = urgap.ucore.calculate_string_hash(
+        hashable_iterable = [
+            uf.ucfs.encode("utf-8")
+            for uf in sorted(self.create_flat_and_non_redundant_list())
+        ]
+        return urgap.ucore.calculate_string_hash(
             hashable_iterable=hashable_iterable,
             hash_algorithm=urgap.config["hash_algorithm"],
         )
-        logger.debug(
-            "[calculate_ucfs] n=%d ucfs_list=%s => %s",
-            len(flat),
-            [h.decode() for h in hashable_iterable],
-            result,
-        )
-        return result
 
     @property
     def id(self) -> collections.abc.Hashable:
