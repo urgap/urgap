@@ -532,7 +532,7 @@ def test_run_unode_returns_two_for_empty_input(tmp_path):
     config_file = tmp_path / "config.json"
     config_file.write_text(
         json.dumps({
-            "urun_dict": {"parameters": {}, "unode_parameters": {}},
+            "urun_dict": {"parameters": {}, "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"}},
             "credentials_lookup": [],
             "config": {},
         })
