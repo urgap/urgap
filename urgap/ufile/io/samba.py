@@ -33,7 +33,7 @@ class IOSMB(UIOBase):
         """
         super().__init__(**kwargs)
         self.conn_object = SMBConnection(
-            self.uuri.query,
+            self.uuri.user,
             self.uuri.password,
             "Urgap-UFile-SMB-IO",
             "Target",
@@ -223,7 +223,7 @@ class IOSMB(UIOBase):
     def list_container_items(
         self,
         pattern: str | None = None,
-        subpath: str = "/",
+        subpath: str | None = None,
         full_string: bool = False,
     ) -> list:
         """Get objects in folder/'container'.

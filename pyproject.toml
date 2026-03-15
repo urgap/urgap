@@ -9,7 +9,6 @@ build-backend = "hatchling.build"
 name = "urgap"
 readme = "README.rst"
 dynamic = ["version"]
-urls = { Source = "https://mygithub.gsk.com/gsk-tech/urgap" }
 classifiers = [
     'Development Status :: 4 - Beta',
     'Environment :: Console',
@@ -31,9 +30,9 @@ classifiers = [
 ]
 dependencies = [
     'click==8.3.1',
-    'fastapi==0.123.9',
-    'fastexcel==0.18.0',
-    'flask==3.1.2',
+    'fastapi==0.133.0',
+    'fastexcel==0.19.0',
+    'flask==3.1.3',
     'flask-wtf==1.2.2',
     'Jinja2==3.1.6',
     'jsonschema==4.26.0',
@@ -46,11 +45,11 @@ dependencies = [
     'plotly',
     'polars>=1.33.0',
     'requests>=2.26,<2.33',
-    'sqlalchemy==2.0.45',
-    'tqdm==4.67.1',
+    'sqlalchemy==2.0.47',
+    'tqdm==4.67.3',
     'uvicorn==0.40.0',
     'PyGithub==2.8.1',
-    'mcp==1.23.1',
+    'mcp==1.26.0',
     'xlsxwriter==3.2.9'
 ]
 
@@ -58,27 +57,27 @@ dependencies = [
 # E.g. pip install "urgap[cloud]"
 cloud = [
     'apache_beam==2.70.0',
-    'azure-identity==1.25.1',
+    'azure-identity==1.25.2',
     'azure-keyvault-secrets==4.10.0',
-    'azure-monitor-opentelemetry==1.8.3',
+    'azure-monitor-opentelemetry==1.8.6',
     'azure-storage-blob==12.28.0',
     'azure-servicebus==7.14.3',
     'azure-storage-file-datalake==12.22.0',
-    'azure-storage-file-share==12.23.1',
+    'azure-storage-file-share==12.24.0',
     'cloud-sql-python-connector~=1.0',
     'google-apitools==0.5.35',
     'google-cloud-logging==3.13.0',
     'google-cloud-secret-manager==2.26.0',
-    'google-cloud-storage==3.8.0',
+    'google-cloud-storage==3.9.0',
     'google-crc32c==1.8.0',
     'opentelemetry-exporter-otlp-proto-grpc==1.39.0',
     'opentelemetry-sdk==1.39.0',
     'pg8000~=1.29',
-    'prefect==3.6.10',
-    'prefect-kubernetes==0.7.2',
+    'prefect==3.6.13',
+    'prefect-kubernetes==0.7.3',
     'pysmb==1.2.13',
     'pyvis==0.3.2',
-    'mcp==1.23.1',
+    'mcp==1.26.0',
 ]
 databases = [
     'pymongo>=3.8.0,<5.0.0',
@@ -96,33 +95,39 @@ legacy = [
     'chemical-composition~=1.0.6',
     'FlowKit',
 ]
-
 all = [
     'apache_beam==2.70.0',
-    'azure-identity==1.25.1',
+    'azure-identity==1.25.2',
     'azure-keyvault-secrets==4.10.0',
-    'azure-monitor-opentelemetry==1.8.3',
+    'azure-monitor-opentelemetry==1.8.6',
     'azure-storage-blob==12.28.0',
     'azure-servicebus==7.14.3',
     'azure-storage-file-datalake==12.22.0',
-    'azure-storage-file-share==12.23.1',
+    'azure-storage-file-share==12.24.0',
     'cloud-sql-python-connector~=1.0',
     'google-apitools==0.5.35',
     'google-cloud-logging==3.13.0',
     'google-cloud-secret-manager==2.26.0',
-    'google-cloud-storage==3.8.0',
+    'google-cloud-storage==3.9.0',
     'google-crc32c==1.8.0',
     'opentelemetry-exporter-otlp-proto-grpc==1.39.0',
     'opentelemetry-sdk==1.39.0',
     'pg8000~=1.29',
-    'prefect-kubernetes==0.7.2',
-    'prefect==3.6.10',
+    'prefect-kubernetes==0.7.3',
+    'prefect==3.6.13',
     'psycopg2-binary',
     'pymongo>=3.8.0,<5.0.0',
     'pysmb==1.2.13',
     'pyvis==0.3.2',
-    'mcp==1.23.1',
+    'mcp==1.26.0',
 ]
+
+[project.urls]
+Homepage = "https://github.com/urgap/urgap"
+Documentation = "https://urgap.github.io/urgap/"
+Repository = "https://github.com/urgap/urgap.git"
+Issues = "https://github.com/urgap/urgap/issues"
+Changelog = "https://github.com/urgap/urgap/blob/main/CHANGELOG.md"
 
 [project.scripts]
 uctl = "urgap.uctl.uctl:cli"

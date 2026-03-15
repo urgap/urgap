@@ -11,8 +11,8 @@ from urgap.uctl.mcp.tools import (
     generate_workflow_id,
     list_container_times,
     mylabdata_urgap_storage_pattern,
-    register_tools,
 )
+from urgap.uctl.mcp.register_helpers import register_tools, register_unodes
 
 
 class DummyServer:
@@ -77,7 +77,7 @@ def test_register_tools_registers_builtins(monkeypatch):
         types.SimpleNamespace(available_io_classes=["file", "https"]),
     )
     server = DummyServer()
-    register_tools(server, nodes_list=[])
+    register_tools(server)
     names = {n for (n, _, _) in server.added}
     assert {
         "list_container_times",
@@ -118,7 +118,7 @@ def test_register_tools_adds_unode_tool_and_skips_when_missing_examples(
 
     server = DummyServer()
     with caplog.at_level(logging.WARNING):
-        register_tools(server, nodes_list=["Good:1.0.0", "Bad:1.0.0", "Foo:latest"])
+        register_unodes(server, nodes_list=["Good:1.0.0", "Bad:1.0.0", "Foo:latest"])
     names = [n for (n, _, _) in server.added]
     assert "Good_1_0_0" in names
     assert any("parameter_example" in r.message for r in caplog.records)

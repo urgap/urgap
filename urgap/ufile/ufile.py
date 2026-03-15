@@ -976,3 +976,45 @@ class UFile:
                 overwrite=False,
             )
         return self
+
+    def relocate_fragment_to_path(
+        self,
+        steps: int = 1,
+        upload: bool = False,
+    ) -> None:
+        """Move the fragment component into the path or vice versa by relocating the # separator.
+
+        Args:
+            steps: Number of path segments to move.
+                   Positive values move fragment segments into the path (fragment → path).
+                   Example: steps=2 converts 'path#a/b/c' to 'path/a/b#c'
+                   Negative values move path segments into the fragment (path → fragment).
+                   Example: steps=-2 converts 'path/a/b#c' to 'path#a/b/c'
+            upload: If True, upload the file after rebasing.
+
+        Raises:
+            ValueError: If steps is zero.
+        """
+        path = self.uuri.path
+        fragment = self.uuri.fragment
+        new_fragment = None
+        new_path = None
+        if steps > 0:
+            for i, location in enumerate(fragment.split("/", steps)):
+                if i == steps:
+                    new_fragment = location
+                else:
+                    path += f"/{location}"
+            self.uri = self.as_uri(path=path, fragment=new_fragment)
+        elif steps < 0:
+            steps = abs(steps)
+            for i, location in enumerate(reversed(path.rsplit("/", steps))):
+                if i == steps:
+                    new_path = location
+                else:
+                    fragment = f"{location}/{fragment}"
+            self.uri = self.as_uri(path=new_path, fragment=fragment)
+        else:
+            msg = f"Invalid steps '{steps}'. Cannot be zero."
+            raise ValueError(msg)
+        self.rebase(uri=self.uri, upload=upload)

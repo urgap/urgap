@@ -3,6 +3,7 @@
 import json
 import logging
 import re
+import time
 
 from collections.abc import Callable
 from typing import ParamSpec
@@ -55,6 +56,7 @@ class IOMyLabData(UIOBase):
         super().__init__(**kwargs)
         self._api_cert = urgap.config["certificates"].get(self.uuri.netloc, True)
         self._api_token = None
+        self._token_created_at = 0
         self._get_token_bearer()
 
     @property
@@ -97,6 +99,7 @@ class IOMyLabData(UIOBase):
         if response.status_code == 200:
             token = response.json()["data"]["token"]
             self._api_token = {"Authorization": f"Bearer {token}"}
+            self._token_created_at = time.time()
         else:
             msg = f"Login failed with status code: {response.status_code}"
             logger.error(msg)
@@ -238,6 +241,10 @@ class IOMyLabData(UIOBase):
         Returns:
             List of object names matching the filter.
         """
+        if (time.time() - self._token_created_at) >= 3600:
+            logger.info("Bearer token expired after 3600 seconds. Refreshing token...")
+            self._get_token_bearer()
+
         equip_task_id_fragment = self.uuri.path.split("/")[1:]
         equip_task_id_fragment.append(limit)
         query = urlencode(

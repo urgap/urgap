@@ -134,15 +134,22 @@ class IOGithub(UIOBase):
 
         Object is written to local scratch path.
         """
+        binary_extensions = (".xlsx", ".xls", ".zip", ".pdf")
+
         try:
             download = self.repo.get_contents(
                 self.object_filepath,
                 ref=self.source_branch.name,
             )
-            text = download.decoded_content.decode("utf-8")
+            content = download.decoded_content
 
-            with self.scratch_path.open("w", encoding="utf-8") as f:
-                f.write(text)
+            if self.object_filepath.lower().endswith(binary_extensions):
+                with self.scratch_path.open("wb") as f:
+                    f.write(content)
+            else:
+                text = content.decode("utf-8")
+                with self.scratch_path.open("w", encoding="utf-8") as f:
+                    f.write(text)
         except GithubException as e:
             self.scratch_path.unlink(missing_ok=True)
             raise RuntimeError from e

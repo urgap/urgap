@@ -5,12 +5,16 @@ This is the main CLI entrypoint and command group dispatcher for urgap.
 
 import click
 
+import urgap
+
 from urgap.uctl.describe import describe
 from urgap.uctl.info import info
 from urgap.uctl.run import run
 from urgap.uctl.set import set_command
 from urgap.uctl.show import show_credentials_click
 from urgap.uctl.upload import upload
+
+urgap.uinit.configure_logger()
 
 
 @click.group()
