@@ -614,7 +614,6 @@ def start_mcp_server(
         kwargs={
             "nodes": nodes_list,
             "mcp_port": port,
-            "shutdown_event": shutdown_event,
         },
     )
     processes.append(p)

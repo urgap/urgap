@@ -11,12 +11,8 @@ import time
 from pathlib import Path
 from urllib.parse import urlparse
 
-import httpx
 import pytest
-import requests
 import urllib3
-from mcp import ClientSession
-from mcp.client.streamable_http import streamable_http_client
 import urgap
 
 urgap._test_folder = Path(__file__).parent.resolve()

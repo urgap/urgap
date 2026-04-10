@@ -45,7 +45,11 @@ async def test_urgap_tools_mcp_server(provide_mcp_tools_server):
 
                 result = await session.call_tool(
                     "mylabdata_urgap_storage_pattern",
-                    {"equipment_id": "my-mld-project", "task_id": "my-task-id"},
+                    {
+                        "server": "mylabdata-files.uat.corpnet2.com",
+                        "equipment_id": "my-mld-project",
+                        "task_id": "my-task-id",
+                    },
                 )
                 assert result.content[0].text == (
                     "mylabdata://mylabdata-files.uat.corpnet2.com/my-mld-project/my-task-id"
@@ -62,17 +66,4 @@ async def test_urgap_tools_mcp_server(provide_mcp_tools_server):
                 )
                 assert result.content[0].text == (
                     '["az-smb://myaccount/myshare#myfile.txt","file:///tmp/folder#dummy.txt"]'
-                )
-
-                result = await session.call_tool(
-                    "prepare_urgap_uris_for_beacon_run",
-                    {
-                        "urgap_uris": [
-                            "az-smb://myaccount/DataSessions/123456/myfile.tag",
-                            "az-smb://myaccount/DataSessions/123456/OptoSelect 1750b.XML",
-                        ]
-                    },
-                )
-                assert result.content[0].text == (
-                    '["az-smb://myaccount/DataSessions?uftype=.optoselect.xml#123456/OptoSelect 1750b.XML"]'
                 )

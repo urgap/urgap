@@ -1,13 +1,18 @@
 """MCP helpers for registering tools and unodes of urgap2."""
 
-import functools
+import inspect
 import logging
+
+from collections.abc import Callable
+from functools import wraps
+from typing import ParamSpec
 
 from mcp.server.fastmcp import FastMCP
 
 import urgap
 
 logger = logging.getLogger(__name__)
+P = ParamSpec("P")
 
 
 def register_unodes(server: FastMCP, nodes_list: list) -> None:
@@ -27,35 +32,22 @@ def register_unodes(server: FastMCP, nodes_list: list) -> None:
             continue
 
         unode_name = unode.replace(":", "_").replace(".", "_")
+        fn = make_tool(un.run_node_as_mcp_tool, unode_name, un)
+        server.tool()(fn)
 
-        def _make_tool(bound_node: urgap.UNodeBase, param_examples: str) -> functools:
-            @functools.wraps(bound_node.run_node_as_mcp_tool)
-            def tool_fn(
-                ufiles: list[str],
-                params: dict,
-                force: bool = False,
-                output_urgap_storage_base_uri: str | None = None,
-                latest_exe_path: str | None = None,
-                workflow_id: str | None = None,
-            ) -> list:
-                return bound_node.run_node_as_mcp_tool(
-                    ufiles=ufiles,
-                    params=params,
-                    force=force,
-                    output_urgap_storage_base_uri=output_urgap_storage_base_uri,
-                    latest_exe_path=latest_exe_path,
-                    workflow_id=workflow_id,
-                )
 
-            tool_fn.__doc__ = (
-                bound_node.run_node_as_mcp_tool.__doc__
-                + f"\n    Node-specific params example: {param_examples}"
-            )
-            return tool_fn
+def make_tool(method: Callable, unode_name: str, unode: urgap.UNodeBase) -> Callable:
+    """Create a fastmcp tool wrapper."""
 
-        server.tool(name=unode_name)(
-            _make_tool(
-                un,
-                un.META_INFO["parameter_examples"],
-            ),
-        )
+    @wraps(method)
+    def wrapper(*args: dict, **kwargs: P.kwargs) -> Callable:
+        return method(*args, **kwargs)
+
+    wrapper.__name__ = unode_name
+    wrapper.__doc__ = f"""
+{unode.__doc__}
+\n {method.__doc__}
+\n This is an example of the parameters for {unode_name}: {unode.META_INFO["parameter_examples"]}"
+"""
+    wrapper.__signature__ = inspect.signature(method)
+    return wrapper

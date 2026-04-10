@@ -102,7 +102,7 @@ class UNodeBase:
     def run_node_as_mcp_tool(
         self,
         ufiles: list[str],
-        params: dict[str, str],
+        unode_execution_parameters: dict[str, str],
         force: bool = False,
         output_urgap_storage_base_uri: str | None = None,
         latest_exe_path: str | None = None,
@@ -113,7 +113,7 @@ class UNodeBase:
         Args:
             ufiles (list of uri strings): List of urgap uri strings which represent the input files for the unode run.
                 example: ["file:///home/user/data#input_file.csv", "azure://mybucket/mycontainer#input_file2.csv"]
-            params (dict): Parameters that are passed to the unode execution.
+            unode_execution_parameters (dict): Parameters that are passed to the unode execution.
                 example: {"parameter1": "value1", "parameter2": "value2"}
             output_urgap_storage_base_uri (str | None, optional):
                 an urgap_storage_base_uri can be used to defines where the output files
@@ -144,7 +144,7 @@ class UNodeBase:
         urun_dict = urgap.URunDict(
             {
                 "parameters": {
-                    self.META_INFO["unode_full_identifier"]: params,
+                    self.META_INFO["unode_full_identifier"]: unode_execution_parameters,
                 },
                 "unode_parameters": {
                     "storage_base_uri": output_urgap_storage_base_uri,
