@@ -1,125 +1,78 @@
-import logging
-import types
-
+import json
+from mcp.client.streamable_http import streamable_http_client
+from mcp.client.session import ClientSession
 import pytest
+import httpx
 
 import urgap
 
-from urgap.uctl.mcp.tools import (
-    calculate_nana,
-    gcp_urgap_storage_pattern,
-    generate_workflow_id,
-    list_container_times,
-    mylabdata_urgap_storage_pattern,
-)
-from urgap.uctl.mcp.register_helpers import register_tools, register_unodes
+MCP_PORT = 41999
 
 
-class DummyServer:
-    def __init__(self):
-        self.added = []
+@pytest.mark.asyncio
+@pytest.mark.parametrize("provide_mcp_tools_server", [MCP_PORT], indirect=True)
+async def test_urgap_tools_mcp_server(provide_mcp_tools_server):
+    url = f"http://127.0.0.1:{MCP_PORT}/mcp"
+    async with httpx.AsyncClient() as http_client:
+        async with streamable_http_client(url, http_client=http_client) as (
+            read,
+            write,
+            _get_session_id,
+        ):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
 
-    def add_tool(self, func, name, desc):
-        self.added.append((name, func, desc))
+                result = await session.call_tool("generate_workflow_id", {})
+                answer = result.content[0].text
+                assert answer.startswith("u_")
+                assert len(answer) > 10
 
+                result = await session.call_tool(
+                    "list_container_items",
+                    {
+                        "urgap_storage_base_uri": f"file://{urgap._test_folder}/data/configs"
+                    },
+                )
+                assert result.content[0].text == (
+                    f'["file://{urgap._test_folder}/data/configs#credentials_lookup.json"]'
+                )
 
-def test_storage_pattern_helpers():
-    assert (
-        mylabdata_urgap_storage_pattern("354557", "24-1-C4")
-        == "mylabdata://mylabdata-files.uat.corpnet2.com/354557/24-1-C4"
-    )
+                result = await session.call_tool(
+                    "gcp_urgap_storage_pattern",
+                    {"project_id": "my-gcp-project", "bucket": "my-bucket"},
+                )
+                assert result.content[0].text == "gcs://my-gcp-project/my-bucket"
 
+                result = await session.call_tool(
+                    "mylabdata_urgap_storage_pattern",
+                    {"equipment_id": "my-mld-project", "task_id": "my-task-id"},
+                )
+                assert result.content[0].text == (
+                    "mylabdata://mylabdata-files.uat.corpnet2.com/my-mld-project/my-task-id"
+                )
 
-def test_gcp_urgap_storage_pattern():
-    uri = gcp_urgap_storage_pattern("my-project", "my-bucket")
-    assert uri == "gcs://my-project/my-bucket"
+                result = await session.call_tool(
+                    "ensure_urgap_uri_format",
+                    {
+                        "uris_to_check": [
+                            "az-smb://myaccount/myshare/myfile.txt",
+                            "/tmp/folder/dummy.txt",
+                        ]
+                    },
+                )
+                assert result.content[0].text == (
+                    '["az-smb://myaccount/myshare#myfile.txt","file:///tmp/folder#dummy.txt"]'
+                )
 
-
-def test_calculate_nana():
-    assert calculate_nana(weight=80, height=2.0) == 20.0
-
-
-def test_generate_workflow_id_monkeypatched(monkeypatch):
-    monkeypatch.setattr(
-        urgap,
-        "uwid_obj",
-        types.SimpleNamespace(generate_wid=lambda: "u_red-fox-jumps-lazy-dog"),
-    )
-    assert generate_workflow_id() == "u_red-fox-jumps-lazy-dog"
-
-
-def test_list_container_times_calls_ufile(monkeypatch):
-    calls = {}
-
-    class DummyUfile:
-        def __init__(self, uri):
-            calls["uri"] = uri
-
-        def list_container_items(self, pattern=None, limit=None, full_string=False):
-            calls["pattern"] = pattern
-            calls["limit"] = limit
-            calls["full_string"] = full_string
-            return ["file://x#one", "file://x#two"]
-
-    monkeypatch.setattr(urgap, "UFile", DummyUfile)
-
-    out = list_container_times("file://p/b", regex_pattern_string=r".*\.csv$", limit=10)
-    assert out == ["file://x#one", "file://x#two"]
-    assert calls["uri"].endswith("#dummy.txt")
-    assert calls["pattern"] == r".*\.csv$"
-    assert calls["limit"] == 10
-
-
-def test_register_tools_registers_builtins(monkeypatch):
-    monkeypatch.setattr(
-        urgap.instances,
-        "ufile_io_manager",
-        types.SimpleNamespace(available_io_classes=["file", "https"]),
-    )
-    server = DummyServer()
-    register_tools(server)
-    names = {n for (n, _, _) in server.added}
-    assert {
-        "list_container_times",
-        "generate_workflow_id",
-        "mylabdata_urgap_storage_pattern",
-    } <= names
-
-
-def test_register_tools_adds_unode_tool_and_skips_when_missing_examples(
-    monkeypatch, caplog
-):
-    class OkUNode:
-        META_INFO = {
-            "parameter_examples": {"x": 1},
-            "input_uftypes": {"any.ANY": {"min": 0, "max": -1}},
-        }
-
-        def run_node_as_mcp_tool(self, **kwargs):
-            """docstring"""
-
-    class BadUNode:
-        META_INFO = {}
-
-    def dummy_init_unode(name):
-        if name == "Good:1.0.0":
-            return OkUNode()
-        if name == "Bad:1.0.0":
-            return BadUNode()
-        raise AssertionError("unexpected")
-
-    monkeypatch.setattr(urgap, "init_unode", dummy_init_unode)
-
-    monkeypatch.setattr(
-        urgap.instances,
-        "ufile_io_manager",
-        types.SimpleNamespace(available_io_classes=["file"]),
-    )
-
-    server = DummyServer()
-    with caplog.at_level(logging.WARNING):
-        register_unodes(server, nodes_list=["Good:1.0.0", "Bad:1.0.0", "Foo:latest"])
-    names = [n for (n, _, _) in server.added]
-    assert "Good_1_0_0" in names
-    assert any("parameter_example" in r.message for r in caplog.records)
-    assert not any(n.startswith("Foo") for n in names)
+                result = await session.call_tool(
+                    "prepare_urgap_uris_for_beacon_run",
+                    {
+                        "urgap_uris": [
+                            "az-smb://myaccount/DataSessions/123456/myfile.tag",
+                            "az-smb://myaccount/DataSessions/123456/OptoSelect 1750b.XML",
+                        ]
+                    },
+                )
+                assert result.content[0].text == (
+                    '["az-smb://myaccount/DataSessions?uftype=.optoselect.xml#123456/OptoSelect 1750b.XML"]'
+                )

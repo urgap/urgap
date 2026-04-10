@@ -189,10 +189,10 @@ class UTrace:
         log_message += f"\n.{'-' * 40}\n"
         log_message += f"| UNode {self.unode_meta['name']} run started at {time_str}\n"
         log_message += f"|   WID: {self.urun_dict.wid}\n"
-        log_message += "| - input_files: [\n"
+        log_message += f"| - {len(self.input_files)} input_files: [\n"
         log_message += self._format_file_section(self.input_files)
         log_message += "|   ]\n"
-        log_message += "| - output_files: [\n"
+        log_message += f"| - {len(self.output_files)} output_files: [\n"
         log_message += self._format_file_section(self.output_files)
         log_message += "|   ]\n"
         log_message += self._format_rerun_section()
@@ -222,7 +222,7 @@ class UTrace:
 
     def _attach_to_span(self, time_str: str, log_message: str) -> None:
         """Attach log details to the current tracing span."""
-        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
+        span = _ot.get_current_span()
         if span is not None and span.is_recording():
             span.set_attribute("time", time_str)
             for line in log_message.split("\n"):

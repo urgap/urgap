@@ -101,21 +101,22 @@ class UNodeBase:
 
     def run_node_as_mcp_tool(
         self,
-        ufiles: list,
-        tool_parameter: dict,
+        ufiles: list[str],
+        params: dict[str, str],
         force: bool = False,
         output_urgap_storage_base_uri: str | None = None,
         latest_exe_path: str | None = None,
         workflow_id: str | None = None,
     ) -> list:
-        """Run UNode via mcp tools.
+        """Run UNode via mcp tools. These are the possible input_parameters for the mcp tool wrapper around the unode run function.
 
         Args:
-            ufiles (list of uri strings): List of urgap uri strings
-            tool_parameter (dict): Parameters that are added to the
-                command line for tools execution.
+            ufiles (list of uri strings): List of urgap uri strings which represent the input files for the unode run.
+                example: ["file:///home/user/data#input_file.csv", "azure://mybucket/mycontainer#input_file2.csv"]
+            params (dict): Parameters that are passed to the unode execution.
+                example: {"parameter1": "value1", "parameter2": "value2"}
             output_urgap_storage_base_uri (str | None, optional):
-                a urgap_storage_base_uri can be used to defines where the output files
+                an urgap_storage_base_uri can be used to defines where the output files
                 of the run is uploaded to. Defaults to None.
             force (bool, optional): Defines if re-run logic is checked. Defaults to False.
             latest_exe_path (str | None, optional): path to the executable. Defaults to None.
@@ -143,7 +144,7 @@ class UNodeBase:
         urun_dict = urgap.URunDict(
             {
                 "parameters": {
-                    self.META_INFO["unode_full_identifier"]: tool_parameter,
+                    self.META_INFO["unode_full_identifier"]: params,
                 },
                 "unode_parameters": {
                     "storage_base_uri": output_urgap_storage_base_uri,
@@ -156,6 +157,9 @@ class UNodeBase:
         )
         if workflow_id is not None:
             urun_dict["wid"] = workflow_id
+        logger.debug(
+            f"starting urgap run with: ufiles: {ufiles} and urun_dict: {urun_dict}",
+        )
         ufile_list = self.run(ufiles, urun_dict)
         uri_list = ufile_list.as_uri_list()
         if isinstance(uri_list, str):
@@ -278,7 +282,7 @@ class UNodeBase:
 
         urun_dict["is_remote_run"] = True
 
-        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
+        span = _ot.get_current_span()
         span_rec = span is not None and span.is_recording()
         if span_rec:
             span.set_attribute("http.method", "POST")
@@ -334,7 +338,7 @@ class UNodeBase:
             "wid": kw["urun_dict"].wid
             if "urun_dict" in kw and kw["urun_dict"] is not None
             else None,
-            "span.kind": str(SpanKind.INTERNAL) if SpanKind is not None else "INTERNAL",
+            "span.kind": str(SpanKind.INTERNAL),
         },
     )
     def _run_locally(
@@ -370,7 +374,7 @@ class UNodeBase:
         )
         ut.input_files = ut.filter_input_files(ut.input_files)
 
-        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
+        span = _ot.get_current_span()
         if span is not None and span.is_recording():
             span.set_attribute("utrace.output_files_stem", ut.output_files_stem)
             span.set_attribute(
@@ -426,7 +430,7 @@ class UNodeBase:
             urun_dict (urgap.URunDict): Runtime configuration for the current run.
             utrace (urgap.UTrace): Execution context for this run.
         """
-        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
+        span = _ot.get_current_span()
         if span is not None and span.is_recording():
             span.set_attribute("wid", urun_dict.wid)
             span.set_attribute(
@@ -438,7 +442,7 @@ class UNodeBase:
 
     @staticmethod
     def _add_rerun_events(reasons: list) -> None:
-        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
+        span = _ot.get_current_span()
         if span is None or not span.is_recording():
             return
         if len(reasons) == 0:
@@ -619,7 +623,7 @@ class UNodeBase:
             exe_path = self.latest_exe_paths
         return Path(exe_path)
 
-    def _construct_exe_path_u3(self) -> os.PathLike:
+    def _construct_exe_path_u3(self) -> os.PathLike | None:
         """Construct the path to the executable for a specific tagged version.
 
         Returns:
@@ -629,6 +633,7 @@ class UNodeBase:
             RuntimeError: If version or exe_path information is missing.
         """
         base_path = Path(urgap.home) / "resources"
+        tagged_exe_path = None
         version_info = None
         for v in self.META_INFO["versions"]:
             if v["version"] == self.META_INFO["unode_version"]:
@@ -646,11 +651,13 @@ class UNodeBase:
             path_to_system_resource = shutil.which(version_info["exe_path"].lstrip("$"))
             if path_to_system_resource is not None:
                 tagged_exe_path = Path(path_to_system_resource)
-            else:
-                tagged_exe_path = base_path / version_info["exe_path"]
         else:
             tagged_exe_path = base_path / Path(version_info["exe_path"])
-        return tagged_exe_path
+            if tagged_exe_path.exists() is False:
+                tagged_exe_path = None
+        if tagged_exe_path is not None:
+            return tagged_exe_path
+        return None
 
     @property
     def resource_subfolder(self) -> str:
@@ -923,7 +930,7 @@ class UNodeBase:
         cmd_msg = f"Executing command list: {' '.join(utrace.urun_dict.command_list)}"
         logger.info(cmd_msg)
 
-        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
+        span = _ot.get_current_span()
         if span is not None and span.is_recording():
             span.set_attribute("unode.command", " ".join(utrace.urun_dict.command_list))
             span.add_event(cmd_msg)

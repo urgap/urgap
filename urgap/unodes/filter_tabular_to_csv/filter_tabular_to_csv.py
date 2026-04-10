@@ -35,21 +35,30 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
         "engine_type": ("io",),
         "citation": "Urgap team (2021)",
         "parameter_examples": """
+            CRITICAL: The parameter key MUST be "-q" (with quotes and dash). Do NOT use "query" or "q".
 
-            -q: Use pandas query string
+            Example structure for tool_parameter argument:
+            {
+                "-q": "your_filter_expression_here"
+            }
 
-            For example:
-
+            Version 1.0.0 - Pandas query syntax:
             {
                 "-q": "500 < `exp_mz` < 1000"
             }
 
-            OR in version 2.0.0 and later:
-            -q: polars sql expression
-
+            Version 2.0.0 - Polars SQL expression syntax:
             {
                 "-q": "500 < exp_mz AND exp_mz < 1000"
             }
+
+            Common examples:
+            {"-q": "charge == 2"}
+            {"-q": "charge == 2 AND accuracy_ppm < 5"}
+            {"-q": "1000 < exp_mz AND exp_mz < 2000"}
+            {"-q": "sequence.str.contains('K')"}  (pandas v1.0.0 only)
+
+            REMEMBER: Always use "-q" as the key, NOT "query", NOT "q", ONLY "-q"
         """,
     }
 

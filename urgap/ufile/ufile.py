@@ -310,6 +310,12 @@ class UFile:
             uftype = urgap.uftypes.unknown.UNKNOWN
         return uftype
 
+    def guess_uftype_from_suffix(self) -> None:
+        """Guess the Urgap file type for this file based on its extension."""
+        suffixes = Path(self.uuri.fragment).suffixes
+        if len(suffixes) >= 1:
+            self.tags["uftype"] = f".any{suffixes[-1]}"
+
     def download(self) -> None:
         """Download this file from remote storage to local scratch."""
         if urgap.utl.tracing_enabled is True:

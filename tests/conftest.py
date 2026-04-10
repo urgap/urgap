@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import platform
@@ -10,9 +11,12 @@ import time
 from pathlib import Path
 from urllib.parse import urlparse
 
+import httpx
 import pytest
+import requests
 import urllib3
-
+from mcp import ClientSession
+from mcp.client.streamable_http import streamable_http_client
 import urgap
 
 urgap._test_folder = Path(__file__).parent.resolve()
@@ -228,7 +232,8 @@ def provide_uctl_server(request):
     else:
         for param in request.param:
             if isinstance(param, int):
-                call.extend(["--mcp-port", str(param)])
+                call.extend(["-m", str(param)])
+                required_ports.append(param)
                 continue
             call.extend(["-n", param])
             required_ports.append(
@@ -249,8 +254,8 @@ def provide_uctl_server(request):
     proc.terminate()
 
 
-@pytest.fixture
-def provide_mcp_server(request):
+@pytest.fixture(scope="function")
+def provide_mcp_tools_server(request):
     call = ["uctl", "run", "mcp-server"]
     port = request.param
     call.extend(["-p", str(port)])
