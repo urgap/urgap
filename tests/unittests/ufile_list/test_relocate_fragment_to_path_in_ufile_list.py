@@ -14,15 +14,13 @@ def test_relocate_fragment_bigger_fragment():
     )
     ufl.relocate_fragment_to_path(steps=-2)
     assert (
-        ufl[0].uri
-        == f"file:///this/test?uftype={urgap.uftypes.any.TXT}#works/data/test_node_data/sub/folder/test.txt"
+        ufl[0].uri == "file:///this/test#works/data/test_node_data/sub/folder/test.txt"
     )
     assert ufl[0].uuri.path == "/this/test"
     assert ufl[0].uuri.fragment == "works/data/test_node_data/sub/folder/test.txt"
 
     assert (
-        ufl[1].uri
-        == f"file:///this/test/works/data?uftype={urgap.uftypes.any.TXT}#test_node_data/sub/folder/test.txt"
+        ufl[1].uri == "file:///this/test/works/data#test_node_data/sub/folder/test.txt"
     )
     assert ufl[1].uuri.path == "/this/test/works/data"
     assert ufl[1].uuri.fragment == "test_node_data/sub/folder/test.txt"

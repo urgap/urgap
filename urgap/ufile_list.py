@@ -43,7 +43,7 @@ class UFileList(UserList):
             flat_list = sorted(self.create_flat_and_non_redundant_list())
 
         if all(isinstance(x, urgap.UFile) for x in flat_list) and all(
-            ufile.uftype in (None, urgap.uftypes.unknown.UNKNOWN) for ufile in flat_list
+            ufile.uuri.query.get("uftype", None) == ".unknown" for ufile in flat_list
         ):
             for ufile in flat_list:
                 ufile.guess_uftype_from_suffix()
