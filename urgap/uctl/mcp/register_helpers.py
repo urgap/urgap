@@ -28,7 +28,7 @@ def register_unodes(server: FastMCP, nodes_list: list) -> None:
 
         unode_name = unode.replace(":", "_").replace(".", "_")
 
-        def _make_tool(bound_node, param_examples, input_uftypes):
+        def _make_tool(bound_node: urgap.UNodeBase, param_examples: str) -> functools:
             @functools.wraps(bound_node.run_node_as_mcp_tool)
             def tool_fn(
                 ufiles: list[str],
@@ -50,12 +50,12 @@ def register_unodes(server: FastMCP, nodes_list: list) -> None:
             tool_fn.__doc__ = (
                 bound_node.run_node_as_mcp_tool.__doc__
                 + f"\n    Node-specific params example: {param_examples}"
-                + f"\n    Input file types (uftypes): {input_uftypes}"
             )
             return tool_fn
 
         server.tool(name=unode_name)(
             _make_tool(
-                un, un.META_INFO["parameter_examples"], un.META_INFO["input_uftypes"],
+                un,
+                un.META_INFO["parameter_examples"],
             ),
         )

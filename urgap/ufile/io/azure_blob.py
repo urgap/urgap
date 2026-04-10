@@ -204,8 +204,9 @@ class IOAzureBlobStorage(UIOBase):
                 if re.search(pattern, blob) is not None
             ]
         if limit is not None and len(container_objects) > limit:
+            msg = f"Number of container objects ({len(container_objects)}) exceeds the specified limit ({limit}). Returning only the first {limit} objects."
             logger.warning(
-                f"Number of container objects ({len(container_objects)}) exceeds the specified limit ({limit}). Returning only the first {limit} objects.",
+                msg,
             )
             container_objects = container_objects[:limit]
         return container_objects

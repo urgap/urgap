@@ -190,14 +190,12 @@ def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
 
 def run_mcp_server(
     mcp_port: int,
-    shutdown_event: multiprocessing.Event,
     nodes: list | None = None,
 ) -> None:
     """Start an MCP server. If nodes are provided, expose those as MCP tools. If no nodes are provided, spawn urgap default tools as MCP.
 
     Args:
         mcp_port: Port for the MCP SSE server.
-        shutdown_event: Event to signal server shutdown.
         nodes: Optional list of urgap nodes to expose. If None, exposes default urgap tools.
     """
     if nodes is None:
