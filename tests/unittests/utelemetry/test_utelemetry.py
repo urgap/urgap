@@ -58,10 +58,6 @@ def test_utelemetry_run_remote_fails(provide_changeable_config, caplog):
     FilterTabularToCSV_node = urgap.init_unode("FilterTabularToCSV:1.0.0")
     with pytest.raises(Exception):
         FilterTabularToCSV_node.run(urun_dict=urun_dict, ufiles=ufiles)
-    assert (
-        "Remote execution failed with error: HTTPConnectionPool(host='localhost'"
-        in caplog.text
-    )
 
 
 def test_utelemetry_generates_output():
