@@ -6,13 +6,13 @@ import httpx
 
 import urgap
 
-MCP_PORT = 41999
+MCP_PORT = 41998
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("provide_mcp_tools_server", [MCP_PORT], indirect=True)
 async def test_urgap_tools_mcp_server(provide_mcp_tools_server):
-    url = f"http://127.0.0.1:{MCP_PORT}/mcp"
+    url = f"http://localhost:{MCP_PORT}/mcp"
     async with httpx.AsyncClient() as http_client:
         async with streamable_http_client(url, http_client=http_client) as (
             read,
