@@ -37,16 +37,19 @@ class UFileList(UserList):
 
     def set_uftypes_if_none_available(self) -> None:
         """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
+        ut = urgap.instances.utree_querier
         if all(isinstance(x, urgap.UFile) for x in self):
             flat_list = self.data
         else:
             flat_list = sorted(self.create_flat_and_non_redundant_list())
-
         if all(isinstance(x, urgap.UFile) for x in flat_list) and all(
             ufile.uuri.query.get("uftype", None) == ".unknown" for ufile in flat_list
         ):
-            for ufile in flat_list:
-                ufile.guess_uftype_from_suffix()
+            for pos, ufile in enumerate(flat_list):
+                suffixes = Path(ufile.uuri.fragment).suffixes
+                flat_list[pos].tags["uftype"] = ut.get_uftype_or_closest_any(
+                    suffixes,
+                ).lower()
 
     @property
     def all_remote_files_exist(self) -> bool:
