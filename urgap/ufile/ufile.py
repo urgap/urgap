@@ -307,14 +307,18 @@ class UFile:
         """
         uftype = self.tags.get("uftype", None)
         if uftype is None:
-            uftype = urgap.uftypes.unknown.UNKNOWN
+            if self.guess_uftype_from_suffix() is not None:
+                uftype = self.guess_uftype_from_suffix()
+            else:
+                uftype = urgap.uftypes.unknown.UNKNOWN
         return uftype
 
-    def guess_uftype_from_suffix(self) -> None:
+    def guess_uftype_from_suffix(self) -> str | None:
         """Guess the Urgap file type for this file based on its extension."""
         suffixes = Path(self.uuri.fragment).suffixes
         if len(suffixes) >= 1:
-            self.tags["uftype"] = f".any{suffixes[-1]}"
+            return f".any{suffixes[-1]}"
+        return None
 
     def download(self) -> None:
         """Download this file from remote storage to local scratch."""

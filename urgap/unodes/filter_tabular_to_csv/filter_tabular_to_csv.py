@@ -8,7 +8,7 @@ import urgap
 class FilterTabularToCSV(urgap.unode.UNodeBase):
     """Urgap wrapper for the filter_csv resource.
 
-    Allows to filter and merge multiple csv files based on a pandas query string.
+    Allows to filter and merge multiple csv files based on a polars query string.
     """
 
     META_INFO = {
@@ -35,19 +35,16 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
         "engine_type": ("io",),
         "citation": "Urgap team (2021)",
         "parameter_examples": """
-            CRITICAL: The parameter key MUST be "-q" (with quotes and dash). Do NOT use "query" or "q".
+            These are possible unode_execution_parameters for FilterTabularToCSV.
 
-            Example structure for tool_parameter argument:
+            -q: Use polars query string
+
+            For example:
             {
                 "-q": "your_filter_expression_here"
             }
 
-            Version 1.0.0 - Pandas query syntax:
-            {
-                "-q": "500 < `exp_mz` < 1000"
-            }
-
-            Version 2.0.0 - Polars SQL expression syntax:
+            Polars SQL expression syntax:
             {
                 "-q": "500 < exp_mz AND exp_mz < 1000"
             }
@@ -56,7 +53,6 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
             {"-q": "charge == 2"}
             {"-q": "charge == 2 AND accuracy_ppm < 5"}
             {"-q": "1000 < exp_mz AND exp_mz < 2000"}
-            {"-q": "sequence.str.contains('K')"}  (pandas v1.0.0 only)
 
             REMEMBER: Always use "-q" as the key, NOT "query", NOT "q", ONLY "-q"
         """,

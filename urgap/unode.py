@@ -158,10 +158,9 @@ class UNodeBase:
         if workflow_id is not None:
             urun_dict["wid"] = workflow_id
         msg = f"starting urgap run with: ufiles: {ufiles} and urun_dict: {urun_dict}"
-        logger.debug(
-            msg,
-        )
-        ufile_list = self.run(ufiles, urun_dict)
+        logger.debug(msg)
+        input_ufiles = urgap.UFileList.from_uri_list(ufiles)
+        ufile_list = self.run(input_ufiles, urun_dict)
         uri_list = ufile_list.as_uri_list()
         if isinstance(uri_list, str):
             uri_list = [uri_list]

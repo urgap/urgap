@@ -40,7 +40,7 @@ def make_tool(method: Callable, unode_name: str, unode: urgap.UNodeBase) -> Call
     """Create a fastmcp tool wrapper."""
 
     @wraps(method)
-    def wrapper(*args: dict, **kwargs: P.kwargs) -> Callable:
+    async def wrapper(*args: dict, **kwargs: P.kwargs) -> Callable:
         return method(*args, **kwargs)
 
     wrapper.__name__ = unode_name
