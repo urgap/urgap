@@ -317,7 +317,7 @@ def run_unode(
         result = node.run(ufiles=uris, urun_dict=urd, **kwargs)
         output_uris = [uf.as_uri() if uf is not None else None for uf in result]
         write_uri_file(output_uris, output_uri_file)
-        return 0 # noqa: TRY300
+        return 0  # noqa: TRY300
 
     except Exception:
         logger.exception("run_unode failed for unode=%s", unode)
@@ -415,7 +415,7 @@ def main(argv: list[str] | None = None) -> int:
 
             _cfg_data = _json.loads(Path(args.config).read_text(encoding="utf-8"))
             log_level = _cfg_data.get("config", {}).get("logging_level", "INFO")
-        except Exception: # noqa: BLE001
+        except Exception:  # noqa: BLE001
             log_level = "INFO"
 
     logging.basicConfig(

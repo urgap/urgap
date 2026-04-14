@@ -86,9 +86,12 @@ def test_nextflow_pipeline_filter_merge_compress(
     result = run_nextflow(
         pipeline_nf=pipeline_nf,
         extra_args=[
-            "--samplesheet", str(samplesheet),
-            "--config", str(pipeline_config),
-            "--outdir", str(results_dir),
+            "--samplesheet",
+            str(samplesheet),
+            "--config",
+            str(pipeline_config),
+            "--outdir",
+            str(results_dir),
         ],
         cwd=tmp_path,
     )
@@ -137,14 +140,17 @@ def test_nextflow_pipeline_smart_rerun(
     """
     results_dir = tmp_path / "results"
     extra_args = [
-        "--samplesheet", str(samplesheet),
-        "--config", str(pipeline_config),
-        "--outdir", str(results_dir),
+        "--samplesheet",
+        str(samplesheet),
+        "--config",
+        str(pipeline_config),
+        "--outdir",
+        str(results_dir),
     ]
 
     print(results_dir)
     pprint([p for p in results_dir.rglob("*")])
-    print()    
+    print()
     result1 = run_nextflow(pipeline_nf, extra_args, cwd=tmp_path)
 
     print(results_dir)
@@ -157,9 +163,7 @@ def test_nextflow_pipeline_smart_rerun(
     # between the two runs even though the actual output files are identical.
     output_dir = tmp_path / "urgap_output"
     first_files = frozenset(
-        p.relative_to(output_dir)
-        for p in output_dir.rglob("*")
-        if p.is_file()
+        p.relative_to(output_dir) for p in output_dir.rglob("*") if p.is_file()
     )
     assert first_files, "No urgap output files found after first run"
 
@@ -172,9 +176,7 @@ def test_nextflow_pipeline_smart_rerun(
     assert result2.returncode == 0, f"Second run failed: {result2.stderr[-2000:]}"
 
     second_files = frozenset(
-        p.relative_to(output_dir)
-        for p in output_dir.rglob("*")
-        if p.is_file()
+        p.relative_to(output_dir) for p in output_dir.rglob("*") if p.is_file()
     )
 
     new_files = second_files - first_files
@@ -286,7 +288,7 @@ def test_filter_merge_compress_via_helpers(tmp_path):
     # ------------------------------------------------------------------
     merge_output_file = tmp_path / "merge_output_uris.txt"
     exit_code = run_unode(
-        input_uri_files=filter_output_files,   # 3 URI files -> merged by read_uri_files
+        input_uri_files=filter_output_files,  # 3 URI files -> merged by read_uri_files
         output_uri_file=merge_output_file,
         unode="FilterTabularToCSV:1.0.0",
         config_path=config_file,
@@ -295,9 +297,7 @@ def test_filter_merge_compress_via_helpers(tmp_path):
     assert merge_output_file.exists()
 
     merge_uris = read_uri_file(merge_output_file)
-    assert len(merge_uris) == 1, (
-        f"Expected 1 merged CSV URI, got {len(merge_uris)}"
-    )
+    assert len(merge_uris) == 1, f"Expected 1 merged CSV URI, got {len(merge_uris)}"
 
     df_merged = pd.read_csv(urgap.UFile(uri=merge_uris[0]).path)
     assert df_merged.shape == (EXPECTED_CONCAT_ROWS, 3), (

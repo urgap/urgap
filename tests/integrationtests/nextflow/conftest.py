@@ -22,13 +22,14 @@ import urgap
 
 @pytest.fixture(autouse=True)
 def cleanup_nextflow_dirs(tmp_path):
-    """Remove Nextflow work directories after each test.
-    """
+    """Remove Nextflow work directories after each test."""
     yield  # let the test run first so outputs are available for inspection
 
     for cwd in [tmp_path, tmp_path / "run2"]:
         for entry in cwd.iterdir() if cwd.exists() else []:
-            if entry.name in {"work", ".nextflow"} or entry.name.startswith(".nextflow.log"):
+            if entry.name in {"work", ".nextflow"} or entry.name.startswith(
+                ".nextflow.log"
+            ):
                 shutil.rmtree(entry, ignore_errors=True)
 
 
