@@ -1,5 +1,7 @@
 """MCP helpers for registering tools and unodes of urgap2."""
 
+import asyncio
+import functools
 import inspect
 import logging
 
@@ -41,7 +43,11 @@ def make_tool(method: Callable, unode_name: str, unode: urgap.UNodeBase) -> Call
 
     @wraps(method)
     async def wrapper(*args: dict, **kwargs: P.kwargs) -> Callable:
-        return method(*args, **kwargs)
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            None,
+            functools.partial(method, *args, **kwargs),
+        )
 
     wrapper.__name__ = unode_name
     wrapper.__doc__ = f"""
