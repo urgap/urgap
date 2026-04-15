@@ -310,6 +310,7 @@ tcsparser.input.CEDEX_LOG = ".cedex.log"
 tcsparser.input.ENVISION_CSV = ".envision.csv"
 tcsparser.input.OCTET_XLS = ".octet.xlsx"
 tcsparser.input.VICELL_XR_XLSX = ".vicellxr.xlsx"
+tcsparser.input.VICELL_XR_TXT = ".vicellxr.txt"
 tcsparser.input.NOVA_CSV = ".nova.csv"
 tcsparser.output = types.SimpleNamespace()
 tcsparser.output.ASM_JSON = ".tcs_asm_output.json"
