@@ -39,7 +39,7 @@ class UFileList(UserList):
         """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
         ut = urgap.instances.utree_querier
         if all(isinstance(x, urgap.UFile) for x in self):
-            flat_list = self
+            flat_list = self.data
         else:
             flat_list = sorted(self.create_flat_and_non_redundant_list())
         if all(isinstance(x, urgap.UFile) for x in flat_list) and all(

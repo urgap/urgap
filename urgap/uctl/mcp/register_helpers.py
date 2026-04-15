@@ -1,61 +1,20 @@
 """MCP helpers for registering tools and unodes of urgap2."""
 
+import asyncio
+import functools
+import inspect
 import logging
+
+from collections.abc import Callable
+from functools import wraps
+from typing import ParamSpec
 
 from mcp.server.fastmcp import FastMCP
 
 import urgap
 
 logger = logging.getLogger(__name__)
-
-
-def register_tools(server: FastMCP) -> None:
-    """Register tools to the FastMCP server.
-
-    Args:
-        server (FastMCP): mcp fastmcp instance
-    """
-    from urgap.uctl.mcp.tools import (
-        calculate_nana,
-        gcp_urgap_storage_pattern,
-        generate_workflow_id,
-        list_container_times,
-        mylabdata_urgap_storage_pattern,
-    )
-
-    tools = [
-        {"function": list_container_times, "tool_name": "list_container_times"},
-        {"function": generate_workflow_id, "tool_name": "generate_workflow_id"},
-        {
-            "function": gcp_urgap_storage_pattern,
-            "tool_name": "gcp_urgap_storage_pattern",
-        },
-        {
-            "function": mylabdata_urgap_storage_pattern,
-            "tool_name": "mylabdata_urgap_storage_pattern",
-        },
-    ]
-    _to_be_implemented = [
-        {"function": calculate_nana, "tool_name": "nana_index"},
-        {
-            "function": "extend_uri_list_with_uftype",
-            "tool_name": "extend_uri_list_with_uftype",
-        },
-        {
-            "function": "understand_urgap_node_parameters",
-            "tool_name": "understand_urgap_node_parameters",
-        },
-    ]
-
-    for tool_item in tools:
-        msg = "Registering {tool_name}".format(**tool_item)
-        logger.info(msg)
-
-        server.add_tool(
-            tool_item["function"],
-            tool_item["tool_name"],
-            tool_item["function"].__doc__,
-        )
+P = ParamSpec("P")
 
 
 def register_unodes(server: FastMCP, nodes_list: list) -> None:
@@ -75,18 +34,26 @@ def register_unodes(server: FastMCP, nodes_list: list) -> None:
             continue
 
         unode_name = unode.replace(":", "_").replace(".", "_")
-        server.add_tool(
-            un.run_node_as_mcp_tool,
-            f"{unode_name}",
-            f"""{unode_name}:
+        fn = make_tool(un.run_node_as_mcp_tool, unode_name, un)
+        server.tool()(fn)
 
-    {un.run_node_as_mcp_tool.__doc__}
 
-    This is an example of the parameters for {unode_name}:
-        {un.META_INFO["parameter_examples"]}
+def make_tool(method: Callable, unode_name: str, unode: urgap.UNodeBase) -> Callable:
+    """Create a fastmcp tool wrapper."""
 
-    Input file types (uftypes) are:
-        {un.META_INFO["input_uftypes"]}
-
-            """,
+    @wraps(method)
+    async def wrapper(*args: dict, **kwargs: P.kwargs) -> Callable:
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(
+            None,
+            functools.partial(method, *args, **kwargs),
         )
+
+    wrapper.__name__ = unode_name
+    wrapper.__doc__ = f"""
+{unode.__doc__}
+\n {method.__doc__}
+\n This is an example of the parameters for {unode_name}: {unode.META_INFO["parameter_examples"]}"
+"""
+    wrapper.__signature__ = inspect.signature(method)
+    return wrapper

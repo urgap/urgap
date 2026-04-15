@@ -2,7 +2,6 @@
 
 import json
 import logging
-import os
 import re
 import shutil
 
@@ -107,36 +106,22 @@ class IOPython(UIOBase):
         logger.debug(msg)
         container_folder.mkdir(exist_ok=exist_ok, parents=True)
 
-    def get_container(self, container_name: str | None = None) -> os.PathLike:
-        """Get container (directory) Path.
-
-        Args:
-            container_name: Name of the container/folder. If None, uses self.uri.container_name.
-
-        Returns:
-            Path object pointing to the container directory.
-        """
-        if container_name is None:
-            container_name = self.uuri.get_container_name()
-        return Path(self.uuri.path).parent / container_name
-
     def list_container_items(
         self,
-        container_name: str | None = None,
         pattern: str | None = None,
         full_string: bool = False,
+        **_kwargs: P.kwargs,
     ) -> list:
         """Get all objects in a container (directory), optionally filtered by pattern.
 
         Args:
-            container_name: Name of the container or bucket. If None, uses self.container_name.
             pattern: Optional regex pattern for filtering file names.
             full_string: Whether to return the list with full strings or just fragments.
 
         Returns:
             List of object names (relative paths) in the container matching the pattern.
         """
-        container = self.get_container(container_name=container_name)
+        container = Path(self.uuri.path)
         container_objects = []
         for obj in container.glob("**/*"):
             try:
