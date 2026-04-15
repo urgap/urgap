@@ -393,14 +393,16 @@ def test_run_unode_returns_zero_on_success(tmp_path):
     output_file = tmp_path / "output_uris.txt"
     config_file = tmp_path / "config.json"
     config_file.write_text(
-        json.dumps({
-            "urun_dict": {
-                "parameters": {"TestNode1:1.0.0": {}},
-                "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
-            },
-            "credentials_lookup": [],
-            "config": {},
-        })
+        json.dumps(
+            {
+                "urun_dict": {
+                    "parameters": {"TestNode1:1.0.0": {}},
+                    "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
+                },
+                "credentials_lookup": [],
+                "config": {},
+            }
+        )
     )
 
     mock_node = MagicMock()
@@ -432,11 +434,13 @@ def test_run_unode_logs_incomplete_warning_on_empty_input(tmp_path, caplog):
     output_file = tmp_path / "output_uris.txt"
     config_file = tmp_path / "config.json"
     config_file.write_text(
-        json.dumps({
-            "urun_dict": {"parameters": {}, "unode_parameters": {}},
-            "credentials_lookup": [],
-            "config": {},
-        })
+        json.dumps(
+            {
+                "urun_dict": {"parameters": {}, "unode_parameters": {}},
+                "credentials_lookup": [],
+                "config": {},
+            }
+        )
     )
 
     with caplog.at_level("WARNING"):
@@ -447,9 +451,9 @@ def test_run_unode_logs_incomplete_warning_on_empty_input(tmp_path, caplog):
             config_path=config_file,
         )
 
-    assert any(
-        INCOMPLETE_WARNING in record.message for record in caplog.records
-    ), f"Expected '{INCOMPLETE_WARNING}' in log records, got: {[r.message for r in caplog.records]}"
+    assert any(INCOMPLETE_WARNING in record.message for record in caplog.records), (
+        f"Expected '{INCOMPLETE_WARNING}' in log records, got: {[r.message for r in caplog.records]}"
+    )
 
 
 def test_run_unode_invalid_node_name_returns_error(tmp_path):
@@ -464,14 +468,16 @@ def test_run_unode_invalid_node_name_returns_error(tmp_path):
     output_file = tmp_path / "output_uris.txt"
     config_file = tmp_path / "config.json"
     config_file.write_text(
-        json.dumps({
-            "urun_dict": {
-                "parameters": {"__not_a_node__:1.0.0": {}},
-                "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
-            },
-            "credentials_lookup": [],
-            "config": {},
-        })
+        json.dumps(
+            {
+                "urun_dict": {
+                    "parameters": {"__not_a_node__:1.0.0": {}},
+                    "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
+                },
+                "credentials_lookup": [],
+                "config": {},
+            }
+        )
     )
 
     exit_code = run_unode(
@@ -498,14 +504,16 @@ def test_run_unode_with_real_node(tmp_path):
     output_file = tmp_path / "output_uris.txt"
     config_file = tmp_path / "config.json"
     config_file.write_text(
-        json.dumps({
-            "urun_dict": {
-                "parameters": {"TestNode1:1.0.0": {}},
-                "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
-            },
-            "credentials_lookup": [],
-            "config": {},
-        })
+        json.dumps(
+            {
+                "urun_dict": {
+                    "parameters": {"TestNode1:1.0.0": {}},
+                    "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
+                },
+                "credentials_lookup": [],
+                "config": {},
+            }
+        )
     )
 
     exit_code = run_unode(
@@ -531,11 +539,16 @@ def test_run_unode_returns_two_for_empty_input(tmp_path):
     output_file = tmp_path / "output_uris.txt"
     config_file = tmp_path / "config.json"
     config_file.write_text(
-        json.dumps({
-            "urun_dict": {"parameters": {}, "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"}},
-            "credentials_lookup": [],
-            "config": {},
-        })
+        json.dumps(
+            {
+                "urun_dict": {
+                    "parameters": {},
+                    "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
+                },
+                "credentials_lookup": [],
+                "config": {},
+            }
+        )
     )
 
     exit_code = run_unode(
@@ -558,14 +571,16 @@ def test_run_unode_merges_multiple_input_files(tmp_path):
     output_file = tmp_path / "output_uris.txt"
     config_file = tmp_path / "config.json"
     config_file.write_text(
-        json.dumps({
-            "urun_dict": {
-                "parameters": {"ConcatCSVs:1.0.0": {}},
-                "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
-            },
-            "credentials_lookup": [],
-            "config": {},
-        })
+        json.dumps(
+            {
+                "urun_dict": {
+                    "parameters": {"ConcatCSVs:1.0.0": {}},
+                    "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
+                },
+                "credentials_lookup": [],
+                "config": {},
+            }
+        )
     )
 
     mock_node = MagicMock()
@@ -596,14 +611,16 @@ def test_run_unode_output_file_written_even_on_skip(tmp_path):
     output_file = tmp_path / "output_uris.txt"
     config_file = tmp_path / "config.json"
     config_file.write_text(
-        json.dumps({
-            "urun_dict": {
-                "parameters": {"TestNode1:1.0.0": {}},
-                "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
-            },
-            "credentials_lookup": [],
-            "config": {},
-        })
+        json.dumps(
+            {
+                "urun_dict": {
+                    "parameters": {"TestNode1:1.0.0": {}},
+                    "unode_parameters": {"storage_base_uri": f"file://{tmp_path}"},
+                },
+                "credentials_lookup": [],
+                "config": {},
+            }
+        )
     )
 
     mock_node = MagicMock()
@@ -632,10 +649,14 @@ def test_run_unode_output_file_written_even_on_skip(tmp_path):
 def test_parse_cli_args_minimal(tmp_path):
     """Required args are parsed correctly."""
     argv = [
-        "--unode", "FilterTabularToCSV:1.0.0",
-        "--input_uris", "input.txt",
-        "--output_uris", "output.txt",
-        "--config", "config.json",
+        "--unode",
+        "FilterTabularToCSV:1.0.0",
+        "--input_uris",
+        "input.txt",
+        "--output_uris",
+        "output.txt",
+        "--config",
+        "config.json",
     ]
     args = parse_cli_args(argv)
 
@@ -649,10 +670,16 @@ def test_parse_cli_args_minimal(tmp_path):
 def test_parse_cli_args_multiple_input_uris(tmp_path):
     """Multiple --input_uris values are collected into a list."""
     argv = [
-        "--unode", "ConcatCSVs:1.0.0",
-        "--input_uris", "a.txt", "b.txt", "c.txt",
-        "--output_uris", "output.txt",
-        "--config", "config.json",
+        "--unode",
+        "ConcatCSVs:1.0.0",
+        "--input_uris",
+        "a.txt",
+        "b.txt",
+        "c.txt",
+        "--output_uris",
+        "output.txt",
+        "--config",
+        "config.json",
     ]
     args = parse_cli_args(argv)
 
@@ -662,11 +689,16 @@ def test_parse_cli_args_multiple_input_uris(tmp_path):
 def test_parse_cli_args_log_level(tmp_path):
     """Optional --log_level is parsed."""
     argv = [
-        "--unode", "TestNode1:1.0.0",
-        "--input_uris", "input.txt",
-        "--output_uris", "output.txt",
-        "--config", "config.json",
-        "--log_level", "DEBUG",
+        "--unode",
+        "TestNode1:1.0.0",
+        "--input_uris",
+        "input.txt",
+        "--output_uris",
+        "output.txt",
+        "--config",
+        "config.json",
+        "--log_level",
+        "DEBUG",
     ]
     args = parse_cli_args(argv)
 
