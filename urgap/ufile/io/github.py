@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 class IOGithub(UIOBase):
     """UIO Class interface for Github file objects."""
 
+    SCHEMA = "github"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing Github scheme.
 

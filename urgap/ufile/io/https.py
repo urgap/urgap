@@ -21,6 +21,8 @@ class IOHTTPS(UIOBase):
     Handles interaction with files accessible via HTTP/S URLs, including download and tag retrieval.
     """
 
+    SCHEMA = "https"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing https scheme.
 

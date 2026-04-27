@@ -20,6 +20,8 @@ class IOPython(UIOBase):
     Provides basic file IO for local files on disk.
     """
 
+    SCHEMA = "file"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing file scheme.
 

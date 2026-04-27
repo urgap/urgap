@@ -1,1 +1,1 @@
-"""Init Filter tabular to xlsx Unode."""
+"""FilterTabularToXlsx UNode for urgap-gsk."""

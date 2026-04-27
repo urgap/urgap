@@ -24,6 +24,8 @@ class IOSMB(UIOBase):
     Handles interaction with remote SMB shares for reading, writing, and listing files and metadata.
     """
 
+    SCHEMA = "smb"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing smb scheme.
 
