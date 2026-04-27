@@ -1,1 +1,0 @@
-"""Init Filter tabular to xlsx Unode."""
