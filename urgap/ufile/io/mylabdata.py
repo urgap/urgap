@@ -47,6 +47,8 @@ class IOMyLabData(UIOBase):
     Provides interaction with the mylabdata REST API for file upload, download, and metadata operations.
     """
 
+    SCHEMA = "mylabdata"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create a new UIO class for processing mylabdata.
 

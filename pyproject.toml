@@ -134,18 +134,19 @@ Changelog = "https://github.com/urgap/urgap/blob/main/CHANGELOG.md"
 [project.scripts]
 uctl = "urgap.uctl.uctl:cli"
 
-[tool.setuptools.packages.find]
+[tool.hatch.build.targets.wheel]
+packages = ["urgap"]
 
-[tool.setuptools]
-include-package-data = false
+[tool.hatch.build.targets.wheel.shared-data]
+"urgap/config_defaults" = "urgap/config_defaults"
 
-[tool.setuptools.package-data]
-"*" = ["*.txt"]
-"urgap.config_defaults" = ["*.json"]
-'urgap.uctl.server.static.css' = ["*.css"]
-"urgap.uctl.server.static.js" = ["*.js"]
-"urgap.uctl.server.templates" = ["*.html"]
-"urgap.ureport.templates" = ["*.html"]
+[tool.hatch.build.targets.sdist]
+include = [
+    "urgap/**",
+    "*.md",
+    "*.rst",
+    "*.toml",
+]
 
 [tool.hatch.version]
 source = "versioningit"

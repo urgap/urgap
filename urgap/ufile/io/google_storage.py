@@ -23,6 +23,8 @@ class IOGoogleCloudStorage(UIOBase):
     Provides interaction and file operations for Google Cloud Storage buckets and objects.
     """
 
+    SCHEMA = "gcs"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing Google Cloud Storage.
 

@@ -15,6 +15,7 @@ class UIOBase:
     provide a consistent interface for working with local copies of files.
     """
 
+    SCHEMA: str | None = None
     reported_tmp_files = set()
 
     def __init__(self, **kwargs: P.kwargs) -> None:

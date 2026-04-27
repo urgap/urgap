@@ -23,6 +23,8 @@ class IOAzureBlobStorage(UIOBase):
     Provides methods for uploading, downloading, and listing blobs, as well as fetching blob metadata.
     """
 
+    SCHEMA = "azure"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Initialize the Azure Blob Storage IO class.
 

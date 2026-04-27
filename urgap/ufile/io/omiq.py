@@ -24,6 +24,8 @@ class IOOmiq(UIOBase):
     Provides interaction with the OMIQ API for file upload, download, and metadata extraction.
     """
 
+    SCHEMA = "omiq"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create a new UIO class for processing OMIQ data.
 
