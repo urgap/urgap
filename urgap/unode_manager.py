@@ -4,16 +4,17 @@ This module defines the UNode Manager class which is used to initialize UNodes
 and check if their requirements are met, so they can actually be run.
 """
 
+import contextlib
 import copy
 import importlib
 import inspect
 import logging
 import os
+import pkgutil
 import re
 import subprocess
 
 from collections import UserDict
-from pathlib import Path
 
 from packaging.version import Version
 
@@ -186,51 +187,62 @@ class UNodeManager(UserDict):
     def generate_wrapper_lookup(self) -> dict:
         """Generate lookup for available wrappers and UNodes.
 
-        Discovers all wrappers and unodes from the package directory.
+        Discovers all wrappers and unodes from the urgap.unodes and urgap.wrappers
+        namespace packages, enabling third-party packages to register additional
+        nodes by installing modules into those namespaces.
 
         Returns:
             Dictionary mapping node_name or node_name:version to (module_path, class_name).
         """
         lookup = {}
-        wrapper_path = urgap.package_dir / "wrappers"
-        unode_path = urgap.package_dir / "unodes"
-        for _path in [wrapper_path, unode_path]:
-            for wrapper in _path.glob("**/*.py"):
-                if wrapper.stem.startswith("_"):
-                    continue
-                self._add_to_lookup(
-                    lookup=lookup,
-                    wrapper=wrapper,
-                )
+        for ns_name in ("urgap.unodes", "urgap.wrappers"):
+            with contextlib.suppress(ModuleNotFoundError):
+                ns = importlib.import_module(ns_name)
+                for _finder, name, is_pkg in pkgutil.iter_modules(
+                    ns.__path__,
+                    prefix=ns_name + ".",
+                ):
+                    if name.rsplit(".", 1)[-1].startswith("_"):
+                        continue
+                    if is_pkg:
+                        with contextlib.suppress(ImportError):
+                            subpkg = importlib.import_module(name)
+                            for _, mod_name, _ in pkgutil.iter_modules(
+                                subpkg.__path__,
+                                prefix=name + ".",
+                            ):
+                                if not mod_name.rsplit(".", 1)[-1].startswith("_"):
+                                    self._add_to_lookup(
+                                        lookup=lookup,
+                                        module_path=mod_name,
+                                    )
+                    else:
+                        self._add_to_lookup(lookup=lookup, module_path=name)
         return lookup
 
     def _add_to_lookup(
         self,
         lookup: dict,
-        wrapper: Path,
+        module_path: str,
     ) -> None:
-        """Add a discovered wrapper or unode Python file to the lookup.
+        """Add a discovered unode or wrapper module to the lookup.
 
         Args:
             lookup: The lookup dictionary being constructed.
-            wrapper: Path to the .py file for the wrapper/unode.
+            module_path: Dotted import path of the module (e.g. 'urgap.unodes.compress_to_tar.compress_to_tar').
         """
-        class_path_string = str(
-            wrapper.relative_to(urgap.package_dir.parent).with_suffix(""),
-        )
-        spec = importlib.util.spec_from_file_location("node", wrapper)
-        mod = importlib.util.module_from_spec(spec)
         try:
-            spec.loader.exec_module(mod)
+            mod = importlib.import_module(module_path)
         except ImportError:
-            msg = f"Cannot import {mod} due to missing dependencies."
+            msg = f"Cannot import {module_path} due to missing dependencies."
             logger.warning(msg)
             return
         classes = inspect.getmembers(mod, inspect.isclass)
         node_name = None
         class_name = None
+        versions = None
         for name, cls in classes:
-            if mod.__name__ == cls.__module__:
+            if cls.__module__ == module_path:
                 try:
                     meta_info = cls.META_INFO
                 except AttributeError:
@@ -239,20 +251,22 @@ class UNodeManager(UserDict):
                 class_name = name
                 versions = meta_info.get("versions", None)
                 break
+        if node_name is None:
+            return
         if versions is not None:
             version_objects = sorted(
                 [Version(v["version"]) for v in versions],
                 reverse=True,
             )
             for n, v in enumerate(version_objects):
-                lookup[f"{node_name}:{v}"] = class_path_string, class_name
+                lookup[f"{node_name}:{v}"] = module_path, class_name
                 if n == 0 and meta_info.get("is_old", None) is None:
                     lookup[f"{node_name}:latest"] = (
-                        class_path_string,
+                        module_path,
                         class_name,
                     )
         else:
-            lookup[node_name] = class_path_string, class_name
+            lookup[node_name] = module_path, class_name
 
     def init_unode(self, unode: str) -> None:
         """Initialize a UNode and check its requirements.
