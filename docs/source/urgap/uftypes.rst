@@ -3,8 +3,6 @@
 UFtypes
 #######
 
-.. automodule:: urgap.uftypes
-
 Module Variables
 ================
 
@@ -33,6 +31,7 @@ Proteomics File Types
    Namespace for proteomics-related file types.
 
    .. py:attribute:: ANY
+      :no-index:
       :type: str
       :value: "proteomics.ANY"
 
@@ -51,6 +50,7 @@ Proteomics File Types
       Bruker D folder compressed as tar.gz.
 
    .. py:attribute:: FASTA
+      :no-index:
       :type: str
       :value: ".protein.faa"
 
@@ -74,6 +74,7 @@ Proteomics File Types
       Database search engine output formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "proteomics.dbsearch.ANY"
 
@@ -139,6 +140,7 @@ Proteomics File Types
       DIA-NN library formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "proteomics.diannlibrary.ANY"
 
@@ -173,6 +175,7 @@ Proteomics File Types
       Data conversion output formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "proteomics.converter.ANY"
 
@@ -185,6 +188,7 @@ Proteomics File Types
          pyMzML MGF output.
 
       .. py:attribute:: PYMZML_IDXGZ
+         :no-index:
          :type: str
          :value: ".pymzml_idx.gz"
 
@@ -202,6 +206,7 @@ Proteomics File Types
       Validation tool output formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "proteomics.validator.ANY"
 
@@ -225,6 +230,7 @@ Proteomics File Types
       Quantification tool output formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "proteomics.quantification.ANY"
 
@@ -260,6 +266,7 @@ Proteomics File Types
          Reporter ion-based quantification formats.
 
          .. py:attribute:: ANY
+            :no-index:
             :type: str
             :value: ".reporter_ions.ANY"
 
@@ -289,6 +296,7 @@ Proteomics File Types
       Quality control output formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "proteomics.qc.ANY"
 
@@ -309,6 +317,7 @@ Statistics File Types
    Namespace for statistical analysis file types.
 
    .. py:attribute:: ANY
+      :no-index:
       :type: str
       :value: "stats.ANY"
 
@@ -335,6 +344,7 @@ Plotter File Types
    Namespace for plotting and visualization output file types.
 
    .. py:attribute:: ANY
+      :no-index:
       :type: str
       :value: "plotter.ANY"
 
@@ -373,6 +383,7 @@ Generic File Types
    Namespace for generic file types.
 
    .. py:attribute:: ANY
+      :no-index:
       :type: str
       :value: "any.ANY"
 
@@ -569,6 +580,7 @@ Transcriptomics File Types
    Namespace for transcriptomics file types.
 
    .. py:attribute:: FASTA
+      :no-index:
       :type: str
       :value: ".transcriptomics.fa"
 
@@ -676,6 +688,7 @@ Transcriptomics File Types
       Sequencing reads formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "transcriptomics.reads.ANY"
 
@@ -767,6 +780,7 @@ Molecular Structure File Types
    Namespace for molecular structure file types.
 
    .. py:attribute:: ANY
+      :no-index:
       :type: str
       :value: "molecular_structure.ANY"
 
@@ -931,11 +945,13 @@ Mass Spectrometry File Types
       KEGG pathway map HTML.
 
    .. py:data:: converter
+      :no-index:
       :type: types.SimpleNamespace
 
       Mass spectrometry data conversion formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "ms.converter.ANY"
 
@@ -947,6 +963,7 @@ Mass Spectrometry File Types
          mzML conversion formats.
 
          .. py:attribute:: ANY
+            :no-index:
             :type: str
             :value: "ms.converter.mzml.ANY"
 
@@ -959,6 +976,7 @@ Mass Spectrometry File Types
             ThermoRawFileParser mzML output.
 
          .. py:attribute:: PYMZML_IDXGZ
+            :no-index:
             :type: str
             :value: ".pymzml_idx.gz"
 
@@ -985,6 +1003,7 @@ Flow Cytometry File Types
       Calibration FCS file.
 
    .. py:data:: qc
+      :no-index:
       :type: types.SimpleNamespace
 
       Quality control formats.
@@ -995,6 +1014,7 @@ Flow Cytometry File Types
          QC report formats.
 
          .. py:attribute:: ANY
+            :no-index:
             :type: str
             :value: "flow_cytometry.qc.reports.ANY"
 
@@ -1013,12 +1033,14 @@ Flow Cytometry File Types
             FlowAI report HTML.
 
          .. py:attribute:: PEACOQC_REPORT_TXT
+            :no-index:
             :type: str
             :value: ".peacoqc_report.txt"
 
             PeacoQC report text.
 
          .. py:attribute:: PEACOQC_REPORT_PNG
+            :no-index:
             :type: str
             :value: ".peacoqc_report.png"
 
@@ -1042,6 +1064,7 @@ Flow Cytometry File Types
          QC summary formats.
 
          .. py:attribute:: ANY
+            :no-index:
             :type: str
             :value: "flow_cytometry.qc.summary.ANY"
 
@@ -1060,12 +1083,14 @@ Flow Cytometry File Types
             FlowAI QC statistics JPG.
 
          .. py:attribute:: PEACOQC_REPORT_TXT
+            :no-index:
             :type: str
             :value: ".peacoqc_summary.txt"
 
             PeacoQC summary text.
 
          .. py:attribute:: PEACOQC_REPORT_PNG
+            :no-index:
             :type: str
             :value: ".peacoqc_summary.png"
 
@@ -1136,6 +1161,7 @@ Flow Cytometry File Types
       Gating strategy formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "flow_cytometry.gating_strategy.ANY"
 
@@ -1201,6 +1227,7 @@ Flow Cytometry File Types
          OMIQ gate boolean file.
 
    .. py:data:: stats
+      :no-index:
       :type: types.SimpleNamespace
 
       Statistics formats.
@@ -1264,6 +1291,7 @@ Experimental Design File Types
    Namespace for experimental design file types.
 
    .. py:attribute:: ANY
+      :no-index:
       :type: str
       :value: "exp_design.ANY"
 
@@ -1275,6 +1303,7 @@ Experimental Design File Types
       Assay-type specific input formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "exp_design.input.ANY"
 
@@ -1299,6 +1328,7 @@ Experimental Design File Types
          NGS metadata JSON.
 
       .. py:attribute:: TEST_METADATA_JSON
+         :no-index:
          :type: str
          :value: ".test_metadata.json"
 
@@ -1316,6 +1346,7 @@ Experimental Design File Types
       URGAP experimental design output formats.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: "exp_design.output.ANY"
 
@@ -1340,6 +1371,7 @@ Experimental Design File Types
          NGS metadata CSV.
 
       .. py:attribute:: TEST_METADATA_JSON
+         :no-index:
          :type: str
          :value: ".test_metadata.json"
 
@@ -1354,6 +1386,7 @@ Test File Types
    Namespace for internal test file types.
 
    .. py:attribute:: ANY
+      :no-index:
       :type: str
       :value: "test.ANY"
 
@@ -1395,6 +1428,7 @@ Test File Types
       Rumpel test subcategory.
 
       .. py:attribute:: ANY
+         :no-index:
          :type: str
          :value: ".test.rumpel.ANY"
 

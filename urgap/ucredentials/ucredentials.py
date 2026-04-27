@@ -88,7 +88,7 @@ class UCredentialManager:
         self._io = None
 
     @property
-    def io(self) -> urgap.ucredentials.io:
+    def io(self):
         """IO Property can be set with init_io_class()."""
         return self._io
 
@@ -97,7 +97,7 @@ class UCredentialManager:
         secret_store: str,
         secret_id: str,
         cloud_host_pid: str | None = None,
-    ) -> urgap.ucredentials.io:
+    ) :
         """Initialize the secret backend handler."""
         if secret_store not in self.available_io_classes:
             msg = (
