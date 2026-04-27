@@ -198,26 +198,14 @@ class UNodeManager(UserDict):
         for ns_name in ("urgap.unodes", "urgap.wrappers"):
             with contextlib.suppress(ModuleNotFoundError):
                 ns = importlib.import_module(ns_name)
-                for _finder, name, is_pkg in pkgutil.iter_modules(
+                for _finder, name, is_pkg in pkgutil.walk_packages(
                     ns.__path__,
                     prefix=ns_name + ".",
+                    onerror=lambda _n: None,
                 ):
-                    if name.rsplit(".", 1)[-1].startswith("_"):
+                    if is_pkg or name.rsplit(".", 1)[-1].startswith("_"):
                         continue
-                    if is_pkg:
-                        with contextlib.suppress(ImportError):
-                            subpkg = importlib.import_module(name)
-                            for _, mod_name, _ in pkgutil.iter_modules(
-                                subpkg.__path__,
-                                prefix=name + ".",
-                            ):
-                                if not mod_name.rsplit(".", 1)[-1].startswith("_"):
-                                    self._add_to_lookup(
-                                        lookup=lookup,
-                                        module_path=mod_name,
-                                    )
-                    else:
-                        self._add_to_lookup(lookup=lookup, module_path=name)
+                    self._add_to_lookup(lookup=lookup, module_path=name)
         return lookup
 
     def _add_to_lookup(
