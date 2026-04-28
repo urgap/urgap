@@ -5,6 +5,40 @@ import types
 unknown = types.SimpleNamespace()
 unknown.UNKNOWN = ".unknown"
 
+# Urgap test =====================================================================
+test = types.SimpleNamespace()
+test.ANY = "test.ANY"
+test.TEST_FILE1 = ".test.test_file1"
+test.TEST_FILE2 = ".test.test_file2"
+test.TEST_FILE3 = ".test.test_file3"
+test.TEST_FILE4 = ".test.test_file4"
+test.MITSURUGI = ".test.mitsurugi"
+
+# Another subcategory
+test.rumpel = types.SimpleNamespace()
+test.rumpel.ANY = ".test.rumpel.ANY"
+test.rumpel.MORE = ".test.more"
+test.rumpel.EVENMORE = ".test.evenmore"
+
+# Filetype =======================================================================
+any = types.SimpleNamespace()
+any.ANY = "any.ANY"
+any.CSV = ".any.csv"
+any.DAT = ".any.dat"
+any.FAA = ".any.faa"
+any.MGF = ".any.mgf"
+any.MZID = ".any.mzid"
+any.MZML = ".any.mzml"
+any.PDF = ".any.pdf"
+any.RAW = ".any.raw"
+any.SVG = ".any.svg"
+any.TSV = ".any.tsv"
+any.XML = ".any.xml"
+any.TABULAR = ".any.tabular"
+any.TXT = ".any.txt"
+any.PARQUET = ".any.parquet"
+any.XLSX = ".any.xlsx"
+
 # Proteomics====================================================================
 proteomics = types.SimpleNamespace()
 proteomics.ANY = "proteomics.ANY"
@@ -91,25 +125,6 @@ plotter.VENN_RESULTS_SVG = ".venn_results.svg"
 plotter.UMAP_PDF = ".umap.pdf"
 plotter.PLOTLY_HTML = ".plotly.html"
 
-# Filetype =======================================================================
-any = types.SimpleNamespace()
-any.ANY = "any.ANY"
-any.CSV = ".any.csv"
-any.DAT = ".any.dat"
-any.FAA = ".any.faa"
-any.MGF = ".any.mgf"
-any.MZID = ".any.mzid"
-any.MZML = ".any.mzml"
-any.PDF = ".any.pdf"
-any.RAW = ".any.raw"
-any.SVG = ".any.svg"
-any.TSV = ".any.tsv"
-any.XML = ".any.xml"
-any.TABULAR = ".any.tabular"
-any.TXT = ".any.txt"
-any.PARQUET = ".any.parquet"
-any.XLSX = ".any.xlsx"
-
 # Metabolomics==================================================================
 mx = types.SimpleNamespace()
 mx.REF_MASS_CSV = ".ref_mass.csv"
@@ -190,64 +205,6 @@ ms.IONS_CSV = ".ions.csv"
 ms.IONS_DRIFT_CORRECTED_CSV = ".ions_drift_corrected.csv"
 ms.KEGG_MAP_HTML = ".kegg_map.html"
 
-# Flow Cytometry================================================================
-flow_cytometry = types.SimpleNamespace()
-flow_cytometry.FCS = ".flow_cytometry.fcs"
-flow_cytometry.CALIBRATION_FCS = ".flow_cytometry.calibration_fcs"
-
-flow_cytometry.qc = types.SimpleNamespace()
-
-flow_cytometry.qc.reports = types.SimpleNamespace()
-flow_cytometry.qc.reports.ANY = "flow_cytometry.qc.reports.ANY"
-flow_cytometry.qc.reports.FLOWAI_QCMINI_TXT = ".flowai_qcmini.txt"
-flow_cytometry.qc.reports.FLOWAI_REPORT_HTML = ".flowai_report.html"
-flow_cytometry.qc.reports.PEACOQC_REPORT_TXT = ".peacoqc_report.txt"
-flow_cytometry.qc.reports.PEACOQC_REPORT_PNG = ".peacoqc_report.png"
-flow_cytometry.qc.reports.FLOWCUT_REPORT_TXT = ".flowcut_report.txt"
-flow_cytometry.qc.reports.FLOWCUT_REPORT_PNG = ".flowcut_report.png"
-
-flow_cytometry.qc.summary = types.SimpleNamespace()
-flow_cytometry.qc.summary.ANY = "flow_cytometry.qc.summary.ANY"
-flow_cytometry.qc.summary.FLOWAI_QCSTATS_XLSX = ".flowai_qc_stats.xlsx"
-flow_cytometry.qc.summary.FLOWAI_QCSTATS_JPG = ".flowai_qc_stats.jpg"
-flow_cytometry.qc.summary.PEACOQC_REPORT_TXT = ".peacoqc_summary.txt"
-flow_cytometry.qc.summary.PEACOQC_REPORT_PNG = ".peacoqc_summary.png"
-flow_cytometry.qc.summary.FLOWCUT_QCSTATS_XLSX = ".flowcut_qc_stats.xlsx"
-flow_cytometry.qc.summary.FLOWCUT_QCSTATS_JPG = ".flowcut_qc_stats.jpg"
-flow_cytometry.qc.summary.ROUTINE_GATING_STATS_XLSX = ".routine_gating_summary.xlsx"
-flow_cytometry.qc.summary.ROUTINE_GATING_STATS_JPG = ".routine_gating_summary.jpg"
-
-flow_cytometry.qc.gating = types.SimpleNamespace()
-flow_cytometry.qc.gating.CYTOCLUSTER_STRAT_CSV = ".cytocluster_gating_strat.csv"
-flow_cytometry.qc.gating.CYTOCLUSTER_STATS_TSV = ".cytocluster_gating_stats.tsv"
-flow_cytometry.qc.gating.CYTOCLUSTER_JPG = ".cytocluster_gating.jpg"
-flow_cytometry.qc.gating.CYTOCLUSTER_MARKER_EXPRESSION_HTML = (
-    ".cytocluster_marker_expression.html"
-)
-flow_cytometry.qc.gating.CYTOCLUSTER_MARKER_EXPRESSION_TSV = (
-    ".cytocluster_marker_expression.tsv"
-)
-flow_cytometry.gating_strategy = types.SimpleNamespace()
-flow_cytometry.gating_strategy.ANY = "flow_cytometry.gating_strategy.ANY"
-flow_cytometry.gating_strategy.FLOWJO_WSP = ".flowjo.wsp"
-flow_cytometry.gating_strategy.CYTOBANK_XML = ".cytobank.xml"
-flow_cytometry.gating_strategy.OMIQ_GFILE = ".omiq.gfile"
-
-flow_cytometry.meta = types.SimpleNamespace()
-flow_cytometry.meta.FPREPPY_EXP_METADATA_XLSX = ".fpreppy_exp_metadata.xlsx"
-flow_cytometry.meta.FPREPPY_PLATE_METADATA_CSV = ".fpreppy_plate_metadata.csv"
-flow_cytometry.meta.MARKER_MAPPING_JSON = ".flow_marker_mapping.json"
-flow_cytometry.meta.GATE_MAPPING_JSON = ".flow_gate_mapping.json"
-flow_cytometry.meta.ADDITONAL_MAPPING_JSON = ".flow_additional_mapping.json"
-flow_cytometry.meta.OMIQ_GATE_BOOLEAN_FILE = ".omiq.gatebooleanfile"
-
-flow_cytometry.stats = types.SimpleNamespace()
-flow_cytometry.stats.STATS_CSV = ".fc_stats.csv"
-flow_cytometry.stats.STATS_PARQUET = ".fc_stats.parquet"
-flow_cytometry.stats.GATING_TREE = ".fc_gating_tree.txt"
-flow_cytometry.stats.FREQS_CSV = ".fc_freqs.csv"
-
-
 # Data Conversion===============================================================
 ms.converter = types.SimpleNamespace()
 ms.converter.ANY = "ms.converter.ANY"
@@ -283,55 +240,6 @@ exp_design.output.PX_METADATA_CSV = ".px_metadata.csv"
 exp_design.output.NGS_METADATA_CSV = ".ngs_metadata.csv"
 exp_design.output.TEST_METADATA_JSON = ".test_metadata.json"
 
-# TCS Parser===================================================================
-tcsparser = types.SimpleNamespace()
-tcsparser.metadata = types.SimpleNamespace()
-tcsparser.metadata.ANY = "tcsparser.metadata.ANY"
-tcsparser.metadata.JSON = ".metadata.json"
-tcsparser.config = types.SimpleNamespace()
-tcsparser.config.ANY = "tcsparser.config.ANY"
-tcsparser.config.CONFIG = ".config.config"
-tcsparser.asmconfig = types.SimpleNamespace()
-tcsparser.asmconfig.JSON = ".asmconfig.json"
-tcsparser.asmconfig.XLSX = ".asmconfig.xlsx"
-tcsparser.mapping = types.SimpleNamespace()
-tcsparser.mapping.ANY = "tcsparser.mapping.ANY"
-tcsparser.mapping.YAML = ".mapping.yaml"
-tcsparser.input = types.SimpleNamespace()
-tcsparser.input.ANY = "tcsparser.input.ANY"
-tcsparser.input.QUANTSTUDIO_TXT = ".quantstudio.txt"
-tcsparser.input.VICELL_TXT = ".vicell.txt"
-tcsparser.input.VICELL_CSV = ".vicell.csv"
-tcsparser.input.VICELLBLU_TXT = ".vicellblu.txt"
-tcsparser.input.VICELLBLU_CSV = ".vicellblu.csv"
-tcsparser.input.NUCLEOCOUNTER_CSV = ".nucleocounter.csv"
-tcsparser.input.CEDEX_TXT = ".cedex.txt"
-tcsparser.input.CEDEX_LOG = ".cedex.log"
-tcsparser.input.ENVISION_CSV = ".envision.csv"
-tcsparser.input.OCTET_XLS = ".octet.xlsx"
-tcsparser.input.VICELL_XR_XLSX = ".vicellxr.xlsx"
-tcsparser.input.VICELL_XR_TXT = ".vicellxr.txt"
-tcsparser.input.NOVA_CSV = ".nova.csv"
-tcsparser.output = types.SimpleNamespace()
-tcsparser.output.ASM_JSON = ".tcs_asm_output.json"
-tcsparser.output.PARSER_PARQUET = ".tcs_parser_output.parquet"
-tcsparser.output.RESULT_PARQUET = ".tcs_result_output.parquet"
-
-# Urgap internal===============================================================
-test = types.SimpleNamespace()
-test.ANY = "test.ANY"
-test.TEST_FILE1 = ".test.test_file1"
-test.TEST_FILE2 = ".test.test_file2"
-test.TEST_FILE3 = ".test.test_file3"
-test.TEST_FILE4 = ".test.test_file4"
-test.MITSURUGI = ".test.mitsurugi"
-
-# Another subcategory
-test.rumpel = types.SimpleNamespace()
-test.rumpel.ANY = ".test.rumpel.ANY"
-test.rumpel.MORE = ".test.more"
-test.rumpel.EVENMORE = ".test.evenmore"
-
 # Genomics=====================================================================
 genomics = types.SimpleNamespace()
 genomics.ANY = "genomics.ANY"
@@ -364,5 +272,3 @@ genomics.plink.SAMPLE_MISSING = ".plink.smiss"
 genomics.plink.HET = ".plink.het"
 genomics.plink.ASSOC = ".plink.assoc"
 genomics.plink.LOG = ".plink.log"
-
-# # Generalized ends

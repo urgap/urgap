@@ -20,7 +20,7 @@ class UTreeQuerier:
         graph: nx.DiGraph | None = None,
         parent_node: str | None = None,
     ) -> None:
-        """Build a directed graph from a file providing namespacing.
+        """Build a directed graph from a file providing namespacing, merging uftypes_addon if present.
 
         Args:
             namespace: Provides the namespace which is basis for the edges.
@@ -36,6 +36,12 @@ class UTreeQuerier:
             namespace = urgap.uftypes
         if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
+        try:
+            import urgap.uftypes_addon
+
+            namespace.update(urgap.uftypes_addon.__dict__)
+        except ImportError:
+            pass
         if graph is None:
             graph = nx.DiGraph()
             graph.add_node("ANY", ext=".ANY")
