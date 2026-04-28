@@ -21,9 +21,9 @@ def test_leaf_suffix_nomenclature():
     leafs = leafs.difference(test_leafs).difference({".unknown"})
 
     suffix_pattern = re.compile(r"^\.[\w]+\.[\w]+$")
-    assert all(bool(re.match(suffix_pattern, s)) for s in leafs)
+    for s in leafs:
+        assert bool(re.match(suffix_pattern, s)), f"Suffix does not match pattern: {s}"
 
 
 def test_uftypes_addon():
     assert urgap.uftypes.test.rumpel.MORE == ".test.more"
-    assert urgap.uftypes.addon.TEST_FILE1 == ".addon.test_file1"

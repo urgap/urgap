@@ -55,7 +55,9 @@ class UTreeQuerier:
             if ispkg:
                 continue
             mod = importlib.import_module(f"{pkg_name}.{modname}")
-            ns_dict = {k: v for k, v in vars(mod).items() if not k.startswith("_")}
+            ns_dict.update(
+                {k: v for k, v in vars(mod).items() if not k.startswith("_")},
+            )
         return ns_dict
 
     def _walk_tree(
