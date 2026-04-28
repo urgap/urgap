@@ -1,6 +1,8 @@
 """UTreeQuerier module of urgap."""
 
 import types
+import importlib
+import pkgutil
 
 import networkx as nx
 import networkx.classes.digraph
@@ -33,15 +35,9 @@ class UTreeQuerier:
                 - python -c "import urgap; print(urgap.instances.utree_querier.get_subgraph('dbsearch.ANY').nodes(data=True))"
         """
         if namespace is None:
-            namespace = urgap.uftypes  # noqa: F823
+            namespace = self._load_namespaces_from_pkg('urgap.uftypes')
         if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
-        try:
-            import urgap.uftypes_addon
-
-            namespace.update(urgap.uftypes_addon.__dict__)
-        except ImportError:
-            pass
         if graph is None:
             graph = nx.DiGraph()
             graph.add_node("ANY", ext=".ANY")
@@ -50,6 +46,19 @@ class UTreeQuerier:
         self.G = self._walk_tree(namespace, graph=graph, parent_node=parent_node)
         self.G = self._connect_general_types(self.G)
         self.G = self._connect_tabular_types(self.G)
+
+    def _load_namespaces_from_pkg(self, pkg_name: str) -> dict:
+        """Dynamically import all modules in a package and return their public attributes as a dict."""
+        pkg = importlib.import_module(pkg_name)
+        ns_dict = {}
+        for _, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
+            if ispkg:
+                continue
+            mod = importlib.import_module(f"{pkg_name}.{modname}")
+            for k, v in vars(mod).items():
+                if not k.startswith("_"):
+                    ns_dict[k] = v
+        return ns_dict
 
     def _walk_tree(
         self,
