@@ -23,6 +23,7 @@ def test_leaf_suffix_nomenclature():
     suffix_pattern = re.compile(r"^\.[\w]+\.[\w]+$")
     assert all(bool(re.match(suffix_pattern, s)) for s in leafs)
 
+
 def test_uftypes_addon():
     assert urgap.uftypes.test.rumpel.MORE == ".test.more"
     assert urgap.uftypes.addon.TEST_FILE1 == ".addon.test_file1"

@@ -33,7 +33,7 @@ class UTreeQuerier:
                 - python -c "import urgap; print(urgap.instances.utree_querier.get_subgraph('dbsearch.ANY').nodes(data=True))"
         """
         if namespace is None:
-            namespace = urgap.uftypes
+            namespace = urgap.uftypes  # noqa: F823
         if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
         try:
