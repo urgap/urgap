@@ -17,4 +17,3 @@ exp_design.output.UTMX_METADATA_CSV = ".utmx_metadata.csv"
 exp_design.output.PX_METADATA_CSV = ".px_metadata.csv"
 exp_design.output.NGS_METADATA_CSV = ".ngs_metadata.csv"
 exp_design.output.TEST_METADATA_JSON = ".test_metadata.json"
-

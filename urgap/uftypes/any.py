@@ -17,4 +17,3 @@ any.TABULAR = ".any.tabular"
 any.TXT = ".any.txt"
 any.PARQUET = ".any.parquet"
 any.XLSX = ".any.xlsx"
-

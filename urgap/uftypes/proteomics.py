@@ -59,4 +59,3 @@ proteomics.quantification.reporter_ions.S2I_CORRECTED_REPORTER_IONS = (
 proteomics.qc = types.SimpleNamespace()
 proteomics.qc.ANY = "proteomics.qc.ANY"
 proteomics.qc.OFFSET_CSV = ".offset.csv"
-

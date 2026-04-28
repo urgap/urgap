@@ -1,8 +1,8 @@
 """UTreeQuerier module of urgap."""
 
-import types
 import importlib
 import pkgutil
+import types
 
 import networkx as nx
 import networkx.classes.digraph
@@ -35,7 +35,7 @@ class UTreeQuerier:
                 - python -c "import urgap; print(urgap.instances.utree_querier.get_subgraph('dbsearch.ANY').nodes(data=True))"
         """
         if namespace is None:
-            namespace = self._load_namespaces_from_pkg('urgap.uftypes')
+            namespace = self._load_namespaces_from_pkg("urgap.uftypes")
         if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
         if graph is None:
@@ -55,9 +55,7 @@ class UTreeQuerier:
             if ispkg:
                 continue
             mod = importlib.import_module(f"{pkg_name}.{modname}")
-            for k, v in vars(mod).items():
-                if not k.startswith("_"):
-                    ns_dict[k] = v
+            ns_dict = {k: v for k, v in vars(mod).items() if not k.startswith("_")}
         return ns_dict
 
     def _walk_tree(

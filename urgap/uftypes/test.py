@@ -12,4 +12,3 @@ test.rumpel = types.SimpleNamespace()
 test.rumpel.ANY = ".test.rumpel.ANY"
 test.rumpel.MORE = ".test.more"
 test.rumpel.EVENMORE = ".test.evenmore"
-

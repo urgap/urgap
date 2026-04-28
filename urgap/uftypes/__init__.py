@@ -1,20 +1,16 @@
-# __init__.py for urgap.uftypes
-# This file imports all namespace modules for uftypes
+import importlib
+import logging
+import pkgutil
 
-from .unknown import unknown
-from .test import test
-from .any import any
-from .proteomics import proteomics
-from .stats import stats
-from .plotter import plotter
-from .mx import mx
-from .transcriptomics import transcriptomics
-from .ms import ms
-from .compression import compression
-from .exp_design import exp_design
-from .genomics import genomics
+logger = logging.getLogger(__name__)
 
-__all__ = [
-    "unknown", "test", "any", "proteomics", "stats", "plotter", "mx", "transcriptomics", "ms", "compression", "exp_design", "genomics"
-]
 
+__all__ = []
+
+for _, modname, ispkg in pkgutil.iter_modules(__path__):
+    if ispkg:
+        continue
+    mod = importlib.import_module(f"{__name__}.{modname}")
+    globals()[modname] = getattr(mod, modname)
+    __all__.append(modname)
+    logger.debug(f"imported uftype {modname}")

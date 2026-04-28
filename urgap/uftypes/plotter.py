@@ -8,4 +8,3 @@ plotter.VENN_RESULTS_CSV = ".venn_results.csv"
 plotter.VENN_RESULTS_SVG = ".venn_results.svg"
 plotter.UMAP_PDF = ".umap.pdf"
 plotter.PLOTLY_HTML = ".plotly.html"
-

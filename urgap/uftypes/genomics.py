@@ -22,4 +22,3 @@ genomics.plink.SAMPLE_MISSING = ".plink.smiss"
 genomics.plink.HET = ".plink.het"
 genomics.plink.ASSOC = ".plink.assoc"
 genomics.plink.LOG = ".plink.log"
-
