@@ -13,8 +13,6 @@ API Documentation
    urgap/uctl
    urgap/ufile
    urgap/ufile_list
-   urgap/uftypes
-   urgap/uftypes_addon
    urgap/uhelpers
    urgap/uinit
    urgap/umeta
