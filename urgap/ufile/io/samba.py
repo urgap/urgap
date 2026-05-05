@@ -1,4 +1,4 @@
-"""FTP scheme subclass of urgap2's UIO submodule."""
+"""FTP scheme subclass of urgap's UIO submodule."""
 
 import json
 import logging
@@ -23,6 +23,8 @@ class IOSMB(UIOBase):
 
     Handles interaction with remote SMB shares for reading, writing, and listing files and metadata.
     """
+
+    SCHEMA = "smb"
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing smb scheme.
