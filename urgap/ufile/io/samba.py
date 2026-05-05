@@ -1,4 +1,4 @@
-"""FTP scheme subclass of urgap's UIO submodule."""
+"""FTP scheme subclass of urgap2's UIO submodule."""
 
 import json
 import logging
@@ -23,8 +23,6 @@ class IOSMB(UIOBase):
 
     Handles interaction with remote SMB shares for reading, writing, and listing files and metadata.
     """
-
-    SCHEMA = "smb"
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing smb scheme.
@@ -219,12 +217,14 @@ class IOSMB(UIOBase):
                     self._get_files_recursively(subpath=subpath + "/" + obj.filename),
                 )
             else:
-                smb_objects.append(subpath + "/" + obj.filename)
+                uri = f"{self.uuri.storage_uri}?last_modified={obj.last_write_time}#{subpath}/{obj.filename}"
+                smb_objects.append(uri)
         return smb_objects
 
     def list_container_items(
         self,
         pattern: str | None = None,
+        limit: int | None = None,
         subpath: str | None = None,
         full_string: bool = False,
     ) -> list:
@@ -236,23 +236,27 @@ class IOSMB(UIOBase):
             pattern: Regex pattern for filtering filenames.
             subpath: Folder path on the SMB share to list objects in.
             full_string: Whether to return the list with full strings or just fragments.
+            limit: Optional maximum number of objects to return.
 
         Returns:
             List of object names matching the filter.
         """
-        if full_string is True:
-            container_objects = self.add_storage_uri_to_container_items(
-                self._get_files_recursively(subpath=subpath),
-            )
-        else:
+        container_objects = self._get_files_recursively(subpath=subpath)
+        if pattern is not None:
+            container_objects = [
+                f
+                for f in container_objects
+                if re.search(pattern, f.split("#", 1)[1].rsplit("/", 1)[-1]) is not None
+            ]
+        if limit is not None and len(container_objects) > limit:
+            msg = f"Number of container objects ({len(container_objects)}) exceeds the specified limit ({limit}). Returning only the first {limit} objects."
+            logger.warning(msg)
+            container_objects = container_objects[:limit]
+        if full_string is False:
             logger.warning(
                 "DeprecationWarning: list_container_items with full_string=False will be deprecated soon, use full_string=True instead.",
             )
-            container_objects = self._get_files_recursively(subpath=subpath)
-        if pattern is not None:
-            container_objects = [
-                f for f in container_objects if re.search(pattern, f) is not None
-            ]
+
         return container_objects
 
     def _create_fragment_directory(self) -> None:
