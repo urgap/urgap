@@ -17,7 +17,7 @@ class PymzMLToIDXGZ(urgap.unode.UNodeBase):
             {
                 "version": "2.6.0",
                 "exe_path": "MsDataConversion/PymzMLToIDXGZ/2_6_0/pymzml2idxgz.py",
-            }
+            },
         ],
         "parameters_not_triggering_rerun": [],
         "engine_type": ("converter", "proteomics"),
@@ -26,7 +26,7 @@ class PymzMLToIDXGZ(urgap.unode.UNodeBase):
             urgap.uftypes.ms.converter.mzml.THERMORAWPARSER_MZML: {
                 "min": 1,
                 "max": 1,
-            }
+            },
         },
         "output_uftypes": {
             urgap.uftypes.ms.converter.mzml.PYMZML_IDXGZ: {"min": 1, "max": 1},
@@ -38,7 +38,7 @@ class PymzMLToIDXGZ(urgap.unode.UNodeBase):
         "input_extensions": [".mzML"],
     }
 
-    def __init__(self, *args: str, **kwargs: str):
+    def __init__(self, *args: str, **kwargs: str) -> None:
         """Initialize PymzMLToIDXGZ class."""
         super().__init__(*args, **kwargs)
 
@@ -57,10 +57,10 @@ class PymzMLToIDXGZ(urgap.unode.UNodeBase):
             UTrace object, combination of urun_dict, ufile_list and unode.meta.
         """
         mzml_file = utrace.input_files.get_path_objects_by_uftype(
-            urgap.uftypes.ms.converter.mzml.THERMORAWPARSER_MZML
+            urgap.uftypes.ms.converter.mzml.THERMORAWPARSER_MZML,
         )[0]
         idxgz_file = utrace.output_files.get_path_objects_by_uftype(
-            urgap.uftypes.ms.converter.mzml.PYMZML_IDXGZ
+            urgap.uftypes.ms.converter.mzml.PYMZML_IDXGZ,
         )[0]
 
         utrace.urun_dict.command_list = [
