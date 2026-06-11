@@ -25,7 +25,7 @@ jobs:
           go install github.com/google/yamlfmt/cmd/yamlfmt@latest
       - name: Run ruff
         run: |
-          ruff check . --exclude urgap/wrappers,urgap/ext,urgap/uftypes.py,tests,docs,urgap/uctl/mcp
+          ruff check . --exclude urgap/wrappers,urgap/ext,urgap/uftypes,tests,docs,urgap/uctl/mcp
       - name: Run yamlfmt
         run: |
           export PATH="$HOME/go/bin:$PATH"

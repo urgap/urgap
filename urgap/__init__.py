@@ -106,7 +106,7 @@ urgap.instances.ufile_io_manager = urgap.UFileIOManager()
 urgap.instances.ucredential_manager = urgap.UCredentialManager()
 urgap.instances.utelemetry_manager = urgap.UTelemetry()
 urgap.utl = urgap.instances.utelemetry_manager
-urgap.instances.utree_querier = urgap.utree.UTreeQuerier(namespace=urgap.uftypes)
+urgap.instances.utree_querier = urgap.utree.UTreeQuerier()
 
 urgap.init_node = urgap.instances.unode_manager.init_unode
 urgap.init_unode = urgap.instances.unode_manager.init_unode
