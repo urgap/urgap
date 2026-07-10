@@ -14,6 +14,7 @@ from collections import defaultdict as ddict
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+from urllib.parse import quote
 
 import networkx as nx
 
@@ -569,7 +570,7 @@ class UTrace:
         uf = self.output_files[output_file_index]
         shutil.move(src=file, dst=uf.path)
         if keep_original_name is True:
-            uf.tags.update({"original_name": str(file)})
+            uf.tags.update({"original_name": quote(str(file))})
 
     def _query_remote_by_uftype(self) -> dict:
         """Query remote files by uftype.
