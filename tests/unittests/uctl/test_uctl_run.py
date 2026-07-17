@@ -23,8 +23,8 @@ runner = CliRunner()
 
 
 def test_homepage():
-    run_module.app.config["data"] = ["foo"]
-    with run_module.app.test_client() as client:
+    app = run_module.create_dashboard_app(data=["foo"])
+    with app.test_client() as client:
         resp = client.get("/")
         assert resp.status_code == 200
         assert b"dashboard" in resp.data
@@ -77,7 +77,6 @@ def test_get_all_relevant_nodes():
 
 
 def test_run_unode_in_loop(tmp_dir):
-    from urgap.uctl.run import run_unode_in_loop
 
     ufiles = urgap.UFileList(
         [
@@ -120,7 +119,9 @@ def test_run_unode_in_loop(tmp_dir):
 def test_umeta_generate_connection_string(monkeypatch):
     # Patch the config dict key
     monkeypatch.setitem(
-        urgap.config, "umeta-gcpsql-url", "postgresql+pg8000://host:5432"
+        urgap.config,
+        "umeta-gcpsql-url",
+        "postgresql+pg8000://host:5432",
     )
 
     # Patch extract_credentials
@@ -163,7 +164,11 @@ def test_send_signal_to_pid_with_sigterm(mock_os_killpg, mock_os_getpgrp):
 @patch("urgap.uctl.run.os.getpgrp")
 @patch("urgap.uctl.run.os.killpg")
 def test_send_signal_to_pid_handles_oserror_with_fallback(
-    mock_os_killpg, mock_os_getpgrp, mock_os_kill, mock_os_getpid, caplog
+    mock_os_killpg,
+    mock_os_getpgrp,
+    mock_os_kill,
+    mock_os_getpid,
+    caplog,
 ):
     """Test that send_signal_to_pid falls back to current process on OSError."""
     mock_os_getpgrp.return_value = 12345
@@ -194,7 +199,11 @@ def test_send_signal_to_pid_default_signal(mock_os_killpg, mock_os_getpgrp):
 @patch("urgap.uctl.run.os.getpgrp")
 @patch("urgap.uctl.run.os.killpg")
 def test_send_signal_to_pid_both_fail(
-    mock_os_killpg, mock_os_getpgrp, mock_os_kill, mock_os_getpid, caplog
+    mock_os_killpg,
+    mock_os_getpgrp,
+    mock_os_kill,
+    mock_os_getpid,
+    caplog,
 ):
     """Test that send_signal_to_pid handles both process group and fallback failures."""
     mock_os_getpgrp.return_value = 12345

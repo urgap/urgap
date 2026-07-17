@@ -1,7 +1,5 @@
 """Urgap FilterTabularToCSV wrapper."""
 
-import pandas as pd
-
 import urgap
 
 
@@ -133,6 +131,7 @@ class FilterTabularToCSV(urgap.unode.UNodeBase):
             ]
             potentially pydantic or similar
         """
+        import pandas as pd
         import plotly.graph_objs as go
 
         from plotly import offline

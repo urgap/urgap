@@ -16,18 +16,17 @@ from concurrent.futures import ProcessPoolExecutor
 from multiprocessing.synchronize import Event as EventClass
 from pathlib import Path
 from types import FrameType
+from typing import TYPE_CHECKING
 
 import click
-import uvicorn
-
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from flask import Flask, render_template
-from flask_wtf.csrf import CSRFProtect
 
 import urgap
 
 from urgap.util import sort_versions
+
+if TYPE_CHECKING:
+    from fastapi import FastAPI
+    from flask import Flask
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +65,7 @@ def run_unode_in_loop(payload: dict, name: str) -> list:
     return [o.as_uri() for o in output_files]
 
 
-def create_app(name: str) -> FastAPI:
+def create_app(name: str) -> "FastAPI":
     """Create FastAPI app with /v1/run and /v1/terminate endpoints.
 
     Args:
@@ -75,6 +74,9 @@ def create_app(name: str) -> FastAPI:
     Returns:
         FastAPI application instance.
     """
+    from fastapi import FastAPI, Request
+    from fastapi.responses import JSONResponse
+
     app = FastAPI(title=name)
     app.state.name = name
 
@@ -139,6 +141,8 @@ def run_server(
         port: Port number to serve on.
         shutdown_event: multiprocessing.Event used to trigger shutdown.
     """
+    import uvicorn
+
     app = create_app(name)
     app.state.shutdown_event = shutdown_event
     app.state.executor = ProcessPoolExecutor()
@@ -658,31 +662,50 @@ urgap_server = Path(__file__).parent / "server"
 urgap_server_static = urgap_server / "static"
 urgap_server_templates = urgap_server / "templates"
 
-app = Flask(
-    __name__,
-    static_folder=urgap_server_static,
-    template_folder=urgap_server_templates,
-)
-csrf = CSRFProtect()
-csrf.init_app(app)
 
+def create_dashboard_app(data: list | None = None) -> "Flask":
+    """Create the dashboard Flask application.
 
-@app.route("/")
-def homepage() -> str:
-    """Homepage of the dashboard.
+    Args:
+        data: Report data to expose on the dashboard homepage.
 
-    Returns the dashboard base info page.
+    Returns:
+        Configured Flask application instance.
     """
-    with app.app_context():
-        return render_template(
-            "dashboard.html",
-            version="0.7.0",
-            data=app.config["data"],
-        )
+    from flask import Flask, render_template
+    from flask_wtf.csrf import CSRFProtect
+
+    app = Flask(
+        __name__,
+        static_folder=urgap_server_static,
+        template_folder=urgap_server_templates,
+    )
+    app.config["data"] = [] if data is None else data
+    csrf = CSRFProtect()
+    csrf.init_app(app)
+
+    @app.route("/")
+    def homepage() -> str:
+        """Homepage of the dashboard.
+
+        Returns the dashboard base info page.
+        """
+        with app.app_context():
+            return render_template(
+                "dashboard.html",
+                version="0.7.0",
+                data=app.config["data"],
+            )
+
+    return app
 
 
-def launch_dashboard() -> None:
-    """Launch the dashboard and open in a web browser."""
+def launch_dashboard(app: "Flask") -> None:
+    """Launch the dashboard and open in a web browser.
+
+    Args:
+        app: The Flask application to serve.
+    """
     if not os.environ.get("WERKZEUG_RUN_MAIN"):
         webbrowser.open_new("http://127.0.0.1:2000/")
     app.run(host="127.0.0.1", port=2000)
@@ -697,10 +720,9 @@ def dashboard() -> None:
 @click.argument("wid")
 def dashboard_wid_click(wid: str) -> None:
     """Show dashboard for a given workflow ID (wid)."""
-    app.config["data"] = []
     ur = urgap.UReport(wid=wid)
-    app.config["data"] = ur.generate_report()
-    launch_dashboard()
+    app = create_dashboard_app(data=ur.generate_report())
+    launch_dashboard(app)
 
 
 @click.command()

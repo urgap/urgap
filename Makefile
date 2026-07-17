@@ -64,22 +64,23 @@ new-unode:
 
 tests:
 	@echo "Running Unittests using pytest"
-	pytest tests
+	uv run --extra dev pytest tests
 
 zip-exes:
 	@echo "Creating new zip files and calculating md5s for new exes"
 	@echo "----[to be implemented ]----"
 
 black:
-	black --line-length 88 --exclude '(urgap/wrapper_template/|.tox)' .
+	uv run --extra dev black --line-length 88 --exclude '(urgap/wrapper_template/|.tox)' .
 
 
-AUTO_GEN1 = /usr/bin/env python3 parse_example_scripts.py
-AUTO_GEN2 = /usr/bin/env python3 parse_third_party.py
+UV_DOCS = uv run --extra docs --extra cloud
+AUTO_GEN1 = $(UV_DOCS) python3 parse_example_scripts.py
+AUTO_GEN2 = $(UV_DOCS) python3 parse_third_party.py
 # You can set these variables from the command line.
 # from the environment for the first two.
 SPHINXOPTS    ?=
-SPHINXBUILD   ?= cd docs;$(AUTO_GEN1);$(AUTO_GEN2);sphinx-build
+SPHINXBUILD   ?= cd docs;$(AUTO_GEN1);$(AUTO_GEN2);$(UV_DOCS) sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
 

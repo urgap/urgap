@@ -2,7 +2,7 @@ import json
 from mcp.client.streamable_http import streamable_http_client
 from mcp.client.session import ClientSession
 import pytest
-import httpx
+import httpx2
 
 import urgap
 
@@ -13,7 +13,7 @@ MCP_PORT = 41998
 @pytest.mark.parametrize("provide_mcp_tools_server", [MCP_PORT], indirect=True)
 async def test_urgap_tools_mcp_server(provide_mcp_tools_server):
     url = f"http://localhost:{MCP_PORT}/mcp"
-    async with httpx.AsyncClient() as http_client:
+    async with httpx2.AsyncClient() as http_client:
         async with streamable_http_client(url, http_client=http_client) as (
             read,
             write,
