@@ -14,18 +14,17 @@ USER nonroot
 
 # Add Urgap repo
 WORKDIR /home/urgap
+COPY --chown=nonroot:nonroot pyproject.toml uv.lock ./
 COPY dist/urgap-*.whl /tmp/
-COPY pyproject.toml uv.lock /tmp/urgap-src/
 
-# Install dependencies using uv
-RUN uv venv urgap
-ENV PATH="/home/urgap/urgap/bin:$PATH"
-# Install the locked dependency set (reproducible), then the built wheel with
-# --no-deps so the versioningit-stamped wheel is used without re-resolving deps.
-RUN uv export --frozen --all-extras --no-emit-project --no-hashes \
-      --project /tmp/urgap-src -o /tmp/requirements.txt && \
-    uv pip install -r /tmp/requirements.txt --no-cache-dir && \
-    uv pip install --no-deps --no-cache-dir $(find /tmp -name 'urgap-*.whl')
+# Install the locked dependency set into .venv with `uv sync` (dependencies only,
+# --no-install-project), then add the pre-built, versioningit-stamped wheel with
+# --no-deps. Build the wheel beforehand with `uv build` (lands in dist/urgap-*.whl).
+ENV UV_NO_CACHE=1
+ENV VIRTUAL_ENV=/home/urgap/.venv
+ENV PATH="/home/urgap/.venv/bin:$PATH"
+RUN uv sync --frozen --all-extras --no-install-project
+RUN uv pip install --no-deps /tmp/urgap-*.whl
 
 # Run checks
 RUN python -c "import urgap; print(urgap.config)"
