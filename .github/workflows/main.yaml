@@ -8,6 +8,9 @@ on:
     branches:
       - dev
       - main
+      - feature/*
+      - fix/*
+      - dependabot/*
 jobs:
   code-quality:
     runs-on: ubuntu-latest
