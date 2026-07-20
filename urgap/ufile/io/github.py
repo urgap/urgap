@@ -233,6 +233,7 @@ class IOGithub(UIOBase):
         self,
         pattern: str | None = None,
         full_string: bool = True,
+        **_kwargs: P.kwargs,
     ) -> list:
         """Get objects in folder/'container'.
 
