@@ -9,7 +9,6 @@ import pprint
 import signal
 import threading
 import time
-import traceback
 import webbrowser
 
 from concurrent.futures import ProcessPoolExecutor
@@ -103,10 +102,10 @@ def create_app(name: str) -> "FastAPI":
                 content=output_files,
                 status_code=200,
             )
-        except Exception as e:
+        except Exception:
             logger.exception("Error during remote UNode execution!")
             return JSONResponse(
-                content={"error": str(e), "traceback": traceback.format_exc()},
+                content={"error": "Internal server error during UNode execution."},
                 status_code=500,
             )
 
