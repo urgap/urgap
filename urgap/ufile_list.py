@@ -10,6 +10,7 @@ import subprocess
 from collections import UserList, defaultdict, defaultdict as ddict
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Self
 
 import urgap
 
@@ -121,7 +122,7 @@ class UFileList(UserList):
     def __iadd__(
         self,
         other: urgap.UFile | urgap.UFileList | list | tuple,
-    ) -> UFileList:
+    ) -> Self:
         """Extend this UFileList in-place with another object.
 
         Args:
