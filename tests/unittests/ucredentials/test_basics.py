@@ -599,7 +599,7 @@ def test_get_secret_crc32c(monkeypatch, caplog):
     with caplog.at_level(logging.WARNING):
         secret = creds.get_secret()
 
-    assert "Secret dummy payload is corrupted." in caplog.text
+    assert "Secret payload is corrupted (checksum mismatch)." in caplog.text
     assert secret == "bad_secret"
 
 
@@ -651,7 +651,7 @@ def test_get_secret_crc32c(monkeypatch, caplog):
     with caplog.at_level(logging.WARNING):
         secret = creds.get_secret()
 
-    assert "Secret dummy payload is corrupted." in caplog.text
+    assert "Secret payload is corrupted (checksum mismatch)." in caplog.text
     assert secret == "bad_secret"
 
 

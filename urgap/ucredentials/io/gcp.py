@@ -57,7 +57,7 @@ class IOGCPCreds(IOBaseCreds):
             crc32c = google_crc32c.Checksum()
             crc32c.update(response.payload.data)
             if response.payload.data_crc32c != int(crc32c.hexdigest(), 16):
-                msg = f"Secret {self.secret_id} payload is corrupted."
+                msg = "Secret payload is corrupted (checksum mismatch)."
                 logger.warning(msg)
 
             secret = response.payload.data.decode("UTF-8")
