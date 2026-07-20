@@ -8,6 +8,8 @@ on:
     branches:
       - dev
       - main
+permissions:
+  contents: read
 jobs:
   code-quality:
     runs-on: ubuntu-latest

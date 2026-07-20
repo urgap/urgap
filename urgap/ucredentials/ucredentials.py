@@ -289,7 +289,10 @@ class UCredentialManager:
                 "please provide 'base_url' in credentials_lookup instead.",
             )
         except KeyError as e:
-            msg = f"{cred_entry} cannot be formated into {self.ID_KEY}"
+            msg = (
+                f"Credential entry (fields: {sorted(cred_entry)}) cannot be "
+                f"formatted into {self.ID_KEY}"
+            )
             logger.warning(msg)
             raise KeyError(msg) from e
         return c_key

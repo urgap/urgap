@@ -32,7 +32,7 @@ class IOAzureBlobStorage(UIOBase):
             kwargs: Passed to UIOBase. Requires "uri" for connection setup.
         """
         super().__init__(**kwargs)
-        if "blob.core.windows.net" in self.uuri.netloc:
+        if self.uuri.netloc.endswith(".blob.core.windows.net"):
             self.client = BlobServiceClient(
                 account_url=f"https://{self.uuri.netloc}",
                 credential=self.uuri.password,
