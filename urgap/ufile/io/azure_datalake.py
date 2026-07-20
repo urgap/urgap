@@ -219,6 +219,7 @@ class IOAzureDL(UIOBase):
         self,
         pattern: str | None = None,
         full_string: bool = False,
+        **_kwargs: P.kwargs,
     ) -> list:
         """List all objects in the file system (container), optionally filtering by regex pattern.
 
