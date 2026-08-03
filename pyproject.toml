@@ -186,6 +186,8 @@ ignore = [
     "PLC0415", # Avoid unnecessary imports,
     "UP047", # Only available 3.13+
     "INP001", # Namespace packages intentionally have no __init__.py (PEP 420)
+    "CPY001", # Missing copyright notice at top of file
+    "PLR0917", # Too many positional arguments -> TODO
 ]
 
 

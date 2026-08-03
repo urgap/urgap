@@ -77,7 +77,6 @@ def test_get_all_relevant_nodes():
 
 
 def test_run_unode_in_loop(tmp_dir):
-
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
