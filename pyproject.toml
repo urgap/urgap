@@ -63,7 +63,7 @@ github = [
 ]
 cloud = [
     'betterproto==2.0.0b6', # Required for 3.14 until beam is updated
-    'apache-beam>=2.75.0,<3.0.0',
+    "apache-beam>=2.75.0,<3.0.0 ; sys_platform != 'win32'",
     'azure-identity>=1.25.2,<2.0.0',
     'azure-keyvault-secrets>=4.10.0,<5.0.0',
     'azure-monitor-opentelemetry>=1.7.0,<2.0.0',
@@ -205,4 +205,9 @@ lines-between-types = 1
 [tool.pytest.ini_options]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+]
+
+[tool.uv]
+override-dependencies = [
+    "cryptography>=50.0.0",
 ]
