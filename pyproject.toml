@@ -66,7 +66,7 @@ cloud = [
     "apache-beam>=2.75.0,<3.0.0 ; sys_platform != 'win32'",
     'azure-identity>=1.25.2,<2.0.0',
     'azure-keyvault-secrets>=4.10.0,<5.0.0',
-    'azure-monitor-opentelemetry>=1.7.0,<2.0.0',
+    'azure-monitor-opentelemetry>=1.8.9,<2.0.0',
     'azure-storage-blob>=12.28.0,<13.0.0',
     'azure-servicebus>=7.14.3,<8.0.0',
     'azure-storage-file-datalake>=12.22.0,<13.0.0',
