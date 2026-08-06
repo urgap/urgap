@@ -20,10 +20,12 @@ COPY dist/urgap-*.whl /tmp/
 # Install the locked dependency set into .venv with `uv sync` (dependencies only,
 # --no-install-project), then add the pre-built, versioningit-stamped wheel with
 # --no-deps. Build the wheel beforehand with `uv build` (lands in dist/urgap-*.whl).
+# `--extra all` covers every runtime extra; it deliberately excludes [dev] and
+# [docs], which --all-extras would have pulled into the worker image.
 ENV UV_NO_CACHE=1
 ENV VIRTUAL_ENV=/home/urgap/.venv
 ENV PATH="/home/urgap/.venv/bin:$PATH"
-RUN uv sync --frozen --all-extras --no-install-project
+RUN uv sync --frozen --extra all --no-install-project
 RUN uv pip install --no-deps /tmp/urgap-*.whl
 
 # Run checks

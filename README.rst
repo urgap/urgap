@@ -44,11 +44,11 @@ Installation
 
     uv sync --extra cloud
 
-**With All Optional Dependencies:**
+**With All Runtime Extras:**
 
 .. code-block:: bash
 
-    uv sync --all-extras
+    uv sync --extra all
 
 Available extras include:
 
@@ -57,10 +57,10 @@ Available extras include:
 * ``viz``: plotly-based reporting and visualizer unodes
 * ``github``: GitHub-backed file IO
 * ``cloud``: Azure and Google Cloud storage backends
-* ``databases``: MongoDB and PostgreSQL backends
+* ``databases``: PostgreSQL backend
 * ``docs``: Sphinx documentation build
-* ``dev``: test/lint tooling (pytest, black) plus all runtime extras
-* ``all``: All optional dependencies
+* ``dev``: test tooling (pytest) plus all runtime extras
+* ``all``: every runtime extra above (not ``dev`` or ``docs``)
 
 Running Tests
 ~~~~~~~~~~~~~

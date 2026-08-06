@@ -22,6 +22,7 @@ classifiers = [
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
     'Topic :: Scientific/Engineering :: Bio-Informatics',
     'Topic :: Scientific/Engineering :: Chemistry',
 ]
@@ -30,7 +31,7 @@ dependencies = [
     'jsonschema>=4.26.0,<5.0.0',
     'networkx>=3.6.1,<4.0.0',
     'packaging>=25.0,<26.0.0',
-    'requests>=2.26,<2.35',
+    'requests>=2.26,<3.0.0',
     'sqlalchemy>=2.0.47,<3.0.0',
 ]
 
@@ -71,10 +72,7 @@ cloud = [
     'azure-servicebus>=7.14.3,<8.0.0',
     'azure-storage-file-datalake>=12.22.0,<13.0.0',
     'azure-storage-file-share>=12.24.0,<13.0.0',
-    'cloud-sql-python-connector~=1.0',
     'fastmcp>=3.0.2,<4.0.0',
-    'google-apitools>=0.5.35,<1.0.0',
-    'google-cloud-logging>=3.13.0,<4.0.0',
     'google-cloud-secret-manager>=2.26.0,<3.0.0',
     'google-cloud-storage>=3.9.0,<4.0.0',
     'google-crc32c>=1.8.0,<2.0.0',
@@ -82,13 +80,11 @@ cloud = [
     'opentelemetry-sdk>=1.39.0,<2.0.0',
     'pg8000~=1.29',
     'prefect>=3.6.13,<4.0.0',
-    'prefect-kubernetes>=0.7.3,<1.0.0',
     'pysmb>=1.2.13,<2.0.0',
     'pyvis>=0.3.2,<1.0.0',
     'mcp>=1.26.0,<2.0.0',
 ]
 databases = [
-    'pymongo>=3.8.0,<5.0.0',
     'psycopg2-binary>=2.9.12,<3.0.0'
 ]
 docs = [
@@ -111,12 +107,10 @@ dev = [
 all = [
     "urgap[cloud]",
     "urgap[databases]",
-    "urgap[docs]",
     "urgap[server]",
     "urgap[tabular]",
     "urgap[viz]",
     "urgap[github]",
-    "urgap[dev]",
 ]
 
 [project.urls]
@@ -158,14 +152,17 @@ dirty = "{next_version}.dev{distance}"
 distance-dirty = "{next_version}.dev{distance}"
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py311"
 line-length = 88
 indent-width = 4
 exclude = [
     ".git",
     "build",
     "dist",
-    "docs"
+    "docs",
+    "urgap/uftypes",
+    "urgap/uctl/mcp",
+    "tests",
 ]
 
 [tool.ruff.lint]
@@ -208,6 +205,8 @@ markers = [
 ]
 
 [tool.uv]
+# Overrides only apache-beam pins down currently
 override-dependencies = [
     "cryptography>=50.0.0",
+    "httplib2>=0.32.0",
 ]
