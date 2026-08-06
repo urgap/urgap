@@ -18,7 +18,6 @@ jobs:
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-        with:
           python-version: "3.13"
       - name: Build package
         run: uv build
