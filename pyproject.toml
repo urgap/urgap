@@ -67,9 +67,7 @@ cloud = [
     "apache-beam>=2.75.0,<3.0.0 ; sys_platform != 'win32'",
     'azure-identity>=1.25.2,<2.0.0',
     'azure-keyvault-secrets>=4.10.0,<5.0.0',
-    # Only the exporter is used (urgap/utelemetry.py), not the azure-monitor-opentelemetry
-    # distro, which additionally pulls in 8 unused auto-instrumentation packages.
-    'azure-monitor-opentelemetry-exporter>=1.0.0b56',
+    'azure-monitor-opentelemetry>=1.8.9,<2.0.0',
     'azure-storage-blob>=12.28.0,<13.0.0',
     'azure-servicebus>=7.14.3,<8.0.0',
     'azure-storage-file-datalake>=12.22.0,<13.0.0',
@@ -106,8 +104,6 @@ dev = [
     'urgap[cloud]',
     'urgap[databases]',
 ]
-# Every runtime extra. Deliberately excludes [dev] and [docs] so that installing
-# urgap[all] does not drag the test and Sphinx toolchains into a user environment.
 all = [
     "urgap[cloud]",
     "urgap[databases]",
@@ -156,7 +152,6 @@ dirty = "{next_version}.dev{distance}"
 distance-dirty = "{next_version}.dev{distance}"
 
 [tool.ruff]
-# Must match project.requires-python so lint matches the oldest supported interpreter.
 target-version = "py311"
 line-length = 88
 indent-width = 4
@@ -165,9 +160,6 @@ exclude = [
     "build",
     "dist",
     "docs",
-    # Single source of truth for the lint scope: CI runs a bare `ruff check .`, so
-    # these must match locally and in the pipeline. Each carries pre-existing
-    # violations under `select = ["ALL"]` and is excluded until they are worked off.
     "urgap/uftypes",
     "urgap/uctl/mcp",
     "tests",
@@ -213,9 +205,8 @@ markers = [
 ]
 
 [tool.uv]
-# Must stay an override rather than a constraint: apache-beam declares
-# cryptography>=39.0.0,<48.0.0, and we knowingly break that cap to pick up the
-# security fixes in 50.x. A constraint-dependencies entry fails to resolve here.
+# Overrides only apache-beam pins down currently
 override-dependencies = [
     "cryptography>=50.0.0",
+    "httplib2>=0.32.0",
 ]
