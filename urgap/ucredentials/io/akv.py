@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 class IOAzureCreds(IOBaseCreds):
     """IO class interface Azure."""
+    
+    SCHEME = "akv"
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOAzureCreds class."""

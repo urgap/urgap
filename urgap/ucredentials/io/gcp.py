@@ -15,9 +15,10 @@ from urgap.ucredentials.io._base import IOBaseCreds
 P = ParamSpec("P")
 logger = logging.getLogger(__name__)
 
-
 class IOGCPCreds(IOBaseCreds):
     """IO class interface GCP."""
+    
+    SCHEME = "gcp"
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOGCPCreds class."""

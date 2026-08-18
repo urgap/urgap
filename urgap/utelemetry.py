@@ -182,6 +182,7 @@ class UTelemetry:
                 raise ValueError(msg)
             metrics.set_meter_provider(
                 MeterProvider(
+                    resource=self._resource(),
                     metric_readers=[
                         PeriodicExportingMetricReader(
                             exporter,
@@ -192,6 +193,23 @@ class UTelemetry:
             )
             UTelemetry.metric_was_initialized = True
         return metrics.get_meter_provider().get_meter("urgap")
+
+    def _resource(self) -> Resource:
+        """Build the shared OTel Resource for this process.
+
+        Set urgap.config["service_name"] before first use to replace the
+        default "urgap" cloud role name. Immutable once built — later
+        changes are silently ignored.
+        """
+        service_name = urgap.config.get("service_name") or "urgap"
+        attrs: dict[str, str] = {
+            "service.name": service_name,
+            "service.instance.id": urgap.config.get("service_instance_id")
+            or urgap.__version_str__,
+        }
+        attrs.update(urgap.config.get("resource_attributes") or {})
+        return Resource.create(attrs)
+
 
     def init_tracer(self) -> trace.Tracer:
         """Initialize and configure a Tracer for distributed tracing.
@@ -204,14 +222,7 @@ class UTelemetry:
         """
         if UTelemetry.trace_was_initialized is False:
             trace.set_tracer_provider(
-                TracerProvider(
-                    resource=Resource.create(
-                        {
-                            "service.name": "urgap",
-                            "service.instance.id": urgap.__version_str__,
-                        },
-                    ),
-                ),
+                TracerProvider(resource=self._resource()),
             )
             if self.otlp_type == "OTLP":
                 exporter = OTLPSpanExporter(

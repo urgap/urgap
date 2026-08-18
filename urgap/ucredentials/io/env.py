@@ -8,9 +8,10 @@ from urgap.ucredentials.io._base import IOBaseCreds
 
 P = ParamSpec("P")
 
-
 class IOEnvCreds(IOBaseCreds):
     """IO class interface Env."""
+    
+    SCHEME = "env"
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOEnvCreds class."""
