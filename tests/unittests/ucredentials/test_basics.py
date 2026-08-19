@@ -269,9 +269,6 @@ def test_concrete_subclass_without_get_secret_raises_when_called():
 
 
 def test_concrete_subclass_without_scheme_raises_at_class_definition():
-    # Built via type() instead of a class statement so no name is ever bound:
-    # __init_subclass__ raises while the subclass is still being created,
-    # which is exactly the behavior under test.
     with pytest.raises(TypeError) as excinfo:
         type("IONoSchemeCreds", (IOBaseCreds,), {"get_secret": lambda self: "unreachable"})
 
