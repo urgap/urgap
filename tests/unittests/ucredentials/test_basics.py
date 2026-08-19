@@ -269,13 +269,11 @@ def test_concrete_subclass_without_get_secret_raises_when_called():
 
 
 def test_concrete_subclass_without_scheme_raises_at_class_definition():
+    # Built via type() instead of a class statement so no name is ever bound:
+    # __init_subclass__ raises while the subclass is still being created,
+    # which is exactly the behavior under test.
     with pytest.raises(TypeError) as excinfo:
-        # Class body is never bound to a name: __init_subclass__ raises
-        # while the class statement itself is still executing, which is
-        # exactly the behavior under test.
-        class _IONoSchemeCreds(IOBaseCreds):
-            def get_secret(self) -> str:
-                return "unreachable"
+        type("IONoSchemeCreds", (IOBaseCreds,), {"get_secret": lambda self: "unreachable"})
 
     assert "must define a non-empty SCHEME" in str(excinfo.value)
 
@@ -524,33 +522,6 @@ def test_get_secret_initialization(monkeypatch):
     assert result == "supersecret"
 
 
-def test_get_secret_try_block(monkeypatch):
-    class DummyPayload:
-        def __init__(self, data: bytes):
-            self.data = data
-            crc = google_crc32c.Checksum()
-            crc.update(data)
-            self.data_crc32c = int(crc.hexdigest(), 16)
-
-    class DummyResponse:
-        def __init__(self):
-            self.payload = DummyPayload(b"topsecret")
-
-    class DummyClient:
-        def access_secret_version(self, request):
-            return DummyResponse()
-
-    monkeypatch.setattr(
-        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
-        lambda: DummyClient(),
-    )
-
-    creds = IOGCPCreds(secret_id="dummy", cloud_host_pid="proj", version_id="1")
-    secret = creds.get_secret()
-
-    assert secret == "topsecret"
-
-
 def test_get_secret_exception(monkeypatch, caplog):
     class DummyClient:
         def access_secret_version(self, request):
@@ -568,33 +539,6 @@ def test_get_secret_exception(monkeypatch, caplog):
 
     assert "Secret could not be retrieved from GCP." in caplog.text
     assert result is None
-
-
-def test_get_secret_client_and_response(monkeypatch):
-    class DummyPayload:
-        def __init__(self, data: bytes):
-            self.data = data
-            crc = google_crc32c.Checksum()
-            crc.update(data)
-            self.data_crc32c = int(crc.hexdigest(), 16)
-
-    class DummyResponse:
-        def __init__(self):
-            self.payload = DummyPayload(b"topsecret")
-
-    class DummyClient:
-        def access_secret_version(self, request):
-            return DummyResponse()
-
-    monkeypatch.setattr(
-        "urgap.ucredentials.io.gcp.secretmanager.SecretManagerServiceClient",
-        lambda: DummyClient(),
-    )
-
-    creds = IOGCPCreds(secret_id="dummy", cloud_host_pid="proj", version_id="1")
-    secret = creds.get_secret()
-
-    assert secret == "topsecret"
 
 
 def test_get_secret_crc32c(monkeypatch, caplog):
