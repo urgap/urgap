@@ -253,24 +253,26 @@ def test_null_user_works():
     assert cred_manager.get_user(cred_id) is None
 
 
-def test_io_base_creds_cannot_be_instantiated_directly():
-    with pytest.raises(TypeError) as excinfo:
-        IOBaseCreds(secret_id="dummy")
-    assert "abstract" in str(excinfo.value).lower()
+def test_io_base_creds_get_secret_raises():
+    creds = IOBaseCreds(secret_id="dummy")
+    with pytest.raises(NotImplementedError):
+        creds.get_secret()
 
 
-def test_concrete_subclass_without_get_secret_cannot_be_instantiated():
+def test_concrete_subclass_without_get_secret_raises_when_called():
     class IOIncompleteCreds(IOBaseCreds):
         SCHEME = "incomplete_for_test"
 
-    with pytest.raises(TypeError) as excinfo:
-        IOIncompleteCreds(secret_id="dummy")
-    assert "get_secret" in str(excinfo.value)
+    creds = IOIncompleteCreds(secret_id="dummy")
+    with pytest.raises(NotImplementedError):
+        creds.get_secret()
 
 
 def test_concrete_subclass_without_scheme_raises_at_class_definition():
     with pytest.raises(TypeError) as excinfo:
-
+        # Class body is never bound to a name: __init_subclass__ raises
+        # while the class statement itself is still executing, which is
+        # exactly the behavior under test.
         class _IONoSchemeCreds(IOBaseCreds):
             def get_secret(self) -> str:
                 return "unreachable"

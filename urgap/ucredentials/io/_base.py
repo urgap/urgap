@@ -1,12 +1,11 @@
 """IOCreds submodule of urgap."""
 
-from abc import ABC, abstractmethod
 from typing import ClassVar, ParamSpec
 
 P = ParamSpec("P")
 
 
-class IOBaseCreds(ABC):
+class IOBaseCreds:
     """All IOCreds classes inherit from this class."""
 
     SCHEME: ClassVar[str]
@@ -30,7 +29,7 @@ class IOBaseCreds(ABC):
             raise TypeError(msg)
         self.secret_id = kwargs["secret_id"]
 
-    @abstractmethod
-    def get_secret(self) -> str | None:
+    def get_secret(self) -> None:
         """Get_secret method is implemented in subclass."""
-        raise NotImplementedError
+        msg = "This needs to be implemented in the IOCreds class"
+        raise NotImplementedError(msg)
