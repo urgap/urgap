@@ -202,16 +202,18 @@ class UCredentialManager:
             cloud_host_pid = _cred_entry.get("host", "localhost")
 
         reserved = {
-            "description", "scheme", "host", "user", "password",
-            "secure", "secret_store", "base_url", "cloud_host_pid",
+            "description",
+            "scheme",
+            "host",
+            "user",
+            "password",
+            "secure",
+            "secret_store",
+            "base_url",
+            "cloud_host_pid",
         }
         extra = {k: v for k, v in _cred_entry.items() if k not in reserved}
         extra["cloud_host_pid"] = cloud_host_pid
-        if _cred_entry.get("secret_store") == "gcp":
-            extra.setdefault("project_id", cloud_host_pid)
-            extra.setdefault("version_id", "latest")
-        elif _cred_entry.get("secret_store") == "akv":
-            extra.setdefault("vault_name", cloud_host_pid)
 
         for keyname in ["user", "password"]:
             secret_id = _cred_entry[keyname]

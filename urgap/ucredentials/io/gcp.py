@@ -15,16 +15,17 @@ from urgap.ucredentials.io._base import IOBaseCreds
 P = ParamSpec("P")
 logger = logging.getLogger(__name__)
 
+
 class IOGCPCreds(IOBaseCreds):
     """IO class interface GCP."""
-    
+
     SCHEME = "gcp"
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOGCPCreds class."""
         super().__init__(**kwargs)
         self.version_id = kwargs["version_id"]
-        self.project_id = kwargs["project_id"]
+        self.project_id = kwargs["cloud_host_pid"]
 
     def get_secret(self) -> str:
         """Get secret from GCP secret Manager.

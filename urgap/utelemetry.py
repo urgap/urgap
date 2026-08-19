@@ -204,12 +204,10 @@ class UTelemetry:
         service_name = urgap.config.get("service_name") or "urgap"
         attrs: dict[str, str] = {
             "service.name": service_name,
-            "service.instance.id": urgap.config.get("service_instance_id")
-            or urgap.__version_str__,
+            "service.instance.id": urgap.__version_str__,
         }
         attrs.update(urgap.config.get("resource_attributes") or {})
         return Resource.create(attrs)
-
 
     def init_tracer(self) -> trace.Tracer:
         """Initialize and configure a Tracer for distributed tracing.
