@@ -7,9 +7,15 @@ import json
 import logging
 import os
 import pkgutil
+
 from pathlib import Path
+from typing import ParamSpec
+
 from jsonschema import validate
+
 import urgap.ucredentials.io
+
+P = ParamSpec("P")
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +114,7 @@ class UCredentialManager:
         self,
         secret_store: str,
         secret_id: str,
-        **extra,
+        **extra: P.kwargs,
     ) -> urgap.ucredentials.io:
         """Initialize the secret backend handler."""
         if secret_store not in self.available_io_classes:
