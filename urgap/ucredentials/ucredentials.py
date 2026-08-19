@@ -210,7 +210,6 @@ class UCredentialManager:
             "secure",
             "secret_store",
             "base_url",
-            "cloud_host_pid",
         }
         extra = {k: v for k, v in _cred_entry.items() if k not in reserved}
         extra["cloud_host_pid"] = cloud_host_pid
