@@ -271,7 +271,7 @@ def test_concrete_subclass_without_get_secret_cannot_be_instantiated():
 def test_concrete_subclass_without_scheme_raises_at_class_definition():
     with pytest.raises(TypeError) as excinfo:
 
-        class IONoSchemeCreds(IOBaseCreds):
+        class _IONoSchemeCreds(IOBaseCreds):
             def get_secret(self) -> str:
                 return "unreachable"
 
@@ -305,14 +305,14 @@ def test_missing_secret_id_raises_typeerror():
 
 
 def test_gcp_io_class_init(monkeypatch):
-    """init_io_class forwards **extra generically; gcp.py's own kwargs
-    names (project_id, version_id) are unchanged from before this refactor.
+    """init_io_class forwards **extra generically; gcp.py now reads
+    cloud_host_pid directly (renamed internally to self.project_id).
     """
 
     class DummyGCPClass:
-        def __init__(self, secret_id, project_id, version_id):
+        def __init__(self, secret_id, cloud_host_pid, version_id="latest"):
             self.secret_id = secret_id
-            self.project_id = project_id
+            self.project_id = cloud_host_pid
             self.version_id = version_id
 
     us = urgap.UCredentialManager()
@@ -321,7 +321,7 @@ def test_gcp_io_class_init(monkeypatch):
     us.init_io_class(
         secret_store="gcp",
         secret_id="dummy",
-        project_id="project123",
+        cloud_host_pid="project123",
         version_id="latest",
     )
 
@@ -333,14 +333,14 @@ def test_gcp_io_class_init(monkeypatch):
 
 def test_akv_io_class_init(monkeypatch):
     class DummyAKV:
-        def __init__(self, secret_id, vault_name):
+        def __init__(self, secret_id, cloud_host_pid):
             self.secret_id = secret_id
-            self.vault_name = vault_name
+            self.vault_name = cloud_host_pid
 
     us = urgap.UCredentialManager()
     monkeypatch.setitem(us.available_io_classes, "akv", DummyAKV)
 
-    us.init_io_class(secret_store="akv", secret_id="dummy", vault_name="vault123")
+    us.init_io_class(secret_store="akv", secret_id="dummy", cloud_host_pid="vault123")
 
     assert us._io.secret_id == "dummy"
     assert us._io.vault_name == "vault123"
@@ -384,8 +384,8 @@ def test_read_credentials_warns_for_missing_file(tmp_path, caplog):
 
 
 def test_gcp_credential_with_explicit_pid(monkeypatch):
-    """extract_credentials still honors an explicit cloud_host_pid and
-    aliases it into project_id/version_id for gcp.py's original kwargs.
+    """extract_credentials still honors an explicit cloud_host_pid;
+    gcp.py now reads it directly (no manager-side aliasing needed).
     """
     c_json = urgap._test_folder / "data" / "configs" / "credentials_lookup.json"
 
@@ -404,9 +404,9 @@ def test_gcp_credential_with_explicit_pid(monkeypatch):
     us.add_credentials([credential_with_pid])
 
     class DummyGCPClass:
-        def __init__(self, secret_id, project_id, version_id, **kwargs):
+        def __init__(self, secret_id, cloud_host_pid, version_id="latest", **kwargs):
             self.secret_id = secret_id
-            self.project_id = project_id
+            self.project_id = cloud_host_pid
             self.version_id = version_id
 
         def get_secret(self):
@@ -442,9 +442,9 @@ def test_gcp_credential_falls_back_to_host(monkeypatch):
     us.add_credentials([credential_no_pid])
 
     class DummyGCPClass:
-        def __init__(self, secret_id, project_id, version_id, **kwargs):
+        def __init__(self, secret_id, cloud_host_pid, version_id="latest", **kwargs):
             self.secret_id = secret_id
-            self.project_id = project_id
+            self.project_id = cloud_host_pid
             self.version_id = version_id
 
         def get_secret(self):
@@ -516,7 +516,7 @@ def test_get_secret_initialization(monkeypatch):
         lambda: DummyClient(),
     )
 
-    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    creds = IOGCPCreds(secret_id="dummy", cloud_host_pid="proj", version_id="1")
     result = creds.get_secret()
 
     assert result == "supersecret"
@@ -543,7 +543,7 @@ def test_get_secret_try_block(monkeypatch):
         lambda: DummyClient(),
     )
 
-    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    creds = IOGCPCreds(secret_id="dummy", cloud_host_pid="proj", version_id="1")
     secret = creds.get_secret()
 
     assert secret == "topsecret"
@@ -559,7 +559,7 @@ def test_get_secret_exception(monkeypatch, caplog):
         lambda: DummyClient(),
     )
 
-    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    creds = IOGCPCreds(secret_id="dummy", cloud_host_pid="proj", version_id="1")
 
     with caplog.at_level(logging.WARNING):
         result = creds.get_secret()
@@ -589,7 +589,7 @@ def test_get_secret_client_and_response(monkeypatch):
         lambda: DummyClient(),
     )
 
-    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    creds = IOGCPCreds(secret_id="dummy", cloud_host_pid="proj", version_id="1")
     secret = creds.get_secret()
 
     assert secret == "topsecret"
@@ -616,7 +616,7 @@ def test_get_secret_crc32c(monkeypatch, caplog):
         lambda: DummyClientMatch(),
     )
 
-    creds = IOGCPCreds(secret_id="dummy", project_id="proj", version_id="1")
+    creds = IOGCPCreds(secret_id="dummy", cloud_host_pid="proj", version_id="1")
     secret = creds.get_secret()
     assert secret == "secret_data"
 

@@ -1,16 +1,12 @@
 """IOCreds submodule of urgap."""
 
-from abc import ABC, abstractmethod
-from typing import ParamSpec, ClassVar
+from typing import ClassVar, ParamSpec
 
 P = ParamSpec("P")
 
 
-class IOBaseCreds(ABC):
-    """IOCreds Local class.
-
-    All IOCreds classes inherit from this class.
-    """
+class IOBaseCreds:
+    """All IOCreds classes inherit from this class."""
 
     SCHEME: ClassVar[str]
 
@@ -26,14 +22,14 @@ class IOBaseCreds(ABC):
         """Create new IOBaseCreds instance with secret_id attribute set from kwargs.
 
         Args:
-            **kwargs: Used to set secret_id attribute from key.
+            **kwargs: Must include "secret_id".
         """
         if "secret_id" not in kwargs:
-            msg = f"{type(self).__name__}.__init__ requires 'secret_id' as a keyword argument."
+            msg = f"{type(self).__name__} requires 'secret_id'."
             raise TypeError(msg)
         self.secret_id = kwargs["secret_id"]
 
-    @abstractmethod
-    def get_secret(self) -> str | None:
+    def get_secret(self) -> None:
         """Get_secret method is implemented in subclass."""
-        raise NotImplementedError
+        msg = "This needs to be implemented in the IOCreds class"
+        raise NotImplementedError(msg)
