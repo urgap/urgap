@@ -1,5 +1,3 @@
-import types
-
 import pytest
 
 from urgap.umanager import UManager
