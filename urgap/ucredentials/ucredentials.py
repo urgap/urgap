@@ -1,12 +1,8 @@
 """UCredentials module of urgap."""
 
-import contextlib
-import importlib
-import inspect
 import json
 import logging
 import os
-import pkgutil
 
 from pathlib import Path
 from typing import ParamSpec
@@ -14,6 +10,9 @@ from typing import ParamSpec
 from jsonschema import validate
 
 import urgap.ucredentials.io
+
+from urgap.ucredentials.io._base import IOBaseCreds
+from urgap.umanager import UManager
 
 P = ParamSpec("P")
 
@@ -45,16 +44,12 @@ DEFAULT_CREDENTIALS_SCHEME = {
 }
 
 
-class UCredentialManager:
-    """UCredentials Manager class.
+class UCredentialManager(UManager[IOBaseCreds]):
+    """Extracts secrets from the secret store defined per credentials_lookup.json entry."""
 
-    The credential Manager extracts the secrets from the secret store.
-
-    The input is a dictionary with a "credentials" key, each entry specifying
-    a secret backend and environment variable names for secrets (but not the secrets themselves).
-
-    By default, it will try to read a `credentials_lookup.json` from $URGAP_HOME.
-    """
+    NAMESPACE_PACKAGE = "urgap.ucredentials.io"
+    MARKER_ATTR = "SCHEME"
+    BASE_CLASS = IOBaseCreds
 
     def __init__(
         self,
@@ -69,9 +64,6 @@ class UCredentialManager:
         """
         super().__init__()
 
-        self.available_io_classes: dict[str, type] = {}
-        self._discover_secret_backends()
-
         self.ID_KEY = credentials_id_key
         self.ingested_credentials = {}
         self._extracted_secrets = {}
@@ -80,30 +72,6 @@ class UCredentialManager:
             self.ingest_cred_entry(cred_entry)
 
         self._io = None
-
-    def _discover_secret_backends(self) -> None:
-        """Discover and register all credentials IO backend modules."""
-        import urgap.ucredentials.io as io_namespace
-
-        from urgap.ucredentials.io._base import IOBaseCreds
-
-        for _finder, module_name, _is_pkg in pkgutil.iter_modules(
-            io_namespace.__path__,
-            prefix="urgap.ucredentials.io.",
-        ):
-            short_name = module_name.rsplit(".", 1)[-1]
-            if short_name.startswith("_"):
-                continue
-            with contextlib.suppress(ImportError):
-                module = importlib.import_module(module_name)
-                for _, obj in inspect.getmembers(module, inspect.isclass):
-                    if (
-                        issubclass(obj, IOBaseCreds)
-                        and obj is not IOBaseCreds
-                        and obj.__module__ == module_name
-                        and not inspect.isabstract(obj)
-                    ):
-                        self.available_io_classes[obj.SCHEME] = obj
 
     @property
     def io(self) -> urgap.ucredentials.io:

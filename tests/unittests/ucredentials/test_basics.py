@@ -171,7 +171,7 @@ def test_registered_backend_with_bad_class_logs_and_raises(caplog, monkeypatch):
     us = urgap.UCredentialManager()
 
     monkeypatch.setitem(us.available_io_classes, "fake_backend", object)
-    
+
     with pytest.raises(TypeError):
         us.init_io_class(secret_store="fake_backend", secret_id="dummy")
 
