@@ -3,7 +3,6 @@
 import binascii
 import concurrent.futures
 import importlib
-import inspect
 import logging
 import os
 import pkgutil
@@ -11,13 +10,10 @@ import re
 
 from collections.abc import Callable, Iterator
 from types import ModuleType
-from typing import TypeVar
 
 from packaging.version import Version
 
 logger = logging.getLogger(__name__)
-
-T = TypeVar("T")
 
 
 def iter_public_modules(
@@ -43,32 +39,6 @@ def iter_public_modules(
                 full_name,
                 exc_info=True,
             )
-
-
-def discover_backend_classes(
-    namespace_package: str,
-    base_class: type[T],
-    marker_attr: str,
-) -> dict[str, type[T]]:
-    """Scan a namespace package for base_class subclasses, keyed by marker_attr."""
-    registry: dict[str, type[T]] = {}
-    for module in iter_public_modules(namespace_package):
-        for _, obj in inspect.getmembers(module, inspect.isclass):
-            marker_value = getattr(obj, marker_attr, None)
-            if (
-                issubclass(obj, base_class)
-                and obj is not base_class
-                and obj.__module__ == module.__name__
-                and marker_value
-            ):
-                if marker_value in registry:
-                    msg = (
-                        f"Duplicate backend registration for {marker_value!r}: "
-                        f"{registry[marker_value]} and {obj}"
-                    )
-                    raise ValueError(msg)
-                registry[marker_value] = obj
-    return registry
 
 
 def sense_compression_format(file: os.PathLike) -> str:

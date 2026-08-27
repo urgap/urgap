@@ -1,14 +1,41 @@
 """Generic registry-based manager for Urgap plugin-style backends."""
 
+import inspect
 import logging
 
 from typing import ClassVar, Generic, TypeVar
 
-from urgap.util import discover_backend_classes
+from urgap.util import iter_public_modules
 
 logger = logging.getLogger(__name__)
 
 T = TypeVar("T")
+
+
+def discover_backend_classes(
+    namespace_package: str,
+    base_class: type[T],
+    marker_attr: str,
+) -> dict[str, type[T]]:
+    """Scan a namespace package for base_class subclasses, keyed by marker_attr."""
+    registry: dict[str, type[T]] = {}
+    for module in iter_public_modules(namespace_package):
+        for _, obj in inspect.getmembers(module, inspect.isclass):
+            marker_value = getattr(obj, marker_attr, None)
+            if (
+                issubclass(obj, base_class)
+                and obj is not base_class
+                and obj.__module__ == module.__name__
+                and marker_value
+            ):
+                if marker_value in registry:
+                    msg = (
+                        f"Duplicate backend registration for {marker_value!r}: "
+                        f"{registry[marker_value]} and {obj}"
+                    )
+                    raise ValueError(msg)
+                registry[marker_value] = obj
+    return registry
 
 
 class UManager(Generic[T]):

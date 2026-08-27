@@ -3,6 +3,7 @@ import types
 
 import pytest
 
+import urgap.umanager as umanager_mod
 import urgap.util as util_mod
 
 
@@ -35,7 +36,7 @@ def test_valid_backend_is_discovered(monkeypatch):
 
     _install_fake_namespace(monkeypatch, "fake.pkg1", {"good_mod": [GoodBackend]})
 
-    result = util_mod.discover_backend_classes("fake.pkg1", DummyBase, "SCHEME")
+    result = umanager_mod.discover_backend_classes("fake.pkg1", DummyBase, "SCHEME")
 
     assert result == {"good": GoodBackend}
 
@@ -46,7 +47,7 @@ def test_class_without_marker_attr_is_skipped(monkeypatch):
 
     _install_fake_namespace(monkeypatch, "fake.pkg2", {"no_scheme_mod": [NoScheme]})
 
-    result = util_mod.discover_backend_classes("fake.pkg2", DummyBase, "SCHEME")
+    result = umanager_mod.discover_backend_classes("fake.pkg2", DummyBase, "SCHEME")
 
     assert result == {}
 
@@ -57,7 +58,7 @@ def test_unrelated_class_is_not_collected(monkeypatch):
 
     _install_fake_namespace(monkeypatch, "fake.pkg3", {"unrelated_mod": [Unrelated]})
 
-    result = util_mod.discover_backend_classes("fake.pkg3", DummyBase, "SCHEME")
+    result = umanager_mod.discover_backend_classes("fake.pkg3", DummyBase, "SCHEME")
 
     assert result == {}
 
@@ -91,7 +92,7 @@ def test_reexported_class_is_not_double_counted(monkeypatch):
         lambda path: [(None, "owner", False), (None, "reexport", False)],
     )
 
-    result = util_mod.discover_backend_classes("fake.pkg4", DummyBase, "SCHEME")
+    result = umanager_mod.discover_backend_classes("fake.pkg4", DummyBase, "SCHEME")
 
     assert result == {"real": RealBackend}
 
@@ -106,7 +107,7 @@ def test_duplicate_marker_value_raises_valueerror(monkeypatch):
     _install_fake_namespace(monkeypatch, "fake.pkg5", {"dup_mod": [BackendA, BackendB]})
 
     with pytest.raises(ValueError) as excinfo:
-        util_mod.discover_backend_classes("fake.pkg5", DummyBase, "SCHEME")
+        umanager_mod.discover_backend_classes("fake.pkg5", DummyBase, "SCHEME")
 
     assert "dup" in str(excinfo.value)
     assert "BackendA" in str(excinfo.value)
@@ -134,7 +135,7 @@ def test_missing_dependency_is_skipped_not_raised(monkeypatch, caplog):
     monkeypatch.setattr(util_mod.importlib, "import_module", fake_import_module)
 
     with caplog.at_level("DEBUG"):
-        result = util_mod.discover_backend_classes("fake.pkg6", DummyBase, "SCHEME")
+        result = umanager_mod.discover_backend_classes("fake.pkg6", DummyBase, "SCHEME")
 
     assert result == {}
     assert "missing_dep" in caplog.text
@@ -148,7 +149,7 @@ def test_empty_namespace_returns_empty_dict(monkeypatch):
 
     monkeypatch.setattr(util_mod.pkgutil, "iter_modules", lambda path: [])
 
-    result = util_mod.discover_backend_classes("fake.pkg7", DummyBase, "SCHEME")
+    result = umanager_mod.discover_backend_classes("fake.pkg7", DummyBase, "SCHEME")
 
     assert result == {}
 
@@ -172,7 +173,7 @@ def test_private_module_is_skipped(monkeypatch):
     )
     monkeypatch.setattr(util_mod.importlib, "import_module", tracking_import_module)
 
-    result = util_mod.discover_backend_classes("fake.pkg8", DummyBase, "SCHEME")
+    result = umanager_mod.discover_backend_classes("fake.pkg8", DummyBase, "SCHEME")
 
     assert result == {}
     assert "fake.pkg8._internal" not in called  # private module never imported
