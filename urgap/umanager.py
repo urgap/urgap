@@ -63,8 +63,3 @@ class UManager(Generic[T]):
                 self.BASE_CLASS.__name__,
                 self.NAMESPACE_PACKAGE,
             )
-
-    @property
-    def available_io_classes(self) -> dict[str, type[T]]:
-        """Alias for available_classes."""
-        return self.available_classes

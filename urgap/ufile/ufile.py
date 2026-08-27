@@ -527,14 +527,14 @@ class UFile:
             ImportError: If the IO backend is not installed.
         """
         scheme = self.uuri.scheme
-        available_io_classes = urgap.instances.ufile_io_manager.available_io_classes
-        if scheme not in available_io_classes:
+        available_classes = urgap.instances.ufile_io_manager.available_classes
+        if scheme not in available_classes:
             msg = (
                 f"IO class for scheme '{scheme}' cannot be imported due to missing "
                 "dependencies or unsupported scheme."
             )
             raise ImportError(msg)
-        return available_io_classes[scheme](uuri=self.uuri)
+        return available_classes[scheme](uuri=self.uuri)
 
     def get_object(self) -> Path | None:
         """Get a local object from remote storage if it exists.
