@@ -35,7 +35,7 @@ def iter_public_modules(
             yield importlib.import_module(full_name)
         except ImportError:
             logger.debug(
-                "Skipping module '%s' -- could not be imported.",
+                "Skipping module '%s' could not be imported.",
                 full_name,
                 exc_info=True,
             )
