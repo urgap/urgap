@@ -6,8 +6,7 @@ import networkx as nx
 import networkx.classes.digraph
 
 import urgap
-
-from urgap.util import iter_public_modules
+import urgap.uftypes
 
 
 class UTreeQuerier:
@@ -35,7 +34,9 @@ class UTreeQuerier:
                 - python -c "import urgap; print(urgap.instances.utree_querier.get_subgraph('dbsearch.ANY').nodes(data=True))"
         """
         if namespace is None:
-            namespace = self._load_namespaces_from_pkg("urgap.uftypes")
+            namespace = {
+                name: getattr(urgap.uftypes, name) for name in urgap.uftypes.__all__
+            }
         if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
         if graph is None:
@@ -46,15 +47,6 @@ class UTreeQuerier:
         self.G = self._walk_tree(namespace, graph=graph, parent_node=parent_node)
         self.G = self._connect_general_types(self.G)
         self.G = self._connect_tabular_types(self.G)
-
-    def _load_namespaces_from_pkg(self, pkg_name: str) -> dict:
-        """Dynamically import all modules in a package and return their public attributes as a dict."""
-        ns_dict = {}
-        for mod in iter_public_modules(pkg_name):
-            ns_dict.update(
-                {k: v for k, v in vars(mod).items() if not k.startswith("_")},
-            )
-        return ns_dict
 
     def _walk_tree(
         self,

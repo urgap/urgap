@@ -30,6 +30,12 @@ class UManager(Generic[T]):
             base_class=self.BASE_CLASS,
             marker_attr=self.MARKER_ATTR,
         )
+        if not self.available_classes:
+            logger.warning(
+                "No %s backends discovered in '%s'.",
+                self.BASE_CLASS.__name__,
+                self.NAMESPACE_PACKAGE,
+            )
 
     @property
     def available_io_classes(self) -> dict[str, type[T]]:

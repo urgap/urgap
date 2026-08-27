@@ -20,11 +20,19 @@ logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
-def iter_public_modules(pkg_name: str) -> Iterator[ModuleType]:
-    """Import and yield each top-level, non-package, non-private module in pkg_name."""
+def iter_public_modules(
+    pkg_name: str,
+    ignore_prefix: str | None = "_",
+) -> Iterator[ModuleType]:
+    """Import and yield each top-level, non-package module in pkg_name.
+
+    Args:
+        pkg_name: Dotted name of the package to scan.
+        ignore_prefix: Skip module names starting with this prefix. Pass None to import all.
+    """
     pkg = importlib.import_module(pkg_name)
     for _, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
-        if ispkg or modname.startswith("_"):
+        if ispkg or (ignore_prefix and modname.startswith(ignore_prefix)):
             continue
         full_name = f"{pkg_name}.{modname}"
         try:
