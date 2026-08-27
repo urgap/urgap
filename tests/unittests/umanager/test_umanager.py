@@ -48,7 +48,7 @@ def test_single_backend_is_registered(monkeypatch):
 
     manager = manager_cls()
 
-    assert manager.available_classes == {"a": DummyBackendA}
+    assert manager.available_io_classes == {"a": DummyBackendA}
 
 
 def test_multiple_backends_are_registered(monkeypatch):
@@ -56,7 +56,7 @@ def test_multiple_backends_are_registered(monkeypatch):
 
     manager = manager_cls()
 
-    assert manager.available_classes == {"a": DummyBackendA, "b": DummyBackendB}
+    assert manager.available_io_classes == {"a": DummyBackendA, "b": DummyBackendB}
 
 
 def test_empty_discovery_yields_empty_registry(monkeypatch):
@@ -64,7 +64,7 @@ def test_empty_discovery_yields_empty_registry(monkeypatch):
 
     manager = manager_cls()
 
-    assert manager.available_classes == {}
+    assert manager.available_io_classes == {}
 
 
 def test_duplicate_registration_key_raises_valueerror(monkeypatch):

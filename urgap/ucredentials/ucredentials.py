@@ -85,13 +85,13 @@ class UCredentialManager(UManager[IOBaseCreds]):
         **extra: P.kwargs,
     ) -> urgap.ucredentials.io:
         """Initialize the secret backend handler."""
-        if secret_store not in self.available_classes:
+        if secret_store not in self.available_io_classes:
             msg = (
                 f"IO class {secret_store} cannot be imported due to missing dependencies."
                 "If needed use: pip install 'urgap[cloud]'"
             )
             raise ImportError(msg)
-        io_class = self.available_classes[secret_store]
+        io_class = self.available_io_classes[secret_store]
         try:
             self._io = io_class(secret_id=secret_id, **extra)
         except (TypeError, ValueError) as e:

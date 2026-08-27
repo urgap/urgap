@@ -47,17 +47,17 @@ class UManager(Generic[T]):
 
     def __init__(self) -> None:
         """Discover and register available implementations."""
-        self.available_classes: dict[str, type[T]] = {}
+        self.available_io_classes: dict[str, type[T]] = {}
         self._discover()
 
     def _discover(self) -> None:
-        """Populate self.available_classes from the namespace package."""
-        self.available_classes = discover_backend_classes(
+        """Populate self.available_io_classes from the namespace package."""
+        self.available_io_classes = discover_backend_classes(
             namespace_package=self.NAMESPACE_PACKAGE,
             base_class=self.BASE_CLASS,
             marker_attr=self.MARKER_ATTR,
         )
-        if not self.available_classes:
+        if not self.available_io_classes:
             logger.warning(
                 "No %s backends discovered in '%s'.",
                 self.BASE_CLASS.__name__,

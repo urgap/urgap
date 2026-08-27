@@ -170,7 +170,7 @@ def test_registered_backend_with_bad_class_logs_and_raises(caplog, monkeypatch):
     """
     us = urgap.UCredentialManager()
 
-    monkeypatch.setitem(us.available_classes, "fake_backend", object)
+    monkeypatch.setitem(us.available_io_classes, "fake_backend", object)
 
     with pytest.raises(TypeError):
         us.init_io_class(secret_store="fake_backend", secret_id="dummy")
@@ -196,7 +196,7 @@ def test_new_backend_with_novel_kwarg_needs_no_manager_changes(monkeypatch):
             return f"{self.secret_id}@{self.namespace}"
 
     us = urgap.UCredentialManager()
-    monkeypatch.setitem(us.available_classes, "vault_for_test", IOVaultCreds)
+    monkeypatch.setitem(us.available_io_classes, "vault_for_test", IOVaultCreds)
 
     us.init_io_class(secret_store="vault_for_test", secret_id="db-pw", namespace="team-ns")
 
@@ -313,7 +313,7 @@ def test_gcp_io_class_init(monkeypatch):
             self.version_id = version_id
 
     us = urgap.UCredentialManager()
-    monkeypatch.setitem(us.available_classes, "gcp", DummyGCPClass)
+    monkeypatch.setitem(us.available_io_classes, "gcp", DummyGCPClass)
 
     us.init_io_class(
         secret_store="gcp",
@@ -335,7 +335,7 @@ def test_akv_io_class_init(monkeypatch):
             self.vault_name = cloud_host_pid
 
     us = urgap.UCredentialManager()
-    monkeypatch.setitem(us.available_classes, "akv", DummyAKV)
+    monkeypatch.setitem(us.available_io_classes, "akv", DummyAKV)
 
     us.init_io_class(secret_store="akv", secret_id="dummy", cloud_host_pid="vault123")
 
@@ -409,7 +409,7 @@ def test_gcp_credential_with_explicit_pid(monkeypatch):
         def get_secret(self):
             return self.secret_id
 
-    monkeypatch.setitem(us.available_classes, "gcp", DummyGCPClass)
+    monkeypatch.setitem(us.available_io_classes, "gcp", DummyGCPClass)
 
     secrets = us.extract_credentials("gcp-demo://localhost")
 
@@ -447,7 +447,7 @@ def test_gcp_credential_falls_back_to_host(monkeypatch):
         def get_secret(self):
             return self.secret_id
 
-    monkeypatch.setitem(us.available_classes, "gcp", DummyGCPClass)
+    monkeypatch.setitem(us.available_io_classes, "gcp", DummyGCPClass)
 
     us.extract_credentials("gcp-demo-nopid://10.0.0.9")
 
@@ -484,7 +484,7 @@ def test_non_gcp_akv_backend_honors_explicit_cloud_host_pid(monkeypatch):
         def get_secret(self):
             return f"{self.secret_id}@{self.cloud_host_pid}"
 
-    monkeypatch.setitem(us.available_classes, "vault_for_test", IOVaultCreds)
+    monkeypatch.setitem(us.available_io_classes, "vault_for_test", IOVaultCreds)
 
     secrets = us.extract_credentials("vault-demo://unrelated-host")
 
