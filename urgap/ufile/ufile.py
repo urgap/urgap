@@ -924,7 +924,7 @@ class UFile:
     @property
     def provenance(
         self,
-    ) -> None | nx.DiGraph:
+    ) -> nx.DiGraph | None:
         """Provenance of UFile as a directed graph.
 
         Returns:

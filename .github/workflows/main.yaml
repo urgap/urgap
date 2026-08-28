@@ -8,6 +8,11 @@ on:
     branches:
       - dev
       - main
+      - feature/*
+      - fix/*
+      - dependabot/*
+permissions:
+  contents: read
 jobs:
   code-quality:
     runs-on: ubuntu-latest
@@ -18,14 +23,18 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
       - name: Install tools
         run: |
-          pip install ruff
           npm install -g prettier
           go install github.com/google/yamlfmt/cmd/yamlfmt@latest
       - name: Run ruff
         run: |
-          ruff check . --exclude urgap/wrappers,urgap/ext,urgap/uftypes,tests,docs,urgap/uctl/mcp
+          uvx ruff check .
       - name: Run yamlfmt
         run: |
           export PATH="$HOME/go/bin:$PATH"
@@ -47,41 +56,48 @@ jobs:
   test-ubuntu:
     runs-on: ubuntu-latest
     needs: code-quality
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+    env:
+      UV_PYTHON: ${{ matrix.python-version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+      - name: Check lockfile is current
+        run: uv lock --locked
       - name: Install dependencies
-        run: |
-          pip install uv
-          uv pip install pytest pytest-asyncio --system
-          uv pip install .["all"] --system
+        run: uv sync --extra dev
       - name: Run unit tests
-        run: |
-          pytest tests/unittests
+        run: uv run pytest tests/unittests
       - name: Run integration tests
-        run: |
-          pytest tests/integrationtests
+        run: uv run pytest tests/integrationtests
 #  test-windows:
 #    runs-on: windows-latest
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        python-version: ["3.11", "3.12", "3.13"]
+#    env:
+#      UV_PYTHON: ${{ matrix.python-version }}
 #    steps:
 #      - name: Checkout code
 #        uses: actions/checkout@v4
-#      - name: Set up Python
-#        uses: actions/setup-python@v5
 #        with:
-#          python-version: "3.13"
+#          fetch-depth: 0
+#      - name: Install uv
+#        uses: astral-sh/setup-uv@v5
 #      - name: Install dependencies
-#        run: |
-#          pip install uv
-#          uv pip install pytest pytest-asyncio --system
-#          uv pip install .["all"] --system
+#        run: uv sync --extra dev
 #      - name: Run unit tests
-#        run: |
-#          pytest tests/unittests
+#        run: uv run pytest tests/unittests
 #      - name: Run integration tests
-#        run: |
-#          pytest tests/integrationtests
+#        run: uv run pytest tests/integrationtests

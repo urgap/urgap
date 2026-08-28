@@ -4,7 +4,7 @@
     "umeta": {
         "value": "sqlite3",
         "description": "Storage interface for meta data. Might require 3rd party installations",
-        "options": ["mongodb", "sqlite3", "postgresql", "gcpsql"]
+        "options": ["sqlite3", "postgresql", "gcpsql"]
     },
     "logging_level": {
         "value": "DEBUG",

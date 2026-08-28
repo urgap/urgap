@@ -5,9 +5,10 @@ build-backend = "hatchling.build"
 [project]
 name = "urgap"
 readme = "README.rst"
+requires-python = ">=3.11"
 dynamic = ["version"]
 classifiers = [
-    'Development Status :: 4 - Beta',
+    'Development Status :: 5 - Production/Stable',
     'Environment :: Console',
     'Intended Audience :: Developers',
     'Intended Audience :: Education',
@@ -18,92 +19,98 @@ classifiers = [
     'Operating System :: POSIX',
     'Operating System :: POSIX :: SunOS/Solaris',
     'Operating System :: Unix',
-    'Programming Language :: Python :: 3.10',
     'Programming Language :: Python :: 3.11',
     'Programming Language :: Python :: 3.12',
     'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
     'Topic :: Scientific/Engineering :: Bio-Informatics',
     'Topic :: Scientific/Engineering :: Chemistry',
 ]
 dependencies = [
-    'click==8.3.1',
-    'fastapi==0.133.0',
-    'fastexcel==0.19.0',
-    'flask==3.1.3',
-    'flask-wtf==1.2.2',
-    'Jinja2==3.1.6',
-    'jsonschema==4.26.0',
-    'nbformat>=4.2.0',
-    'networkx>=3.4.2,<3.5 ; python_version == "3.10"',
-    'networkx==3.6.1 ; python_version >= "3.11"',
-    'openpyxl',
-    'packaging==25.0',
-    'pandas>=1.4.2,<2.4.0',
-    'plotly',
-    'polars>=1.33.0',
-    'requests>=2.26,<2.33',
-    'sqlalchemy==2.0.47',
-    'tqdm==4.67.3',
-    'uvicorn==0.40.0',
-    'PyGithub==2.8.1',
-    'mcp==1.26.0',
-    'xlsxwriter==3.2.9'
+    'click>=8.3.1,<9.0.0',
+    'jsonschema>=4.26.0,<5.0.0',
+    'networkx>=3.6.1,<4.0.0',
+    'packaging>=25.0,<26.0.0',
+    'requests>=2.26,<3.0.0',
+    'sqlalchemy>=2.0.47,<3.0.0',
 ]
 
 [project.optional-dependencies]
-# E.g. pip install "urgap[cloud]"
+server = [
+    'fastapi>=0.133.0,<1.0.0',
+    'flask>=3.1.3,<4.0.0',
+    'flask-wtf>=1.2.2,<2.0.0',
+    'Jinja2>=3.1.6,<4.0.0',
+    'uvicorn>=0.40.0,<1.0.0',
+    'mcp>=1.26.0,<2.0.0',
+    'fastmcp>=3.0.2,<4.0.0',
+]
+tabular = [
+    'pandas>=2,<4',
+    'polars>=1.33.0,<2.0.0',
+    'openpyxl>=3.1.5,<4.0.0',
+    'fastexcel>=0.19.0,<1.0.0',
+    'xlsxwriter>=3.2.9,<4.0.0',
+    'pyarrow>=18.1.0,<25.0.0',
+    'tqdm>=4.67.3,<5.0.0',
+]
+viz = [
+    'plotly>=6.9.0,<7.0.0',
+    'nbformat>=4.2.0,<6.0.0',
+    'ipython>=9.15.0,<10.0.0',
+]
+github = [
+    'PyGithub>=2.8.1,<3.0.0',
+]
 cloud = [
-    'apache_beam==2.70.0',
-    'azure-identity==1.25.2',
-    'azure-keyvault-secrets==4.10.0',
-    'azure-monitor-opentelemetry==1.8.6',
-    'azure-storage-blob==12.28.0',
-    'azure-servicebus==7.14.3',
-    'azure-storage-file-datalake==12.22.0',
-    'azure-storage-file-share==12.24.0',
-    'cloud-sql-python-connector~=1.0',
-    'fastmcp==3.0.2',
-    'google-apitools==0.5.35',
-    'google-cloud-logging==3.13.0',
-    'google-cloud-secret-manager==2.26.0',
-    'google-cloud-storage==3.9.0',
-    'google-crc32c==1.8.0',
-    'opentelemetry-exporter-otlp-proto-grpc==1.39.0',
-    'opentelemetry-sdk==1.39.0',
+    'betterproto==2.0.0b6', # Required for 3.14 until beam is updated
+    "apache-beam>=2.75.0,<3.0.0 ; sys_platform != 'win32'",
+    'azure-identity>=1.25.2,<2.0.0',
+    'azure-keyvault-secrets>=4.10.0,<5.0.0',
+    'azure-monitor-opentelemetry>=1.8.9,<2.0.0',
+    'azure-storage-blob>=12.28.0,<13.0.0',
+    'azure-servicebus>=7.14.3,<8.0.0',
+    'azure-storage-file-datalake>=12.22.0,<13.0.0',
+    'azure-storage-file-share>=12.24.0,<13.0.0',
+    'fastmcp>=3.0.2,<4.0.0',
+    'google-cloud-secret-manager>=2.26.0,<3.0.0',
+    'google-cloud-storage>=3.9.0,<4.0.0',
+    'google-crc32c>=1.8.0,<2.0.0',
+    'opentelemetry-exporter-otlp-proto-grpc>=1.39.0,<2.0.0',
+    'opentelemetry-sdk>=1.39.0,<2.0.0',
     'pg8000~=1.29',
-    'prefect==3.6.13',
-    'prefect-kubernetes==0.7.3',
-    'pysmb==1.2.13',
-    'pyvis==0.3.2',
-    'mcp==1.26.0',
+    'prefect>=3.6.13,<4.0.0',
+    'pysmb>=1.2.13,<2.0.0',
+    'pyvis>=0.3.2,<1.0.0',
+    'mcp>=1.26.0,<2.0.0',
 ]
 databases = [
-    'pymongo>=3.8.0,<5.0.0',
-    'psycopg2-binary'
+    'psycopg2-binary>=2.9.12,<3.0.0'
 ]
 docs = [
-    'sphinx',
-    'sphinx-rtd-theme',
-    'nbsphinx',
-    'ipython',
-]
-legacy = [
-    'unimod-mapper~=0.6.4',
-    'uparma~=1.0.1',
-    'chemical-composition~=1.0.6',
-    'FlowKit',
+    'sphinx>=9.0.4,<10.0.0',
+    'sphinx-rtd-theme>=3.1.0,<4.0.0',
+    'nbsphinx>=0.9.8,<1.0.0',
+    'ipython>=9.15.0,<10.0.0',
 ]
 dev = [
-    'black>=18.3a0',
-    'pytest',
-    'pytest-asyncio>=0.23',
+    'pytest>=8.4,<10.0.0',
+    'pytest-asyncio>=1.0,<2.0.0',
+    'httpx2>=2.7.0,<3.0.0',
+    'urgap[server]',
+    'urgap[tabular]',
+    'urgap[viz]',
+    'urgap[github]',
+    'urgap[cloud]',
+    'urgap[databases]',
 ]
 all = [
     "urgap[cloud]",
     "urgap[databases]",
-    "urgap[docs]",
-    "urgap[legacy]",
-    "urgap[dev]",
+    "urgap[server]",
+    "urgap[tabular]",
+    "urgap[viz]",
+    "urgap[github]",
 ]
 
 [project.urls]
@@ -145,14 +152,17 @@ dirty = "{next_version}.dev{distance}"
 distance-dirty = "{next_version}.dev{distance}"
 
 [tool.ruff]
-target-version = "py312"
+target-version = "py311"
 line-length = 88
 indent-width = 4
 exclude = [
     ".git",
     "build",
     "dist",
-    "docs"
+    "docs",
+    "urgap/uftypes",
+    "urgap/uctl/mcp",
+    "tests",
 ]
 
 [tool.ruff.lint]
@@ -165,7 +175,6 @@ ignore = [
     "LOG015", # Root logger call
     "FBT001", # Boolean type hint positional argument
     "FBT002", # Boolean default value positional argument,
-    "PYI034", # Wait until we drop 3.10 so Self is in typing
     "PLR0913", # Too many arguments -> TODO
     "TC003", # Causes false positives
     "D203", # Incompatible with D211
@@ -174,6 +183,8 @@ ignore = [
     "PLC0415", # Avoid unnecessary imports,
     "UP047", # Only available 3.13+
     "INP001", # Namespace packages intentionally have no __init__.py (PEP 420)
+    "CPY001", # Missing copyright notice at top of file
+    "PLR0917", # Too many positional arguments -> TODO
 ]
 
 
@@ -191,4 +202,11 @@ lines-between-types = 1
 [tool.pytest.ini_options]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+]
+
+[tool.uv]
+# Overrides only apache-beam pins down currently
+override-dependencies = [
+    "cryptography>=50.0.0",
+    "httplib2>=0.32.0",
 ]

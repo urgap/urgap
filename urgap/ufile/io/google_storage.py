@@ -130,6 +130,7 @@ class IOGoogleCloudStorage(UIOBase):
         self,
         pattern: str | None = None,
         full_string: bool = False,
+        **_kwargs: P.kwargs,
     ) -> list:
         """Get objects in folder/'container', optionally filtered by a regex pattern.
 

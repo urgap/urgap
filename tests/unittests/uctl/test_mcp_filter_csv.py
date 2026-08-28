@@ -3,7 +3,7 @@ import pytest
 from mcp.client.streamable_http import streamable_http_client
 from mcp.client.session import ClientSession
 import json
-import httpx
+import httpx2
 import urgap
 
 
@@ -16,7 +16,7 @@ import urgap
 async def test_urgap_mcp_server_filter_csv(provide_uctl_server, tmp_dir):
     url = "http://localhost:41999/mcp"
 
-    async with httpx.AsyncClient() as http_client:
+    async with httpx2.AsyncClient() as http_client:
         async with streamable_http_client(url, http_client=http_client) as (
             read,
             write,

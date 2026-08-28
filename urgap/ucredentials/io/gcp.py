@@ -19,11 +19,13 @@ logger = logging.getLogger(__name__)
 class IOGCPCreds(IOBaseCreds):
     """IO class interface GCP."""
 
+    SCHEME = "gcp"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOGCPCreds class."""
         super().__init__(**kwargs)
         self.version_id = kwargs["version_id"]
-        self.project_id = kwargs["project_id"]
+        self.project_id = kwargs["cloud_host_pid"]
 
     def get_secret(self) -> str:
         """Get secret from GCP secret Manager.
@@ -57,7 +59,7 @@ class IOGCPCreds(IOBaseCreds):
             crc32c = google_crc32c.Checksum()
             crc32c.update(response.payload.data)
             if response.payload.data_crc32c != int(crc32c.hexdigest(), 16):
-                msg = f"Secret {self.secret_id} payload is corrupted."
+                msg = "Secret payload is corrupted (checksum mismatch)."
                 logger.warning(msg)
 
             secret = response.payload.data.decode("UTF-8")

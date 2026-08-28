@@ -41,7 +41,7 @@ def show_credentials(cred_key: str) -> None:
         logger.info("Credential key: %s", cred_key)
         _log_cred_entry(cred_entry)
     else:
-        logger.exception("No credentials found for key: %s", cred_key)
+        logger.error("No credentials found for key: %s", cred_key)
 
 
 @click.command()
