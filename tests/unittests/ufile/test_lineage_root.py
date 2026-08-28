@@ -8,7 +8,7 @@ import urgap
     [
         (
             urgap.UFile(
-                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.genomics.plink.PGEN}"
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}"
                 f"#unified_csvs/demo.csv",
             ),
             urgap.URunDict(
