@@ -16,7 +16,7 @@ def test_wrapper_filter_csv(tmp_dir, unode, query):
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
-                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.genomics.plink.BIM}"
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}"
                 f"#unified_csvs/demo.csv",
             ),
         ]

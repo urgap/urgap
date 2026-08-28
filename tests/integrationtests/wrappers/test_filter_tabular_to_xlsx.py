@@ -59,7 +59,7 @@ def test_wrapper_filter_xlsx_csv_input(tmp_dir, unode):
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
-                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.genomics.plink.BIM}"
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}"
                 f"#unified_csvs/demo.csv",
             ),
         ],
@@ -95,7 +95,7 @@ def test_wrapper_filter_xlsx_2_input(tmp_dir, unode):
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
-                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.genomics.plink.BIM}"
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}"
                 f"#unified_csvs/demo.csv",
             ),
             urgap.UFile(

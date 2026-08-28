@@ -5,7 +5,7 @@ import urgap
 
 def test_ureport_graph(tmp_dir):
     input_file = urgap.UFile(
-        uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.genomics.plink.BIM}#"
+        uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}#"
         f"unified_csvs/demo.csv",
     )
 
