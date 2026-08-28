@@ -1,16 +1,20 @@
 """UCredentials module of urgap."""
 
-import contextlib
-import importlib
 import json
 import logging
 import os
 
 from pathlib import Path
+from typing import ParamSpec
 
 from jsonschema import validate
 
 import urgap.ucredentials.io
+
+from urgap.ucredentials.io._base import IOBaseCreds
+from urgap.umanager import UManager
+
+P = ParamSpec("P")
 
 logger = logging.getLogger(__name__)
 
@@ -40,16 +44,12 @@ DEFAULT_CREDENTIALS_SCHEME = {
 }
 
 
-class UCredentialManager:
-    """UCredentials Manager class.
+class UCredentialManager(UManager[IOBaseCreds]):
+    """Extracts secrets from the secret store defined per credentials_lookup.json entry."""
 
-    The credential Manager extracts the secrets from the secret store.
-
-    The input is a dictionary with a "credentials" key, each entry specifying
-    a secret backend and environment variable names for secrets (but not the secrets themselves).
-
-    By default, it will try to read a `credentials_lookup.json` from $URGAP_HOME.
-    """
+    NAMESPACE_PACKAGE = "urgap.ucredentials.io"
+    MARKER_ATTR = "SCHEME"
+    BASE_CLASS = IOBaseCreds
 
     def __init__(
         self,
@@ -63,20 +63,6 @@ class UCredentialManager:
             credentials_id_key: How uniqueness is determined for entries.
         """
         super().__init__()
-
-        self.available_io_classes = {}
-        io_modules = (
-            "akv",
-            "echo",
-            "env",
-            "gcp",
-        )
-        for io_module in io_modules:
-            with contextlib.suppress(ImportError):
-                self.available_io_classes[io_module] = importlib.import_module(
-                    f".{io_module}",
-                    package="urgap.ucredentials.io",
-                )
 
         self.ID_KEY = credentials_id_key
         self.ingested_credentials = {}
@@ -96,7 +82,7 @@ class UCredentialManager:
         self,
         secret_store: str,
         secret_id: str,
-        cloud_host_pid: str | None = None,
+        **extra: P.kwargs,
     ) -> urgap.ucredentials.io:
         """Initialize the secret backend handler."""
         if secret_store not in self.available_io_classes:
@@ -105,31 +91,13 @@ class UCredentialManager:
                 "If needed use: pip install 'urgap[cloud]'"
             )
             raise ImportError(msg)
-        if secret_store == "env":
-            self._io = self.available_io_classes[secret_store].IOEnvCreds(
-                secret_id=secret_id,
-            )
-        elif secret_store == "gcp":
-            self._io = self.available_io_classes[secret_store].IOGCPCreds(
-                secret_id=secret_id,
-                project_id=cloud_host_pid,
-                version_id="latest",
-            )
-        elif secret_store == "akv":
-            self._io = self.available_io_classes[secret_store].IOAzureCreds(
-                secret_id=secret_id,
-                vault_name=cloud_host_pid,
-            )
-        elif secret_store == "echo":
-            self._io = self.available_io_classes[secret_store].IOEchoCreds(
-                secret_id=secret_id,
-            )
-        else:
-            msg = (
-                f"Don't know secret backend {secret_store}."
-                f"Currently supported secret_stores are 'echo', 'env', 'gcp' and 'akv'."
-            )
+        io_class = self.available_io_classes[secret_store]
+        try:
+            self._io = io_class(secret_id=secret_id, **extra)
+        except (TypeError, ValueError) as e:
+            msg = f"Could not initialize secret backend '{secret_store}': {e}"
             logger.info(msg)
+            raise
 
     def get_user(
         self,
@@ -202,12 +170,23 @@ class UCredentialManager:
             msg = f"{cred_key} could not be extracted - is missing!"
             raise KeyError(msg)
 
-        if (_cred_entry["secret_store"] in ("gcp", "akv")) and (
-            _cred_entry["cloud_host_pid"] is not None
-        ):
+        if _cred_entry.get("cloud_host_pid") is not None:
             cloud_host_pid = _cred_entry["cloud_host_pid"]
         else:
             cloud_host_pid = _cred_entry.get("host", "localhost")
+
+        reserved = {
+            "description",
+            "scheme",
+            "host",
+            "user",
+            "password",
+            "secure",
+            "secret_store",
+            "base_url",
+        }
+        extra = {k: v for k, v in _cred_entry.items() if k not in reserved}
+        extra["cloud_host_pid"] = cloud_host_pid
 
         for keyname in ["user", "password"]:
             secret_id = _cred_entry[keyname]
@@ -215,7 +194,7 @@ class UCredentialManager:
             self.init_io_class(
                 secret_store=_cred_entry.get("secret_store", "env"),
                 secret_id=secret_id,
-                cloud_host_pid=cloud_host_pid,
+                **extra,
             )
 
             if keyname == "user" and secret_id is None:
