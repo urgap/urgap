@@ -9,7 +9,7 @@ import urgap
 def test_rebase_and_upload(tmpdir):
     file = urgap.UFile.from_path_object(
         path_object=Path(f"{urgap._test_folder}/data/usermods/usermods.xml"),
-        query=f"uftype={urgap.uftypes.proteomics.MODS_XML}",
+        query=f"uftype={urgap.uftypes.any.XML}",
     )
     file.rebase(f"file://{tmpdir}/data/test_node_data")
     file.upload()

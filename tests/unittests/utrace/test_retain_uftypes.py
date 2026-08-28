@@ -11,12 +11,12 @@ def test_retain_uftype_all_same_not_set():
         [
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_abcdefg.csv",
             ),
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_defghij.csv",
             ),
         ],
@@ -41,12 +41,12 @@ def test_retain_uftype_all_same():
         [
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_abcdefg.csv",
             ),
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_defghij.csv",
             ),
         ],
@@ -68,7 +68,7 @@ def test_retain_uftype_all_same():
     # First check the scans_file
     assert (
         ut.output_files[0].tags.get("uftype", None)
-        == urgap.uftypes.proteomics.converter.PYIOHAT_CSV
+        == urgap.uftypes.any.CSV
     )
 
 
@@ -77,7 +77,7 @@ def test_retain_uftype_different():
         [
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_abcdefg.csv",
             ),
             urgap.UFile(
