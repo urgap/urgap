@@ -10,7 +10,7 @@ def test_utelemetry_run(provide_changeable_config):
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
-                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.validator.PEPTIDEFOREST_CSV}"
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.genomics.plink.BIM}"
                 f"#unified_csvs/demo.csv",
             ),
         ],
@@ -37,7 +37,7 @@ def test_utelemetry_run_remote_fails(provide_changeable_config, caplog):
     ufiles = urgap.UFileList(
         [
             urgap.UFile(
-                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.validator.PEPTIDEFOREST_CSV}"
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.genomics.plink.BIM}"
                 f"#unified_csvs/demo.csv",
             ),
         ],
