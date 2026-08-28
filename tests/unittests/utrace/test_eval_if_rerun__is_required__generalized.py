@@ -10,12 +10,12 @@ def test_rerun_reason_by_force():
         [
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_abcdefg.csv",
             ),
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_defghij.csv",
             ),
         ],
@@ -36,12 +36,12 @@ def test_rerun_reason_output_files_are_missing():
         [
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_abcdefg.csv",
             ),
             urgap.UFile(
                 uri=f"file://{urgap._test_folder}/data?uftype="
-                f"{urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#csvs"
+                f"{urgap.uftypes.any.CSV}#csvs"
                 f"/sequence_defghij.csv",
             ),
         ],
