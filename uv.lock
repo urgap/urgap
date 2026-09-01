@@ -484,15 +484,16 @@ wheels = [
 
 [[package]]
 name = "betterproto"
-version = "2.0.0b6"
+version = "2.0.0b7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "grpclib" },
     { name = "python-dateutil" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/45/43/4c44efd75f2ef48a16b458c2fe2cff7aa74bab8fcadf2653bb5110a87f97/betterproto-2.0.0b6.tar.gz", hash = "sha256:720ae92697000f6fcf049c69267d957f0871654c8b0d7458906607685daee784", size = 63775, upload-time = "2023-06-26T19:43:54.319Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4e/94/930a1368fbed92adc897a9a1fae282e3f9d608547dbf805034ca549f381a/betterproto-2.0.0b7.tar.gz", hash = "sha256:1b1458ca5278d519bcd62556a4c236f998a91d503f0f71c67b0b954747052af2", size = 101447, upload-time = "2024-08-14T21:26:01.314Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/99/6d/007abe4bf14cd02a3c07710c22f0e3252b55b06678de2535ae5f03b7433a/betterproto-2.0.0b6-py3-none-any.whl", hash = "sha256:a0839ec165d110a69d0d116f4d0e2bec8d186af4db826257931f0831dab73fcf", size = 64275, upload-time = "2023-06-26T19:43:52.013Z" },
+    { url = "https://files.pythonhosted.org/packages/a7/9a/5db824c378f6f88b5c6366429f2f5169a10315e9e3d5ab754c4a8d1202aa/betterproto-2.0.0b7-py3-none-any.whl", hash = "sha256:401ab8055e2f814e77b9c88a74d0e1ae3d1e8a969cced6aeb1b59f71ad63fbd2", size = 105386, upload-time = "2024-08-14T21:25:59.826Z" },
 ]
 
 [[package]]
@@ -5135,9 +5136,9 @@ requires-dist = [
     { name = "azure-storage-file-share", marker = "extra == 'all'", specifier = ">=12.24.0,<13.0.0" },
     { name = "azure-storage-file-share", marker = "extra == 'cloud'", specifier = ">=12.24.0,<13.0.0" },
     { name = "azure-storage-file-share", marker = "extra == 'dev'", specifier = ">=12.24.0,<13.0.0" },
-    { name = "betterproto", marker = "extra == 'all'", specifier = "==2.0.0b6" },
-    { name = "betterproto", marker = "extra == 'cloud'", specifier = "==2.0.0b6" },
-    { name = "betterproto", marker = "extra == 'dev'", specifier = "==2.0.0b6" },
+    { name = "betterproto", marker = "extra == 'all'", specifier = "==2.0.0b7" },
+    { name = "betterproto", marker = "extra == 'cloud'", specifier = "==2.0.0b7" },
+    { name = "betterproto", marker = "extra == 'dev'", specifier = "==2.0.0b7" },
     { name = "click", specifier = ">=8.3.1,<9.0.0" },
     { name = "fastapi", marker = "extra == 'all'", specifier = ">=0.133.0,<1.0.0" },
     { name = "fastapi", marker = "extra == 'dev'", specifier = ">=0.133.0,<1.0.0" },
