@@ -25,6 +25,7 @@ from .ufile.ufile import UFile
 from .ufile.ufile_io_manager import UFileIOManager
 from .ufile.uuri import UUri
 from .ufile_list import UFileList
+from .umessagebus.umessagebus_manager import UMessageBusManager
 
 # Importing into namespace a level higher
 from .umeta import io
@@ -42,6 +43,7 @@ __all__ = [
     "UFile",
     "UFileIOManager",
     "UFileList",
+    "UMessageBusManager",
     "UMeta",
     "UNodeBase",
     "UNodeManager",
@@ -103,6 +105,7 @@ urgap.uinit.copy_resources_if_needed(
 urgap.instances = SimpleNamespace()
 urgap.instances.unode_manager = urgap.UNodeManager()
 urgap.instances.ufile_io_manager = urgap.UFileIOManager()
+urgap.instances.umessagebus_manager = urgap.UMessageBusManager()
 urgap.instances.ucredential_manager = urgap.UCredentialManager()
 urgap.instances.utelemetry_manager = urgap.UTelemetry()
 urgap.utl = urgap.instances.utelemetry_manager

@@ -21,6 +21,9 @@ UCtl
 .. automodule:: urgap.uctl.upload
    :members:
 
+.. automodule:: urgap.uctl.rebase
+   :members:
+
 .. automodule:: urgap.uctl.set
    :members:
 

@@ -76,6 +76,7 @@ cloud = [
     'azure-storage-file-datalake>=12.22.0,<13.0.0',
     'azure-storage-file-share>=12.24.0,<13.0.0',
     'fastmcp>=3.0.2,<4.0.0',
+    'google-cloud-pubsub>=2.39.2,<3.0.0',
     'google-cloud-secret-manager>=2.26.0,<3.0.0',
     'google-cloud-storage>=3.9.0,<4.0.0',
     'google-crc32c>=1.8.0,<2.0.0',
