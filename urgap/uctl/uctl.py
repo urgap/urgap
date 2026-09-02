@@ -9,6 +9,7 @@ import urgap
 
 from urgap.uctl.describe import describe
 from urgap.uctl.info import info
+from urgap.uctl.rebase import rebase
 from urgap.uctl.run import run
 from urgap.uctl.set import set_command
 from urgap.uctl.show import show_credentials_click
@@ -29,3 +30,4 @@ cli.add_command(describe)
 cli.add_command(run)
 cli.add_command(info)
 cli.add_command(upload)
+cli.add_command(rebase)

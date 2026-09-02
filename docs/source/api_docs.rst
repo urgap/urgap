@@ -15,6 +15,7 @@ API Documentation
    urgap/ufile_list
    urgap/uhelpers
    urgap/uinit
+   urgap/umessagebus
    urgap/umeta
    urgap/unode
    urgap/unode_manager
