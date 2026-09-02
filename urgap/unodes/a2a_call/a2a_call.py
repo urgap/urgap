@@ -21,7 +21,7 @@ import urgap
 if TYPE_CHECKING:
     from pathlib import Path
 
-    import httpx2 as httpx
+    import httpx
 
     from a2a.client import Client
     from a2a.types import Message, Part, Task
@@ -209,7 +209,7 @@ async def download_part(part: Part, httpx_client: httpx.AsyncClient) -> bytes:
     Raises:
         RuntimeError: If the content cannot be downloaded.
     """
-    import httpx2 as httpx
+    import httpx
 
     msg = f"Downloading file part {part.filename} from {part.url}"
     logger.info(msg)
@@ -298,7 +298,7 @@ async def ask_agent(
     Raises:
         RuntimeError: If the agent task did not complete successfully.
     """
-    import httpx2 as httpx
+    import httpx
 
     from a2a.types import Task, TaskState
 

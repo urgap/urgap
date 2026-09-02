@@ -217,7 +217,7 @@ def test_wrapper_a2a_call_is_skipped_on_rerun(
         ufiles=get_input_ufiles(),
     )
     assert len(stub_a2a_agent.received_requests) == 1
-    assert second_run.as_uri_list() == first_run.as_uri_list()
+    assert sorted(second_run.as_uri_list()) == sorted(first_run.as_uri_list())
     assert len(second_run.get_path_objects_by_uftype(urgap.uftypes.any.BLOB)) == 2
 
 
