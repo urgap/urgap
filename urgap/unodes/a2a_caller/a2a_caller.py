@@ -1,4 +1,4 @@
-"""Urgap A2ACall wrapper.
+"""Urgap A2ACaller wrapper.
 
 The A2A call is performed in process with the official a2a-sdk, hence this
 UNode has no separate resource and overwrites execute instead of building a
@@ -343,7 +343,7 @@ async def ask_agent(
     return text, returned_files
 
 
-class A2ACall(urgap.unode.UNodeBase):
+class A2ACaller(urgap.unode.UNodeBase):
     """Urgap wrapper for Agent2Agent (A2A) calls.
 
     Asks a question to an A2A agent, attaches all input UFiles as A2A file
@@ -361,7 +361,7 @@ class A2ACall(urgap.unode.UNodeBase):
     """
 
     META_INFO = {
-        "name": "A2ACall",
+        "name": "A2ACaller",
         "wrapper_version": {"major": 1, "minor": 0, "patch": 0},
         # This UNode has no resource of its own, the system resource it runs on
         # is the python interpreter urgap itself is running in.
@@ -394,7 +394,7 @@ class A2ACall(urgap.unode.UNodeBase):
         },
         "citation": "Urgap team (2026)",
         "parameter_examples": """
-            These are possible unode_execution_parameters for A2ACall.
+            These are possible unode_execution_parameters for A2ACaller.
 
             agent_url: Base URL of the A2A agent, its agent card is resolved
                 from /.well-known/agent-card.json. Required.
@@ -418,7 +418,7 @@ class A2ACall(urgap.unode.UNodeBase):
     }
 
     def __init__(self) -> None:
-        """Initialize A2ACall class."""
+        """Initialize A2ACaller class."""
         super().__init__()
 
     def write_answer(self, utrace: urgap.UTrace, text: str) -> None:
@@ -463,7 +463,7 @@ class A2ACall(urgap.unode.UNodeBase):
         self,
         utrace: urgap.UTrace,
     ) -> urgap.UTrace:
-        """Execute routine for A2ACall, performs the A2A call in process.
+        """Execute routine for A2ACaller, performs the A2A call in process.
 
         Args:
             utrace: Combination of urun_dict, ufile_list and unode.meta.
@@ -482,7 +482,7 @@ class A2ACall(urgap.unode.UNodeBase):
             question = parameters["question"]
         except KeyError as e:
             msg = (
-                f"A2ACall requires the unode_execution_parameter {e}, "
+                f"A2ACaller requires the unode_execution_parameter {e}, "
                 f"see META_INFO['parameter_examples']."
             )
             raise KeyError(msg) from e

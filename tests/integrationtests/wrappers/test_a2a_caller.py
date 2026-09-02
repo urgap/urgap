@@ -1,4 +1,4 @@
-"""Integration tests for A2ACall, run against a stub A2A agent."""
+"""Integration tests for A2ACaller, run against a stub A2A agent."""
 
 import base64
 import json
@@ -146,11 +146,11 @@ def get_input_ufiles() -> urgap.UFileList:
 
 
 def get_urun_dict(agent_url: str, tmp_dir: urgap.Path, **parameters) -> urgap.URunDict:  # noqa: ANN003
-    """Get a URunDict for an A2ACall run against the given agent URL."""
+    """Get a URunDict for an A2ACaller run against the given agent URL."""
     return urgap.URunDict(
         {
             "parameters": {
-                "A2ACall:1.0.0": {
+                "A2ACaller:1.0.0": {
                     "agent_url": agent_url,
                     "question": "Summarize the attached files.",
                     **parameters,
@@ -169,15 +169,15 @@ def get_agent_url(stub_a2a_agent: ThreadingHTTPServer) -> str:
     return f"http://{host}:{port}"
 
 
-def test_wrapper_a2a_call(
+def test_wrapper_a2a_caller(
     tmp_dir: urgap.Path,
     stub_a2a_agent: ThreadingHTTPServer,
 ) -> None:
     """Input files are sent as file parts and returned files are written back."""
     ufiles = get_input_ufiles()
     expected_contents = {ufile.path.read_bytes() for ufile in ufiles}
-    a2a_node = urgap.init_unode("A2ACall:1.0.0")
-    output_files = a2a_node.run(
+    a2a_caller_node = urgap.init_unode("A2ACaller:1.0.0")
+    output_files = a2a_caller_node.run(
         urun_dict=get_urun_dict(get_agent_url(stub_a2a_agent), tmp_dir),
         ufiles=ufiles,
     )
@@ -201,18 +201,18 @@ def test_wrapper_a2a_call(
     } == expected_contents
 
 
-def test_wrapper_a2a_call_is_skipped_on_rerun(
+def test_wrapper_a2a_caller_is_skipped_on_rerun(
     tmp_dir: urgap.Path,
     stub_a2a_agent: ThreadingHTTPServer,
 ) -> None:
     """A rerun is skipped and recovers the dynamic number of returned files."""
     agent_url = get_agent_url(stub_a2a_agent)
-    a2a_node = urgap.init_unode("A2ACall:1.0.0")
-    first_run = a2a_node.run(
+    a2a_caller_node = urgap.init_unode("A2ACaller:1.0.0")
+    first_run = a2a_caller_node.run(
         urun_dict=get_urun_dict(agent_url, tmp_dir),
         ufiles=get_input_ufiles(),
     )
-    second_run = a2a_node.run(
+    second_run = a2a_caller_node.run(
         urun_dict=get_urun_dict(agent_url, tmp_dir),
         ufiles=get_input_ufiles(),
     )
@@ -222,13 +222,13 @@ def test_wrapper_a2a_call_is_skipped_on_rerun(
 
 
 @pytest.mark.parametrize("stub_a2a_agent", ["message_only"], indirect=True)
-def test_wrapper_a2a_call_with_message_answer(
+def test_wrapper_a2a_caller_with_message_answer(
     tmp_dir: urgap.Path,
     stub_a2a_agent: ThreadingHTTPServer,
 ) -> None:
     """Agents answering with a message instead of a task return no files."""
-    a2a_node = urgap.init_unode("A2ACall:1.0.0")
-    output_files = a2a_node.run(
+    a2a_caller_node = urgap.init_unode("A2ACaller:1.0.0")
+    output_files = a2a_caller_node.run(
         urun_dict=get_urun_dict(get_agent_url(stub_a2a_agent), tmp_dir),
         ufiles=get_input_ufiles(),
     )
@@ -239,14 +239,14 @@ def test_wrapper_a2a_call_with_message_answer(
 
 
 @pytest.mark.parametrize("stub_a2a_agent", ["no_card"], indirect=True)
-def test_wrapper_a2a_call_crashes_without_agent_card(
+def test_wrapper_a2a_caller_crashes_without_agent_card(
     tmp_dir: urgap.Path,
     stub_a2a_agent: ThreadingHTTPServer,
 ) -> None:
     """An agent which serves no agent card cannot be talked to."""
-    a2a_node = urgap.init_unode("A2ACall:1.0.0")
+    a2a_caller_node = urgap.init_unode("A2ACaller:1.0.0")
     with pytest.raises(AgentCardResolutionError):
-        a2a_node.run(
+        a2a_caller_node.run(
             urun_dict=get_urun_dict(get_agent_url(stub_a2a_agent), tmp_dir),
             ufiles=get_input_ufiles(),
         )
@@ -254,13 +254,13 @@ def test_wrapper_a2a_call_crashes_without_agent_card(
 
 
 @pytest.mark.parametrize("stub_a2a_agent", ["working"], indirect=True)
-def test_wrapper_a2a_call_polls_until_task_is_done(
+def test_wrapper_a2a_caller_polls_until_task_is_done(
     tmp_dir: urgap.Path,
     stub_a2a_agent: ThreadingHTTPServer,
 ) -> None:
     """Tasks which are not completed right away are polled via tasks/get."""
-    a2a_node = urgap.init_unode("A2ACall:1.0.0")
-    output_files = a2a_node.run(
+    a2a_caller_node = urgap.init_unode("A2ACaller:1.0.0")
+    output_files = a2a_caller_node.run(
         urun_dict=get_urun_dict(
             get_agent_url(stub_a2a_agent),
             tmp_dir,
@@ -278,14 +278,14 @@ def test_wrapper_a2a_call_polls_until_task_is_done(
 
 
 @pytest.mark.parametrize("stub_a2a_agent", ["failed"], indirect=True)
-def test_wrapper_a2a_call_crashes_on_failed_task(
+def test_wrapper_a2a_caller_crashes_on_failed_task(
     tmp_dir: urgap.Path,
     stub_a2a_agent: ThreadingHTTPServer,
 ) -> None:
     """A task which does not complete successfully crashes the UNode run."""
-    a2a_node = urgap.init_unode("A2ACall:1.0.0")
+    a2a_caller_node = urgap.init_unode("A2ACaller:1.0.0")
     with pytest.raises(RuntimeError, match="TASK_STATE_FAILED"):
-        a2a_node.run(
+        a2a_caller_node.run(
             urun_dict=get_urun_dict(get_agent_url(stub_a2a_agent), tmp_dir),
             ufiles=get_input_ufiles(),
         )
