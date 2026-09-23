@@ -808,6 +808,29 @@ class UFileList(UserList):
         finally:
             os.chdir(workdir)
 
+    def rebase(
+        self,
+        storage_base_uri: str,
+        upload: bool = True,
+    ) -> UFileList:
+        """Rebase all UFiles in the list onto a new storage base UUri.
+
+        Only the storage base is replaced, the object name of each UFile is
+        kept, so this relocates files without renaming them.
+
+        Args:
+            storage_base_uri: Target storage base UUri, e.g. "azure://account/container".
+            upload: If True, upload each UFile to the new location.
+
+        Returns:
+            This UFileList, with every UFile pointing at the new location.
+        """
+        for uf in self:
+            msg = f"Rebasing {uf.object_name} onto {storage_base_uri}"
+            logger.info(msg)
+            uf.rebase(uri=storage_base_uri, upload=upload)
+        return self
+
     def relocate_fragment_to_path(
         self,
         steps: int = 1,
