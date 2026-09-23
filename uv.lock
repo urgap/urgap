@@ -9,17 +9,33 @@ resolution-markers = [
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version == '3.12.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
 [manifest]
-overrides = [
-    { name = "cryptography", specifier = ">=50.0.0" },
-    { name = "httplib2", specifier = ">=0.32.0" },
+overrides = [{ name = "cryptography", specifier = ">=50.0.0" }]
+
+[[package]]
+name = "a2a-sdk"
+version = "1.1.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "culsans", marker = "python_full_version < '3.13'" },
+    { name = "google-api-core" },
+    { name = "googleapis-common-protos" },
+    { name = "httpx" },
+    { name = "json-rpc" },
+    { name = "packaging" },
+    { name = "protobuf" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/38/cc/59b35c518d8289bd59d20d9d216ca29ccb41c4697eb85971efe41d1adaf3/a2a_sdk-1.1.2.tar.gz", hash = "sha256:f928d8bf9a0dc0a473ee8258bd5226c1b8520a85c70e7f233c3b9b0e30a1bd10", size = 379627, upload-time = "2026-07-22T13:40:51.409Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/33/d414a03d5ef5a7d6d09a20dc9f8094e7fb9edb488662ff99c535a2a62cf1/a2a_sdk-1.1.2-py3-none-any.whl", hash = "sha256:eb9a698f526dc45a9ea967d7804e7aa363ff273d2c44fbed699bc68c9399f9c9", size = 245981, upload-time = "2026-07-22T13:40:49.484Z" },
 ]
 
 [[package]]
@@ -32,6 +48,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/14/31/edb06aabd8f8f0b56d659f30800795f40b93cba96be946ce179f6931e3a5/aiofile-3.12.3.tar.gz", hash = "sha256:caa6aa746b5e47e2165f7abd741b6415e49cf4d44fddc0f61844612cc3924d41", size = 21600, upload-time = "2026-08-04T22:59:27.171Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4e/79/6e45e778c4c3cab39e0937b007b720c15f76c50c6453d153282d0fcc3588/aiofile-3.12.3-py3-none-any.whl", hash = "sha256:5c1bcc9e929c50834608e8cc1a4cc1d7503eb60c15a535b779fd39e2f372c017", size = 22122, upload-time = "2026-08-04T22:59:25.838Z" },
+]
+
+[[package]]
+name = "aiologic"
+version = "0.17.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+    { name = "wrapt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f1/7a/d51f2fde1e8ae8a83431f8e97b7a71e9358cdb1d4d2ce6be387fa44d68de/aiologic-0.17.1.tar.gz", hash = "sha256:2e1b93b9e88ced318c2a63ad7b382688f40cbfe40e3d42258d49dc9c5aea179d", size = 252354, upload-time = "2026-06-27T20:41:33.25Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/d3/2d310b1b839014034dba0cba685e492df8a5c7ad32c19cab7e979eed6554/aiologic-0.17.1-py3-none-any.whl", hash = "sha256:c66b319830fedb7ca3d2b2125fa6f5b653f89418c2a27ea76f259ec5f00943c0", size = 161331, upload-time = "2026-06-27T20:41:31.877Z" },
 ]
 
 [[package]]
@@ -5194,7 +5224,11 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+agents = [
+    { name = "a2a-sdk" },
+]
 all = [
+    { name = "a2a-sdk" },
     { name = "apache-beam", marker = "sys_platform != 'win32'" },
     { name = "azure-identity" },
     { name = "azure-keyvault-secrets" },
@@ -5259,6 +5293,7 @@ databases = [
     { name = "psycopg2-binary" },
 ]
 dev = [
+    { name = "a2a-sdk" },
     { name = "apache-beam", marker = "sys_platform != 'win32'" },
     { name = "azure-identity" },
     { name = "azure-keyvault-secrets" },
@@ -5336,6 +5371,9 @@ viz = [
 
 [package.metadata]
 requires-dist = [
+    { name = "a2a-sdk", marker = "extra == 'agents'", specifier = ">=1.1.2,<2.0.0" },
+    { name = "a2a-sdk", marker = "extra == 'all'", specifier = ">=1.1.2,<2.0.0" },
+    { name = "a2a-sdk", marker = "extra == 'dev'", specifier = ">=1.1.2,<2.0.0" },
     { name = "apache-beam", marker = "sys_platform != 'win32' and extra == 'all'", specifier = ">=2.75.0,<3.0.0" },
     { name = "apache-beam", marker = "sys_platform != 'win32' and extra == 'cloud'", specifier = ">=2.75.0,<3.0.0" },
     { name = "apache-beam", marker = "sys_platform != 'win32' and extra == 'dev'", specifier = ">=2.75.0,<3.0.0" },
@@ -5463,7 +5501,7 @@ requires-dist = [
     { name = "xlsxwriter", marker = "extra == 'dev'", specifier = ">=3.2.9,<4.0.0" },
     { name = "xlsxwriter", marker = "extra == 'tabular'", specifier = ">=3.2.9,<4.0.0" },
 ]
-provides-extras = ["all", "cloud", "databases", "dev", "docs", "github", "server", "tabular", "viz"]
+provides-extras = ["agents", "all", "cloud", "databases", "dev", "docs", "github", "server", "tabular", "viz"]
 
 [[package]]
 name = "urllib3"
