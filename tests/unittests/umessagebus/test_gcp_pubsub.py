@@ -1,12 +1,14 @@
 """Unit tests for the GCP Pub/Sub transport, with the Google clients stubbed."""
 
 import json
+import time
 
 import pytest
 
 from google.api_core.exceptions import AlreadyExists, DeadlineExceeded
 
 from urgap.umessagebus.io.gcp_pubsub import (
+    LEASE_RENEWAL_INTERVAL_SECONDS,
     MAX_ACK_DEADLINE_SECONDS,
     UMessageBusGCPPubSub,
 )
@@ -87,9 +89,8 @@ class StubSubscriber:
         self.closed = True
 
 
-@pytest.fixture
-def bus(monkeypatch):
-    """A connected Pub/Sub transport with both Google clients stubbed."""
+def connected_bus(monkeypatch, completion_topic="urgap_completed"):
+    """Create a connected Pub/Sub transport with both Google clients stubbed."""
     subscriber = StubSubscriber()
     publisher = StubPublisher()
     monkeypatch.setattr(
@@ -103,10 +104,18 @@ def bus(monkeypatch):
     message_bus = UMessageBusGCPPubSub(
         cred_key="gcp-pubsub://my-project",
         subscription_key="urgap_rebase",
-        completion_topic="urgap_completed",
+        completion_topic=completion_topic,
     )
     message_bus.connect()
     return message_bus
+
+
+@pytest.fixture
+def bus(monkeypatch):
+    """A connected Pub/Sub transport with both Google clients stubbed."""
+    message_bus = connected_bus(monkeypatch)
+    yield message_bus
+    message_bus.close()
 
 
 def test_project_and_paths_come_from_cred_key(bus):
@@ -132,6 +141,22 @@ def test_ensure_entities_creates_topics_and_filtered_subscription(bus):
         'attributes.subscription_key = "urgap_rebase"'
     )
     assert bus.subscriber.created[0]["topic"] == "projects/my-project/topics/urgap_queue"
+
+
+def test_ensure_entities_subscribes_to_the_completion_topic(bus):
+    bus.ensure_entities()
+    created = bus.subscriber.created[1]
+    assert created["name"] == "projects/my-project/subscriptions/Completed"
+    assert created["topic"] == "projects/my-project/topics/urgap_completed"
+    assert "filter" not in created
+
+
+def test_ensure_entities_skips_the_completion_subscription_without_topic(monkeypatch):
+    message_bus = connected_bus(monkeypatch, completion_topic=None)
+    message_bus.ensure_entities()
+    assert [request["name"] for request in message_bus.subscriber.created] == [
+        "projects/my-project/subscriptions/urgap_rebase",
+    ]
 
 
 def test_ensure_entities_tolerates_existing_topics(bus):
@@ -179,10 +204,56 @@ def test_renew_extends_the_ack_deadline(bus):
     assert bus.subscriber.deadlines == [(["ack-1"], 120)]
 
 
-def test_renew_is_capped_at_the_pubsub_maximum(bus, caplog):
+def test_renew_does_not_start_a_renewer_for_a_short_duration(bus):
+    bus.renew(StubMessage("ack-1", {}), 120)
+    assert bus._leases == {}
+    assert bus._lease_thread is None
+
+
+def test_renew_caps_the_first_extension_and_keeps_the_lease(bus):
     bus.renew(StubMessage("ack-1", {}), 3600)
     assert bus.subscriber.deadlines == [(["ack-1"], MAX_ACK_DEADLINE_SECONDS)]
-    assert "caps the ack deadline" in caplog.text
+    assert list(bus._leases) == ["ack-1"]
+    assert bus._lease_thread.is_alive()
+
+
+def test_renewer_extends_a_message_held_longer_than_the_maximum(bus):
+    bus.renew(StubMessage("ack-1", {}), 3600)
+    bus._renew_due_leases()
+    assert bus.subscriber.deadlines == [
+        (["ack-1"], MAX_ACK_DEADLINE_SECONDS),
+        (["ack-1"], MAX_ACK_DEADLINE_SECONDS),
+    ]
+
+
+def test_renewer_gives_up_when_the_requested_duration_is_used_up(bus, caplog):
+    bus.renew(StubMessage("ack-1", {}), 3600)
+    bus._leases["ack-1"] = time.monotonic() + LEASE_RENEWAL_INTERVAL_SECONDS - 1
+    bus._renew_due_leases()
+    assert bus._leases == {}
+    assert "is used up" in caplog.text
+    assert bus.subscriber.deadlines == [(["ack-1"], MAX_ACK_DEADLINE_SECONDS)]
+
+
+def test_settling_a_message_stops_renewing_it(bus):
+    message = StubMessage("ack-1", {})
+    bus.renew(message, 3600)
+    bus.complete(message)
+    bus._renew_due_leases()
+    assert bus._leases == {}
+    assert bus.subscriber.deadlines == [(["ack-1"], MAX_ACK_DEADLINE_SECONDS)]
+
+
+def test_abandoning_a_message_stops_renewing_it(bus):
+    message = StubMessage("ack-1", {})
+    bus.renew(message, 3600)
+    bus.abandon(message)
+    bus._renew_due_leases()
+    assert bus._leases == {}
+    assert bus.subscriber.deadlines == [
+        (["ack-1"], MAX_ACK_DEADLINE_SECONDS),
+        (["ack-1"], 0),
+    ]
 
 
 def test_renew_is_a_noop_without_duration(bus):
@@ -199,25 +270,19 @@ def test_publish_completion_sends_json_with_attributes(bus):
 
 
 def test_publish_completion_is_noop_without_completion_topic(monkeypatch):
-    subscriber, publisher = StubSubscriber(), StubPublisher()
-    monkeypatch.setattr(
-        "urgap.umessagebus.io.gcp_pubsub.pubsub_v1.SubscriberClient",
-        lambda: subscriber,
-    )
-    monkeypatch.setattr(
-        "urgap.umessagebus.io.gcp_pubsub.pubsub_v1.PublisherClient",
-        lambda: publisher,
-    )
-    message_bus = UMessageBusGCPPubSub(
-        cred_key="gcp-pubsub://my-project",
-        subscription_key="urgap_rebase",
-        completion_topic=None,
-    )
-    message_bus.connect()
+    message_bus = connected_bus(monkeypatch, completion_topic=None)
     message_bus.publish_completion({"uuid": "an-id"})
-    assert publisher.published == []
+    assert message_bus.publisher.published == []
 
 
 def test_close_closes_the_subscriber(bus):
     bus.close()
     assert bus.subscriber is None
+
+
+def test_close_stops_the_lease_renewer(bus):
+    bus.renew(StubMessage("ack-1", {}), 3600)
+    lease_thread = bus._lease_thread
+    bus.close()
+    assert not lease_thread.is_alive()
+    assert bus._leases == {}

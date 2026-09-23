@@ -20,7 +20,7 @@ from azure.servicebus.management import (
     SqlRuleFilter,
 )
 
-from urgap.umessagebus.io._base import UMessageBusBase
+from urgap.umessagebus.io._base import COMPLETION_SUBSCRIPTION_NAME, UMessageBusBase
 
 logger = logging.getLogger(__name__)
 
@@ -77,7 +77,7 @@ class UMessageBusAzureServiceBus(UMessageBusBase):
         ]
         if self.completion_topic is not None:
             topic_subscription_filter_pairs += [
-                (self.completion_topic, "Completed", None),
+                (self.completion_topic, COMPLETION_SUBSCRIPTION_NAME, None),
             ]
         for topic, subscription, filter_value in topic_subscription_filter_pairs:
             newly_created_subscription = False

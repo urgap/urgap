@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Self
 
 DEFAULT_TOPIC = "urgap_queue"
+COMPLETION_SUBSCRIPTION_NAME = "Completed"
 
 
 class UMessageBusBase:
@@ -63,6 +64,9 @@ class UMessageBusBase:
     @staticmethod
     def safe_subscription_name(subscription_key: str) -> str:
         """Turn a routing key into a name every transport accepts.
+
+        Pub/Sub allows letters, numbers and ``-_.~+%`` only, so the colon of a
+        unode_full_identifier is replaced.
 
         Args:
             subscription_key: Routing key, e.g. a unode_full_identifier.
