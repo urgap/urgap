@@ -61,27 +61,16 @@ class UFile:
     def check_uri_scheme_exists(self) -> None:
         """Check if the URI scheme is supported.
 
-        Returns:
-            True if the URI scheme is supported.
-
         Raises:
-            ValueError: If the scheme is not in the supported list.
+            ValueError: If the scheme has no registered IO backend.
         """
         scheme = self.uuri.scheme
-        if scheme not in (
-            "azure",
-            "az-dl",
-            "az-smb",
-            "file",
-            "ftp",
-            "gcs",
-            "github",
-            "https",
-            "mylabdata",
-            "omiq",
-            "smb",
-        ):
-            msg = f"Scheme {scheme} not supported"
+        available_schemes = urgap.instances.ufile_io_manager.available_io_classes
+        if scheme not in available_schemes:
+            msg = (
+                f"Unsupported URI scheme '{scheme}'. Available: "
+                f"{sorted(available_schemes)}"
+            )
             raise ValueError(msg)
 
     def format_uri(self) -> None:
