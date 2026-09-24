@@ -41,10 +41,6 @@
         "value": null,
         "description": "Temporary urgap processing disk"
     },
-    "git_clone_disk": {
-        "value": null,
-        "description": "Persistent disk where the 'git' scheme clones repositories. Defaults to ~/.urgap/git_clones when null."
-    },
     "mode": {
         "value": "dev",
         "description": "Mode in which urgap is running. Can be set to prod for stricter rules.",

@@ -25,7 +25,6 @@ P = ParamSpec("P")
 logger = logging.getLogger(__name__)
 
 GIT_TIMEOUT_SECONDS = 300
-DEFAULT_CLONE_BASE = Path.home() / ".urgap" / "git_clones"
 
 
 class IOGit(UIOBase):
@@ -87,14 +86,20 @@ class IOGit(UIOBase):
 
     @property
     def clone_dir(self) -> Path:
-        """Get the persistent clone directory for this repository.
+        """Get the clone directory for this repository.
+
+        Clones live under the per-run scratch base, so they are shared across
+        all downloads in a single run and removed at interpreter exit.
 
         Returns:
-            ``<git_clone_disk>/<host>/<org>/<repo>``.
+            ``<scratch_disk_base>/git_clones/<host>/<org>/<repo>``.
         """
-        base = urgap.config.get("git_clone_disk") or DEFAULT_CLONE_BASE
         return (
-            Path(base).expanduser() / self.host / self.org_name / self.repo_name
+            Path(urgap.scratch_disk_base)
+            / "git_clones"
+            / self.host
+            / self.org_name
+            / self.repo_name
         ).resolve()
 
     def _redact(self, text: str) -> str:

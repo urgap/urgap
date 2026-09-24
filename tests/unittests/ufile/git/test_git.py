@@ -40,9 +40,9 @@ def remote_repo(tmp_path: Path) -> Path:
 
 
 @pytest.fixture(autouse=True)
-def _clone_disk(tmp_path: Path) -> None:
-    """Point git_clone_disk at a temp dir and reset the process refresh cache."""
-    urgap.config["git_clone_disk"] = str(tmp_path / "clones")
+def _clone_disk(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Point the scratch base at a temp dir and reset the process refresh cache."""
+    monkeypatch.setattr(urgap, "scratch_disk_base", tmp_path / "scratch")
     IOGit._refreshed.clear()
 
 
