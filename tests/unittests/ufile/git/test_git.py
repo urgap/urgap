@@ -2,6 +2,7 @@
 
 import subprocess
 
+from collections.abc import Callable
 from pathlib import Path
 
 import pytest
@@ -46,30 +47,35 @@ def _clone_disk(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     IOGit._refreshed.clear()
 
 
-def _make_io(fragment: str, remote: Path, query: str = "") -> IOGit:
+@pytest.fixture
+def make_io(remote_repo: Path) -> Callable[..., IOGit]:
     """Build an IOGit for a file, pointing the clone source at the local remote."""
-    query_part = f"?{query}" if query else ""
-    uri = f"git://github.com/testorg/testrepo/main{query_part}#{fragment}"
-    io = IOGit(uuri=urgap.UUri(uri=uri))
-    io.remote_url = str(remote)
-    return io
+
+    def _factory(fragment: str, query: str = "") -> IOGit:
+        query_part = f"?{query}" if query else ""
+        uri = f"git://github.com/testorg/testrepo/main{query_part}#{fragment}"
+        io = IOGit(uuri=urgap.UUri(uri=uri))
+        io.remote_url = str(remote_repo)
+        return io
+
+    return _factory
 
 
-def test_download_reads_from_clone(remote_repo: Path) -> None:
+def test_download_reads_from_clone(make_io: Callable[..., IOGit]) -> None:
     """Download copies the file contents from the local checkout."""
-    io = _make_io("README.md", remote_repo)
+    io = make_io("README.md")
     io.download()
     assert io.scratch_path.read_text() == "hello world"
 
 
-def test_force_deletes_and_reclones(remote_repo: Path) -> None:
+def test_force_deletes_and_reclones(make_io: Callable[..., IOGit]) -> None:
     """force query param wipes the existing clone and clones again."""
-    io1 = _make_io("README.md", remote_repo)
+    io1 = make_io("README.md")
     io1.download()
     marker = io1.clone_dir / "local_only.txt"
     marker.write_text("stale")
 
-    io2 = _make_io("README.md", remote_repo, query="force=True")
+    io2 = make_io("README.md", query="force=True")
     io2.download()
 
     assert io2.scratch_path.read_text() == "hello world"
@@ -77,40 +83,40 @@ def test_force_deletes_and_reclones(remote_repo: Path) -> None:
     assert not marker.exists()
 
 
-def test_force_purges_scratch_copy(remote_repo: Path) -> None:
+def test_force_purges_scratch_copy(make_io: Callable[..., IOGit]) -> None:
     """force drops any cached scratch copy so the file is re-fetched."""
-    io1 = _make_io("README.md", remote_repo)
+    io1 = make_io("README.md")
     io1.download()
     assert io1.scratch_path.exists()
 
-    io2 = _make_io("README.md", remote_repo, query="force=True")
+    io2 = make_io("README.md", query="force=True")
     # Constructing with force must have removed the shared scratch copy.
     assert not io2.scratch_path.exists()
 
 
-def test_download_nested_file(remote_repo: Path) -> None:
+def test_download_nested_file(make_io: Callable[..., IOGit]) -> None:
     """Download works for a nested file path."""
-    io = _make_io("sub/data.txt", remote_repo)
+    io = make_io("sub/data.txt")
     io.download()
     assert io.scratch_path.read_text() == "nested content"
 
 
-def test_remote_object_exists(remote_repo: Path) -> None:
+def test_remote_object_exists(make_io: Callable[..., IOGit]) -> None:
     """remote_object_exists reflects presence in the checkout."""
-    assert _make_io("README.md", remote_repo).remote_object_exists() is True
-    assert _make_io("missing.txt", remote_repo).remote_object_exists() is False
+    assert make_io("README.md").remote_object_exists() is True
+    assert make_io("missing.txt").remote_object_exists() is False
 
 
-def test_download_missing_raises(remote_repo: Path) -> None:
+def test_download_missing_raises(make_io: Callable[..., IOGit]) -> None:
     """Download raises RuntimeError when the file is absent."""
-    io = _make_io("missing.txt", remote_repo)
+    io = make_io("missing.txt")
     with pytest.raises(RuntimeError, match="Unable to find"):
         io.download()
 
 
-def test_list_container_items(remote_repo: Path) -> None:
+def test_list_container_items(make_io: Callable[..., IOGit]) -> None:
     """list_container_items returns git URIs for tracked files, skipping .git."""
-    items = _make_io("README.md", remote_repo).list_container_items()
+    items = make_io("README.md").list_container_items()
     assert (
         "git://github.com/testorg/testrepo/main#README.md" in items
     )
@@ -118,28 +124,28 @@ def test_list_container_items(remote_repo: Path) -> None:
     assert all(".git/" not in item for item in items)
 
 
-def test_list_container_items_pattern(remote_repo: Path) -> None:
+def test_list_container_items_pattern(make_io: Callable[..., IOGit]) -> None:
     """list_container_items filters by regex pattern."""
-    items = _make_io("README.md", remote_repo).list_container_items(pattern=r"\.txt$")
+    items = make_io("README.md").list_container_items(pattern=r"\.txt$")
     assert items == ["git://github.com/testorg/testrepo/main#sub/data.txt"]
 
 
-def test_list_container_items_fragments(remote_repo: Path) -> None:
+def test_list_container_items_fragments(make_io: Callable[..., IOGit]) -> None:
     """list_container_items returns fragments when full_string is False."""
-    items = _make_io("README.md", remote_repo).list_container_items(full_string=False)
+    items = make_io("README.md").list_container_items(full_string=False)
     assert "README.md" in items
     assert "sub/data.txt" in items
 
 
-def test_clone_is_reused_for_other_file(remote_repo: Path) -> None:
+def test_clone_is_reused_for_other_file(make_io: Callable[..., IOGit]) -> None:
     """A second file in the same repo reuses the clone without re-cloning."""
-    io1 = _make_io("README.md", remote_repo)
+    io1 = make_io("README.md")
     io1.download()
     clone_dir = io1.clone_dir
     marker = clone_dir / "local_only.txt"
     marker.write_text("do not lose me")
 
-    io2 = _make_io("sub/data.txt", remote_repo)
+    io2 = make_io("sub/data.txt")
     io2.download()
 
     assert io2.scratch_path.read_text() == "nested content"
@@ -147,30 +153,30 @@ def test_clone_is_reused_for_other_file(remote_repo: Path) -> None:
     assert marker.read_text() == "do not lose me"
 
 
-def test_clone_args_are_used(remote_repo: Path) -> None:
+def test_clone_args_are_used(make_io: Callable[..., IOGit]) -> None:
     """clone-args query param is parsed into flags forwarded to git clone."""
-    io = _make_io("README.md", remote_repo, query="clone-args=['--depth', '1']")
+    io = make_io("README.md", query="clone-args=['--depth', '1']")
     assert io.clone_args == ["--depth", "1"]
     io.download()
     assert io.scratch_path.read_text() == "hello world"
 
 
-def test_get_object(remote_repo: Path) -> None:
+def test_get_object(make_io: Callable[..., IOGit]) -> None:
     """get_object returns the local path or None."""
-    io = _make_io("README.md", remote_repo)
+    io = make_io("README.md")
     assert io.get_object() == str(io.clone_dir / "README.md")
-    missing = _make_io("missing.txt", remote_repo)
+    missing = make_io("missing.txt")
     assert missing.get_object() is None
 
 
-def test_get_remote_tags_is_none(remote_repo: Path) -> None:
+def test_get_remote_tags_is_none(make_io: Callable[..., IOGit]) -> None:
     """get_remote_tags always returns None for the git scheme."""
-    assert _make_io("README.md", remote_repo).get_remote_tags() is None
+    assert make_io("README.md").get_remote_tags() is None
 
 
-def test_run_git_failure_raises(remote_repo: Path) -> None:
+def test_run_git_failure_raises(make_io: Callable[..., IOGit]) -> None:
     """A failing git command surfaces as RuntimeError."""
-    io = _make_io("README.md", remote_repo)
+    io = make_io("README.md")
     io.ensure_clone()
     with pytest.raises(RuntimeError, match="failed"):
         io._run_git(["checkout", "does-not-exist"], cwd=io.clone_dir)
@@ -196,12 +202,13 @@ def _remote_has_branch(remote: Path, branch: str) -> bool:
 
 def test_upload_pushes_new_file(
     remote_repo: Path,
+    make_io: Callable[..., IOGit],
     _git_identity: None,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """upload creates the branch, commits the new file, and pushes it."""
     monkeypatch.setattr(IOGit, "_create_pull_request", lambda self, branch: None)
-    io = _make_io("added/new.txt", remote_repo, query="target-branch=feat/add")
+    io = make_io("added/new.txt", query="target-branch=feat/add")
     io.ensure_clone()
     io.scratch_path.write_text("fresh content", encoding="utf-8")
 
