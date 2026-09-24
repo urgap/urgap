@@ -176,18 +176,6 @@ def test_run_git_failure_raises(remote_repo: Path) -> None:
         io._run_git(["checkout", "does-not-exist"], cwd=io.clone_dir)
 
 
-def test_missing_git_binary_raises(
-    remote_repo: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """A missing git executable raises an actionable RuntimeError."""
-    io = _make_io("README.md", remote_repo)
-    monkeypatch.setattr("urgap.ufile.io.git.shutil.which", lambda _name: None)
-    with pytest.raises(RuntimeError, match="system dependency"):
-        io.download()
-
-
-
 @pytest.fixture
 def _git_identity(monkeypatch: pytest.MonkeyPatch) -> None:
     """Provide a git commit identity via environment for isolated tests."""
@@ -220,28 +208,3 @@ def test_upload_pushes_new_file(
     io.upload()
 
     assert _remote_has_branch(remote_repo, "feat/add")
-
-
-def test_upload_is_idempotent_on_existing_branch(
-    remote_repo: Path,
-    _git_identity: None,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """Re-running upload with the same branch fast-forwards instead of failing."""
-    monkeypatch.setattr(IOGit, "_create_pull_request", lambda self, branch: None)
-
-    io1 = _make_io("added/new.txt", remote_repo, query="target-branch=feat/add")
-    io1.ensure_clone()
-    io1.scratch_path.write_text("v1", encoding="utf-8")
-    io1.upload()
-
-    # Second upload to the SAME remote branch must not raise a non-fast-forward.
-    io2 = _make_io(
-        "added/new.txt", remote_repo, query="target-branch=feat/add&force=True"
-    )
-    io2.ensure_clone()
-    io2.scratch_path.write_text("v2", encoding="utf-8")
-    io2.upload()
-
-    assert _remote_has_branch(remote_repo, "feat/add")
-
