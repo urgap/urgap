@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import logging
 
+from typing import TYPE_CHECKING
+
 import urgap
+
+if TYPE_CHECKING:
+    from urgap.umeta.io._base import UMetaIOBase
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +44,7 @@ class UMeta:
         self._io_id = io
 
     @property
-    def io(self):
+    def io(self) -> UMetaIOBase:
         """IO Property, enabling on-demand initialization of the IO class.
 
         Notes:
@@ -53,7 +58,7 @@ class UMeta:
             self._io = self.init_io_class()
         return self._io
 
-    def init_io_class(self):
+    def init_io_class(self) -> UMetaIOBase:
         """Initialize the appropriate IO class for UMeta.
 
         Raises:
