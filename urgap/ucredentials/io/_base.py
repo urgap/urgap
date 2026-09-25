@@ -1,22 +1,32 @@
 """IOCreds submodule of urgap."""
 
-from typing import ParamSpec
+from typing import ClassVar, ParamSpec
 
 P = ParamSpec("P")
 
 
 class IOBaseCreds:
-    """IOCreds Local class.
+    """All IOCreds classes inherit from this class."""
 
-    All IOCreds classes inherit from this class.
-    """
+    SCHEME: ClassVar[str]
+
+    def __init_subclass__(cls, *, abstract: bool = False, **kwargs: P.kwargs) -> None:
+        super().__init_subclass__(**kwargs)
+        if abstract:
+            return
+        if not getattr(cls, "SCHEME", None):
+            msg = f"{cls.__name__} must define a non-empty SCHEME class attribute."
+            raise TypeError(msg)
 
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOBaseCreds instance with secret_id attribute set from kwargs.
 
         Args:
-            **kwargs: Used to set secret_id attribute from key.
+            **kwargs: Must include "secret_id".
         """
+        if "secret_id" not in kwargs:
+            msg = f"{type(self).__name__} requires 'secret_id'."
+            raise TypeError(msg)
         self.secret_id = kwargs["secret_id"]
 
     def get_secret(self) -> None:

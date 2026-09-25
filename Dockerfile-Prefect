@@ -14,12 +14,19 @@ USER nonroot
 
 # Add Urgap repo
 WORKDIR /home/urgap
+COPY --chown=nonroot:nonroot pyproject.toml uv.lock ./
 COPY dist/urgap-*.whl /tmp/
 
-# Install dependencies using uv
-RUN uv venv urgap
-ENV PATH="/home/urgap/urgap/bin:$PATH"
-RUN uv pip install $(find /tmp -name 'urgap-*.whl')"[all]" --no-cache-dir
+# Install the locked dependency set into .venv with `uv sync` (dependencies only,
+# --no-install-project), then add the pre-built, versioningit-stamped wheel with
+# --no-deps. Build the wheel beforehand with `uv build` (lands in dist/urgap-*.whl).
+# `--extra all` covers every runtime extra; it deliberately excludes [dev] and
+# [docs], which --all-extras would have pulled into the worker image.
+ENV UV_NO_CACHE=1
+ENV VIRTUAL_ENV=/home/urgap/.venv
+ENV PATH="/home/urgap/.venv/bin:$PATH"
+RUN uv sync --frozen --extra all --no-install-project
+RUN uv pip install --no-deps /tmp/urgap-*.whl
 
 # Run checks
 RUN python -c "import urgap; print(urgap.config)"

@@ -3,6 +3,8 @@
 import atexit
 import logging
 import os
+
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
 import sys
 
 from importlib.metadata import PackageNotFoundError, version
@@ -23,6 +25,7 @@ from .ufile.ufile import UFile
 from .ufile.ufile_io_manager import UFileIOManager
 from .ufile.uuri import UUri
 from .ufile_list import UFileList
+from .umessagebus.umessagebus_manager import UMessageBusManager
 
 # Importing into namespace a level higher
 from .umeta import io
@@ -40,6 +43,7 @@ __all__ = [
     "UFile",
     "UFileIOManager",
     "UFileList",
+    "UMessageBusManager",
     "UMeta",
     "UNodeBase",
     "UNodeManager",
@@ -101,10 +105,11 @@ urgap.uinit.copy_resources_if_needed(
 urgap.instances = SimpleNamespace()
 urgap.instances.unode_manager = urgap.UNodeManager()
 urgap.instances.ufile_io_manager = urgap.UFileIOManager()
+urgap.instances.umessagebus_manager = urgap.UMessageBusManager()
 urgap.instances.ucredential_manager = urgap.UCredentialManager()
 urgap.instances.utelemetry_manager = urgap.UTelemetry()
 urgap.utl = urgap.instances.utelemetry_manager
-urgap.instances.utree_querier = urgap.utree.UTreeQuerier(namespace=urgap.uftypes)
+urgap.instances.utree_querier = urgap.utree.UTreeQuerier()
 
 urgap.init_node = urgap.instances.unode_manager.init_unode
 urgap.init_unode = urgap.instances.unode_manager.init_unode

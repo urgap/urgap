@@ -17,11 +17,13 @@ logger = logging.getLogger(__name__)
 class IOAzureCreds(IOBaseCreds):
     """IO class interface Azure."""
 
+    SCHEME = "akv"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOAzureCreds class."""
         super().__init__(**kwargs)
         self.secret_name = self.secret_id
-        self.vault_name = kwargs["vault_name"]
+        self.vault_name = kwargs["cloud_host_pid"]
 
     def get_secret(self) -> str:
         """Get secret from Azure Key Vault.

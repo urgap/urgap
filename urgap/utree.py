@@ -6,6 +6,7 @@ import networkx as nx
 import networkx.classes.digraph
 
 import urgap
+import urgap.uftypes
 
 
 class UTreeQuerier:
@@ -20,7 +21,7 @@ class UTreeQuerier:
         graph: nx.DiGraph | None = None,
         parent_node: str | None = None,
     ) -> None:
-        """Build a directed graph from a file providing namespacing.
+        """Build a directed graph from a file providing namespacing, merging uftypes_addon if present.
 
         Args:
             namespace: Provides the namespace which is basis for the edges.
@@ -33,7 +34,9 @@ class UTreeQuerier:
                 - python -c "import urgap; print(urgap.instances.utree_querier.get_subgraph('dbsearch.ANY').nodes(data=True))"
         """
         if namespace is None:
-            namespace = urgap.uftypes
+            namespace = {
+                name: getattr(urgap.uftypes, name) for name in urgap.uftypes.__all__
+            }
         if isinstance(namespace, types.ModuleType | types.SimpleNamespace):
             namespace = namespace.__dict__
         if graph is None:

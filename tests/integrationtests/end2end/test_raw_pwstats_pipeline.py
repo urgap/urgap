@@ -69,8 +69,8 @@ def test_raw_to_pwstats_pipeline():
         },
     )
 
-    raw_uftype = urgap.uftypes.proteomics.THERMO_RAW
-    fasta_uftype = urgap.uftypes.proteomics.FASTA
+    raw_uftype = urgap.uftypes.any.RAW
+    fasta_uftype = urgap.uftypes.any.FASTA
 
     # curdir = Path(__file__).resolve()
     raw = urgap.UFile(

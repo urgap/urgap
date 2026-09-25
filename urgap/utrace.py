@@ -14,6 +14,7 @@ from collections import defaultdict as ddict
 from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+from urllib.parse import quote
 
 import networkx as nx
 
@@ -189,10 +190,10 @@ class UTrace:
         log_message += f"\n.{'-' * 40}\n"
         log_message += f"| UNode {self.unode_meta['name']} run started at {time_str}\n"
         log_message += f"|   WID: {self.urun_dict.wid}\n"
-        log_message += "| - input_files: [\n"
+        log_message += f"| - {len(self.input_files)} input_files: [\n"
         log_message += self._format_file_section(self.input_files)
         log_message += "|   ]\n"
-        log_message += "| - output_files: [\n"
+        log_message += f"| - {len(self.output_files)} output_files: [\n"
         log_message += self._format_file_section(self.output_files)
         log_message += "|   ]\n"
         log_message += self._format_rerun_section()
@@ -222,7 +223,7 @@ class UTrace:
 
     def _attach_to_span(self, time_str: str, log_message: str) -> None:
         """Attach log details to the current tracing span."""
-        span = _ot.get_current_span() if _OPENTELEMETRY_AVAILABLE else None
+        span = _ot.get_current_span()
         if span is not None and span.is_recording():
             span.set_attribute("time", time_str)
             for line in log_message.split("\n"):
@@ -569,7 +570,7 @@ class UTrace:
         uf = self.output_files[output_file_index]
         shutil.move(src=file, dst=uf.path)
         if keep_original_name is True:
-            uf.tags.update({"original_name": str(file)})
+            uf.tags.update({"original_name": quote(str(file))})
 
     def _query_remote_by_uftype(self) -> dict:
         """Query remote files by uftype.

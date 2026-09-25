@@ -2,7 +2,7 @@
 
 import urllib.parse
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 import urgap
 

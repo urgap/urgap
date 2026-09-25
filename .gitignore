@@ -16,6 +16,7 @@ urgap/.coverage
 urgap/version.txt
 urgap/_version.py
 .tox
+.venv/
 tests/integrationtests/test_t1.txt
 tests/integrationtests/test.txt.ujson
 tests/data/test_node_data/test.txt.ujson

@@ -32,6 +32,8 @@ class IOAzureSMB(UIOBase):
     Handles connecting, reading, writing, and listing objects on Azure file shares using SMB.
     """
 
+    SCHEMA = "az-smb"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing Azure file storage SMB scheme.
 

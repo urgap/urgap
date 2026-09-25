@@ -36,24 +36,31 @@ Installation
 
 .. code-block:: bash
 
-    uv pip install -e .
+    uv sync
 
 **With Cloud Storage Support:**
 
 .. code-block:: bash
 
-    uv pip install -e ".[cloud]"
+    uv sync --extra cloud
 
-**With All Optional Dependencies:**
+**With All Runtime Extras:**
 
 .. code-block:: bash
 
-    uv pip install -e ".[all]"
+    uv sync --extra all
 
 Available extras include:
 
+* ``server``: FastAPI/Flask/uvicorn + MCP server for ``uctl run``
+* ``tabular``: pandas/polars/pyarrow and Excel engines for tabular unodes
+* ``viz``: plotly-based reporting and visualizer unodes
+* ``github``: GitHub-backed file IO
 * ``cloud``: Azure and Google Cloud storage backends
-* ``all``: All optional dependencies
+* ``databases``: PostgreSQL backend
+* ``docs``: Sphinx documentation build
+* ``dev``: test tooling (pytest) plus all runtime extras
+* ``all``: every runtime extra above (not ``dev`` or ``docs``)
 
 Running Tests
 ~~~~~~~~~~~~~
@@ -62,13 +69,13 @@ Install test dependencies:
 
 .. code-block:: bash
 
-    uv pip install pytest
+    uv sync --extra dev
 
 Run the test suite:
 
 .. code-block:: bash
 
-    pytest tests
+    uv run pytest tests
 
 Quickstart: Writing Your First Pipeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

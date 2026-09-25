@@ -29,6 +29,8 @@ class IOAzureDL(UIOBase):
     Handles connections, uploads, downloads, metadata retrieval and listing for DataLake files.
     """
 
+    SCHEMA = "az-dl"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Initialize UIO class for Azure DataLake file storage.
 
@@ -217,6 +219,7 @@ class IOAzureDL(UIOBase):
         self,
         pattern: str | None = None,
         full_string: bool = False,
+        **_kwargs: P.kwargs,
     ) -> list:
         """List all objects in the file system (container), optionally filtering by regex pattern.
 

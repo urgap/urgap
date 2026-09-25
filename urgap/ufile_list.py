@@ -10,6 +10,7 @@ import subprocess
 from collections import UserList, defaultdict, defaultdict as ddict
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Self
 
 import urgap
 
@@ -39,7 +40,7 @@ class UFileList(UserList):
         """Set uftypes for all ufiles in list to closest ANY if all uftypes in the list are None."""
         ut = urgap.instances.utree_querier
         if all(isinstance(x, urgap.UFile) for x in self):
-            flat_list = self
+            flat_list = self.data
         else:
             flat_list = sorted(self.create_flat_and_non_redundant_list())
         if all(isinstance(x, urgap.UFile) for x in flat_list) and all(
@@ -121,7 +122,7 @@ class UFileList(UserList):
     def __iadd__(
         self,
         other: urgap.UFile | urgap.UFileList | list | tuple,
-    ) -> UFileList:
+    ) -> Self:
         """Extend this UFileList in-place with another object.
 
         Args:
@@ -808,6 +809,29 @@ class UFileList(UserList):
                 logger.info("Tar extraction completed successfully")
         finally:
             os.chdir(workdir)
+
+    def rebase(
+        self,
+        storage_base_uri: str,
+        upload: bool = True,
+    ) -> UFileList:
+        """Rebase all UFiles in the list onto a new storage base UUri.
+
+        Only the storage base is replaced, the object name of each UFile is
+        kept, so this relocates files without renaming them.
+
+        Args:
+            storage_base_uri: Target storage base UUri, e.g. "azure://account/container".
+            upload: If True, upload each UFile to the new location.
+
+        Returns:
+            This UFileList, with every UFile pointing at the new location.
+        """
+        for uf in self:
+            msg = f"Rebasing {uf.object_name} onto {storage_base_uri}"
+            logger.info(msg)
+            uf.rebase(uri=storage_base_uri, upload=upload)
+        return self
 
     def relocate_fragment_to_path(
         self,

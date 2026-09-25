@@ -61,22 +61,23 @@ def configure_logger() -> None:
     otherwise it is set to DEBUG.
     """
     execution_traceback = [line.strip() for line in traceback.format_stack()]
-    sh = logging.StreamHandler(sys.stderr)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(filename)s - %(lineno)d - %(levelname)s - %(message)s",
-    )
-    sh.setFormatter(formatter)
-    logger = logging.getLogger(__name__)
+    urgap_logger = logging.getLogger("urgap")
 
-    for handler in logger.handlers[:]:
-        logger.removeHandler(handler)
+    for handler in urgap_logger.handlers[:]:
+        urgap_logger.removeHandler(handler)
 
-    logging.getLogger().addHandler(sh)
     if "/bin/uctl" in execution_traceback[0]:
-        logging.getLogger().setLevel(level="INFO")
+        sh = logging.StreamHandler(sys.stderr)
+        sh.setFormatter(
+            logging.Formatter(
+                "%(asctime)s - %(filename)s - %(lineno)d - %(levelname)s - %(message)s",
+            ),
+        )
+        urgap_logger.addHandler(sh)
+        urgap_logger.setLevel(logging.INFO)
+        urgap_logger.propagate = False
     else:
-        logging.getLogger().setLevel(level="DEBUG")
-        # so bad to have it hard-coded
+        urgap_logger.addHandler(logging.NullHandler())
 
 
 def create_home_folder(home_dir_parent: str | os.PathLike) -> None:

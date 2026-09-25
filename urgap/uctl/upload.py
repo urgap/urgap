@@ -7,8 +7,6 @@ from pathlib import Path
 
 import click
 
-from tqdm import tqdm
-
 import urgap
 
 logger = logging.getLogger(__name__)
@@ -49,6 +47,8 @@ def upload_folder(folder: str, bucket_structure: str, storage_base_uri: str) -> 
         bucket_structure: Prefix for object name in the bucket.
         storage_base_uri: Target storage base UUri.
     """
+    from tqdm import tqdm
+
     base_folder = Path(folder)
     all_files = urgap.UFileList.from_folder(base_folder)
     resulting_uris = []

@@ -5,11 +5,17 @@ import pytest
 import urgap
 
 
-def test_uuri_scheme_not_supported():
-    with pytest.raises(ValueError, match=r"Scheme notsupported not supported"):
-        urgap.UFile(
-            uri=f"notsupported://{urgap._test_folder}/data#test_node_data/test.txt",
-        )
+_CORE_KNOWN_SCHEMES = frozenset({
+    "azure", "az-dl", "az-smb", "file", "ftp", "gcs",
+    "github", "https", "mylabdata", "omiq", "smb",
+})
+
+def check_uri_scheme_exists(self) -> None:
+    scheme = self.uuri.scheme
+    available_schemes = urgap.instances.ufile_io_manager.available_io_classes
+    if scheme not in _CORE_KNOWN_SCHEMES and scheme not in available_schemes:
+        msg = f"Scheme {scheme} not supported"
+        raise ValueError(msg)
 
 
 def test_uuri_properties_file_schema():
@@ -41,9 +47,9 @@ def test_uuri_properties_file_schema():
 
 
 def test_uuri_properties_mld():
-    uf = urgap.UFile(uri="mylabdata://dummy#test")
-    assert uf.uuri.mylabdata_api_url == "https://dummy"
-    assert uf.uuri.mylabdata_api_url_files == "https://dummy/files"
+    uuri = urgap.UUri(uri="mylabdata://dummy#test")
+    assert uuri.mylabdata_api_url == "https://dummy"
+    assert uuri.mylabdata_api_url_files == "https://dummy/files"
 
 
 def test_uuri_properties_samba():

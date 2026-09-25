@@ -23,6 +23,8 @@ class IOAzureBlobStorage(UIOBase):
     Provides methods for uploading, downloading, and listing blobs, as well as fetching blob metadata.
     """
 
+    SCHEMA = "azure"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Initialize the Azure Blob Storage IO class.
 
@@ -30,7 +32,7 @@ class IOAzureBlobStorage(UIOBase):
             kwargs: Passed to UIOBase. Requires "uri" for connection setup.
         """
         super().__init__(**kwargs)
-        if "blob.core.windows.net" in self.uuri.netloc:
+        if self.uuri.netloc.endswith(".blob.core.windows.net"):
             self.client = BlobServiceClient(
                 account_url=f"https://{self.uuri.netloc}",
                 credential=self.uuri.password,
@@ -160,6 +162,7 @@ class IOAzureBlobStorage(UIOBase):
     def list_container_items(
         self,
         pattern: str | None = None,
+        limit: int | None = 1000,
         full_string: bool = False,
         start_date: str | None = None,
         end_date: str | None = None,
@@ -168,6 +171,7 @@ class IOAzureBlobStorage(UIOBase):
 
         Args:
             pattern: Regular expression pattern to filter blob names.
+            limit: Maximum number of files to request in one query.
             full_string: Whether to return the list with full strings or just fragments.
             start_date: ISO format datetime string to filter blobs modified after this date.
             end_date: ISO format datetime string to filter blobs modified before this date.
@@ -201,7 +205,12 @@ class IOAzureBlobStorage(UIOBase):
                 for blob in container_objects
                 if re.search(pattern, blob) is not None
             ]
-
+        if limit is not None and len(container_objects) > limit:
+            msg = f"Number of container objects ({len(container_objects)}) exceeds the specified limit ({limit}). Returning only the first {limit} objects."
+            logger.warning(
+                msg,
+            )
+            container_objects = container_objects[:limit]
         return container_objects
 
     def is_within_date_range(

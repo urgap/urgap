@@ -1,8 +1,7 @@
 """Prompts for MCP module of urgap."""
 
-from mcp.server.fastmcp import FastMCP
-from mcp.server.fastmcp.prompts import base
-from mcp.types import Prompt
+from fastmcp import FastMCP
+from fastmcp.prompts import PromptResult
 
 """
 Prompts
@@ -20,6 +19,11 @@ Adapted from Mahesh Murag @ Antrophic
 
 The client logic for deciding when to inject prompts can vary significantly
 based on the implementation, but here are the common patterns and strategies:
+
+A prompt function returns its *content* (a str, a list of Message or a
+PromptResult). Name, description and the argument schema are derived by
+FastMCP from the function name, its docstring and its signature, so none of
+that has to be repeated by hand.
 """
 
 
@@ -30,25 +34,25 @@ def register_prompts(server: FastMCP) -> None:
         server (FastMCP): mcp fastmcp instance
     """
 
-    @server.prompt()
-    async def mylabdata_urgap_storage_base_uri_pattern(
+    @server.prompt
+    def mylabdata_urgap_storage_base_uri_pattern(
         equipment_id: str,
         task_id: str,
         env: str = "uat",
-    ) -> Prompt:
+    ) -> PromptResult:
         """Mylabdata urgap storage base uri pattern.
 
         Args:
             equipment_id (str): Mylabdata equipment ID
             task_id (str): Mylabdata Task ID
-            env (str, optional): Mylabdata environment uat|prod. Defaults to "uat".
+            env (str, optional): Mylabdata environment uat|dev|prod. Defaults to "uat".
 
         Returns:
-            Prompt: Pattern of the mylabdata urgap storage pattern
+            PromptResult: Pattern of the mylabdata urgap storage pattern
         """
-        env_normalized = env.upper() if env is not None else "UAT"
+        env_normalized = env.upper()
 
-        if env_normalized in ["UAT", "DEV"]:
+        if env_normalized in {"UAT", "DEV"}:
             content = (
                 f"mylabdata://mylabdata-files.uat.corpnet2.com/{equipment_id}/{task_id}"
             )
@@ -57,41 +61,20 @@ def register_prompts(server: FastMCP) -> None:
                 f"mylabdata://mylabdata-files.corpnet2.com/{equipment_id}/{task_id}"
             )
         else:
-            content = "The environment {env_normalized} is unknown, please specify 'uat' or 'prod'."
+            content = (
+                f"The environment {env} is unknown, please specify 'uat' or 'prod'."
+            )
 
-        return Prompt(
-            name="mylabdata_urgap_storage_base_uri_pattern",
+        return PromptResult(
+            content,
             description=f"Mylabdata urgap storage base uri pattern for {equipment_id} {task_id} in {env}",
-            messages=[
-                base.AssistantMessage(
-                    content={"type": "text", "text": content},
-                ),
-            ],
-            arguments=[
-                {
-                    "name": "equipment_id",
-                    "description": "Mylabdata equipment_id",
-                    "required": True,
-                },
-                {
-                    "name": "task_id",
-                    "description": "Mylabdata task_id",
-                    "required": True,
-                },
-                {
-                    "name": "env",
-                    "description": "Mylabdata environment, that is uat or prod",
-                    "required": False,
-                    "default": "uat",
-                },
-            ],
         )
 
-    @server.prompt()
-    async def google_bucket_urgap_storage_base_uri_pattern(
+    @server.prompt
+    def google_bucket_urgap_storage_base_uri_pattern(
         project_id: str,
         bucket: str,
-    ) -> Prompt:
+    ) -> str:
         """Google bucket urgap storage base uri pattern.
 
         Args:
@@ -99,34 +82,14 @@ def register_prompts(server: FastMCP) -> None:
             bucket (str): Gcs Bucket name
 
         Returns:
-            Prompt: Pattern of the goolge urgap storage pattern
+            str: Pattern of the goolge urgap storage pattern
         """
-        return Prompt(
-            name="google_bucket_urgap_storage_base_uri_pattern",
-            messages=[
-                base.AssistantMessage(
-                    content={
-                        "type": "text",
-                        "text": f"gcs://{project_id}/{bucket}",
-                    },
-                ),
-            ],
-            arguments=[
-                {
-                    "name": "project_id",
-                    "description": "Google project id",
-                    "required": True,
-                },
-                {
-                    "name": "bucket",
-                    "description": "Google bucket name",
-                    "required": True,
-                },
-            ],
-        )
+        return f"gcs://{project_id}/{bucket}"
 
-    @server.prompt()
-    async def urun_default_dict() -> Prompt:
+    @server.prompt(
+        description="Default urgap urun_dict required to run all urgap tools.",
+    )
+    def urun_default_dict() -> str:
         """Provide default urgap URun Dict used for urgap node execution."""
         tool_docs = """
                 The urgap configuration dictionary has the following structure:
@@ -219,12 +182,4 @@ def register_prompts(server: FastMCP) -> None:
             }
         """
 
-        return Prompt(
-            name="urun_default_dict",
-            description="Default urgap urun_dict requireed to run all urgap tools.",
-            messages=[
-                base.AssistantMessage(
-                    content={"type": "text", "text": tool_docs},
-                ),
-            ],
-        )
+        return tool_docs

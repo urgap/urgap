@@ -23,6 +23,8 @@ class IOGoogleCloudStorage(UIOBase):
     Provides interaction and file operations for Google Cloud Storage buckets and objects.
     """
 
+    SCHEMA = "gcs"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing Google Cloud Storage.
 
@@ -128,6 +130,7 @@ class IOGoogleCloudStorage(UIOBase):
         self,
         pattern: str | None = None,
         full_string: bool = False,
+        **_kwargs: P.kwargs,
     ) -> list:
         """Get objects in folder/'container', optionally filtered by a regex pattern.
 

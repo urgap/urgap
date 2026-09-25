@@ -8,27 +8,25 @@ import os
 import pprint
 import signal
 import threading
-import time
-import traceback
 import webbrowser
 
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing.synchronize import Event as EventClass
 from pathlib import Path
 from types import FrameType
+from typing import TYPE_CHECKING
 
 import click
-import uvicorn
-
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-from flask import Flask, render_template
-from flask_wtf.csrf import CSRFProtect
-from mcp.server.fastmcp import FastMCP
 
 import urgap
 
+from urgap.uctl.rebase import rebase_worker
+from urgap.umessagebus.worker import run_subscription_worker
 from urgap.util import sort_versions
+
+if TYPE_CHECKING:
+    from fastapi import FastAPI
+    from flask import Flask
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +65,7 @@ def run_unode_in_loop(payload: dict, name: str) -> list:
     return [o.as_uri() for o in output_files]
 
 
-def create_app(name: str) -> FastAPI:
+def create_app(name: str) -> "FastAPI":
     """Create FastAPI app with /v1/run and /v1/terminate endpoints.
 
     Args:
@@ -76,6 +74,9 @@ def create_app(name: str) -> FastAPI:
     Returns:
         FastAPI application instance.
     """
+    from fastapi import FastAPI, Request
+    from fastapi.responses import JSONResponse
+
     app = FastAPI(title=name)
     app.state.name = name
 
@@ -102,10 +103,10 @@ def create_app(name: str) -> FastAPI:
                 content=output_files,
                 status_code=200,
             )
-        except Exception as e:
+        except Exception:
             logger.exception("Error during remote UNode execution!")
             return JSONResponse(
-                content={"error": str(e), "traceback": traceback.format_exc()},
+                content={"error": "Internal server error during UNode execution."},
                 status_code=500,
             )
 
@@ -140,6 +141,8 @@ def run_server(
         port: Port number to serve on.
         shutdown_event: multiprocessing.Event used to trigger shutdown.
     """
+    import uvicorn
+
     app = create_app(name)
     app.state.shutdown_event = shutdown_event
     app.state.executor = ProcessPoolExecutor()
@@ -191,54 +194,28 @@ def send_signal_to_pid(sig: int = signal.SIGINT) -> None:
 
 def run_mcp_server(
     mcp_port: int,
-    shutdown_event: multiprocessing.Event,
     nodes: list | None = None,
-    google_adk_style: bool = True,
 ) -> None:
     """Start an MCP server. If nodes are provided, expose those as MCP tools. If no nodes are provided, spawn urgap default tools as MCP.
 
     Args:
         mcp_port: Port for the MCP SSE server.
-        shutdown_event: Event to signal server shutdown.
         nodes: Optional list of urgap nodes to expose. If None, exposes default urgap tools.
-        google_adk_style: If True, resources and prompts are not exposed. Defaults to True.
     """
     if nodes is None:
-        name = "urgap tools mcp server"
-        server = FastMCP(name)
-        from urgap.uctl.mcp.register_helpers import register_tools
+        from urgap.uctl.mcp.tools import mcp_tools_server
 
-        register_tools(server)
-        if not google_adk_style:
-            from urgap.uctl.mcp.prompts import register_prompts
-            from urgap.uctl.mcp.resources import register_resources
-
-            register_resources(server)
-            register_prompts(server)
+        mcp_tools_server.run(port=mcp_port, transport="streamable-http")
     else:
+        import fastmcp
+
         name = f"urgap mcp server for {', '.join(nodes)}"
-        server = FastMCP(name)
+        mcp_unodes_server = fastmcp.FastMCP(name)
         from urgap.uctl.mcp.register_helpers import register_unodes
 
-        register_unodes(server, nodes)
+        register_unodes(mcp_unodes_server, nodes)
 
-    config = uvicorn.Config(
-        server.sse_app(),
-        host="127.0.0.1",
-        port=int(mcp_port),
-        log_level="info",
-    )
-    server = uvicorn.Server(config)
-
-    thread = threading.Thread(target=server.run)
-    thread.start()
-
-    shutdown_event.wait()
-
-    server.should_exit = True
-    thread.join()
-
-    send_signal_to_pid()
+        mcp_unodes_server.run(port=mcp_port, transport="streamable-http")
 
 
 def get_all_relevant_nodes(nodes: tuple | str) -> list:
@@ -273,75 +250,6 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
         elif unode == actual_latest_version and latest_in_name not in nodes_list:
             nodes_list.append(latest_in_name)
     return nodes_list
-
-
-def _ensure_service_bus_entities(
-    namespace: str,
-    credential: object,
-    topic_subscription_filter_pairs: list,
-) -> None:
-    from azure.core.exceptions import ResourceNotFoundError
-    from azure.servicebus.management import (
-        ServiceBusAdministrationClient,
-        SqlRuleFilter,
-    )
-
-    admin = ServiceBusAdministrationClient(
-        fully_qualified_namespace=namespace,
-        credential=credential,
-    )
-    for (
-        topic,
-        subscription,
-        filter_value,
-    ) in topic_subscription_filter_pairs:  # renamed from filter (ruff A001)
-        newly_created_subscription = False
-        try:
-            admin.get_topic(topic)
-        except ResourceNotFoundError:
-            admin.create_topic(topic_name=topic)
-        try:
-            admin.get_subscription(topic, subscription)
-        except ResourceNotFoundError:
-            admin.create_subscription(topic_name=topic, subscription_name=subscription)
-            newly_created_subscription = True
-
-        if (filter_value is not None) and newly_created_subscription:
-            admin.delete_rule(topic, subscription, "$Default")
-            admin.create_rule(
-                topic_name=topic,
-                subscription_name=subscription,
-                rule_name="unode_filter",
-                filter=SqlRuleFilter(
-                    f"subscription_key = '{filter_value}'",
-                ),
-            )
-
-
-def _publish_completion(
-    sender: object,
-    completion_topic: str | None,
-    event: dict,
-) -> None:
-    """Publish a completion event.
-
-    Args:
-        sender: Service Bus sender object.
-        completion_topic: Topic name if completion publishing enabled, else None.
-        event: Event payload dictionary to serialize.
-    """
-    if not completion_topic:
-        return
-    from azure.servicebus import ServiceBusMessage
-
-    app_props = {"subscription_key": event.get("subscription_key")}
-    sender.send_messages(
-        ServiceBusMessage(
-            json.dumps(event),
-            application_properties=app_props,
-            correlation_id=event.get("uuid"),
-        ),
-    )
 
 
 def _process_message(
@@ -397,153 +305,12 @@ def _service_bus_run_worker(
         unode_identifier: Full unode identifier (e.g., Name:1.0.0).
         shutdown_event: Event to signal parent process to terminate.
     """
-    from azure.identity import DefaultAzureCredential
-    from azure.servicebus import (
-        AutoLockRenewer,
-        ServiceBusClient,
-        ServiceBusReceiveMode,
+    run_subscription_worker(
+        cred_key=cred_key,
+        subscription_key=unode_identifier,
+        handler=_process_message,
+        shutdown_event=shutdown_event,
     )
-
-    namespace_host = cred_key.split("://", 1)[-1].rstrip("/")
-    credential = DefaultAzureCredential()
-    topic_name = urgap.config["service_bus_topic"]
-    subscription_name = unode_identifier.replace(":", "__")
-    completion_topic = urgap.config["service_bus_completion_topic"]
-    exit_after_first = urgap.config["service_bus_exit_after_first_message"]
-    max_autorenew = urgap.config["service_bus_max_autorenewal_minutes"] * 60
-    topic_subscription_filter_pairs = [
-        (topic_name, subscription_name, unode_identifier),
-    ]
-    if completion_topic is not None:
-        topic_subscription_filter_pairs += [(completion_topic, "Completed", None)]
-    _ensure_service_bus_entities(
-        namespace_host,
-        credential,
-        topic_subscription_filter_pairs=topic_subscription_filter_pairs,
-    )
-    with ServiceBusClient(
-        fully_qualified_namespace=namespace_host,
-        credential=credential,
-    ) as client:
-        receiver_ctx = client.get_subscription_receiver(
-            topic_name=topic_name,
-            subscription_name=subscription_name,
-            max_wait_time=5,
-            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
-        )
-        completion_sender = (
-            client.get_topic_sender(topic_name=completion_topic)
-            if completion_topic
-            else None
-        )
-        renewer = AutoLockRenewer() if max_autorenew > 0 else None
-        with receiver_ctx as receiver:
-            logger.info(
-                "ServiceBus worker started for unode=%s topic=%s subscription=%s max_autorenew=%ss",
-                unode_identifier,
-                topic_name,
-                subscription_name,
-                max_autorenew,
-            )
-            _handle_service_bus_messages(
-                receiver=receiver,
-                completion_sender=completion_sender,
-                completion_topic=completion_topic if completion_sender else None,
-                exit_after_first=exit_after_first,
-                unode_identifier=unode_identifier,
-                lock_renewer=renewer,
-                max_autorenew=max_autorenew,
-            )
-        if renewer:
-            renewer.close()
-    if exit_after_first and shutdown_event:
-        shutdown_event.set()
-
-
-def _process_service_bus_message(
-    msg: object,
-    receiver: object,
-    completion_sender: object | None,
-    completion_topic: str | None,
-    unode_identifier: str,
-    exit_after_first: bool,
-) -> bool:
-    """Handle a single Service Bus message.
-
-    Returns True if worker loop should stop; False otherwise.
-    """
-    preview = json.loads(str(msg))
-    target_unode = preview.get("subscription_key")
-    if target_unode != unode_identifier:
-        receiver.abandon_message(msg)
-        return False
-    ok, output_uris = _process_message(preview)
-    if ok:
-        if completion_topic is not None:
-            event_payload = preview.copy()
-            if "custom_message" in event_payload:
-                event_payload["custom_message"].update({"output_uris": output_uris})
-            else:
-                event_payload["custom_message"] = {"output_uris": output_uris}
-            _publish_completion(
-                completion_sender,
-                completion_topic,
-                event_payload,
-            )
-        receiver.complete_message(msg)
-        if exit_after_first:
-            logger.info(
-                "Configured to exit after first message; stopping worker for %s",
-                unode_identifier,
-            )
-            return True
-    else:
-        receiver.abandon_message(msg)
-    return False
-
-
-def _handle_service_bus_messages(
-    receiver: object,
-    completion_sender: object | None,
-    completion_topic: str | None,
-    exit_after_first: bool,
-    unode_identifier: str,
-    lock_renewer: object | None,
-    max_autorenew: float,
-) -> None:
-    empty_polls = 0
-    while True:
-        messages = receiver.receive_messages(
-            max_wait_time=5,
-            max_message_count=1,
-        )
-        if not messages:
-            empty_polls += 1
-            if empty_polls >= 3:
-                logger.info(
-                    "No messages after %s consecutive polls exiting worker",
-                    empty_polls,
-                )
-                return
-            time.sleep(10)
-            continue
-        for msg in messages:
-            if lock_renewer and max_autorenew > 0:
-                lock_renewer.register(
-                    receiver,
-                    msg,
-                    max_lock_renewal_duration=max_autorenew,
-                )
-            stop = _process_service_bus_message(
-                msg,
-                receiver,
-                completion_sender,
-                completion_topic,
-                unode_identifier,
-                exit_after_first,
-            )
-            if stop:
-                return
 
 
 @click.command()
@@ -563,8 +330,14 @@ def _handle_service_bus_messages(
     default=None,
 )
 @click.option(
+    "--via-message-bus",
     "--via-servicebus",
-    help="Service Bus ucredentials key (azure-servicebus://<ns>.servicebus.windows.net) to run a subscription worker.",
+    "via_servicebus",
+    help=(
+        "Message bus ucredentials key to run a subscription worker. The scheme "
+        "selects the transport, e.g. azure-servicebus://<ns>.servicebus.windows.net "
+        "or gcp-pubsub://<project-id>."
+    ),
     required=False,
 )
 def upi_server(
@@ -574,7 +347,7 @@ def upi_server(
 ) -> None:
     """Spawn servers for requested Urgap nodes and optional Service Bus worker.
 
-    If --via-servicebus is provided a worker process is started that listens on configured queues.
+    If --via-message-bus is provided a worker process is started that listens on configured queues.
     """
     processes = []
     shutdown_event = multiprocessing.Event()
@@ -600,7 +373,7 @@ def upi_server(
             sb_proc.start()
 
     if mcp_port is not None:
-        spawn_mcp_server(port=mcp_port, nodes_list=nodes_list)
+        start_mcp_server(port=mcp_port, nodes_list=nodes_list)
 
     def signal_handler(sig: int, _frame: FrameType | None) -> None:
         msg = f"Parent process received termination signal {sig}"
@@ -616,7 +389,7 @@ def upi_server(
         process.join()
 
 
-def spawn_mcp_server(
+def start_mcp_server(
     port: int,
     nodes_list: list | None = None,
 ) -> None:
@@ -629,9 +402,9 @@ def spawn_mcp_server(
         nodes_list: Optional list of specific urgap nodes to expose as tools.
 
     Example:
-        >>> from urgap.uctl.run import spawn_mcp_server
-        >>> spawn_mcp_server(port=8080)
-        >>> spawn_mcp_server(port=8080, nodes_list=['FilterTabularToCSV:1.0.0'])
+        >>> from urgap.uctl.run import start_mcp_server
+        >>> start_mcp_server(port=8080)
+        >>> start_mcp_server(port=8080, nodes_list=['FilterTabularToCSV:1.0.0'])
     """
     processes = []
     shutdown_event = multiprocessing.Event()
@@ -641,7 +414,6 @@ def spawn_mcp_server(
         kwargs={
             "nodes": nodes_list,
             "mcp_port": port,
-            "shutdown_event": shutdown_event,
         },
     )
     processes.append(p)
@@ -678,7 +450,7 @@ def mcp_server(
     If --port is provided, the MCP server will be exposed on that port.
     """
     if port is not None:
-        spawn_mcp_server(port=port)
+        start_mcp_server(port=port)
 
 
 """Dashboard submodule of urgap.uctl."""
@@ -686,31 +458,50 @@ urgap_server = Path(__file__).parent / "server"
 urgap_server_static = urgap_server / "static"
 urgap_server_templates = urgap_server / "templates"
 
-app = Flask(
-    __name__,
-    static_folder=urgap_server_static,
-    template_folder=urgap_server_templates,
-)
-csrf = CSRFProtect()
-csrf.init_app(app)
 
+def create_dashboard_app(data: list | None = None) -> "Flask":
+    """Create the dashboard Flask application.
 
-@app.route("/")
-def homepage() -> str:
-    """Homepage of the dashboard.
+    Args:
+        data: Report data to expose on the dashboard homepage.
 
-    Returns the dashboard base info page.
+    Returns:
+        Configured Flask application instance.
     """
-    with app.app_context():
-        return render_template(
-            "dashboard.html",
-            version="0.7.0",
-            data=app.config["data"],
-        )
+    from flask import Flask, render_template
+    from flask_wtf.csrf import CSRFProtect
+
+    app = Flask(
+        __name__,
+        static_folder=urgap_server_static,
+        template_folder=urgap_server_templates,
+    )
+    app.config["data"] = [] if data is None else data
+    csrf = CSRFProtect()
+    csrf.init_app(app)
+
+    @app.route("/")
+    def homepage() -> str:
+        """Homepage of the dashboard.
+
+        Returns the dashboard base info page.
+        """
+        with app.app_context():
+            return render_template(
+                "dashboard.html",
+                version="0.7.0",
+                data=app.config["data"],
+            )
+
+    return app
 
 
-def launch_dashboard() -> None:
-    """Launch the dashboard and open in a web browser."""
+def launch_dashboard(app: "Flask") -> None:
+    """Launch the dashboard and open in a web browser.
+
+    Args:
+        app: The Flask application to serve.
+    """
     if not os.environ.get("WERKZEUG_RUN_MAIN"):
         webbrowser.open_new("http://127.0.0.1:2000/")
     app.run(host="127.0.0.1", port=2000)
@@ -725,10 +516,9 @@ def dashboard() -> None:
 @click.argument("wid")
 def dashboard_wid_click(wid: str) -> None:
     """Show dashboard for a given workflow ID (wid)."""
-    app.config["data"] = []
     ur = urgap.UReport(wid=wid)
-    app.config["data"] = ur.generate_report()
-    launch_dashboard()
+    app = create_dashboard_app(data=ur.generate_report())
+    launch_dashboard(app)
 
 
 @click.command()
@@ -772,5 +562,6 @@ def run() -> None:
 
 
 run.add_command(upi_server)
+run.add_command(rebase_worker)
 run.add_command(mcp_server)
 run.add_command(dashboard)

@@ -2,60 +2,11 @@
 
 import logging
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 import urgap
 
 logger = logging.getLogger(__name__)
-
-
-def register_tools(server: FastMCP) -> None:
-    """Register tools to the FastMCP server.
-
-    Args:
-        server (FastMCP): mcp fastmcp instance
-    """
-    from urgap.uctl.mcp.tools import (
-        calculate_nana,
-        gcp_urgap_storage_pattern,
-        generate_workflow_id,
-        list_container_times,
-        mylabdata_urgap_storage_pattern,
-    )
-
-    tools = [
-        {"function": list_container_times, "tool_name": "list_container_times"},
-        {"function": generate_workflow_id, "tool_name": "generate_workflow_id"},
-        {
-            "function": gcp_urgap_storage_pattern,
-            "tool_name": "gcp_urgap_storage_pattern",
-        },
-        {
-            "function": mylabdata_urgap_storage_pattern,
-            "tool_name": "mylabdata_urgap_storage_pattern",
-        },
-    ]
-    _to_be_implemented = [
-        {"function": calculate_nana, "tool_name": "nana_index"},
-        {
-            "function": "extend_uri_list_with_uftype",
-            "tool_name": "extend_uri_list_with_uftype",
-        },
-        {
-            "function": "understand_urgap_node_parameters",
-            "tool_name": "understand_urgap_node_parameters",
-        },
-    ]
-
-    for tool_item in tools:
-        msg = "Registering {tool_name}".format(**tool_item)
-        logger.info(msg)
-
-        server.add_tool(
-            tool_item["function"],
-            tool_item["tool_name"],
-            tool_item["function"].__doc__,
-        )
 
 
 def register_unodes(server: FastMCP, nodes_list: list) -> None:
@@ -75,18 +26,29 @@ def register_unodes(server: FastMCP, nodes_list: list) -> None:
             continue
 
         unode_name = unode.replace(":", "_").replace(".", "_")
-        server.add_tool(
+        server.tool(
             un.run_node_as_mcp_tool,
-            f"{unode_name}",
-            f"""{unode_name}:
-
-    {un.run_node_as_mcp_tool.__doc__}
-
-    This is an example of the parameters for {unode_name}:
-        {un.META_INFO["parameter_examples"]}
-
-    Input file types (uftypes) are:
-        {un.META_INFO["input_uftypes"]}
-
-            """,
+            name=unode_name,
+            description=build_tool_description(unode_name, un),
         )
+
+
+def build_tool_description(unode_name: str, unode: urgap.UNodeBase) -> str:
+    """Build the mcp tool description for a unode.
+
+    The parameter descriptions themselves are derived by FastMCP from the
+    signature and docstring of ``run_node_as_mcp_tool``, so only the
+    unode specific context is assembled here.
+
+    Args:
+        unode_name (str): mcp safe name of the unode, e.g. ``FilterTabularToCSV_1_0_0``
+        unode (urgap.UNodeBase): initialized unode instance
+
+    Returns:
+        str: description shown to the model for this tool.
+    """
+    return f"""
+{unode.__doc__}
+\n {unode.run_node_as_mcp_tool.__doc__}
+\n This is an example of the parameters for {unode_name}: {unode.META_INFO["parameter_examples"]}"
+"""

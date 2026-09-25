@@ -10,9 +10,6 @@ from pathlib import Path
 from pprint import pformat
 
 import networkx as nx
-import plotly.graph_objects as go
-
-from plotly.offline import init_notebook_mode, iplot
 
 import urgap
 
@@ -324,6 +321,10 @@ UMeta:
 
     def draw_execution_dag(self) -> None:
         """Generate and display a DAG of execution described by UReport, with node aliases."""
+        import plotly.graph_objects as go
+
+        from plotly.offline import init_notebook_mode, iplot
+
         init_notebook_mode(connected=True)
         nodes, links = self._get_history_nodes_and_links()
         custom_hover_data = []

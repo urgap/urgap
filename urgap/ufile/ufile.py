@@ -61,27 +61,16 @@ class UFile:
     def check_uri_scheme_exists(self) -> None:
         """Check if the URI scheme is supported.
 
-        Returns:
-            True if the URI scheme is supported.
-
         Raises:
-            ValueError: If the scheme is not in the supported list.
+            ValueError: If the scheme has no registered IO backend.
         """
         scheme = self.uuri.scheme
-        if scheme not in (
-            "azure",
-            "az-dl",
-            "az-smb",
-            "file",
-            "ftp",
-            "gcs",
-            "github",
-            "https",
-            "mylabdata",
-            "omiq",
-            "smb",
-        ):
-            msg = f"Scheme {scheme} not supported"
+        available_schemes = urgap.instances.ufile_io_manager.available_io_classes
+        if scheme not in available_schemes:
+            msg = (
+                f"Unsupported URI scheme '{scheme}'. Available: "
+                f"{sorted(available_schemes)}"
+            )
             raise ValueError(msg)
 
     def format_uri(self) -> None:
@@ -307,8 +296,18 @@ class UFile:
         """
         uftype = self.tags.get("uftype", None)
         if uftype is None:
-            uftype = urgap.uftypes.unknown.UNKNOWN
+            if self.guess_uftype_from_suffix() is not None:
+                uftype = self.guess_uftype_from_suffix()
+            else:
+                uftype = urgap.uftypes.unknown.UNKNOWN
         return uftype
+
+    def guess_uftype_from_suffix(self) -> str | None:
+        """Guess the Urgap file type for this file based on its extension."""
+        suffixes = Path(self.uuri.fragment).suffixes
+        if len(suffixes) >= 1:
+            return f".any{suffixes[-1]}"
+        return None
 
     def download(self) -> None:
         """Download this file from remote storage to local scratch."""
@@ -914,7 +913,7 @@ class UFile:
     @property
     def provenance(
         self,
-    ) -> None | nx.DiGraph:
+    ) -> nx.DiGraph | None:
         """Provenance of UFile as a directed graph.
 
         Returns:

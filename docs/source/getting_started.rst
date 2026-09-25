@@ -43,7 +43,9 @@ Installation from source
     user@localhost:~/urgap$ uv sync
     # with doc dependencies
     user@localhost:~/urgap$ uv sync --extra docs
-    # with all extras
+    # with every runtime extra
+    user@localhost:~/urgap$ uv sync --extra all
+    # everything, including the test and doc toolchains (contributor setup)
     user@localhost:~/urgap$ uv sync --all-extras
 
 * pip version
@@ -54,7 +56,9 @@ Installation from source
     # base version
     user@localhost:~/urgap$ pip install .
     # with doc dependencies
-    user@localhost:~/urgap$ uv sync ".[docs]"
-    # with all extras
+    user@localhost:~/urgap$ pip install ".[docs]"
+    # with every runtime extra
     user@localhost:~/urgap$ pip install ".[all]"
+    # everything, including the test and doc toolchains (contributor setup)
+    user@localhost:~/urgap$ pip install ".[all,dev,docs]"
     

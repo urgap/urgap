@@ -2,15 +2,43 @@
 
 import binascii
 import concurrent.futures
+import importlib
 import logging
 import os
+import pkgutil
 import re
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from types import ModuleType
 
 from packaging.version import Version
 
 logger = logging.getLogger(__name__)
+
+
+def iter_public_modules(
+    pkg_name: str,
+    ignore_prefix: str | None = "_",
+) -> Iterator[ModuleType]:
+    """Import and yield each top-level, non-package module in pkg_name.
+
+    Args:
+        pkg_name: Dotted name of the package to scan.
+        ignore_prefix: Skip module names starting with this prefix. Pass None to import all.
+    """
+    pkg = importlib.import_module(pkg_name)
+    for _, modname, ispkg in pkgutil.iter_modules(pkg.__path__):
+        if ispkg or (ignore_prefix and modname.startswith(ignore_prefix)):
+            continue
+        full_name = f"{pkg_name}.{modname}"
+        try:
+            yield importlib.import_module(full_name)
+        except ImportError:
+            logger.debug(
+                "Skipping module '%s' could not be imported.",
+                full_name,
+                exc_info=True,
+            )
 
 
 def sense_compression_format(file: os.PathLike) -> str:

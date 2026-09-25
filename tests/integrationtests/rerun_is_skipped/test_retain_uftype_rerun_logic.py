@@ -8,7 +8,7 @@ import urgap
     [
         (
             urgap.UFile(
-                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.proteomics.converter.PYIOHAT_CSV}#"
+                uri=f"file://{urgap._test_folder}/data?uftype={urgap.uftypes.any.CSV}#"
                 f"unified_csvs/BSA1_xtandem_alanine_unified.csv",
             ),
             urgap.URunDict(

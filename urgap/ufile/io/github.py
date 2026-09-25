@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 class IOGithub(UIOBase):
     """UIO Class interface for Github file objects."""
 
+    SCHEMA = "github"
+
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new UIO class for processing Github scheme.
 
@@ -231,6 +233,7 @@ class IOGithub(UIOBase):
         self,
         pattern: str | None = None,
         full_string: bool = True,
+        **_kwargs: P.kwargs,
     ) -> list:
         """Get objects in folder/'container'.
 

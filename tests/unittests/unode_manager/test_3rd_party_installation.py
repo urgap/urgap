@@ -34,27 +34,33 @@ def test_unknown_dependency_logs_warning(caplog):
 
     with caplog.at_level("WARNING"):
         um._check_other_dependencies(
-            availabilities=availabilities, requirements=requirements, unode="TestNode"
+            availabilities=availabilities,
+            requirements=requirements,
+            unode="TestNode",
         )
 
     assert "Wrapper TestNode contains requirements fake_dep" in caplog.text
     assert availabilities == []
 
 
-def test_meta_info_fallback_to_instance(tmp_path, monkeypatch):
-    dummy_file = tmp_path / "dummy_unode.py"
-    dummy_file.write_text("""
-class DummyClass:
-    def __init__(self):
-        self.META_INFO = {"name": "dummy_node", "engine_type": ["test_engine"]}
-""")
+def test_meta_info_fallback_to_instance(monkeypatch):
+    import sys
+    import types
 
-    monkeypatch.setattr(urgap, "package_dir", tmp_path)
+    mod_name = "urgap.unodes.dummy_unode"
+    dummy_module = types.ModuleType(mod_name)
+
+    class DummyClass:
+        def __init__(self):
+            self.META_INFO = {"name": "dummy_node", "engine_type": ["test_engine"]}
+
+    DummyClass.__module__ = mod_name
+    dummy_module.DummyClass = DummyClass
+    monkeypatch.setitem(sys.modules, mod_name, dummy_module)
 
     um = UNodeManager()
-
     lookup = {}
-    um._add_to_lookup(lookup=lookup, wrapper=dummy_file)
+    um._add_to_lookup(lookup=lookup, module_path=mod_name)
 
     assert any("dummy_node" in k for k in lookup)
 
@@ -63,7 +69,8 @@ def test__test_command_with_regex():
     um = urgap.UNodeManager()
 
     is_available = um._test_command(
-        command_list=["echo", "hello123"], regex_pattern=r"hello\d+"
+        command_list=["echo", "hello123"],
+        regex_pattern=r"hello\d+",
     )
     assert is_available is True
 
