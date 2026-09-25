@@ -71,6 +71,7 @@ class UNodeManager(UserDict):
 
         Note:
             For example::
+
                 {
                     "java": {
                         "command": ["java", "-version"],
@@ -81,14 +82,18 @@ class UNodeManager(UserDict):
                         "regex_pattern": r"^5\.[0-9]*\.[0-9]* ",
                     }
                 }
-            The key is used as lookup. Wrappers can specify their requirements in META_INFO, e.g::
+
+            The key is used as lookup. Wrappers can specify their requirements in META_INFO, e.g.::
+
                 {
                     "requires": {
                         "other_uftypes": {
                             "other_dependencies": ("java",),
-                            "python_packages: ["pymzml", "pyqms"]
+                            "python_packages": ["pymzml", "pyqms"]
                         },
+                    }
                 }
+
             The requirements are tracked based on specific input_file uftypes or for all other
             uftypes under `other_uftypes`.
 
@@ -291,7 +296,7 @@ class UNodeManager(UserDict):
         )
         return None
 
-    def import_class(self, unode: str) -> urgap.unode:
+    def import_class(self, unode: str) -> type:
         """Import and return the class for a given wrapper/unode.
 
         Updates self.data and checks dependencies via self.check_unode_dependencies.

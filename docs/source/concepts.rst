@@ -1,4 +1,4 @@
-.. _getting_started:
+.. _concepts:
 
 Concepts
 ========
@@ -74,7 +74,7 @@ Unlike traditional systems that record provenance through separate system stores
 key lineage into the output filename. In urgap, users and pipelines do not choose
 output names. Each name is a deterministic digest of the processing parameters
 that affect results, the algorithm and its version, and the input file signatures
-(the list of `ucfs`, see below and :numref:`Figure 2`). The result is an immutable PaC hash
+(the list of `ucfs`, see below and :ref:`Figure 2 <figure-2>`). The result is an immutable PaC hash
 that supports global smart rerun and reproducibility. Files in different locations
 are treated as the same asset if their `ucfs` match, enabling identity-based reuse
 across environments. This design plays well with explicit pipeline specs,

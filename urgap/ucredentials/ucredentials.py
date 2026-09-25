@@ -74,7 +74,7 @@ class UCredentialManager(UManager[IOBaseCreds]):
         self._io = None
 
     @property
-    def io(self) -> urgap.ucredentials.io:
+    def io(self) -> IOBaseCreds | None:
         """IO Property can be set with init_io_class()."""
         return self._io
 
@@ -83,7 +83,7 @@ class UCredentialManager(UManager[IOBaseCreds]):
         secret_store: str,
         secret_id: str,
         **extra: P.kwargs,
-    ) -> urgap.ucredentials.io:
+    ) -> None:
         """Initialize the secret backend handler."""
         if secret_store not in self.available_io_classes:
             msg = (
