@@ -1,20 +1,12 @@
 """MCP helpers for registering tools and unodes of urgap2."""
 
-import asyncio
-import functools
-import inspect
 import logging
 
-from collections.abc import Callable
-from functools import wraps
-from typing import ParamSpec
-
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 import urgap
 
 logger = logging.getLogger(__name__)
-P = ParamSpec("P")
 
 
 def register_unodes(server: FastMCP, nodes_list: list) -> None:
@@ -34,26 +26,29 @@ def register_unodes(server: FastMCP, nodes_list: list) -> None:
             continue
 
         unode_name = unode.replace(":", "_").replace(".", "_")
-        fn = make_tool(un.run_node_as_mcp_tool, unode_name, un)
-        server.tool()(fn)
-
-
-def make_tool(method: Callable, unode_name: str, unode: urgap.UNodeBase) -> Callable:
-    """Create a fastmcp tool wrapper."""
-
-    @wraps(method)
-    async def wrapper(*args: dict, **kwargs: P.kwargs) -> Callable:
-        loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(
-            None,
-            functools.partial(method, *args, **kwargs),
+        server.tool(
+            un.run_node_as_mcp_tool,
+            name=unode_name,
+            description=build_tool_description(unode_name, un),
         )
 
-    wrapper.__name__ = unode_name
-    wrapper.__doc__ = f"""
+
+def build_tool_description(unode_name: str, unode: urgap.UNodeBase) -> str:
+    """Build the mcp tool description for a unode.
+
+    The parameter descriptions themselves are derived by FastMCP from the
+    signature and docstring of ``run_node_as_mcp_tool``, so only the
+    unode specific context is assembled here.
+
+    Args:
+        unode_name (str): mcp safe name of the unode, e.g. ``FilterTabularToCSV_1_0_0``
+        unode (urgap.UNodeBase): initialized unode instance
+
+    Returns:
+        str: description shown to the model for this tool.
+    """
+    return f"""
 {unode.__doc__}
-\n {method.__doc__}
+\n {unode.run_node_as_mcp_tool.__doc__}
 \n This is an example of the parameters for {unode_name}: {unode.META_INFO["parameter_examples"]}"
 """
-    wrapper.__signature__ = inspect.signature(method)
-    return wrapper

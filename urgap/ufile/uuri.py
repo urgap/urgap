@@ -123,7 +123,7 @@ class UUri:
 
         If found, sets _user and _password attributes using Urgap's credential manager.
         """
-        if self.scheme == "github":
+        if self.scheme in ("github", "git"):
             cred_key = (
                 f"{self.scheme}://{self.netloc}/"
                 f"{self.get_github_resource_name('org')}/{self.get_github_resource_name('repo')}"

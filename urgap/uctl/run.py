@@ -8,7 +8,6 @@ import os
 import pprint
 import signal
 import threading
-import time
 import webbrowser
 
 from concurrent.futures import ProcessPoolExecutor
@@ -21,6 +20,8 @@ import click
 
 import urgap
 
+from urgap.uctl.rebase import rebase_worker
+from urgap.umessagebus.worker import run_subscription_worker
 from urgap.util import sort_versions
 
 if TYPE_CHECKING:
@@ -251,75 +252,6 @@ def get_all_relevant_nodes(nodes: tuple | str) -> list:
     return nodes_list
 
 
-def _ensure_service_bus_entities(
-    namespace: str,
-    credential: object,
-    topic_subscription_filter_pairs: list,
-) -> None:
-    from azure.core.exceptions import ResourceNotFoundError
-    from azure.servicebus.management import (
-        ServiceBusAdministrationClient,
-        SqlRuleFilter,
-    )
-
-    admin = ServiceBusAdministrationClient(
-        fully_qualified_namespace=namespace,
-        credential=credential,
-    )
-    for (
-        topic,
-        subscription,
-        filter_value,
-    ) in topic_subscription_filter_pairs:  # renamed from filter (ruff A001)
-        newly_created_subscription = False
-        try:
-            admin.get_topic(topic)
-        except ResourceNotFoundError:
-            admin.create_topic(topic_name=topic)
-        try:
-            admin.get_subscription(topic, subscription)
-        except ResourceNotFoundError:
-            admin.create_subscription(topic_name=topic, subscription_name=subscription)
-            newly_created_subscription = True
-
-        if (filter_value is not None) and newly_created_subscription:
-            admin.delete_rule(topic, subscription, "$Default")
-            admin.create_rule(
-                topic_name=topic,
-                subscription_name=subscription,
-                rule_name="unode_filter",
-                filter=SqlRuleFilter(
-                    f"subscription_key = '{filter_value}'",
-                ),
-            )
-
-
-def _publish_completion(
-    sender: object,
-    completion_topic: str | None,
-    event: dict,
-) -> None:
-    """Publish a completion event.
-
-    Args:
-        sender: Service Bus sender object.
-        completion_topic: Topic name if completion publishing enabled, else None.
-        event: Event payload dictionary to serialize.
-    """
-    if not completion_topic:
-        return
-    from azure.servicebus import ServiceBusMessage
-
-    app_props = {"subscription_key": event.get("subscription_key")}
-    sender.send_messages(
-        ServiceBusMessage(
-            json.dumps(event),
-            application_properties=app_props,
-            correlation_id=event.get("uuid"),
-        ),
-    )
-
-
 def _process_message(
     body: object,
 ) -> tuple[bool, list[str] | None]:
@@ -373,153 +305,12 @@ def _service_bus_run_worker(
         unode_identifier: Full unode identifier (e.g., Name:1.0.0).
         shutdown_event: Event to signal parent process to terminate.
     """
-    from azure.identity import DefaultAzureCredential
-    from azure.servicebus import (
-        AutoLockRenewer,
-        ServiceBusClient,
-        ServiceBusReceiveMode,
+    run_subscription_worker(
+        cred_key=cred_key,
+        subscription_key=unode_identifier,
+        handler=_process_message,
+        shutdown_event=shutdown_event,
     )
-
-    namespace_host = cred_key.split("://", 1)[-1].rstrip("/")
-    credential = DefaultAzureCredential()
-    topic_name = urgap.config["service_bus_topic"]
-    subscription_name = unode_identifier.replace(":", "__")
-    completion_topic = urgap.config["service_bus_completion_topic"]
-    exit_after_first = urgap.config["service_bus_exit_after_first_message"]
-    max_autorenew = urgap.config["service_bus_max_autorenewal_minutes"] * 60
-    topic_subscription_filter_pairs = [
-        (topic_name, subscription_name, unode_identifier),
-    ]
-    if completion_topic is not None:
-        topic_subscription_filter_pairs += [(completion_topic, "Completed", None)]
-    _ensure_service_bus_entities(
-        namespace_host,
-        credential,
-        topic_subscription_filter_pairs=topic_subscription_filter_pairs,
-    )
-    with ServiceBusClient(
-        fully_qualified_namespace=namespace_host,
-        credential=credential,
-    ) as client:
-        receiver_ctx = client.get_subscription_receiver(
-            topic_name=topic_name,
-            subscription_name=subscription_name,
-            max_wait_time=5,
-            receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
-        )
-        completion_sender = (
-            client.get_topic_sender(topic_name=completion_topic)
-            if completion_topic
-            else None
-        )
-        renewer = AutoLockRenewer() if max_autorenew > 0 else None
-        with receiver_ctx as receiver:
-            logger.info(
-                "ServiceBus worker started for unode=%s topic=%s subscription=%s max_autorenew=%ss",
-                unode_identifier,
-                topic_name,
-                subscription_name,
-                max_autorenew,
-            )
-            _handle_service_bus_messages(
-                receiver=receiver,
-                completion_sender=completion_sender,
-                completion_topic=completion_topic if completion_sender else None,
-                exit_after_first=exit_after_first,
-                unode_identifier=unode_identifier,
-                lock_renewer=renewer,
-                max_autorenew=max_autorenew,
-            )
-        if renewer:
-            renewer.close()
-    if exit_after_first and shutdown_event:
-        shutdown_event.set()
-
-
-def _process_service_bus_message(
-    msg: object,
-    receiver: object,
-    completion_sender: object | None,
-    completion_topic: str | None,
-    unode_identifier: str,
-    exit_after_first: bool,
-) -> bool:
-    """Handle a single Service Bus message.
-
-    Returns True if worker loop should stop; False otherwise.
-    """
-    preview = json.loads(str(msg))
-    target_unode = preview.get("subscription_key")
-    if target_unode != unode_identifier:
-        receiver.abandon_message(msg)
-        return False
-    ok, output_uris = _process_message(preview)
-    if ok:
-        if completion_topic is not None:
-            event_payload = preview.copy()
-            if "custom_message" in event_payload:
-                event_payload["custom_message"].update({"output_uris": output_uris})
-            else:
-                event_payload["custom_message"] = {"output_uris": output_uris}
-            _publish_completion(
-                completion_sender,
-                completion_topic,
-                event_payload,
-            )
-        receiver.complete_message(msg)
-        if exit_after_first:
-            logger.info(
-                "Configured to exit after first message; stopping worker for %s",
-                unode_identifier,
-            )
-            return True
-    else:
-        receiver.abandon_message(msg)
-    return False
-
-
-def _handle_service_bus_messages(
-    receiver: object,
-    completion_sender: object | None,
-    completion_topic: str | None,
-    exit_after_first: bool,
-    unode_identifier: str,
-    lock_renewer: object | None,
-    max_autorenew: float,
-) -> None:
-    empty_polls = 0
-    while True:
-        messages = receiver.receive_messages(
-            max_wait_time=5,
-            max_message_count=1,
-        )
-        if not messages:
-            empty_polls += 1
-            if empty_polls >= 3:
-                logger.info(
-                    "No messages after %s consecutive polls exiting worker",
-                    empty_polls,
-                )
-                return
-            time.sleep(10)
-            continue
-        for msg in messages:
-            if lock_renewer and max_autorenew > 0:
-                lock_renewer.register(
-                    receiver,
-                    msg,
-                    max_lock_renewal_duration=max_autorenew,
-                )
-            stop = _process_service_bus_message(
-                msg,
-                receiver,
-                completion_sender,
-                completion_topic,
-                unode_identifier,
-                exit_after_first,
-            )
-            if stop:
-                return
 
 
 @click.command()
@@ -539,8 +330,14 @@ def _handle_service_bus_messages(
     default=None,
 )
 @click.option(
+    "--via-message-bus",
     "--via-servicebus",
-    help="Service Bus ucredentials key (azure-servicebus://<ns>.servicebus.windows.net) to run a subscription worker.",
+    "via_servicebus",
+    help=(
+        "Message bus ucredentials key to run a subscription worker. The scheme "
+        "selects the transport, e.g. azure-servicebus://<ns>.servicebus.windows.net "
+        "or gcp-pubsub://<project-id>."
+    ),
     required=False,
 )
 def upi_server(
@@ -550,7 +347,7 @@ def upi_server(
 ) -> None:
     """Spawn servers for requested Urgap nodes and optional Service Bus worker.
 
-    If --via-servicebus is provided a worker process is started that listens on configured queues.
+    If --via-message-bus is provided a worker process is started that listens on configured queues.
     """
     processes = []
     shutdown_event = multiprocessing.Event()
@@ -765,5 +562,6 @@ def run() -> None:
 
 
 run.add_command(upi_server)
+run.add_command(rebase_worker)
 run.add_command(mcp_server)
 run.add_command(dashboard)
