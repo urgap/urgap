@@ -1,10 +1,10 @@
 """UMessageBusManager module of urgap."""
 
-from urgap.umanager import UManager
+from urgap.ubackend_manager import UBackendManager
 from urgap.umessagebus.io._base import UMessageBusBase
 
 
-class UMessageBusManager(UManager[UMessageBusBase]):
+class UMessageBusManager(UBackendManager[UMessageBusBase]):
     """Manager for message bus transports.
 
     The UMessageBusManager detects which message bus implementations are

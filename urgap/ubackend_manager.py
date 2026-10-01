@@ -38,7 +38,7 @@ def discover_backend_classes(
     return registry
 
 
-class UManager(Generic[T]):
+class UBackendManager(Generic[T]):
     """Registry-backed manager: discovers backends and registers them by key."""
 
     NAMESPACE_PACKAGE: ClassVar[str]
