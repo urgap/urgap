@@ -30,6 +30,6 @@ class UMeta(SQLAlchemyBaseUMeta):
         )
         connection_string = postgresql_uri.replace(
             "postgresql://",
-            "postgresql://{user}:{password}@",
+            "postgresql+psycopg://{user}:{password}@",
         )
         return connection_string.format(**credentials)

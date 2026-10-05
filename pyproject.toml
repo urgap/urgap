@@ -89,7 +89,7 @@ cloud = [
     'mcp>=1.26.0,<3.0.0',
 ]
 databases = [
-    'psycopg2-binary>=2.9.12,<3.0.0'
+    'psycopg[binary]>=3.2.0,<4.0.0'
 ]
 docs = [
     'sphinx>=9.0.4,<10.0.0',

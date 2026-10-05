@@ -30,7 +30,7 @@ def test_generate_connection_string(monkeypatch):
     conn_str = umeta.generate_connection_string()
 
     # Expected string should include dummy credentials
-    expected = "postgresql://dummyuser:dummypass@dummyhost:5432"
+    expected = "postgresql+psycopg://dummyuser:dummypass@dummyhost:5432"
     assert conn_str == expected
 
 
@@ -49,5 +49,5 @@ def test_generate_connection_string_credentials(monkeypatch):
     umeta = UMeta()
     conn_str = umeta.generate_connection_string()
 
-    expected = "postgresql://testuser:testpass@localhost:5432"
+    expected = "postgresql+psycopg://testuser:testpass@localhost:5432"
     assert conn_str == expected
