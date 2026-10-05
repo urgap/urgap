@@ -1,6 +1,6 @@
 import pytest
 
-from urgap.umanager import UManager
+from urgap.ubackend_manager import UBackendManager
 
 
 class DummyBase:
@@ -22,9 +22,9 @@ class DummyBackendADuplicate(DummyBase):
 
 
 def _make_manager(monkeypatch, classes):
-    """Build a UManager subclass with discovery patched to return `classes`."""
+    """Build a UBackendManager subclass with discovery patched to return `classes`."""
 
-    class DummyManager(UManager[DummyBase]):
+    class DummyManager(UBackendManager[DummyBase]):
         NAMESPACE_PACKAGE = "fake.namespace"
         BASE_CLASS = DummyBase
         MARKER_ATTR = "SCHEME"
@@ -39,7 +39,7 @@ def _make_manager(monkeypatch, classes):
             registry[key] = cls
         return registry
 
-    monkeypatch.setattr("urgap.umanager.discover_backend_classes", fake_discover)
+    monkeypatch.setattr("urgap.ubackend_manager.discover_backend_classes", fake_discover)
     return DummyManager
 
 
