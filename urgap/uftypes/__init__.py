@@ -1,3 +1,5 @@
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
+
 import logging
 
 from urgap.util import iter_public_modules
