@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>urgap — unified resource governance and data provenance</title>
+  <meta name="description" content="urgap is a cloud-native Python framework for file-based data engineering. Wrap any tool once and get storage abstraction, provenance, lineage and smart reruns — for pipelines and AI agents.">
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <a class="wordmark" href="#top" aria-label="urgap home">
+      <svg class="mark" width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 8C16 8 15 16 24 16M7 24C16 24 15 16 24 16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="8" r="3.4" fill="currentColor"/><circle cx="7" cy="24" r="3.4" fill="currentColor"/><circle class="mark__out" cx="24.5" cy="16" r="4.6"/></svg>
+      <span>urgap</span>
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#unode">UNode</a>
+      <a href="#pac">Provenance</a>
+      <a href="#agents">Agents</a>
+      <a href="#reruns">Reruns</a>
+      <a href="#storage">Storage</a>
+      <a href="#lineage">Lineage</a>
+      <a href="#start" class="nav__cta">Get started</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- 01 HERO -->
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">Unified resource governance &amp; data provenance</p>
+        <h1>Your pipeline, <em>minus the plumbing.</em></h1>
+        <p class="lede">
+          urgap is a cloud-native Python framework for file-based data engineering.
+          Wrap a tool once and storage, metadata, lineage and smart reruns come with it —
+          whether the caller is a scheduler, a notebook or an AI agent.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#start">Get started</a>
+          <a class="btn btn--ghost" href="https://www.youtube.com/watch?v=63pYK1xZPx8" target="_blank" rel="noopener">
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            Watch the talk
+          </a>
+        </div>
+        <dl class="hero__facts">
+          <div><dt>Runs on</dt><dd>local · https · Azure · GCS · GitHub · SMB</dd></div>
+          <div><dt>Plugs into</dt><dd>Prefect · Beam · Nextflow · MCP · A2A</dd></div>
+        </dl>
+      </div>
+
+      <figure class="hero__code card card--dark">
+        <figcaption class="card__bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>pipeline.py</span>
+        </figcaption>
+<pre><code><span class="k">import</span> urgap
+
+ufiles = urgap.UFileList([urgap.UFile(
+    <span class="s">"gcs://lab/raw?uftype=.any.csv#BSA1.csv"</span>)])
+
+urun_dict = urgap.URunDict({
+  <span class="s">"parameters"</span>: {
+    <span class="s">"FilterTabularToCSV:1.0.0"</span>: {
+        <span class="s">"-q"</span>: <span class="s">"500 &lt; `exp_mz` &lt; 1000"</span>},
+    <span class="s">"CompressToTar:1.0.0"</span>: {},
+  },
+  <span class="s">"unode_parameters"</span>: {
+    <span class="s">"storage_base_uri"</span>: <span class="s">"gcs://lab/results"</span>},
+})
+
+flt = urgap.init_unode(<span class="s">"FilterTabularToCSV:1.0.0"</span>)
+tar = urgap.init_unode(<span class="s">"CompressToTar:1.0.0"</span>)
+
+csvs = flt.run(urun_dict=urun_dict, ufiles=ufiles)
+arch = tar.run(urun_dict=urun_dict, ufiles=csvs)
+<span class="c"># run it again: nothing is recomputed.</span></code></pre>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 02 UNODE -->
+  <section id="unode" class="section">
+    <div class="wrap split">
+      <div class="split__text">
+        <p class="eyebrow"><span class="num">01</span> Processing abstraction</p>
+        <h1>Wrap any tool as a UNode</h1>
+        <p class="lede">
+          A UNode is a thin, versioned layer between a tool and the framework. It declares
+          what goes in and what comes out, builds the command line, and leaves IO, secrets
+          and metadata to urgap. No glue code — your tool stays your tool.
+        </p>
+        <ul class="ticks">
+          <li><strong>Typed contracts.</strong> Inputs and outputs are declared as <code>uftypes</code> with min/max counts, so mismatched wiring fails before anything runs.</li>
+          <li><strong>One lifecycle.</strong> Every node runs <code>preflight → execute → postflight</code>, with checks for third-party tools like Java, R or .NET up front.</li>
+          <li><strong>Pinned versions.</strong> Tool versions and wrapper versions are explicit and become part of every output's identity.</li>
+          <li><strong>Container-ready.</strong> The same node runs in-process, as a microservice, or behind a message bus.</li>
+        </ul>
+      </div>
+
+      <figure class="card card--dark split__visual">
+        <figcaption class="card__bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>unodes/filter_tabular_to_csv.py</span>
+        </figcaption>
+<pre><code><span class="k">class</span> <span class="f">FilterTabularToCSV</span>(urgap.unode.UNodeBase):
+    <span class="s">"""Filter and merge tabular files with a polars query."""</span>
+
+    META_INFO = {
+        <span class="s">"name"</span>: <span class="s">"FilterTabularToCSV"</span>,
+        <span class="s">"wrapper_version"</span>: {<span class="s">"major"</span>: <span class="n">1</span>, <span class="s">"minor"</span>: <span class="n">0</span>, <span class="s">"patch"</span>: <span class="n">0</span>},
+        <span class="s">"versions"</span>: [
+            {<span class="s">"version"</span>: <span class="s">"1.0.0"</span>,
+             <span class="s">"exe_path"</span>: <span class="s">"FilterTabular/1_0_0/filter_tabular.py"</span>},
+        ],
+        <span class="s">"parameters_not_triggering_rerun"</span>: [],
+        <span class="s">"input_uftypes"</span>:  {any.TABULAR: {<span class="s">"min"</span>: <span class="n">1</span>, <span class="s">"max"</span>: <span class="n">-1</span>}},
+        <span class="s">"output_uftypes"</span>: {any.CSV:     {<span class="s">"min"</span>: <span class="n">1</span>, <span class="s">"max"</span>: <span class="n">1</span>}},
+    }
+
+    <span class="k">def</span> <span class="f">preflight</span>(self, utrace):
+        out = utrace.output_files[<span class="n">0</span>].path  <span class="c"># named for you</span>
+        cmd = [<span class="s">"python"</span>, str(self.exe_path), <span class="s">"-m"</span>, <span class="s">"csv"</span>]
+        <span class="k">for</span> f <span class="k">in</span> utrace.input_files:
+            cmd += [<span class="s">"-i"</span>, str(f.path)]  <span class="c"># fetched for you</span>
+        utrace.urun_dict.command_list = cmd + [<span class="s">"-o"</span>, str(out)]
+        <span class="k">return</span> utrace</code></pre>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 03 PROVENANCE AS CODE -->
+  <section id="pac" class="section section--tint">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow"><span class="num">02</span> Provenance as Code</p>
+        <h1>The file name <em>is</em> the provenance</h1>
+        <p class="lede">
+          In urgap, nobody picks output names. Each name is a deterministic digest of the tool
+          and its version, the parameters that change results, and the signatures of the inputs.
+          Lineage isn't bolted on afterwards — it's encoded where the data lives.
+        </p>
+      </div>
+
+      <div class="pac card">
+        <div class="pac__controls">
+          <p class="pac__title">Try it — change a parameter</p>
+          <label class="field">
+            <span class="field__label">Query <code>-q</code> <em class="tag tag--accent">triggers rerun</em></span>
+            <input id="pac-q" type="text" value="500 &lt; `exp_mz` &lt; 1000" spellcheck="false" autocomplete="off">
+          </label>
+          <label class="field">
+            <span class="field__label">Threads <code>--threads</code> <em class="tag">ignored for identity</em></span>
+            <input id="pac-t" type="range" min="1" max="32" value="8">
+            <output id="pac-t-out" class="field__out">8</output>
+          </label>
+          <label class="field">
+            <span class="field__label">Tool version</span>
+            <select id="pac-v">
+              <option value="1.0.0">FilterTabularToCSV 1.0.0</option>
+              <option value="2.0.0">FilterTabularToCSV 2.0.0</option>
+            </select>
+          </label>
+          <p class="pac__note">Hashes here are computed in your browser for illustration; urgap uses MD5 or blake2 over the sorted parameter JSON.</p>
+        </div>
+
+        <div class="pac__out">
+          <p class="pac__label">Output object name</p>
+          <p class="pac__name" id="pac-name" aria-live="polite">
+            <span class="seg seg--tool" id="seg-tool">FilterTabularToCSV_1_0_0</span><span class="seg seg--w">_w1_</span><span class="seg seg--params" id="seg-params">…</span><span class="seg seg--sep">/</span><wbr><span class="seg seg--inputs">7d2a91c04e…be13</span><span class="seg seg--n">_1_of_1</span><span class="seg seg--type">.any.csv</span>
+          </p>
+          <ol class="legend">
+            <li><i class="sw sw--tool"></i><span><strong>Resource</strong> — node name &amp; tool version</span></li>
+            <li><i class="sw sw--params"></i><span><strong>Parameters</strong> — only those that affect results</span></li>
+            <li><i class="sw sw--inputs"></i><span><strong>Inputs</strong> — digest of input <code>ucfs</code> signatures</span></li>
+            <li><i class="sw sw--type"></i><span><strong>Type</strong> — output uftype, plus <code>n_of_N</code></span></li>
+          </ol>
+          <p class="pac__status" id="pac-status">Same inputs, same parameters → same name → <strong>skipped</strong>.</p>
+        </div>
+      </div>
+
+      <div class="trio">
+        <article>
+          <h3>ucfs — an ISBN for files</h3>
+          <p><code>&lt;object_name&gt;@&lt;md5&gt;</code>. The same title can sit in many bookstores and keep one identifier; the same file can sit in many clouds and stay one asset.</p>
+        </article>
+        <article>
+          <h3>Identity ≠ location</h3>
+          <p>A UFile is a URI: <code>scheme://location#object_name</code>. The scheme picks the backend, the fragment is the identity. Move data without breaking anything.</p>
+        </article>
+        <article>
+          <h3>FAIR by design</h3>
+          <p>Every asset carries its own lineage. Files become self-describing — findable, reusable and governable without extra paperwork.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 AGENTS -->
+  <section id="agents" class="section section--ink">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow"><span class="num">03</span> Agent-ready</p>
+        <h1>Agent-ready by design</h1>
+        <p class="lede">
+          Every UNode can be served as an MCP tool. An agent calls STAR, kallisto or a CSV
+          filter the same way a pipeline does — and because it goes through the same
+          Provenance-as-Code path, everything it does is versioned, traceable and reproducible.
+          Ask twice, compute once.
+        </p>
+      </div>
+
+      <div class="agent">
+        <div class="agent__chat card card--dark" aria-label="Example agent session">
+          <div class="card__bar">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>agent session · urgap MCP</span>
+            <button class="replay" id="agent-replay" type="button">Replay</button>
+          </div>
+          <ol class="chat" id="chat">
+            <li class="msg msg--user">List the CSVs in <code>gcs://my-project/raw</code> and keep rows with m/z between 500 and 1000.</li>
+            <li class="msg msg--tool"><span class="call">ensure_urgap_uri_format</span><span class="io">["gcs://my-project/raw"] → ok</span></li>
+            <li class="msg msg--tool"><span class="call">list_container_items</span><span class="io">pattern=".*\.csv$" → 3 files</span></li>
+            <li class="msg msg--tool"><span class="call">generate_workflow_id</span><span class="io">→ u_brisk-otter-sorts-amber-river</span></li>
+            <li class="msg msg--tool"><span class="call">FilterTabularToCSV_1_0_0</span><span class="io">{"-q": "500 &lt; `exp_mz` &lt; 1000"} → 1 output</span></li>
+            <li class="msg msg--agent">Done. The filtered table is at <code>…/FilterTabularToCSV_1_0_0_w1_3f9e…/7d2a…_1_of_1.any.csv</code>, linked to its three parent files under workflow <code>u_brisk-otter-sorts-amber-river</code>.</li>
+            <li class="msg msg--user">Run that again for the report.</li>
+            <li class="msg msg--tool msg--skip"><span class="call">FilterTabularToCSV_1_0_0</span><span class="io">outputs exist → skipped</span></li>
+          </ol>
+        </div>
+
+        <div class="agent__points">
+          <article class="point">
+            <h3>Nodes become tools</h3>
+            <p>Serve nodes over REST and MCP side by side. Tool names are derived from the node, e.g. <code>FilterTabularToCSV_1_0_0</code>.</p>
+<pre class="snippet"><code>uctl run upi-server -n FilterTabularToCSV:1.0.0 --mcp-port 8765</code></pre>
+          </article>
+          <article class="point">
+            <h3>Your docs are the prompt</h3>
+            <p>A node's docstring and <code>parameter_examples</code> become the tool description, so the model learns the exact parameter format from the wrapper itself.</p>
+          </article>
+          <article class="point">
+            <h3>Built-in helper tools</h3>
+            <p><code>list_container_items</code>, <code>generate_workflow_id</code>, <code>ensure_urgap_uri_format</code> and storage-URI builders for GCS and Azure. MCP prompts teach the <code>urun_dict</code> format; resource templates build storage URIs.</p>
+<pre class="snippet"><code>uctl run mcp-server -p 8000</code></pre>
+          </article>
+          <article class="point">
+            <h3>Agent-to-agent</h3>
+            <p>The <code>a2a_caller</code> node calls other A2A agents, so an agent hop is just another versioned, traceable step in your pipeline.</p>
+          </article>
+          <article class="point point--wide">
+            <h3>Governance for free</h3>
+            <p>Agent runs get deterministic output names, rerun skipping, lineage tags and UMeta records — exactly like scheduled pipelines. You can audit what an agent did, and why.</p>
+          </article>
+        </div>
+      </div>
+
+      <figure class="card card--dark config">
+        <figcaption class="card__bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>mcp client config</span>
+          <button class="copy" type="button" data-copy="mcp-config">Copy</button>
+        </figcaption>
+<pre><code id="mcp-config">{
+  <span class="s">"mcpServers"</span>: {
+    <span class="s">"urgap"</span>: { <span class="s">"type"</span>: <span class="s">"http"</span>, <span class="s">"url"</span>: <span class="s">"http://localhost:8000/mcp"</span> }
+  }
+}</code></pre>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 05 RERUNS -->
+  <section id="reruns" class="section">
+    <div class="wrap split split--rev">
+      <div class="split__text">
+        <p class="eyebrow"><span class="num">04</span> Smart rerun</p>
+        <h1>Smart reruns, everywhere</h1>
+        <p class="lede">
+          Before a node runs, urgap already knows the names its outputs will have. If they exist —
+          anywhere in your storage, from anyone's run — the step is skipped. Change a parameter
+          and only that step and its descendants run.
+        </p>
+        <ul class="ticks">
+          <li><strong>Fork freely.</strong> Define a pipeline without knowing what already exists; finished work is reused.</li>
+          <li><strong>Compare methods cheaply.</strong> Swap one node, keep the rest of the graph — competing approaches run on identical inputs.</li>
+          <li><strong>Operational parameters stay out.</strong> Thread counts and similar are listed in <code>parameters_not_triggering_rerun</code>.</li>
+          <li><strong>Force when you mean it.</strong> <code>force=True</code> reruns anyway. <span class="muted">You used the Force.</span></li>
+        </ul>
+      </div>
+
+      <figure class="card split__visual dag">
+        <div class="dag__toolbar" role="tablist" aria-label="Scenario">
+          <button role="tab" class="chip is-active" data-scenario="first" aria-selected="true">First run</button>
+          <button role="tab" class="chip" data-scenario="align" aria-selected="false">New aligner params</button>
+          <button role="tab" class="chip" data-scenario="again" aria-selected="false">Run again</button>
+        </div>
+        <svg class="dag__svg" viewBox="0 0 520 300" role="img" aria-labelledby="dag-title">
+          <title id="dag-title">NGS pipeline: QC, trimming, index, alignment, sort, final QC</title>
+          <g class="edges">
+            <path d="M110 70 H170"/>
+            <path d="M290 70 C320 70 320 150 350 150"/>
+            <path d="M110 230 H170"/>
+            <path d="M290 230 C320 230 320 150 350 150"/>
+            <path d="M430 175 V205"/>
+          </g>
+          <g class="node" data-step="fastqc"><rect x="10"  y="45"  width="100" height="50" rx="10"/><text x="60"  y="75">fastqc</text></g>
+          <g class="node" data-step="trim"><rect x="170" y="45"  width="120" height="50" rx="10"/><text x="230" y="75">cutadapt</text></g>
+          <g class="node" data-step="ref"><rect x="10"  y="205" width="100" height="50" rx="10"/><text x="60"  y="235">reference</text></g>
+          <g class="node" data-step="index"><rect x="170" y="205" width="120" height="50" rx="10"/><text x="230" y="235">STAR index</text></g>
+          <g class="node" data-step="align"><rect x="350" y="125" width="160" height="50" rx="10"/><text x="430" y="155">STAR align</text></g>
+          <g class="node" data-step="sort"><rect x="350" y="205" width="160" height="50" rx="10"/><text x="430" y="235">samtools sort</text></g>
+        </svg>
+        <figcaption class="dag__caption" id="dag-caption">Every step runs once and writes outputs named by its provenance.</figcaption>
+        <div class="dag__legend"><span><i class="sw sw--run"></i>runs</span><span><i class="sw sw--skip"></i>skipped — outputs exist</span></div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 06 STORAGE -->
+  <section id="storage" class="section section--tint">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow"><span class="num">05</span> Data abstraction</p>
+        <h1>One file abstraction, any storage</h1>
+        <p class="lede">
+          A UFile is a URI. The same node code reads from a laptop and writes to a bucket —
+          the scheme decides how to talk to storage. Access <code>.path</code> and the file
+          is downloaded to scratch; call <code>rebase()</code> and it moves, identity intact.
+        </p>
+      </div>
+
+      <div class="uri card">
+        <p class="uri__line">
+          <span class="u u--scheme">azure</span><span class="u u--punct">://</span><span class="u u--loc">account.blob.core.windows.net/raw</span><span class="u u--punct">?</span><span class="u u--q">uftype=.any.csv</span><span class="u u--punct">#</span><span class="u u--frag">runs/BSA1.csv</span>
+        </p>
+        <div class="uri__keys">
+          <span><i class="u--scheme"></i>scheme → IO backend</span>
+          <span><i class="u--loc"></i>location → where it lives</span>
+          <span><i class="u--q"></i>uftype → what it is</span>
+          <span><i class="u--frag"></i>fragment → identity</span>
+        </div>
+      </div>
+
+      <ul class="backends">
+        <li><code>file://</code><span>Local file system</span></li>
+        <li><code>https://</code><span>Any web endpoint</span></li>
+        <li><code>azure://</code><span>Azure Blob &amp; Data Lake</span></li>
+        <li><code>az-smb://</code><span>Azure file shares</span></li>
+        <li><code>samba://</code><span>SMB shares</span></li>
+        <li><code>gcs://</code><span>Google Cloud Storage</span></li>
+        <li><code>github://</code><span>Files in a GitHub repo</span></li>
+        <li><code>git://</code><span>Any git remote</span></li>
+      </ul>
+
+      <div class="trio trio--small">
+        <article>
+          <h3>Tags everywhere</h3>
+          <p>Checksums and lineage live in object tags. Backends without native tags get a sidecar <code>.tag</code> JSON.</p>
+        </article>
+        <article>
+          <h3>Secrets, handled</h3>
+          <p>Credentials resolve from Azure Key Vault, GCP Secret Manager or environment variables — never hard-coded in nodes.</p>
+        </article>
+        <article>
+          <h3>Parallel IO</h3>
+          <p><code>UFileList</code> downloads in parallel, filters by uftype or tags, and rebases whole sets in one call.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 LINEAGE -->
+  <section id="lineage" class="section">
+    <div class="wrap split">
+      <div class="split__text">
+        <p class="eyebrow"><span class="num">06</span> Metadata</p>
+        <h1>Lineage you can query</h1>
+        <p class="lede">
+          Every output carries its parents and a compressed provenance graph in its tags.
+          Run details — configs, timings, inputs, outputs, user metadata — are recorded
+          automatically in UMeta, so you can answer "where did this come from?" from the
+          command line.
+        </p>
+        <ul class="ticks">
+          <li><strong>UMeta backends:</strong> SQLite by default, PostgreSQL or Cloud SQL when you share.</li>
+          <li><strong>Workflow IDs:</strong> every run is grouped under a readable <code>wid</code>.</li>
+          <li><strong>Your context too:</strong> attach a <code>user_dict</code> such as experiment ID or operator.</li>
+        </ul>
+      </div>
+
+      <figure class="card card--dark split__visual">
+        <figcaption class="card__bar">
+          <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>terminal</span>
+        </figcaption>
+<pre class="term"><code><span class="p">$</span> uctl describe object <span class="s">7d2a…_1_of_1.any.csv</span>
+<span class="c">  producer   </span>FilterTabularToCSV:1.0.0
+<span class="c">  wid        </span>u_brisk-otter-sorts-amber-river
+<span class="c">  parents    </span>BSA1.csv · BSA2.csv · BSA3.csv
+<span class="c">  consumers  </span>CompressToTar:1.0.0
+
+<span class="p">$</span> uctl describe wid <span class="s">u_brisk-otter-sorts-amber-river</span>
+<span class="p">$</span> uctl describe history
+<span class="p">$</span> uctl describe ucfs <span class="s">BSA1.csv@9b1f…</span></code></pre>
+        <p class="card__foot">Output abridged for illustration.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 08 ORCHESTRATORS -->
+  <section id="orchestrators" class="section section--tint">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow"><span class="num">07</span> Integration</p>
+        <h1>Bring your own orchestrator</h1>
+        <p class="lede">
+          urgap doesn't want to be your scheduler. It handles what happens <em>inside</em> each
+          step, so pipeline code stays independent of business logic and storage.
+          Keep the tools you already run.
+        </p>
+      </div>
+      <div class="logos">
+        <div class="logo-tile"><strong>Prefect</strong><span>task helpers</span></div>
+        <div class="logo-tile"><strong>Apache Beam</strong><span>&amp; Dataflow</span></div>
+        <div class="logo-tile"><strong>Nextflow</strong><span>process helpers</span></div>
+        <div class="logo-tile"><strong>Azure Service Bus</strong><span>subscription workers</span></div>
+        <div class="logo-tile"><strong>GCP Pub/Sub</strong><span>subscription workers</span></div>
+        <div class="logo-tile"><strong>Plain Python</strong><span>just call <code>.run()</code></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 SERVICES -->
+  <section id="services" class="section">
+    <div class="wrap split split--rev">
+      <div class="split__text">
+        <p class="eyebrow"><span class="num">08</span> Operations</p>
+        <h1>Nodes as services, observable by default</h1>
+        <p class="lede">
+          One command turns any node into a FastAPI microservice with health probes. Point a
+          pipeline at it with <code>remote_url</code> and the run happens there — same inputs,
+          same names, same lineage.
+        </p>
+        <ul class="ticks">
+          <li><strong>Kubernetes-friendly:</strong> <code>/livez</code> and <code>/readyz</code> out of the box.</li>
+          <li><strong>OpenTelemetry:</strong> spans and counters for every run, exported via OTLP, Azure Monitor or console.</li>
+          <li><strong>Standardised logs:</strong> every node logs the same way, so debugging looks the same everywhere.</li>
+        </ul>
+      </div>
+      <figure class="card split__visual endpoints">
+        <div class="endpoint"><span class="verb verb--post">POST</span><code>/v1/run</code><span>execute the node</span></div>
+        <div class="endpoint"><span class="verb verb--post">POST</span><code>/v1/terminate</code><span>graceful shutdown</span></div>
+        <div class="endpoint"><span class="verb verb--get">GET</span><code>/livez</code><span>liveness probe</span></div>
+        <div class="endpoint"><span class="verb verb--get">GET</span><code>/readyz</code><span>readiness probe</span></div>
+        <div class="endpoint endpoint--mcp"><span class="verb verb--mcp">MCP</span><code>--mcp-port</code><span>same node, as an agent tool</span></div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 10 GET STARTED -->
+  <section id="start" class="section section--ink">
+    <div class="wrap">
+      <div class="section__head">
+        <p class="eyebrow"><span class="num">09</span> Batteries included</p>
+        <h1>Start with what's in the box</h1>
+        <p class="lede">Ready-made nodes cover common data chores and bioinformatics workhorses. Wrap your own when you need more.</p>
+      </div>
+
+      <div class="families">
+        <div class="family"><h3>Tabular</h3><p>FilterTabularToCSV · ToParquet · ToXlsx</p></div>
+        <div class="family"><h3>Compression</h3><p>CompressToTar · CompressToZip</p></div>
+        <div class="family"><h3>Visualisation</h3><p>plotly visualizer · Venn diagrams</p></div>
+        <div class="family"><h3>NGS &amp; transcriptomics</h3><p>STAR · kallisto · bowtie · samtools · cutadapt · fastqc · umi_tools</p></div>
+        <div class="family"><h3>GWAS</h3><p>plink freq</p></div>
+        <div class="family"><h3>Agents</h3><p>a2a_caller</p></div>
+      </div>
+
+      <div class="install">
+        <div class="steps">
+          <div class="step">
+            <span class="step__n">1</span>
+            <div>
+              <h3>Install</h3>
+              <div class="cmd"><code id="cmd-1">uv sync --extra all</code><button class="copy" type="button" data-copy="cmd-1">Copy</button></div>
+              <p class="muted">Or pick extras: <code>tabular</code>, <code>cloud</code>, <code>server</code>, <code>viz</code>, <code>github</code>, <code>databases</code>.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step__n">2</span>
+            <div>
+              <h3>Run the end-to-end example</h3>
+              <div class="cmd"><code id="cmd-2">uv run pytest tests/integrationtests/end2end/test_filter_csv_pipeline.py</code><button class="copy" type="button" data-copy="cmd-2">Copy</button></div>
+              <p class="muted">Runs entirely on your machine — no cloud account needed.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step__n">3</span>
+            <div>
+              <h3>Go deeper</h3>
+              <p class="muted">Tutorial notebooks cover credentials, UFiles, reports, telemetry and pipelines. Build the Sphinx docs with <code>make html</code> in <code>docs/</code>.</p>
+            </div>
+          </div>
+        </div>
+
+        <a class="talk" href="https://www.youtube.com/watch?v=63pYK1xZPx8" target="_blank" rel="noopener">
+          <span class="talk__play" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></span>
+          <span class="talk__text">
+            <span class="talk__kicker">Talk</span>
+            <strong>urgap — unified resource governance and data provenance</strong>
+            <span>Christian Fufezan · design and capabilities overview</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer__inner">
+    <span class="wordmark wordmark--small"><svg class="mark" width="20" height="20" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M7 8C16 8 15 16 24 16M7 24C16 24 15 16 24 16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="7" cy="8" r="3.4" fill="currentColor"/><circle cx="7" cy="24" r="3.4" fill="currentColor"/><circle class="mark__out" cx="24.5" cy="16" r="4.6"/></svg><span>urgap</span></span>
+    <span class="muted">Unified resource governance &amp; data provenance.</span>
+    <a href="#top" class="muted">Back to top ↑</a>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
