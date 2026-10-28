@@ -24,7 +24,7 @@ class IOGCPCreds(IOBaseCreds):
     def __init__(self, **kwargs: P.kwargs) -> None:
         """Create new IOGCPCreds class."""
         super().__init__(**kwargs)
-        self.version_id = kwargs["version_id"]
+        self.version_id = kwargs.get("version_id") or "latest"
         self.project_id = kwargs["cloud_host_pid"]
 
     def get_secret(self) -> str:
