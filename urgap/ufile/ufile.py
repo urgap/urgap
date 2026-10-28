@@ -17,13 +17,16 @@ import zlib
 
 from base64 import b64decode
 from pathlib import Path
-from typing import ParamSpec
+from typing import TYPE_CHECKING, ParamSpec
 from urllib.parse import urlparse, urlunparse
 from zipfile import ZipFile
 
 import networkx as nx
 
 import urgap
+
+if TYPE_CHECKING:
+    from urgap.ufile.io._base import UIOBase
 
 P = ParamSpec("P")
 
@@ -404,7 +407,7 @@ class UFile:
             self.purge_local_file()
 
     @property
-    def io(self) -> urgap.io:
+    def io(self) -> UIOBase:
         """IO property to access the Urgap IO backend for this file.
 
         Returns:
@@ -506,7 +509,7 @@ class UFile:
         """
         return f"{self.uuri.scheme}://{self.uuri.netloc}{self.uuri.path}"
 
-    def init_io_class(self) -> urgap.UFile.io:
+    def init_io_class(self) -> UIOBase:
         """Initialize the IO backend for this file, based on the UUri scheme.
 
         Returns:

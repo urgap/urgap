@@ -48,11 +48,6 @@ UFile IO Classes
 
    .. automethod:: __init__
 
-.. autoclass:: urgap.ufile.io.libcloud.IOLibcloud
-   :members:
-
-   .. automethod:: __init__
-
 .. autoclass:: urgap.ufile.io.mylabdata.IOMyLabData
    :members:
 
