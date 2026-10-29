@@ -99,6 +99,56 @@ def test_init_raises_if_share_not_available():
     assert expected_msg in str(excinfo.value)
 
 
+def _dummy_uuri():
+    dummy_uuri = MagicMock()
+    dummy_uuri.query = {"tenant-id": "tid", "client-id": "cid"}
+    dummy_uuri.user = "accountname"
+    dummy_uuri.password = "secret"
+    dummy_uuri.get_azure_share.return_value = "myfs"
+    dummy_uuri.get_azure_directory_list.return_value = ["dir1"]
+    dummy_uuri.get_azure_object_directory_list.return_value = ["objdir"]
+    dummy_uuri.get_azure_object_file.return_value = "file.txt"
+    return dummy_uuri
+
+
+def _init_with_list_error(status_code):
+    from azure.core.exceptions import HttpResponseError
+
+    error = HttpResponseError(message="not authorized")
+    error.status_code = status_code
+    dls_client = MagicMock()
+    dls_client.list_file_systems.side_effect = error
+
+    def dummy_init(self, **kwargs):
+        self.uuri = kwargs["uuri"]
+
+    with patch("urgap.ufile.io.azure_datalake.UIOBase.__init__", new=dummy_init):
+        with patch(
+            "urgap.ufile.io.azure_datalake.DataLakeServiceClient",
+            return_value=dls_client,
+        ):
+            with patch("urgap.ufile.io.azure_datalake.ClientSecretCredential"):
+                return IOAzureDL(uuri=_dummy_uuri()), dls_client
+
+
+def test_init_skips_file_system_check_if_listing_is_forbidden():
+    """A principal with folder-level access only gets 403 on listing; that is fine."""
+    io, dls_client = _init_with_list_error(403)
+
+    dls_client.get_file_system_client.assert_called_once_with("myfs")
+    assert io.file_client == (
+        dls_client.get_file_system_client.return_value.get_directory_client.return_value.get_file_client.return_value
+    )
+
+
+def test_init_raises_other_listing_errors():
+    """Only 403 is tolerated; e.g. a 401 still fails."""
+    from azure.core.exceptions import HttpResponseError
+
+    with pytest.raises(HttpResponseError):
+        _init_with_list_error(401)
+
+
 def test_init_calls_get_file_system_client_with_share():
     dummy_uuri = MagicMock()
     dummy_uuri.query = {"tenant-id": "tid", "client-id": "cid"}

@@ -4,6 +4,7 @@ import contextlib
 import logging
 import re
 
+from http import HTTPStatus
 from typing import ParamSpec
 
 from azure.core.exceptions import (
@@ -56,10 +57,24 @@ class IOAzureDL(UIOBase):
             ),
         )
 
-        available_file_systems = [
-            x["name"] for x in self.datalake_service_client.list_file_systems()
-        ]
-        if self.uuri.get_azure_share() not in available_file_systems:
+        try:
+            available_file_systems = [
+                x["name"] for x in self.datalake_service_client.list_file_systems()
+            ]
+        except HttpResponseError as exc:
+            if exc.status_code != HTTPStatus.FORBIDDEN:
+                raise
+            logger.warning(
+                "Not allowed to list file systems on host %s; skipping the "
+                "check that file system '%s' exists.",
+                self.uuri.netloc,
+                self.uuri.get_azure_share(),
+            )
+            available_file_systems = None
+        if (
+            available_file_systems is not None
+            and self.uuri.get_azure_share() not in available_file_systems
+        ):
             msg = (
                 f"File system '{self.uuri.get_azure_share()}' is not available on host {self.uuri.netloc}"
                 f". Available file systems are: {sorted(available_file_systems)}"
