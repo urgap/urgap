@@ -38,7 +38,7 @@ class UIOBase:
         _scratch_path = (
             urgap.scratch_disk
             / self.uuri.get_container_name()
-            / self.uuri.get_object_name()
+            / self.uuri.get_object_name().lstrip("/")
         ).resolve()
         _scratch_path.parent.mkdir(exist_ok=True, parents=True)
 
