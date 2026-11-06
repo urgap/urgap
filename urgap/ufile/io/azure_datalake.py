@@ -47,7 +47,7 @@ class IOAzureDL(UIOBase):
             if key_name not in self.uuri.query:
                 msg = f"DataLake '{key_name}' was not found in the query!"
                 raise OSError(msg)
-        account_name = self.uuri.user
+        account_name = self.uuri.user or self.uuri.netloc.split(".")[0]
         self.datalake_service_client = DataLakeServiceClient(
             account_url=f"https://{account_name}.dfs.core.windows.net",
             credential=ClientSecretCredential(
