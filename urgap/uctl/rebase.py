@@ -13,7 +13,12 @@ import click
 
 import urgap
 
-from urgap.umessagebus.worker import load_message_context, run_subscription_worker
+from urgap.umessagebus.worker import (
+    DEFAULT_EMPTY_POLL_SLEEP,
+    DEFAULT_MAX_WAIT_TIME,
+    load_message_context,
+    run_subscription_worker,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +36,15 @@ def rebase_uris(uris: list[str], storage_base_uri: str) -> list[str]:
         List of urgap URIs of the relocated UFiles.
     """
     ufiles = urgap.UFileList.from_uri_list(list(uris))
-    ufiles.rebase(storage_base_uri=storage_base_uri, upload=True)
-    return ufiles.as_uri_list()
+    source_copies = [uf.io.scratch_path for uf in ufiles]
+    try:
+        ufiles.rebase(storage_base_uri=storage_base_uri, upload=True)
+        return ufiles.as_uri_list()
+    finally:
+        for path in source_copies:
+            path.unlink(missing_ok=True)
+        for uf in ufiles:
+            uf.purge_local_file()
 
 
 @click.command()
@@ -116,8 +128,33 @@ def process_rebase_message(body: dict) -> tuple[bool, list[str] | None]:
 )
 @click.option(
     "--exit-after-first/--stay-alive",
-    help="Exit after the first handled message instead of polling forever.",
+    help=(
+        "Exit after the first handled message instead of polling forever. "
+        "The same as --max-messages 1, and takes precedence over it."
+    ),
     default=False,
+    show_default=True,
+)
+@click.option(
+    "--max-messages",
+    type=click.IntRange(min=0),
+    help=(
+        "Exit after this many successfully rebased messages, e.g. to run a "
+        "batch of files per scheduled job. Failed messages do not count. "
+        "0 means no limit."
+    ),
+    default=0,
+    show_default=True,
+)
+@click.option(
+    "--max-empty-polls",
+    type=click.IntRange(min=0),
+    help=(
+        "Exit after this many polls in a row found no message, each taking "
+        f"about {DEFAULT_MAX_WAIT_TIME + DEFAULT_EMPTY_POLL_SLEEP}s. "
+        "0 keeps polling forever."
+    ),
+    default=0,
     show_default=True,
 )
 def rebase_worker(
@@ -126,6 +163,8 @@ def rebase_worker(
     topic: str | None,
     completion_topic: str | None,
     exit_after_first: bool,
+    max_messages: int,
+    max_empty_polls: int,
 ) -> None:
     """Relocate UFiles requested via a message bus.
 
@@ -141,8 +180,9 @@ def rebase_worker(
         topic_name=topic,
         completion_topic=completion_topic,
         exit_after_first=exit_after_first,
-        # A relay is long lived, it should not give up on an idle queue
-        max_empty_polls=0,
+        max_messages=max_messages,
+        # A relay is long lived, by default it does not give up on an idle queue
+        max_empty_polls=max_empty_polls,
     )
 
 

@@ -244,6 +244,21 @@ suits a job that is scheduled per message. The rebase worker keeps polling by
 default, since it is a long lived relay, and ``--exit-after-first`` switches it
 to the one shot behaviour.
 
+In between, ``--max-messages N`` lets one rebase worker move a batch of files
+and then exit, which suits a job scheduled per batch (e.g. a KEDA ScaledJob
+whose trigger targets N messages per job) and saves starting a new process for
+every file. Only successfully rebased messages count. ``--max-empty-polls M``
+makes the worker exit once M polls in a row found nothing, so a job does not
+wait for a batch that never fills up. The rebase worker removes its local copy
+of each file once it is transferred, so a long running worker does not fill its
+scratch disk.
+
+.. code-block:: bash
+
+   # move up to 100 files, stop early once the subscription stays empty
+   $ uctl run rebase-worker --via-message-bus gcp-pubsub://my-gcp-project \
+        --max-messages 100 --max-empty-polls 4
+
 Two transport differences are worth knowing. A Pub/Sub subscription filter is
 **immutable**, so a subscription that already exists with a different filter is
 used as it is and the worker logs a warning: recreate the subscription if it
