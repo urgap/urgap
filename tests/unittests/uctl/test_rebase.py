@@ -1,15 +1,23 @@
 import json
 
+from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
+
 from click.testing import CliRunner
 
 import urgap
 
 from urgap.uctl.rebase import (
     REBASE_SUBSCRIPTION_KEY,
+    SourceNotFoundError,
+    find_missing_sources,
     process_rebase_message,
     rebase_uris,
     rebase_uris_click,
 )
+from urgap.umessagebus.worker import UnprocessableMessageError
 
 runner = CliRunner()
 
@@ -112,3 +120,56 @@ def test_rebase_message_round_trip_is_json_serializable(tmp_dir):
     }
     ok, _output_uris = process_rebase_message(json.loads(json.dumps(message)))
     assert ok is True
+
+
+def get_missing_source_uri() -> str:
+    return f"file://{urgap._test_folder}/data?uftype=.any.csv#unified_csvs/not_there.csv"
+
+
+def test_rebase_uris_raises_for_missing_source_and_rebases_nothing(tmp_dir):
+    missing_uri = get_missing_source_uri()
+    with pytest.raises(SourceNotFoundError) as excinfo:
+        rebase_uris(
+            uris=[*get_source_uris(), missing_uri],
+            storage_base_uri=f"file://{tmp_dir}",
+        )
+    assert [uri.split("#")[-1] for uri in excinfo.value.uris] == [
+        "unified_csvs/not_there.csv",
+    ]
+    # the sources that do exist were not copied either
+    assert not any(Path(tmp_dir).rglob("*.csv"))
+
+
+def test_process_rebase_message_marks_missing_source_unprocessable(tmp_dir):
+    with pytest.raises(UnprocessableMessageError, match="not_there.csv"):
+        process_rebase_message(
+            {
+                "subscription_key": REBASE_SUBSCRIPTION_KEY,
+                "consumer_kwargs": {
+                    "input_uris": [get_missing_source_uri()],
+                    "storage_base_uri": f"file://{tmp_dir}",
+                },
+            },
+        )
+
+
+def test_find_missing_sources_only_trusts_checked_backends():
+    def must_not_be_called():
+        msg = "remote_object_exists must not be called for this backend"
+        raise AssertionError(msg)
+
+    unchecked = SimpleNamespace(
+        io=SimpleNamespace(SCHEMA="https", remote_object_exists=must_not_be_called),
+        as_uri=lambda: "https://example.org#a.csv",
+    )
+    missing = SimpleNamespace(
+        io=SimpleNamespace(SCHEMA="gcs", remote_object_exists=lambda: False),
+        as_uri=lambda: "gcs://bucket#gone.csv",
+    )
+    present = SimpleNamespace(
+        io=SimpleNamespace(SCHEMA="az-dl", remote_object_exists=lambda: True),
+        as_uri=lambda: "az-dl://account/fs#there.csv",
+    )
+    assert find_missing_sources([unchecked, missing, present]) == [
+        "gcs://bucket#gone.csv",
+    ]

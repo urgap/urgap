@@ -5,13 +5,16 @@ import time
 
 import pytest
 
-from google.api_core.exceptions import AlreadyExists, DeadlineExceeded
+from google.api_core.exceptions import AlreadyExists, DeadlineExceeded, PermissionDenied
 
 from urgap.umessagebus.io.gcp_pubsub import (
     LEASE_RENEWAL_INTERVAL_SECONDS,
     MAX_ACK_DEADLINE_SECONDS,
+    MAX_ATTRIBUTE_VALUE_BYTES,
     UMessageBusGCPPubSub,
 )
+
+DEAD_LETTER_TOPIC = "projects/my-project/topics/urgap_rebase_deadletter"
 
 
 class StubPublisher:
@@ -19,6 +22,7 @@ class StubPublisher:
         self.existing_topics = set(existing_topics)
         self.created_topics = []
         self.published = []
+        self.fail_publish = False
 
     @staticmethod
     def topic_path(project, topic):
@@ -31,18 +35,25 @@ class StubPublisher:
 
     def publish(self, topic, data, **attrs):
         self.published.append((topic, data, attrs))
+        fail = self.fail_publish
 
         class StubFuture:
             def result(self):
+                if fail:
+                    raise PermissionDenied("no publish rights on the topic")
                 return "message-id"
 
         return StubFuture()
 
 
 class StubMessage:
-    def __init__(self, ack_id, body):
+    def __init__(self, ack_id, body, attributes=None):
         self.ack_id = ack_id
-        self.message = type("Msg", (), {"data": json.dumps(body).encode()})()
+        self.message = type(
+            "Msg",
+            (),
+            {"data": json.dumps(body).encode(), "attributes": attributes or {}},
+        )()
 
 
 class StubPullResponse:
@@ -59,6 +70,9 @@ class StubSubscriber:
         self.acknowledged = []
         self.deadlines = []
         self.closed = False
+        self.dead_letter_topic = ""
+        self.failing_lookups = 0
+        self.lookups = 0
 
     @staticmethod
     def subscription_path(project, subscription):
@@ -70,7 +84,16 @@ class StubSubscriber:
         self.created.append(request)
 
     def get_subscription(self, request):  # noqa: ARG002
-        return type("Sub", (), {"filter": self.existing_filter})()
+        self.lookups += 1
+        if self.failing_lookups:
+            self.failing_lookups -= 1
+            raise PermissionDenied("no rights to read the subscription")
+        policy = type("Policy", (), {"dead_letter_topic": self.dead_letter_topic})()
+        return type(
+            "Sub",
+            (),
+            {"filter": self.existing_filter, "dead_letter_policy": policy},
+        )()
 
     def pull(self, request, timeout=None):  # noqa: ARG002
         if self.raise_deadline:
@@ -286,3 +309,79 @@ def test_close_stops_the_lease_renewer(bus):
     bus.close()
     assert not lease_thread.is_alive()
     assert bus._leases == {}
+
+
+def test_dead_letter_publishes_to_the_dead_letter_topic_and_acknowledges(bus):
+    bus.subscriber.dead_letter_topic = DEAD_LETTER_TOPIC
+    message = StubMessage(
+        "ack-1",
+        {"uuid": "an-id"},
+        attributes={"subscription_key": "urgap_rebase"},
+    )
+    bus.dead_letter(message, reason="Source file(s) do not exist: a.pdf")
+    assert bus.publisher.published == [
+        (
+            DEAD_LETTER_TOPIC,
+            message.message.data,
+            {
+                "subscription_key": "urgap_rebase",
+                "dead_letter_reason": "Source file(s) do not exist: a.pdf",
+                "dead_letter_source_subscription": (
+                    "projects/my-project/subscriptions/urgap_rebase"
+                ),
+            },
+        ),
+    ]
+    assert bus.subscriber.acknowledged == ["ack-1"]
+    assert bus.subscriber.deadlines == []
+
+
+def test_dead_letter_looks_up_the_dead_letter_topic_once(bus):
+    bus.subscriber.dead_letter_topic = DEAD_LETTER_TOPIC
+    bus.dead_letter(StubMessage("ack-1", {}), reason="missing")
+    bus.dead_letter(StubMessage("ack-2", {}), reason="missing")
+    assert bus.subscriber.lookups == 1
+    assert bus.subscriber.acknowledged == ["ack-1", "ack-2"]
+
+
+def test_dead_letter_abandons_without_a_dead_letter_topic(bus, caplog):
+    bus.dead_letter(StubMessage("ack-1", {}), reason="missing")
+    assert bus.publisher.published == []
+    assert bus.subscriber.acknowledged == []
+    assert bus.subscriber.deadlines == [(["ack-1"], 0)]
+    assert "has no dead letter topic" in caplog.text
+
+
+def test_dead_letter_abandons_when_publishing_fails(bus, caplog):
+    bus.subscriber.dead_letter_topic = DEAD_LETTER_TOPIC
+    bus.publisher.fail_publish = True
+    bus.dead_letter(StubMessage("ack-1", {}), reason="missing")
+    assert bus.subscriber.acknowledged == []
+    assert bus.subscriber.deadlines == [(["ack-1"], 0)]
+    assert "Could not publish to dead letter topic" in caplog.text
+
+
+def test_dead_letter_retries_the_lookup_after_it_failed(bus):
+    bus.subscriber.dead_letter_topic = DEAD_LETTER_TOPIC
+    bus.subscriber.failing_lookups = 1
+    bus.dead_letter(StubMessage("ack-1", {}), reason="missing")
+    bus.dead_letter(StubMessage("ack-2", {}), reason="missing")
+    assert bus.subscriber.deadlines == [(["ack-1"], 0)]
+    assert bus.subscriber.acknowledged == ["ack-2"]
+    assert bus.subscriber.lookups == 2
+
+
+def test_dead_letter_reason_fits_the_attribute_limit(bus):
+    bus.subscriber.dead_letter_topic = DEAD_LETTER_TOPIC
+    bus.dead_letter(StubMessage("ack-1", {}), reason="é" * MAX_ATTRIBUTE_VALUE_BYTES)
+    reason = bus.publisher.published[0][2]["dead_letter_reason"]
+    assert len(reason.encode()) <= MAX_ATTRIBUTE_VALUE_BYTES
+    assert set(reason) == {"é"}
+
+
+def test_dead_letter_stops_renewing_the_message(bus):
+    bus.subscriber.dead_letter_topic = DEAD_LETTER_TOPIC
+    message = StubMessage("ack-1", {})
+    bus.renew(message, MAX_ACK_DEADLINE_SECONDS * 3)
+    bus.dead_letter(message, reason="missing")
+    assert "ack-1" not in bus._leases

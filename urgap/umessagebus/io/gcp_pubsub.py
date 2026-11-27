@@ -27,6 +27,21 @@ DEFAULT_ACK_DEADLINE_SECONDS = 600
 # comfortably inside MAX_ACK_DEADLINE_SECONDS so a slow call still has margin
 LEASE_RENEWAL_INTERVAL_SECONDS = 300
 LEASE_RENEWER_JOIN_TIMEOUT_SECONDS = 5
+# Pub/Sub caps an attribute value at 1024 bytes
+MAX_ATTRIBUTE_VALUE_BYTES = 1024
+
+
+def _truncate_utf8(text: str, max_bytes: int) -> str:
+    """Cut text to at most max_bytes of UTF-8 without splitting a character.
+
+    Args:
+        text: Text to shorten.
+        max_bytes: Maximum encoded length.
+
+    Returns:
+        The text, shortened if needed.
+    """
+    return text.encode()[:max_bytes].decode(errors="ignore")
 
 
 class UMessageBusGCPPubSub(UMessageBusBase):
@@ -37,6 +52,12 @@ class UMessageBusGCPPubSub(UMessageBusBase):
     message has its ack deadline zeroed and is redelivered.
 
     The cred_key carries the project, e.g. ``gcp-pubsub://my-gcp-project``.
+
+    Pub/Sub has no call to dead-letter a single message. ``dead_letter``
+    therefore publishes the message to the dead letter topic of the
+    subscription's dead letter policy, the same topic Pub/Sub itself uses
+    once max delivery attempts are reached, and acknowledges it. Without such
+    a policy the message is abandoned instead.
 
     Note:
         A Pub/Sub subscription filter is immutable. If the subscription already
@@ -54,6 +75,8 @@ class UMessageBusGCPPubSub(UMessageBusBase):
         self.publisher = None
         self.subscription_path = None
         self.completion_topic_path = None
+        # None until looked up, "" if the subscription has no dead letter topic
+        self._dead_letter_topic_path: str | None = None
         self._leases: dict[str, float] = {}
         self._lease_lock = threading.Lock()
         self._lease_stop = threading.Event()
@@ -202,6 +225,74 @@ class UMessageBusGCPPubSub(UMessageBusBase):
                 "ack_ids": [message.ack_id],
             },
         )
+
+    def dead_letter(self, message: Any, reason: str) -> None:  # noqa: ANN401
+        """Publish a Pub/Sub message to the dead letter topic and acknowledge it.
+
+        The original data and attributes are kept, so whatever consumes the
+        dead letter topic sees the same message as when Pub/Sub dead-letters
+        it, plus ``dead_letter_reason`` and ``dead_letter_source_subscription``
+        attributes. If the subscription has no dead letter topic, or publishing
+        fails, the message is abandoned instead so it is not lost.
+
+        Args:
+            message: Received Pub/Sub message.
+            reason: Why the message cannot be processed.
+        """
+        topic_path = self._get_dead_letter_topic_path()
+        if not topic_path:
+            logger.warning(
+                "Subscription %s has no dead letter topic, abandoning the message "
+                "instead; it is redelivered until Pub/Sub gives up on it",
+                self.subscription_path,
+            )
+            self.abandon(message)
+            return
+        attributes = dict(getattr(message.message, "attributes", None) or {})
+        attributes["dead_letter_reason"] = _truncate_utf8(
+            reason,
+            MAX_ATTRIBUTE_VALUE_BYTES,
+        )
+        attributes["dead_letter_source_subscription"] = self.subscription_path
+        try:
+            self.publisher.publish(
+                topic_path,
+                message.message.data,
+                **attributes,
+            ).result()
+        except GoogleAPICallError:
+            logger.exception(
+                "Could not publish to dead letter topic %s, abandoning the message",
+                topic_path,
+            )
+            self.abandon(message)
+            return
+        self.complete(message)
+
+    def _get_dead_letter_topic_path(self) -> str:
+        """Look up the dead letter topic of the subscription once.
+
+        Returns:
+            Dead letter topic path, empty if the subscription has none or it
+            could not be read.
+        """
+        if self._dead_letter_topic_path is None:
+            try:
+                subscription = self.subscriber.get_subscription(
+                    request={"subscription": self.subscription_path},
+                )
+            except GoogleAPICallError:
+                logger.warning(
+                    "Could not read the dead letter policy of %s",
+                    self.subscription_path,
+                    exc_info=True,
+                )
+                # Not cached, the next dead letter tries again
+                return ""
+            self._dead_letter_topic_path = (
+                subscription.dead_letter_policy.dead_letter_topic or ""
+            )
+        return self._dead_letter_topic_path
 
     def abandon(self, message: Any) -> None:  # noqa: ANN401
         """Nack a Pub/Sub message by zeroing its ack deadline.

@@ -14,7 +14,17 @@ A message is expected to look like::
     }
 
 and the handler is called with the full message body, returning
-``(ok, output_uris)``.
+``(ok, output_uris)``. A message is settled by its outcome:
+
+- ``ok``: completed, and a completion event is published.
+- not ``ok``: abandoned, so it is redelivered; for failures worth retrying.
+- ``UnprocessableMessageError`` raised: dead-lettered, for messages which can
+  never succeed (e.g. a source file which does not exist), so they do not
+  cycle through the workers until the bus gives up on them.
+
+``exit_after_first`` stops the worker after the first settled message, i.e.
+completed or dead-lettered. An abandoned message is still on the bus, so the
+worker keeps going.
 """
 
 from __future__ import annotations
@@ -41,6 +51,15 @@ DEFAULT_TOPIC = "urgap_queue"
 DEFAULT_COMPLETION_TOPIC = "urgap_completed"
 
 
+class UnprocessableMessageError(Exception):
+    """Raised by a handler for a message which can never be processed.
+
+    Retrying such a message only wastes workers, so it is dead-lettered
+    instead of abandoned. Use it for permanent problems with the message
+    itself, not for transient failures like timeouts or throttling.
+    """
+
+
 class MessageHandler(Protocol):
     """Callable which performs the work a message asks for."""
 
@@ -52,6 +71,9 @@ class MessageHandler(Protocol):
 
         Returns:
             Tuple of a success flag and the resulting urgap URIs.
+
+        Raises:
+            UnprocessableMessageError: If the message can never succeed.
         """
         ...  # pragma: no cover
 
@@ -120,7 +142,8 @@ def process_message(
         message: Received transport specific message.
         message_bus: Transport the message came from, used to settle it.
         handler: Callable performing the work the message asks for.
-        exit_after_first: If True, stop the loop after one handled message.
+        exit_after_first: If True, stop the loop after the first settled
+            (completed or dead-lettered) message.
 
     Returns:
         True if the worker loop should stop, False otherwise.
@@ -129,7 +152,16 @@ def process_message(
     if body.get("subscription_key") != message_bus.subscription_key:
         message_bus.abandon(message)
         return False
-    ok, output_uris = handler(body)
+    try:
+        ok, output_uris = handler(body)
+    except UnprocessableMessageError as e:
+        logger.error(  # noqa: TRY400 - the reason is enough, no traceback needed
+            "Dead-lettering message %s, it cannot be processed: %s",
+            body.get("uuid"),
+            e,
+        )
+        message_bus.dead_letter(message, reason=str(e))
+        return _stop_after_settling(message_bus, exit_after_first)
     if not ok:
         message_bus.abandon(message)
         return False
@@ -141,13 +173,25 @@ def process_message(
             event_payload["custom_message"] = {"output_uris": output_uris}
         message_bus.publish_completion(event_payload)
     message_bus.complete(message)
+    return _stop_after_settling(message_bus, exit_after_first)
+
+
+def _stop_after_settling(message_bus: UMessageBusBase, exit_after_first: bool) -> bool:
+    """Tell the loop whether to stop now that a message is settled.
+
+    Args:
+        message_bus: Transport the settled message came from.
+        exit_after_first: If True, the worker stops after a settled message.
+
+    Returns:
+        True if the worker loop should stop, False otherwise.
+    """
     if exit_after_first:
         logger.info(
             "Configured to exit after first message; stopping worker for %s",
             message_bus.subscription_key,
         )
-        return True
-    return False
+    return exit_after_first
 
 
 def handle_messages(
@@ -162,7 +206,8 @@ def handle_messages(
     Args:
         message_bus: Transport to receive from.
         handler: Callable performing the work a message asks for.
-        exit_after_first: If True, stop after one handled message.
+        exit_after_first: If True, stop after the first settled (completed or
+            dead-lettered) message.
         max_autorenew: Requested lock duration in seconds, 0 disables renewal.
         max_empty_polls: Number of consecutive empty polls after which the
             worker exits. 0 keeps the worker polling forever.
@@ -221,8 +266,9 @@ def run_subscription_worker(
         topic_name: Topic to receive from, defaults to config service_bus_topic.
         completion_topic: Topic to publish completion events to, defaults to
             config service_bus_completion_topic.
-        exit_after_first: If True, stop after one handled message. Defaults to
-            config service_bus_exit_after_first_message.
+        exit_after_first: If True, stop after the first settled (completed or
+            dead-lettered) message. Defaults to config
+            service_bus_exit_after_first_message.
         max_autorenew: Requested lock duration in seconds. Defaults to config
             service_bus_max_autorenewal_minutes.
         max_empty_polls: Number of consecutive empty polls after which the

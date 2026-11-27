@@ -177,6 +177,15 @@ attaches a filter on the ``subscription_key`` so it only receives the messages
 meant for it. A message that is handled successfully is settled and a message
 whose handler failed is released back to the subscription for redelivery.
 
+A message that can never succeed is **dead-lettered** instead of redelivered,
+so it does not keep cycling through the workers: the rebase worker does this
+when a source file does not exist. Service Bus moves it to the subscription's
+dead-letter queue. Pub/Sub has no call for that, so the worker publishes the
+message, with a ``dead_letter_reason`` attribute added, to the dead letter topic
+of the subscription's dead letter policy and acknowledges it. This needs a dead
+letter policy on the subscription and publish rights on its topic for the
+worker; without either, the message is released for redelivery as before.
+
 Message format
 ^^^^^^^^^^^^^^
 
@@ -234,7 +243,7 @@ The topics come from the urgap config and can be overridden per worker with
    * - ``service_bus_completion_topic``
      - Topic completions are sent to
    * - ``service_bus_exit_after_first_message``
-     - Exit once one message is done
+     - Exit once one message is settled (completed or dead-lettered)
    * - ``service_bus_max_autorenewal_minutes``
      - How long to hold a message lock
 
@@ -242,7 +251,9 @@ The keys are named after Service Bus for historical reasons but apply to every
 transport. The UNode worker exits after its first message by default, which
 suits a job that is scheduled per message. The rebase worker keeps polling by
 default, since it is a long lived relay, and ``--exit-after-first`` switches it
-to the one shot behaviour.
+to the one shot behaviour. A message counts once it is settled, i.e. completed
+or dead-lettered. A message whose handler failed is back on the bus, so the
+worker does not exit and takes the next message instead.
 
 Two transport differences are worth knowing. A Pub/Sub subscription filter is
 **immutable**, so a subscription that already exists with a different filter is

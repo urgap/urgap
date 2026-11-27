@@ -137,6 +137,15 @@ class UMessageBusBase:
         """
         raise NotImplementedError(self._not_implemented_msg("abandon"))
 
+    def dead_letter(self, message: Any, reason: str) -> None:  # noqa: ANN401
+        """Move a message which can never be processed out of the subscription.
+
+        Args:
+            message: Transport specific message.
+            reason: Why the message cannot be processed, kept with the message.
+        """
+        raise NotImplementedError(self._not_implemented_msg("dead_letter"))
+
     def renew(self, message: Any, duration: float) -> None:  # noqa: ANN401
         """Keep a message locked while it is being handled.
 

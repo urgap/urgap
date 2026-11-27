@@ -26,6 +26,7 @@ class StubMessageBus(UMessageBusBase):
         self.batches = list(batches or [])
         self.completed = []
         self.abandoned = []
+        self.dead_lettered = []
         self.renewed = []
         self.published = []
         self.entities_ensured = False
@@ -52,6 +53,9 @@ class StubMessageBus(UMessageBusBase):
     def abandon(self, message) -> None:
         self.abandoned.append(message)
 
+    def dead_letter(self, message, reason) -> None:
+        self.dead_lettered.append((message, reason))
+
     def renew(self, message, duration) -> None:
         self.renewed.append((message, duration))
 
@@ -73,6 +77,25 @@ def ok_handler(body):  # noqa: ARG001
 
 def failing_handler(body):  # noqa: ARG001
     return False, None
+
+
+def unprocessable_handler(body):  # noqa: ARG001
+    raise worker.UnprocessableMessageError("source does not exist")
+
+
+def handler_by_uuid(body):
+    """Fail transiently, reject, or succeed depending on the message uuid."""
+    if body["uuid"] == "transient":
+        return failing_handler(body)
+    if body["uuid"] == "missing":
+        return unprocessable_handler(body)
+    return ok_handler(body)
+
+
+def make_body_with_uuid(uuid):
+    body = make_body()
+    body["uuid"] = uuid
+    return body
 
 
 def test_process_message_completes_on_success():
@@ -234,8 +257,105 @@ def test_base_class_requires_implementations():
         ("get_body", (None,)),
         ("complete", (None,)),
         ("abandon", (None,)),
+        ("dead_letter", (None, "reason")),
         ("renew", (None, 1)),
         ("publish_completion", ({},)),
     ):
         with pytest.raises(NotImplementedError):
             getattr(bus, method)(*args)
+
+
+def test_process_message_dead_letters_unprocessable_message():
+    body = make_body()
+    bus = StubMessageBus(completion_topic="urgap_completed")
+    stop = worker.process_message(
+        message=body,
+        message_bus=bus,
+        handler=unprocessable_handler,
+    )
+    assert stop is False
+    assert bus.dead_lettered == [(body, "source does not exist")]
+    assert bus.completed == []
+    assert bus.abandoned == []
+    # nothing was produced, so there is no completion event
+    assert bus.published == []
+
+
+def test_process_message_stops_after_dead_letter_when_exit_after_first():
+    bus = StubMessageBus(completion_topic=None)
+    stop = worker.process_message(
+        message=make_body(),
+        message_bus=bus,
+        handler=unprocessable_handler,
+        exit_after_first=True,
+    )
+    assert stop is True
+
+
+def test_process_message_keeps_going_after_abandon_when_exit_after_first():
+    bus = StubMessageBus(completion_topic=None)
+    stop = worker.process_message(
+        message=make_body(),
+        message_bus=bus,
+        handler=failing_handler,
+        exit_after_first=True,
+    )
+    assert stop is False
+
+
+def test_handle_messages_exit_after_first_stops_at_first_settled_message(
+    monkeypatch,
+):
+    monkeypatch.setattr(worker.time, "sleep", lambda _s: None)
+    transient, missing, fine = (
+        make_body_with_uuid(uuid) for uuid in ("transient", "missing", "fine")
+    )
+    bus = StubMessageBus(
+        batches=[[transient], [missing], [fine]],
+        completion_topic=None,
+    )
+    worker.handle_messages(
+        message_bus=bus,
+        handler=handler_by_uuid,
+        exit_after_first=True,
+        max_empty_polls=1,
+    )
+    assert bus.abandoned == [transient]
+    assert bus.dead_lettered == [(missing, "source does not exist")]
+    # the worker stopped after the dead letter, the next message is untouched
+    assert bus.completed == []
+    assert bus.batches == [[fine]]
+
+
+def test_handle_messages_stay_alive_carries_on_after_dead_letter(monkeypatch):
+    monkeypatch.setattr(worker.time, "sleep", lambda _s: None)
+    missing, fine = (make_body_with_uuid(uuid) for uuid in ("missing", "fine"))
+    bus = StubMessageBus(batches=[[missing], [fine]], completion_topic=None)
+    worker.handle_messages(
+        message_bus=bus,
+        handler=handler_by_uuid,
+        exit_after_first=False,
+        max_empty_polls=1,
+    )
+    assert [message for message, _reason in bus.dead_lettered] == [missing]
+    assert bus.completed == [fine]
+
+
+def test_azure_service_bus_dead_letters_with_a_bounded_reason():
+    from unittest.mock import Mock
+
+    from urgap.umessagebus.io.azure_servicebus import (
+        MAX_DEAD_LETTER_REASON_LENGTH,
+        UMessageBusAzureServiceBus,
+    )
+
+    bus = UMessageBusAzureServiceBus(
+        cred_key="azure-servicebus://ns.servicebus.windows.net",
+        subscription_key="urgap_rebase",
+    )
+    bus.receiver = Mock()
+    bus.dead_letter("a-message", reason="x" * (MAX_DEAD_LETTER_REASON_LENGTH + 10))
+    bus.receiver.dead_letter_message.assert_called_once_with(
+        "a-message",
+        reason="x" * MAX_DEAD_LETTER_REASON_LENGTH,
+    )

@@ -24,6 +24,9 @@ from urgap.umessagebus.io._base import COMPLETION_SUBSCRIPTION_NAME, UMessageBus
 
 logger = logging.getLogger(__name__)
 
+# Keeps the dead-letter reason well inside the message's property size limit
+MAX_DEAD_LETTER_REASON_LENGTH = 1024
+
 
 class UMessageBusAzureServiceBus(UMessageBusBase):
     """UMessageBus class interface for Azure Service Bus topics.
@@ -150,6 +153,19 @@ class UMessageBusAzureServiceBus(UMessageBusBase):
             message: Received Service Bus message.
         """
         self.receiver.complete_message(message)
+
+    def dead_letter(self, message: Any, reason: str) -> None:  # noqa: ANN401
+        """Move a Service Bus message to the subscription's dead-letter queue.
+
+        Args:
+            message: Received Service Bus message.
+            reason: Why the message cannot be processed, stored as its
+                DeadLetterReason.
+        """
+        self.receiver.dead_letter_message(
+            message,
+            reason=reason[:MAX_DEAD_LETTER_REASON_LENGTH],
+        )
 
     def abandon(self, message: Any) -> None:  # noqa: ANN401
         """Abandon a Service Bus message so it is redelivered.

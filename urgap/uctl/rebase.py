@@ -4,6 +4,9 @@ Relocates UFiles from one storage location to another without processing them
 and without renaming them. Available synchronously via ``uctl rebase`` and
 message driven via ``uctl run rebase-worker``, which pulls work from any
 message bus urgap supports (Azure Service Bus or GCP Pub/Sub).
+
+A message whose source file does not exist can never succeed, so the worker
+dead-letters it instead of handing it back to the bus for another attempt.
 """
 
 import logging
@@ -13,11 +16,53 @@ import click
 
 import urgap
 
-from urgap.umessagebus.worker import load_message_context, run_subscription_worker
+from urgap.umessagebus.worker import (
+    UnprocessableMessageError,
+    load_message_context,
+    run_subscription_worker,
+)
 
 logger = logging.getLogger(__name__)
 
 REBASE_SUBSCRIPTION_KEY = "urgap_rebase"
+
+# Storage backends whose remote_object_exists() returns False only when the
+# object is missing and raises on auth or connection errors. Others (e.g.
+# https, smb) also return False on errors, so a False from them says nothing.
+EXISTENCE_CHECKED_SCHEMAS = frozenset({"az-dl", "az-smb", "azure", "file", "gcs"})
+
+
+class SourceNotFoundError(FileNotFoundError):
+    """Raised when UFiles to rebase do not exist in their source location."""
+
+    def __init__(self, uris: list[str]) -> None:
+        """Create the error for the missing source URIs.
+
+        Args:
+            uris: Urgap URIs of the missing UFiles.
+        """
+        self.uris = uris
+        super().__init__(f"Source file(s) do not exist: {', '.join(uris)}")
+
+
+def find_missing_sources(ufiles: urgap.UFileList) -> list[str]:
+    """Return the URIs of UFiles which certainly do not exist remotely.
+
+    Only backends in EXISTENCE_CHECKED_SCHEMAS are checked; for any other a
+    missing file shows up as a failure during the rebase itself.
+
+    Args:
+        ufiles: UFiles to check.
+
+    Returns:
+        Urgap URIs of the UFiles which do not exist.
+    """
+    return [
+        uf.as_uri()
+        for uf in ufiles
+        if getattr(uf.io, "SCHEMA", None) in EXISTENCE_CHECKED_SCHEMAS
+        and not uf.io.remote_object_exists()
+    ]
 
 
 def rebase_uris(uris: list[str], storage_base_uri: str) -> list[str]:
@@ -29,8 +74,14 @@ def rebase_uris(uris: list[str], storage_base_uri: str) -> list[str]:
 
     Returns:
         List of urgap URIs of the relocated UFiles.
+
+    Raises:
+        SourceNotFoundError: If any source does not exist; nothing is rebased.
     """
     ufiles = urgap.UFileList.from_uri_list(list(uris))
+    missing = find_missing_sources(ufiles)
+    if missing:
+        raise SourceNotFoundError(missing)
     ufiles.rebase(storage_base_uri=storage_base_uri, upload=True)
     return ufiles.as_uri_list()
 
@@ -68,6 +119,10 @@ def process_rebase_message(body: dict) -> tuple[bool, list[str] | None]:
 
     Returns:
         Tuple of a success flag and the urgap URIs of the relocated UFiles.
+
+    Raises:
+        UnprocessableMessageError: If a source file does not exist, so the
+            worker dead-letters the message instead of retrying it.
     """
     ok = False
     output_uris = None
@@ -79,6 +134,8 @@ def process_rebase_message(body: dict) -> tuple[bool, list[str] | None]:
             storage_base_uri=consumer_kwargs["storage_base_uri"],
         )
         ok = True
+    except SourceNotFoundError as e:
+        raise UnprocessableMessageError(str(e)) from e
     except Exception:
         logger.exception("Failed to rebase files requested by message")
     return ok, output_uris
@@ -116,7 +173,11 @@ def process_rebase_message(body: dict) -> tuple[bool, list[str] | None]:
 )
 @click.option(
     "--exit-after-first/--stay-alive",
-    help="Exit after the first handled message instead of polling forever.",
+    help=(
+        "Exit after the first settled message, i.e. rebased or dead-lettered, "
+        "instead of polling forever. A message that failed and went back to "
+        "the bus does not count, the worker then takes the next one."
+    ),
     default=False,
     show_default=True,
 )
@@ -132,7 +193,7 @@ def rebase_worker(
     Each message names the UFiles in the source location and the storage base
     UUri of the target location, the worker copies them over under their
     existing object names and publishes the resulting URIs to the completion
-    topic.
+    topic. Messages whose source files do not exist are dead-lettered.
     """
     run_subscription_worker(
         cred_key=via_message_bus,
