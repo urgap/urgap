@@ -5,6 +5,7 @@ the settlement and completion logic of the receive loop without a real bus.
 """
 
 import json
+import threading
 
 import pytest
 
@@ -239,3 +240,84 @@ def test_base_class_requires_implementations():
     ):
         with pytest.raises(NotImplementedError):
             getattr(bus, method)(*args)
+
+
+def handler_by_uuid(body):
+    """Fail for messages with uuid "fail", succeed for all others."""
+    return failing_handler(body) if body["uuid"] == "fail" else ok_handler(body)
+
+
+def make_bodies(*uuids):
+    bodies = []
+    for uuid in uuids:
+        body = make_body()
+        body["uuid"] = uuid
+        bodies.append(body)
+    return bodies
+
+
+def test_handle_messages_stops_after_max_messages(monkeypatch):
+    monkeypatch.setattr(worker.time, "sleep", lambda _s: None)
+    bodies = make_bodies("a", "b", "c")
+    bus = StubMessageBus(batches=[[body] for body in bodies], completion_topic=None)
+    worker.handle_messages(message_bus=bus, handler=ok_handler, max_messages=2)
+    assert bus.completed == bodies[:2]
+    assert bus.batches == [[bodies[2]]]
+
+
+def test_handle_messages_failed_messages_do_not_count_towards_max(monkeypatch):
+    monkeypatch.setattr(worker.time, "sleep", lambda _s: None)
+    first, failed, second, third = make_bodies("a", "fail", "b", "c")
+    bus = StubMessageBus(
+        batches=[[first], [failed], [second], [third]],
+        completion_topic=None,
+    )
+    worker.handle_messages(message_bus=bus, handler=handler_by_uuid, max_messages=2)
+    assert bus.completed == [first, second]
+    assert bus.abandoned == [failed]
+    assert bus.batches == [[third]]
+
+
+def test_handle_messages_exit_after_first_takes_precedence(monkeypatch):
+    monkeypatch.setattr(worker.time, "sleep", lambda _s: None)
+    bodies = make_bodies("a", "b")
+    bus = StubMessageBus(batches=[[body] for body in bodies], completion_topic=None)
+    worker.handle_messages(
+        message_bus=bus,
+        handler=ok_handler,
+        exit_after_first=True,
+        max_messages=5,
+    )
+    assert bus.completed == bodies[:1]
+
+
+def test_handle_messages_idle_exit_before_reaching_max(monkeypatch):
+    monkeypatch.setattr(worker.time, "sleep", lambda _s: None)
+    bodies = make_bodies("a")
+    bus = StubMessageBus(batches=[bodies], completion_topic=None)
+    worker.handle_messages(
+        message_bus=bus,
+        handler=ok_handler,
+        max_messages=100,
+        max_empty_polls=2,
+    )
+    assert bus.completed == bodies
+
+
+def test_run_subscription_worker_stops_after_max_messages(monkeypatch):
+    monkeypatch.setattr(worker.time, "sleep", lambda _s: None)
+    bodies = make_bodies("a", "b", "c")
+    bus = StubMessageBus(batches=[[body] for body in bodies], completion_topic=None)
+    monkeypatch.setattr(worker, "init_message_bus", lambda **_kwargs: bus)
+    shutdown_event = threading.Event()
+    worker.run_subscription_worker(
+        cred_key="stub://nowhere",
+        subscription_key="urgap_rebase",
+        handler=ok_handler,
+        exit_after_first=False,
+        max_messages=2,
+        shutdown_event=shutdown_event,
+    )
+    assert bus.completed == bodies[:2]
+    assert bus.closed is True
+    assert shutdown_event.is_set()

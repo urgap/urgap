@@ -9,6 +9,7 @@ from urgap.uctl.rebase import (
     process_rebase_message,
     rebase_uris,
     rebase_uris_click,
+    rebase_worker,
 )
 
 runner = CliRunner()
@@ -112,3 +113,69 @@ def test_rebase_message_round_trip_is_json_serializable(tmp_dir):
     }
     ok, _output_uris = process_rebase_message(json.loads(json.dumps(message)))
     assert ok is True
+
+
+def test_rebase_uris_removes_scratch_copies(tmp_dir):
+    source_copies = [
+        uf.io.scratch_path for uf in urgap.UFileList.from_uri_list(get_source_uris())
+    ]
+    resulting_uris = rebase_uris(
+        uris=get_source_uris(),
+        storage_base_uri=f"file://{tmp_dir}",
+    )
+    target_copies = [
+        uf.io.scratch_path for uf in urgap.UFileList.from_uri_list(resulting_uris)
+    ]
+    assert not any(path.exists() for path in source_copies + target_copies)
+    # the source and the rebased files themselves are untouched
+    assert all(
+        uf.io.remote_object_exists()
+        for uf in urgap.UFileList.from_uri_list(get_source_uris() + resulting_uris)
+    )
+
+
+def capture_worker_kwargs(monkeypatch):
+    captured = {}
+    monkeypatch.setattr(
+        "urgap.uctl.rebase.run_subscription_worker",
+        lambda **kwargs: captured.update(kwargs),
+    )
+    return captured
+
+
+def test_rebase_worker_passes_message_and_idle_limits(monkeypatch):
+    captured = capture_worker_kwargs(monkeypatch)
+    result = runner.invoke(
+        rebase_worker,
+        [
+            "--via-message-bus",
+            "gcp-pubsub://my-project",
+            "--max-messages",
+            "100",
+            "--max-empty-polls",
+            "4",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    assert captured["max_messages"] == 100
+    assert captured["max_empty_polls"] == 4
+    assert captured["exit_after_first"] is False
+
+
+def test_rebase_worker_polls_forever_by_default(monkeypatch):
+    captured = capture_worker_kwargs(monkeypatch)
+    result = runner.invoke(
+        rebase_worker,
+        ["--via-message-bus", "gcp-pubsub://my-project"],
+    )
+    assert result.exit_code == 0, result.output
+    assert (captured["max_messages"], captured["max_empty_polls"]) == (0, 0)
+
+
+def test_rebase_worker_rejects_negative_limits(monkeypatch):
+    capture_worker_kwargs(monkeypatch)
+    result = runner.invoke(
+        rebase_worker,
+        ["--via-message-bus", "gcp-pubsub://my-project", "--max-messages", "-1"],
+    )
+    assert result.exit_code == 2

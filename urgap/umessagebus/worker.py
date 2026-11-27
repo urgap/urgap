@@ -125,6 +125,31 @@ def process_message(
     Returns:
         True if the worker loop should stop, False otherwise.
     """
+    completed = _settle_message(message, message_bus, handler)
+    if completed and exit_after_first:
+        logger.info(
+            "Configured to exit after first message; stopping worker for %s",
+            message_bus.subscription_key,
+        )
+        return True
+    return False
+
+
+def _settle_message(
+    message: Any,  # noqa: ANN401
+    message_bus: UMessageBusBase,
+    handler: MessageHandler,
+) -> bool:
+    """Run the handler on a message, then complete or abandon it.
+
+    Args:
+        message: Received transport specific message.
+        message_bus: Transport the message came from, used to settle it.
+        handler: Callable performing the work the message asks for.
+
+    Returns:
+        True if the message was handled successfully and completed.
+    """
     body = json.loads(message_bus.get_body(message))
     if body.get("subscription_key") != message_bus.subscription_key:
         message_bus.abandon(message)
@@ -141,13 +166,7 @@ def process_message(
             event_payload["custom_message"] = {"output_uris": output_uris}
         message_bus.publish_completion(event_payload)
     message_bus.complete(message)
-    if exit_after_first:
-        logger.info(
-            "Configured to exit after first message; stopping worker for %s",
-            message_bus.subscription_key,
-        )
-        return True
-    return False
+    return True
 
 
 def handle_messages(
@@ -156,17 +175,24 @@ def handle_messages(
     exit_after_first: bool = False,
     max_autorenew: float = 0,
     max_empty_polls: int = DEFAULT_MAX_EMPTY_POLLS,
+    max_messages: int = 0,
 ) -> None:
     """Receive and handle messages until the worker is done.
 
     Args:
         message_bus: Transport to receive from.
         handler: Callable performing the work a message asks for.
-        exit_after_first: If True, stop after one handled message.
+        exit_after_first: If True, stop after one handled message, the same as
+            max_messages=1.
         max_autorenew: Requested lock duration in seconds, 0 disables renewal.
         max_empty_polls: Number of consecutive empty polls after which the
             worker exits. 0 keeps the worker polling forever.
+        max_messages: Number of successfully handled messages after which the
+            worker exits. Failed messages go back to the bus and do not count.
+            0 means no limit.
     """
+    limit = 1 if exit_after_first else max_messages
+    handled = 0
     empty_polls = 0
     while True:
         messages = message_bus.receive(
@@ -187,13 +213,16 @@ def handle_messages(
         for message in messages:
             if max_autorenew > 0:
                 message_bus.renew(message, max_autorenew)
-            stop = process_message(
-                message=message,
-                message_bus=message_bus,
-                handler=handler,
-                exit_after_first=exit_after_first,
-            )
-            if stop:
+            if not _settle_message(message, message_bus, handler):
+                continue
+            handled += 1
+            if limit and handled >= limit:
+                logger.info(
+                    "Handled %s message(s), the configured maximum; stopping "
+                    "worker for %s",
+                    handled,
+                    message_bus.subscription_key,
+                )
                 return
 
 
@@ -208,6 +237,7 @@ def run_subscription_worker(
     max_autorenew: float | None = None,
     max_empty_polls: int = DEFAULT_MAX_EMPTY_POLLS,
     shutdown_event: EventClass | None = None,
+    max_messages: int = 0,
 ) -> None:
     """Run a message bus subscription worker for one routing key.
 
@@ -228,6 +258,8 @@ def run_subscription_worker(
         max_empty_polls: Number of consecutive empty polls after which the
             worker exits. 0 keeps the worker polling forever.
         shutdown_event: Event to signal the parent process to terminate.
+        max_messages: Number of successfully handled messages after which the
+            worker exits, 0 means no limit. exit_after_first takes precedence.
     """
     if exit_after_first is None:
         exit_after_first = urgap.config.get(
@@ -259,8 +291,9 @@ def run_subscription_worker(
             exit_after_first=exit_after_first,
             max_autorenew=max_autorenew,
             max_empty_polls=max_empty_polls,
+            max_messages=max_messages,
         )
-    if exit_after_first and shutdown_event:
+    if (exit_after_first or max_messages) and shutdown_event:
         shutdown_event.set()
 
 
